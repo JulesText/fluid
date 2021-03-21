@@ -1,0 +1,623 @@
+/* CSS global reset - ensures consistency across all browsers*/
+/* http://leftjustified.net/journal/2004/10/19/global-ws-reset */
+* {
+/*	padding: 0; */    /* messes up select boxes in Firefox, for some reason */
+	margin: 0;
+}
+
+table.datatable {
+    color: blue; 
+}
+
+td.JKPadding {
+	color: black; padding: 50px;
+}
+
+td.col-description {
+	color: black; padding: 30px; 
+}
+
+td.col-desiredOutcome {
+	color: black; padding: 30px; 
+}
+
+th.col-description {
+	width: 30%;
+}
+
+th.col-desiredOutcome {
+	width: 30%;
+}
+
+th.contList {
+	border: 1px dotted #999;
+    cursor: pointer;
+    *cursor: hand;
+}
+
+td.col-title {
+	color: black; padding: 30px;
+}
+
+td.JKSmallPadding {
+	color: black; padding: 30px;
+}
+
+p.JKSmallPadding {
+	color: black; padding: 30px;
+}
+
+textarea.JKPadding {
+	color: black; padding: 30px;
+}
+
+input.JKPadding {
+	color: black; padding: 10px; padding-left: 30px;
+}
+
+/* This JK indent */
+div {
+/* padding-left: 40px; */
+}
+
+blockquote{
+	padding: 0;
+	margin-left: 2.5em;
+}
+
+h1, h2, h3, h4, h5, h6, p, pre, form, label, ul, ol, dl, address {
+	padding: 0;
+	margin: .5em 0;
+}
+select {
+	min-width: 1.5em;
+}
+li, dd {
+	padding: 0;
+	margin-left: 1.5em;
+}
+fieldset {
+	padding: 10px;
+	margin: .5em 0;
+}
+/* end of global CSS reset */
+
+td.jjk {
+	vertical-align: text-top;
+	color:#333; 
+	text-decoration: none;
+	font-weight: bold;
+}
+
+tbody td {
+	color: #111;
+	border: 1px dotted #999;
+	font-weight: normal;
+	font-size: 19px;
+	font-family: verdana;
+}
+
+.whitespace {
+    white-space: nowrap; 
+}
+
+.underline {
+	text-decoration: underline;
+}
+
+.italic {
+	font-style: italic;
+}
+
+
+/*===================================================================================*/
+/* Layout code - float/position, display, margin, padding, width, height, text-align */
+/*===================================================================================*/
+body {
+	text-align: left;
+}
+
+#container {
+	width: 100%;
+	margin: 10px;	
+}
+
+#sidebar {
+	float: left;
+	display: inline;
+	margin: 0 10px 0 0;
+	width: 150px;
+	text-align:left;
+}
+
+#main {
+	/* clear: left; */
+	width: 98%;
+	/* width: 960px; */
+}
+
+#footer {
+	float: left;
+	clear: left;
+	width: 100%;
+	margin: 20px 0 10px 0;
+	text-align: right;
+}
+
+#filter {
+	margin: 4px 0;
+}
+
+
+select, input, textarea {
+	padding: 2px;
+	margin: auto 0.25em;
+}
+
+input[type="submit"], input[type="reset"] {
+	margin: 0px 10px;
+}
+.submitbuttons a[href] {
+    display:inline-block;
+    margin:0 5px 0 0;
+     arecolor:#f5f5f5;
+    border:1px solid #ccb;
+    text-decoration:none;
+    color:#665;
+    cursor:pointer;
+    padding:5px;
+    font-weight: normal;
+}
+.submitbuttons a[href]:active {
+    border-color:black;
+}
+input.hasdate {
+    margin-right:0;
+    padding-right:0;
+}
+table {
+	margin: 0 4px 10px 4px;
+}
+
+tbody td {
+	padding: 4px;
+}
+
+
+div.reportsection {
+	margin:20px;
+}
+
+
+/* the ! preceding each project without a next action defined (in listProjects.php) */
+span.noNextAction { 
+	margin-right: .5em;
+}
+
+/* the * marking each next action (in projectReport.php) */
+span.nextActionMarker {
+	margin-right: .5em;
+}
+
+
+/* form styling */
+.form {
+	padding: 1em;
+	margin-bottom: 1em;
+	
+}
+.formrow {
+	clear: left;
+	margin-bottom: .25em;
+}
+/* grrr... IE6 requires this, or things get ugly */		
+* html .formrow {
+	width: 60.5em;
+	height: 2.1em;
+}
+
+.formbuttons {
+	clear: left;
+	margin-bottom: 1em;
+	padding-top:0.25em;
+}
+.formrow label.left {
+	margin-left: 2em;
+	text-align: right;
+}
+.formrow label.right {
+	text-align: left;
+}
+.formrow label.first, .formrow label:first-child {
+	width: 6em;
+	margin-left: 0;
+	display:block;
+	float:left;
+}
+.formrow label.nomargin:first-child, .formrow label.nomargin {
+    display:inline;
+    float:none;
+    margin-left:0;
+}
+.formrow input[type="checkbox"], .formrow input[type="radio"], .formbuttons input[type="checkbox"],button {
+	margin-top: .6em;
+	margin-right: .5em;
+}
+table input[type="checkbox"]{
+	margin:0;
+	padding:0;
+	height:3.0em;
+	width:3.0em;
+}
+table input[type="checkbox"].mx{
+	margin:0;
+	padding:0;
+	height:1.0em;
+	width:1.0em;
+}
+.formrow input[type="radio"].notfirst, .formrow input[type="checkbox"].notfirst, .formbuttons input[type="checkbox"].notfirst {
+	margin-left: 1.5em;
+}
+.formrow textarea, .formrow #name {
+	width: 40em;
+	font: verdana;
+	font-size: 18px;
+}
+.formrow #title, #conclusion, #outcome, #hyperlink, #metaphor {
+	font: verdana;
+	font-size: 18px;
+	width: 40em;
+}
+.weeklytable {
+	width: 95%;
+}
+.formrow .text {
+    position:relative;
+    top:0.5em;
+}
+
+/*===================================================================================================*/
+/* non-layout code - font family, font size, font-weight, color, border, background, text decoration */
+/*===================================================================================================*/
+body {
+	font-family:"Lucida Grande", "Lucida Sans", Verdana, Helvetica, arial, sans-serif;
+	font-size: 16px;
+}
+
+h1 {
+	font-size: 16px;
+	font-weight: bold;
+	color: #666;
+}
+
+h2 {
+	color: #666;
+	font-size: 16px;
+	font-weight: bold;
+	background: none;
+	border-bottom: 2px solid #ccb;
+}
+
+h3 {
+	color: #666;
+	font-size: 16px;
+	font-weight: bold;
+	background: none;
+}
+
+h4 {
+	font-size: 15px;
+	font-weight: bold;
+	background: none;
+}
+.editbar {
+    padding-bottom:1em;
+}
+.hanging {
+    margin-left:10em;
+}
+
+.hanging p {
+    margin-top:0.25em;
+    margin-bottom:0.25em;
+}
+.hanging span {
+    text-indent:-10em;
+    font-size: 16px;
+	font-weight: bold;
+	display:block;
+    float:left;
+    margin-right:0.5em;
+}
+
+
+a {
+	color:#006; 
+	text-decoration: none;
+	font-weight: bold;
+}
+a:visited {
+	color:#006; 
+	text-decoration: none;
+}
+a:hover{
+	text-decoration: underline;
+	color:#006; 
+}
+a img {
+	border:0;
+}
+
+img {
+        border: 0;
+        margin-right: 2px;
+}
+
+select, input, textarea, button {
+	color: #665;
+	font-family: Verdana, Helvetica, sans-serif;
+	font-size: 16px;
+}
+select, input[type='text'], input[type='submit'], input[type='reset'], button, textarea {
+	border: 2px solid #ccb;
+	font-size: 16px;
+}
+
+div.success {
+    border: solid green 2px;
+    font-weight:bold;
+    padding:2px;
+    background-color:#CFC;
+}
+
+table {
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+
+thead td, th {
+	padding: 2px 3px;
+	border: 1px solid #777;
+	background: #eee;
+	color: #666;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+tbody tr {
+	background: #fcfcf0;
+}
+
+tr.blank {
+	padding: 2px 3px;
+	border: 1px solid #eee;
+	background: #eee;
+	color: #666;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.datatable tbody tr:hover {
+	background: #EEE;
+}
+
+
+a.nextactionlink {
+	font-weight: bold;
+	color: #006;
+}
+td.overdue, span.overdue,.warnresult {
+	color: red;
+}
+span.comingdue {
+	color: #AA7200;
+	font-weight: bolder;
+}
+.celloverdue,.celloverdue:hover {
+    background-color: #FFAAAA;
+}
+.celldue,.celldue:hover {
+    background-color: #AAFFAA;
+}
+.goodresult {
+	color:green;
+}
+.due {
+	color:orange;
+}
+.duesoon {
+	color:#00aa00;
+}
+.tickle {
+	color:#ccc;
+	font-weight: normal;
+}
+span.due {
+	font-weight: bolder;
+}
+.tomorrow {
+	color:green;
+}
+a.add:hover, #searchresults a:hover, a.add:link, a.add:visited,#searchresults a:link, #searchresults a:visited {
+	color:green;
+	font-weight:bolder;
+    font-size:larger;
+    margin:1px;
+}
+a.remove:link,a.remove:visited {
+    color:red;
+    font-weight:bold;
+    font-size:larger;
+    margin:1px;
+}
+a.remove:hover, a.add:hover, #searchresults a:hover {
+    background-color:white;
+    margin:0;
+    border:1px black dotted;
+    text-decoration:none;
+}
+td.maincolumn {
+  background-color:#ffffff;
+}
+
+.noparent {
+    background-color:#fff;
+}
+
+p.warning {
+    background-color:white;
+    color:#800;
+    font-size:larger;
+    border: solid 2px #800;
+}
+
+input.warning,th.warning {
+    background-color:#800;
+    color:white;
+}
+
+input.warning {
+    font-size:0.9em;
+}
+#container {
+	background: none;
+}
+
+#header {
+	background: none;
+	/*border-bottom: 4px solid #eed;*/
+}
+
+#sidebar {
+	border-right: 1px solid #eed;
+	font: 10px "Lucida Grande", "Lucida Sans", Verdana, Helvetica, sans-serif;
+}
+
+#footer {
+	color:#666;
+	border-top: 2px solid #eed;
+}
+
+#menulist a,
+#menulist a:link,
+#menulist a:visited {
+	text-decoration: none;
+}
+#menulist a:hover {
+	background: #eed;
+	text-decoration: none;
+}
+
+
+#menudiv li li { /* second-level list items */
+	border-top: .1em solid #eed;
+}
+
+
+a.pageheading:hover {
+	color:#006; 
+	text-decoration: underline;
+}
+
+a.subheading:hover {
+	color:#006; 
+	text-decoration: underline;
+}
+
+/* the ! preceding each project without a next action defined (in listProjects.php) */
+.noNextAction,a.noNextAction {
+	font-weight: bold;
+	color: #F00;
+}
+
+/* the * marking each next action (in projectReport.php) */
+.nextActionMarker {
+	font-weight: bold;
+	color: #F80;
+}
+
+/* forms */
+div.form {
+	background: #FCFCF0;
+	border: 1px dotted #DDD;
+}
+.formrow label {
+	color: #665;
+}
+span.label {
+	color: #665;
+}
+span.detail {
+	color: #888;
+	float: left;
+	clear: left;
+}
+
+.error {
+	color:red;
+	font-size:1.1em;
+}
+/*------------------------------
+  live javascript effects CSS
+  ----------------------------*/
+#searcher {
+	top:6em;
+	left:30em;
+	right:1em;
+	bottom:1em;
+	position:fixed;
+	z-Index:999;
+	background-Color:white;
+	border: 6px ridge #39c;
+	display:none;
+}
+#parenttable {
+    z-Index:950;
+}
+#searchresults {
+    position:fixed;
+    right:2em;
+    left:32em;
+    bottom:2em;
+    top:12em;
+    overflow:scroll;
+}
+#searchresults p {
+    padding:0.1em;
+    margin:0;
+}
+#searcher #donebox {
+    position:fixed;
+    top:7em;
+    right:2em;
+    background-color:#c00;
+}
+#searcher #donebox a,#searcher #donebox a:link, #searcher #donebox a:visited {
+    color:#ddd;
+    font-size:2em;
+    text-decoration:none;
+}
+#searcher #donebox a:hover {
+    color:white;
+    border:1px solid #c00;
+}
+.togglehidden {
+    display:none;
+}
+div#freezer {
+	top:0;
+	left:0;
+    right:0;
+    bottom:0;
+	position:fixed;
+	z-Index:900;
+	background-color:#000;
+	opacity:0.20;
+	filter:alpha(opacity=20);
+	-Moz-Opacity:0.20;
+}
+.trans {
+    opacity:0;
+    border:0px;
+    
+}

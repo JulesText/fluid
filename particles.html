@@ -1,0 +1,46 @@
+<html>
+<body onload="particles()">
+<script>
+function particles() {
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    var windows = [
+        'reportLists.php?id=134&type=C&instanceId=11', // last window
+        'reportLists.php?id=134&type=C',
+        'reportLists.php?id=118&type=C&instanceId=11',
+        'reportLists.php?id=118&type=C',
+        'reportLists.php?id=116&type=c&instanceId=11',
+        'reportLists.php?id=116&type=C',
+        'reportLists.php?id=178&type=c',
+        'reportLists.php?id=184&type=c&instanceId=11', 
+        'reportLists.php?id=179&type=c',
+        'reportLists.php?id=177&type=c',
+        'reportLists.php?id=172&type=c&instanceId=11',
+        'reportLists.php?id=172&type=c',
+        'reportLists.php?id=119&type=c&instanceId=11',
+        'reportLists.php?id=119&type=C',
+        'reportLists.php?id=176&type=c', // third window etc.
+        'itemReport.php?itemId=18056', // second window
+        'reportLists.php?id=137&type=c' // first/current window
+    ];
+
+    var arrayLength = windows.length;
+
+    async function display() {
+        for (var i = 0; i < arrayLength - 1; i++) { // skip the last array item
+            window.open(windows[i]);
+            await sleep(200); // avoid windows from not opening due to server restrictions
+        }
+        window.location.assign(windows[i]); // first/current window
+    }
+
+    display();
+
+    return true;
+}
+</script>
+</body>
+</html>

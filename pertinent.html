@@ -6,18 +6,18 @@ function pertinent() {
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
-    
+
     var windows = [
         'ToD.php', // second window
         'https://calendar.google.com/calendar/r',
         'reportLists.php?id=120&type=C',
-        'listItems.php?type=w&contextId=25&notspacecontext=true&nextonly=true&dueonly=true&liveparents=*&',
+        'listItems.php?tickler=false&type=w&contextId=25&notspacecontext=true&nextonly=true&dueonly=true&liveparents=*',
         'reportLists.php?id=170&type=C',
         'reportLists.php?id=168&type=C',
         'reportLists.php?id=13&type=C',
         'Lunar.php',
-        'index.php', 
-        'listItems.php?tickler=false&type=a&contextId=25&notspacecontext=true&dueonly=true&liveparents=*&', 
+        'index.php',
+        'listItems.php?tickler=false&type=a&contextId=25&notspacecontext=true&dueonly=true&liveparents=*',
         'reportContext.php?notContext=25', // last window
         'editListItems.php?itemId=3646&type=C' // first/current window
     ];
@@ -25,13 +25,13 @@ function pertinent() {
 // firefox in reverse
 //    var windows = [
 //        'reportContext.php?notContext=25', // last window
-//        'index.php', 
+//        'index.php',
 //        'ToD.php', // second window
 //        'editListItems.php?itemId=3646&type=C' // first/current window
 //    ];
 
     var arrayLength = windows.length;
-    
+
     async function display() {
         for (var i = 0; i < arrayLength - 1; i++) { // skip the last array item
             window.open(windows[i]);
@@ -39,10 +39,10 @@ function pertinent() {
         }
         window.location.assign(windows[i]); // first/current window
     }
-    
+
     display();
-    
-    return true; 
+
+    return true;
 }
 </script>
 </body>

@@ -19,8 +19,8 @@ $menu[] = array("link"=>"fantastical2://", 'title'=>"Calendar", 'label' => "Cale
 //$menu[] = array("link"=>"reportLists.php?id=170&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Process FFF");
 $menu[] = array("link"=>"Lunar.php", 'title'=>"Phase", 'label' => "Phase");
 $menu[] = array("link"=>"index.php", 'title'=>"Summary View", 'label' => "Summary View");
-$menu[] = array("link"=>"listItems.php?tickler=false&type=w&contextId=25&notspacecontext=true&nextonly=true&dueonly=true&liveparents=*&", 'title'=>"Due Waiting On", 'label' => "Due Waiting On");
-$menu[] = array("link"=>"listItems.php?tickler=false&type=a&contextId=25&notspacecontext=true&dueonly=true&liveparents=*&", 'title'=>"Due Actions", 'label' => "Due Actions");
+$menu[] = array("link"=>"listItems.php?tickler=false&type=w&contextId=25&notspacecontext=true&nextonly=true&dueonly=true&liveparents=*", 'title'=>"Due Waiting On", 'label' => "Due Waiting On");
+$menu[] = array("link"=>"listItems.php?tickler=false&type=a&contextId=25&notspacecontext=true&dueonly=true&liveparents=*", 'title'=>"Due Actions", 'label' => "Due Actions");
 $menu[] = array("link"=>"reportContext.php?notContext=25", 'title'=>"Process actions sorted by space context", 'label' => "All Contexts");
 $menu[] = array("link"=>'','label'=>'');
 $menu2[] = array("link"=>"listItems.php?type=i", 'title'=>"Inbox", 'label' => "Inbox");
@@ -64,7 +64,7 @@ $menu[] = array("link"=>'','label'=>'');
 */
 $menu2[] = array("link"=>'','label'=>'Capture');
 //-------------------------------------------
-/* 
+/*
 $menu[] = array("link"=>"item.php?type=a&amp;nextonly=true", 'title'=>"Create a new next action", 'label' => "Next Action");
 $menu[] = array("link"=>"item.php?type=a", 'title'=>"Create a new action", 'label' => "Action");
 $menu[] = array("link"=>"item.php?type=w", 'title'=>"Create a new waiting on item", 'label' => "Waiting On");
@@ -169,7 +169,7 @@ if (!empty($config['addons'])) foreach ($config['addons'] as $addonid=>$thisaddo
 </div>
 -->
 <div id="menudiv">
-    
+
 <?php
 $menProc = '';
 foreach ((array) $menu as $l) {
@@ -231,10 +231,10 @@ foreach ((array) $vres as $visn) {
             $values['type'] = $list['type'];
             if ($list['type'] == 'c') { $qry = "selectchecklist"; } else { $qry = "selectlist"; }
             $listN = query($qry,$config,$values,$sort);
-            if ($listN[0]['menu'] == 'y') 
+            if ($listN[0]['menu'] == 'y')
                 $listMena[] = array(
-                    'id' => $list['id'], 
-                    'type' => $list['type'], 
+                    'id' => $list['id'],
+                    'type' => $list['type'],
                     'title' => makeclean($listN[0]['title'] . ($list['type'] == 'c' ? ' .CL' : ' .LIST')),
                     'sortBy' => substr($listN[0]['sortBy'], 0, 2)
                 );
@@ -299,14 +299,14 @@ for ($i=0; $i<$numberprojects;$i++) {
         $pres[$i]['td.title']='Project due for completion today';
         $numdue++;
     }
-} 
-*/   
+}
+*/
 if($numberprojects) {
-    echo "<table summary='table of projects'><tbody>\n" . $menProc . $listMen 
+    echo "<table summary='table of projects'><tbody>\n" . $menProc . $listMen
         ,columnedTable(1,$pres)
         ,"</tbody></table>\n";
 }
-?>	
+?>
 	<ul id="menulist">
     <?php
     $class=$menuend='';

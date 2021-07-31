@@ -46,16 +46,17 @@ function gtd_searchdiv_init(ids,titles,types,onetype) {
         ptitles[i]=unescape(titles[i]);
         ptitleslc[i]=ptitles[i].toLowerCase();
         if (useTypes) {thistype=mapTypeToName(types[i]);}
-        
+
         anchor=document.createElement('a');
         anchor.href='#';
-        anchor.appendChild(document.createTextNode('+'));
+        anchor.appendChild(document.createTextNode('+-'));
         anchor.id=parentIds[i];
         anchor.ptitle=ptitles[i];
         anchor.ptype=thistype;
         addEvent(anchor,'click',function(e){
             myargs=(e.srcElement===undefined)?this:e.srcElement;
             gtd_gotparent(myargs.id,myargs.ptitle,myargs.ptype);
+						gtd_closesearch();
         });
 
         line=document.createElement('p');
@@ -74,7 +75,7 @@ function gtd_gotparent(id,title,type) {
     if (document.getElementById('parentrow'+id)) {return;}
     var newrow=document.createElement('tr');
     newrow.id='parentrow'+id;
-    
+
     var cell=document.createElement('td');
     var anchor=document.createElement('a');
     anchor.href='#';
@@ -88,7 +89,7 @@ function gtd_gotparent(id,title,type) {
     anchor.appendChild(document.createTextNode('X'));
     cell.appendChild(anchor);
     newrow.appendChild(cell);
-    
+
     cell=document.createElement('td');
     anchor=document.createElement('a');
     anchor.href="itemReport.php?itemId="+id;

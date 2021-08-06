@@ -1175,7 +1175,7 @@ if (!$data) {
         <td class='cont' onClick="window.location = 'matrix.php';">Defult</td>
 <?php
     if ($qLimit == 'h') { ?>
-        <td class='cont' onClick="window.location = 'backup/backup_scenario.php?name=<?php echo $mxTitle; ?>';">Save</td>
+        <td class='cont' onClick="window.location = 'backup_scenario.php?name=<?php echo $mxTitle; ?>';">Save</td>
         <td class='cont'>Name:</td>
         <td class='cont' contenteditable="true" onBlur="sT(this,'lq','val','qaId','1','qId','1001')" onFocus="sE(this)"><?php echo $mxTitle; ?></td>
         <td class='cont'>Item width:</td>

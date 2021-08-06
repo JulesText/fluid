@@ -16,7 +16,7 @@ $typename=array();
 $typename=getTypes();
 
 $variables = array(
-    
+
     );
 
 /*
@@ -45,14 +45,14 @@ $values['qValue'] = 'angle';
 $values['qSearch'] = "`disp`";
 $values['qNeedle'] = $qLimit;
 $angles = query("getqualities",$config,$values,$sort);
-// call angles qualities 
+// call angles qualities
 $i = 0;
 $attrStat = array();
 foreach ((array) $angles as $row) {
     $values['qQuery'] = "`parId`";
     $values['qValue'] = $row['qId'];
     $qualities = query("getqualities",$config,$values,$sort);
-    // call qualities attributes 
+    // call qualities attributes
     $j = 0;
     foreach ((array) $qualities as $rowN) {
         $values['qValue'] = $rowN['qId'];
@@ -79,7 +79,7 @@ foreach ((array) $attrStat as $attr) {
 $visAttr = array();
 foreach ((array) $attrStat as $attr) {
     if (
-        is_null($attr['existTable']) && 
+        is_null($attr['existTable']) &&
         strpos($attr['typeNoEd'],'v') === false
     ) $visAttr[] = $attr['qId'];
 }
@@ -192,12 +192,12 @@ foreach ((array) $vis as $visn) {
     $maintable[$i]['itemId']=$visn['itemId'];
     $maintable[$i]['type']='v';
     $maintable[$i]['item']= $visn['title'];
-    $maintable[$i]['items']= 
-                    childUpd('o',$visn['itemId'],$visn['itemId'],$visn['categoryId']) . '&nbsp;' . 
-                    childUpd('g',$visn['itemId'],$visn['itemId'],$visn['categoryId']) . '&nbsp;' . 
-                    childUpd('p',$visn['itemId'],$visn['itemId'],$visn['categoryId']) . '&nbsp;' . 
-                    childUpd('c',$visn['itemId'],$visn['itemId']/*,$visn['categoryId']*/) . '&nbsp;' . 
-                    childUpd('l',$visn['itemId'],$visn['itemId']/*,$visn['categoryId']*/) . '&nbsp;' .  
+    $maintable[$i]['items']=
+                    childUpd('o',$visn['itemId'],$visn['itemId'],$visn['categoryId']) . '&nbsp;' .
+                    childUpd('g',$visn['itemId'],$visn['itemId'],$visn['categoryId']) . '&nbsp;' .
+                    childUpd('p',$visn['itemId'],$visn['itemId'],$visn['categoryId']) . '&nbsp;' .
+                    childUpd('c',$visn['itemId'],$visn['itemId']/*,$visn['categoryId']*/) . '&nbsp;' .
+                    childUpd('l',$visn['itemId'],$visn['itemId']/*,$visn['categoryId']*/) . '&nbsp;' .
                     '<a href="itemReport.php?itemId=' . $visn['itemId'] . '&convert=true" target="_blank" class="mx">E</a>&nbsp;' .
                     '<a href="' . $url . '&vLimit=' . $visn['itemId'] . '" target="_blank" class="mx">*</a>';
     $flag = 'y';
@@ -218,13 +218,13 @@ foreach ((array) $vis as $visn) {
             }
         }
     }
-    
+
     $i++;
 
     //RETRIEVE VARIABLES
     $values=array();
     $values['itemId'] = (int) $visn['itemId'];
-    
+
     //Get item details
     $values['childfilterquery']=' WHERE '.sqlparts('singleitem',$config,$values);
     $values['filterquery']=sqlparts('isNA',$config,$values);
@@ -233,22 +233,22 @@ foreach ((array) $vis as $visn) {
     $item = ($result)?$result[0]:array();
     $values['isSomeday']=($item['isSomeday']=="y")?'y':'n';
     $values['type']=$item['type'];
-    
+
     $pitemId = $values['itemId'];
-    
+
     $values['parentId']=$values['itemId'];
 
     $maintable[$i]=array();
 
     $values['type']='';
     $values['filterquery'] ='';
-   
+
     //$values['filterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
-    
+
     $result = query("getchildren",$config,$values,$sort);
 
     // sort children of vision
-    
+
     if (!is_array($result)) continue; // vision no children, skip query, avoid error from non array result
 
     $j = 0;
@@ -273,12 +273,12 @@ foreach ((array) $vis as $visn) {
     }
 
     foreach ((array) $result as $row) {
-        
+
         if ($row['pId'] == 0) {
             $fostId = $visn['itemId'];
         } else {
             $fostId = $row['pId'];
-        } 
+        }
 
         $maintable[$i]['toggle']='<a class="mx ho" onClick="toggleOther(this)">*</a>';
         //'<a href="processItems.php?action=deleteparlookup&itemId=' . $row['itemId'] . '&pId=' . $row['pId'] . '&matrix=true" class="mx" target="_blank">x</a>';
@@ -294,41 +294,41 @@ foreach ((array) $vis as $visn) {
         $flag = 'y';
         if ($row['dateCompleted']==NULL) {
             $maintable[$i]['someday'] = checkerB('itemattributes','itemId',$row['itemId'],'isSomeday',$row['isSomeday'],'vId',$visn['itemId']);
-            
+
             $flag = '';
-        } 
+        }
         $maintable[$i]['complete'] = checkerB('itemstatus','itemId',$row['itemId'],'dateCompleted',$flag,'vId',$visn['itemId']);
 
-        //$maintable[$i]['project'] = 
-        $maintable[$i]['items'] = 
-                    childUpd('p',$row['itemId'],$visn['itemId'],$row['categoryId']) . '&nbsp;' . 
-                    childUpd('c',$row['itemId'],$visn['itemId'],$row['categoryId']) . '&nbsp;' . 
-                    childUpd('l',$row['itemId'],$visn['itemId'],$row['categoryId']) . '&nbsp;' . 
+        //$maintable[$i]['project'] =
+        $maintable[$i]['items'] =
+                    childUpd('p',$row['itemId'],$visn['itemId'],$row['categoryId']) . '&nbsp;' .
+                    childUpd('c',$row['itemId'],$visn['itemId'],$row['categoryId']) . '&nbsp;' .
+                    childUpd('l',$row['itemId'],$visn['itemId'],$row['categoryId']) . '&nbsp;' .
                     '<a href="itemReport.php?itemId=' . $row['itemId'] . '&convert=true" target="_blank" class="mx" title="edit">E</a>&nbsp;' .
                     '<a href="processItems.php?action=deleteparlookup&itemId=' . $row['itemId'] . '&pId=' . $fostId . '" target="_blank" class="mx" title="orphan">-</a>';
         switch ($row['type']) {
-            case 'o': 
-                //$maintable[$i]['role']= $row['title']; 
-                $maintable[$i]['item']= $row['title']; 
+            case 'o':
+                //$maintable[$i]['role']= $row['title'];
+                $maintable[$i]['item']= $row['title'];
                 $maintable[$i]['row.class'] = 'role v ' . $visn['itemId'] . ' id ' . $row['itemId'];
                 break;
-            case 'g': 
-                //$maintable[$i]['goal']= $row['title']; 
-                $maintable[$i]['item']= $row['title']; 
+            case 'g':
+                //$maintable[$i]['goal']= $row['title'];
+                $maintable[$i]['item']= $row['title'];
                 $maintable[$i]['row.class'] = 'goal v ' . $visn['itemId'] . ' id ' . $row['itemId'];
                 break;
-            case 'p': 
-                //$maintable[$i]['project']= $row['title']; 
-                $maintable[$i]['item']= $row['title']; 
+            case 'p':
+                //$maintable[$i]['project']= $row['title'];
+                $maintable[$i]['item']= $row['title'];
                 $maintable[$i]['row.class'] = 'project v ' . $visn['itemId'] . ' id ' . $row['itemId'];
                 break;
-                
+
         }
 
         $i++;
-        
+
     }
-} // end of foreach 
+} // end of foreach
 
 //insert lists
 // seems inefficient query
@@ -377,19 +377,19 @@ foreach ((array) $vis as $visn) {
                     if ($l['id'] == $list['id'] && $l['type'] == $list['type']) {
                         $pId = $key;
                         break 2;
-                    }   
+                    }
                 }
             }
             $maintable[] = array(
-                'visId' => $visn['itemId'], 
+                'visId' => $visn['itemId'],
                 'pId' => $pId,
-                'itemId' => $list['id'], 
-                'mx' => true, 
-                'type' => $list['type'], 
-                'item' => $listN[0]['title'] . ($list['type'] == 'c' ? ' .CL' : ' .LIST'), 
-                'row.class' => ($list['type'] == 'c' ? 'check' : '') . 'list v ' . $visn['itemId'] . ' id ' . $list['id'], 
-                'toggle' => '<a class="mx ho" onClick="toggleOther(this)">*</a>', 
-                'items' => '<a href="reportLists.php?id=' . $list['id'] . '&type=' . $list['type'] . '" target="_blank" class="mx">E</a>', 
+                'itemId' => $list['id'],
+                'mx' => true,
+                'type' => $list['type'],
+                'item' => $listN[0]['title'] . ($list['type'] == 'c' ? ' .CL' : ' .LIST'),
+                'row.class' => ($list['type'] == 'c' ? 'check' : '') . 'list v ' . $visn['itemId'] . ' id ' . $list['id'],
+                'toggle' => '<a class="mx ho" onClick="toggleOther(this)">*</a>',
+                'items' => '<a href="reportLists.php?id=' . $list['id'] . '&type=' . $list['type'] . '" target="_blank" class="mx">E</a>',
                 'sortBy' => $listN[0]['sortBy']
             );
         }
@@ -398,20 +398,20 @@ foreach ((array) $vis as $visn) {
 
 $maintemp = array();
 
-// row sort 
+// row sort
 $parentTypes = array('g','o','p');
 foreach ((array) $maintable as $row) {
     // loop by vision
     if ($row['type'] == 'v') {
         // append vision
         $maintemp[] = $row;
-        
+
         // create array of visions children
         $mainsearch = array();
         foreach ((array) $maintable as $r) {
             if ($r['visId'] == $row['itemId']) $mainsearch[] = $r;
         }
-        
+
         // sort visions children by sortBy then title
         usort($mainsearch, function($a, $b) {
             $sortBy = strcmp($a['sortBy'], $b['sortBy']);
@@ -450,13 +450,13 @@ foreach ((array) $maintable as $row) {
                                                 if ($v['pId'] == $u['itemId']) {
                                                     $v['indent'] = 3;
                                                     $v['row.class'] .= ' i3';
-                                                    $maintemp[] = $v; 
+                                                    $maintemp[] = $v;
                                                     if (in_array($v['type'], $parentTypes)) {
                                                         foreach ((array) $mainsearch as $w) {
                                                             if ($w['pId'] == $v['itemId']) {
                                                                 $w['indent'] = 4;
                                                                 $w['row.class'] .= ' i4';
-                                                                $maintemp[] = $w; 
+                                                                $maintemp[] = $w;
                                                             }
                                                         }
                                                     }
@@ -491,7 +491,7 @@ foreach ((array) $maintable as $row) {
         foreach ((array) $angles as $angle) {
             foreach ((array) $angle['qualities'] as $quals) {
                 foreach ((array) $quals['attributes'] as $attr) {
-                    $exist = false; 
+                    $exist = false;
                     foreach ((array) $result as $res) {
                         if ($attr['qId'] == $res['qId']) {
                             $exist = true;
@@ -501,16 +501,16 @@ foreach ((array) $maintable as $row) {
                     }
                     if (!$exist) {
                         $maintable[$i]['attr ' . $attr['qId']] = '';
-                        $maintable[$i]['attr ' . $attr['qId'] . ' qaId'] = '';                        
+                        $maintable[$i]['attr ' . $attr['qId'] . ' qaId'] = '';
                         /*
                         $sql = "
-                            INSERT INTO ". $config['prefix'] ."lookupqualities 
+                            INSERT INTO ". $config['prefix'] ."lookupqualities
                             (`qaId`,`visId`,`itemId`,`qId`,`itemType`,`value`)
         				    VALUES (''," . $row['visId'] . "," . $row['itemId'] . "," . $attr['qId'] . ",'" . $row['type'] . "','')
         				";
                         doQuery($sql);
                         */
-                      
+
                     }
                 }
             }
@@ -521,13 +521,13 @@ foreach ((array) $maintable as $row) {
             $maintable[$i]['attr ' . $res['qId']] = $res['value'];
             $maintable[$i]['attr ' . $res['qId'] . ' qaId'] = $res['qaId'];
         }
-    } 
+    }
     $i++;
 }
 
 /* orphaned items */
 if (isset($_GET['orphans']) && $_GET['orphans'] == true) {
-    
+
     $values = array();
     $values['filterquery'] = " WHERE ia.type IN ('o','g','p')";
     $orphans=query("getitemsattr",$config,$values,$sort);
@@ -559,10 +559,10 @@ if (isset($_GET['orphans']) && $_GET['orphans'] == true) {
                 // stop search
                 break;
             }
-        } 
+        }
         $k++;
     }
-    // second level foster parent check    
+    // second level foster parent check
 /*    foreach ((array) $orphans as $orphan) {
         foreach ((array) $lu as $l) {
             foreach ((array) $fosters as $f) {
@@ -571,55 +571,55 @@ if (isset($_GET['orphans']) && $_GET['orphans'] == true) {
                     // note item as possible foster parent
                     $fosters[] = array('parentId' => $f['parentId'], 'itemId' => $l['itemId']);
                 }
-            } 
+            }
         }
     }
     echo '<pre>'; var_dump($fosters);die;
 */
-    // set orphans meta 
+    // set orphans meta
     $values = array();
     $presort = array();
     $i=0;
     foreach ((array) $orphans as $orphan) {
-        
+
         $values['itemId'] = $orphan['itemId'];
         $res = query("selectitem",$config,$values,$sort);
         $row = $res[0];
         //var_dump($row);var_dump($res);die;
-        
+
         $presort[$i]['mx']=false;
         $presort[$i]['itemId']=$row['itemId'];
         $presort[$i]['type']=$row['type'];
-    
+
         $flag = 'y';
         if ($row['dateCompleted']==NULL) {
             $presort[$i]['someday'] = checkerB('itemattributes','itemId',$row['itemId'],'isSomeday',$row['isSomeday']);
             $flag = '';
-        } 
+        }
         $presort[$i]['complete'] = checkerB('itemstatus','itemId',$row['itemId'],'dateCompleted',$flag);
 
         $title = $row['title'];// . '&nbsp;&nbsp;<a href="itemReport.php?itemId=' . $row ['itemId'] . '&convert=true" target="_new" class="mx">ed</a>&nbsp;&nbsp;<a href="processItems.php?itemId=' . $row ['itemId'] . '&action=delete&type=' . $row['type'] . '" target="_new" class="mx">del</a>';
-        
+
         $presort[$i]['temp'] = $row['title'];
-        
+
         switch ($row['type']) {
-            case 'o': 
+            case 'o':
                 //$presort[$i]['role']= $title;
                 $presort[$i]['item']= $title;
                 $presort[$i]['row.class'] = 'role v ';
                 break;
-            case 'g': 
+            case 'g':
                 //$presort[$i]['goal']= $title;
                 $presort[$i]['item']= $title;
                 $presort[$i]['row.class'] = 'goal v ';
                 break;
-            case 'p': 
+            case 'p':
                 //$presort[$i]['project']= $title;
                 $presort[$i]['item']= $title;
                 $presort[$i]['row.class'] = 'project v ';
                 break;
         }
-        
+
         // create meta action for orphans with non-orphan parents
         $str = '';
         $parent = '';
@@ -633,16 +633,16 @@ if (isset($_GET['orphans']) && $_GET['orphans'] == true) {
             if ($f['itemId'] == (int)$parent) {
                 $str = '&nbsp;<a href="processItems.php?itemId=' . $row ['itemId'] . '&action=parentupdate&type=' . $row['type'] . '&visId=' . $f['parentId'] . '" target="_new" class="mx">FOST</a>';
                 break;
-            } 
+            }
         }
 
-        $presort[$i]['items'] = 
-                    '<a href="processItems.php?itemId=' . $row ['itemId'] . '&action=delete&type=' . $row['type'] . '" target="_new" class="mx">DEL</a>&nbsp; 
+        $presort[$i]['items'] =
+                    '<a href="processItems.php?itemId=' . $row ['itemId'] . '&action=delete&type=' . $row['type'] . '" target="_new" class="mx">DEL</a>&nbsp;
                     <a href="itemReport.php?itemId=' . $row['itemId'] . '" target="_blank" class="mx">E</a>' . $str;
-                
+
         $i++;
     }
-    
+
     // sort order for orphans
     function typeName ($a, $b) {
         if ($a["type"] == $b["type"]) return strcmp($a["temp"], $b["temp"]);
@@ -652,7 +652,7 @@ if (isset($_GET['orphans']) && $_GET['orphans'] == true) {
         return $a - $b;
     }
     usort($presort, 'typeName');
-    
+
     $i = count($maintable);
     foreach ((array) $presort as $orphan) {
         $maintable[$i] = $orphan;
@@ -661,12 +661,12 @@ if (isset($_GET['orphans']) && $_GET['orphans'] == true) {
 }
 
 // capture numeric fields for datatables field type sort
-$sortCols = ''; 
+$sortCols = '';
 $i = 0;
 foreach ((array) $dispArray as $key=>$val) {
     if (strpos($key,'attr ') === false) {
         $i++;
-        continue;    
+        continue;
     }
     foreach ((array) $attrStat as $attr) {
         if (
@@ -700,7 +700,7 @@ foreach ((array) $dispArray as $key=>$val) {
 <script>
 
 var tableDrawn = false;
-if (window.location.href.search('matrix.php') == -1) { var archive = true; } else { var archive = false; } 
+if (window.location.href.search('matrix.php') == -1) { var archive = true; } else { var archive = false; }
 <?php
     if ($calc == 'true') {  ?>
     var autoCalc = true;
@@ -738,9 +738,9 @@ function drawTable() {
     });
 
     //$(".dataTables_filter input").focus();
-    
+
     tableDrawn = true;
-} 
+}
 
 /* Custom filtering function which will search data in column and hide rows*/
 var filterCol = false;
@@ -748,15 +748,15 @@ var filterType = false;
 $.fn.dataTable.ext.search.push(
     function( settings, data, dataIndex ) {
         switch (filterType) {
-        case false: 
+        case false:
             return true;
             break;
-        case 'fMin':    
+        case 'fMin':
         case 'fMax':
             var mina = $('#min'+filterCol).val();
             var min = parseFloat( mina, 10 ); // convert to integer
             var max = parseFloat( $('#max'+filterCol).val(), 10 ); // convert to integer
-            var col = parseFloat( data[filterCol] ) || null;    // value for each row in column 
+            var col = parseFloat( data[filterCol] ) || null;    // value for each row in column
             if ( data[filterCol] == 0) col = 0; // undo col set null if value is 0
             if ( mina == 'null' ) { // special operand for empty cells
                 if (col == null) { return true; } else { return false; }
@@ -773,7 +773,7 @@ $.fn.dataTable.ext.search.push(
                 ) return true;
             return false;
             break;
-        case 'fTxt':    
+        case 'fTxt':
             var txt = $('#txt'+filterCol).val();
             var col = data[filterCol]; // use data for col n
             if (txt.length == 0) return true; // filter cleared
@@ -794,7 +794,7 @@ $.fn.dataTable.ext.search.push(
                         i++; // skip to next
                         rnot.push(txts[i]); // append next to rnot array
                         break;
-                    case 'or': 
+                    case 'or':
                         qor++;
                         if (qand) { // check or is not first term
                             ror.push(rand.pop()); // take term from qand array
@@ -825,7 +825,7 @@ $.fn.dataTable.ext.search.push(
                 }
             }
             qry += '.*$';
-            // example: ^(?=.*goal)(?=.*32)(?=.*(test|car))(?!.*b).*$ 
+            // example: ^(?=.*goal)(?=.*32)(?=.*(test|car))(?!.*b).*$
             // in any positions, 'goal' and '32', and 'test' or 'car', and not 'b'
             // alert (qry);
             var txtMatch = new RegExp(qry, 'gim'); // g global i case-insensitive m multi-line
@@ -836,11 +836,11 @@ $.fn.dataTable.ext.search.push(
             var emp = $('#emp'+filterCol).is(':checked');
             alert(emp);
             break;
-        case 'fChk':    
+        case 'fChk':
             var chk = $('#chk'+filterCol).is(':checked');
             alert(chk);
             break;
-        }    
+        }
     }
 );
 
@@ -859,16 +859,16 @@ function toggleCol(angleIds) {
 
 $(document).ready(function() {
 
-    calcFormulae('<?php if ($calc == 'true') echo $vLimit; ?>'); 
+    calcFormulae('<?php if ($calc == 'true') echo $vLimit; ?>');
     tableSummary();
-    
+
     if (archive) return;
 
     <?php
         $col = 1;
         foreach ((array) $dispArray as $key=>$val) if ($show[$key]) $col++;
         foreach ((array) $angles as $val) {
-            foreach ((array) $val['qualities'] as $valN) { 
+            foreach ((array) $val['qualities'] as $valN) {
                 foreach ((array) $valN['attributes'] as $valO) $col--;
             }
         }
@@ -878,7 +878,7 @@ $(document).ready(function() {
                 $needle = $qLimit . '0';
                 $all = '';
                 $chl = '';
-                foreach ((array) $vala['qualities'] as $valN) { 
+                foreach ((array) $vala['qualities'] as $valN) {
                     foreach ((array) $valN['attributes'] as $valO) {
                         $all .= $commaa . "'" . $col . "'";
                         $commaa = ',';
@@ -895,7 +895,7 @@ $(document).ready(function() {
                 echo "toggleCol([" . $chl . "]);\n\t";
             }
         }
-        
+
         if ($live) echo "toggleCheckB('someday');toggleCheckB('complete');\n\t";
         if (!$meta) echo "toggleCol(['3','4','5']);\n\t";
 
@@ -947,13 +947,13 @@ var liveDisp = true;
 var brainlessDisp = true;
 
 function toggleCheckB(ctype) {
-    
+
     // to do: simplify with array of classes with binary values, generate index of arrays using find, process values with criteria
     // assumes each iteration table is searched the index result is the same
-    
+
     var hideR = false;
     var checkd = true;
-    
+
     if (ctype == 'live') {
         hideR = liveDisp;
         liveDisp ^= true;
@@ -981,20 +981,20 @@ function toggleCheckB(ctype) {
                 if (!$(this).parent().parent().hasClass('vision')) {
                     if (!$(this).is(':checked')) {
                         $(this).parent().parent().show();
-                    } 
+                    }
                 }
             });
             $('table.mx td.complete').find("input[type='checkbox']").each(function(){
                 if (!$(this).parent().parent().hasClass('vision')) {
                     if (!$(this).is(':checked')) {
                         $(this).parent().parent().show();
-                    } 
+                    }
                 }
             });
         }
         return;
     }
-    
+
     if (ctype == 'someday') {
         hideR = somedayDisp;
         somedayDisp ^= true;
@@ -1012,37 +1012,37 @@ function toggleCheckB(ctype) {
         $('table.mx td.'+ctype).find("input[type='checkbox']").each(function(){
             if(!$(this).parent().parent().hasClass('vision')){
             if((checkd === true && $(this).is(':checked')) ||
-               (checkd === false && !$(this).is(':checked'))  
+               (checkd === false && !$(this).is(':checked'))
             ) $(this).parent().parent().hide();
             }
         });
     } else {
         $('table.mx td.'+ctype).find("input[type='checkbox']").each(function(){
             if((checkd === true && $(this).is(':checked')) ||
-               (checkd === false && !$(this).is(':checked'))  
+               (checkd === false && !$(this).is(':checked'))
             ) $(this).parent().parent().show();
         });
     }
 }
 
 function calcFormulae (vLimit) {
-    
+
     var tLine = [<?php echo $tLimit; ?>];
 
     if (autoCalc === false || archive === true) {
         if (!tableDrawn) drawTable();
         return;
     }
-    
+
     $.ajax({
         url: "matrixformula.php",
         type: "POST",
         data: 'qLimit=<?php echo $qLimit; ?>&vLimit='+vLimit,
         dataType: "json",
         success: function(result) {
-            // clear timeline 
+            // clear timeline
             $('table.mx').find('tr').find('td.atr.mx.yr').text('');
-            
+
             // write response
             for (i = 0; i < result.length; ++i) {
                 // if (result[i]['value'] == '12345') alert(JSON.stringify(result[i]));
@@ -1053,15 +1053,15 @@ function calcFormulae (vLimit) {
                         $('table.mx').find('tr.summary').find('th.attr.'+result[i]['attrId']+'.'+result[i]['form']).text(result[i]['value']);
                         // check effort warning
                         if ($.inArray(result[i]['attrId'], tLine) != -1) {
-                            
+
                             if (
                                 (result[i]['form'] == 'a' && result[i]['value'] > <?php echo $unqhoursyear; ?>) ||
                                 (result[i]['form'] == 'b' && result[i]['value'] > <?php echo $unqhoursyearbrainless; ?>)
                             ) $('table.mx').find('tr.summary').find('th.attr.'+result[i]['attrId']+'.'+result[i]['form']).css("background","#f5e6bc");
-                            
+
                             if (result[i]['form'] == 'c' && result[i]['value'] > <?php echo $unqhoursyear + $unqhoursyearbrainless; ?>
                             ) $('table.mx').find('tr.summary').find('th.attr.'+result[i]['attrId']).css("background","#edd");
-                            
+
                         }
                         break;
                     case 'v':
@@ -1117,15 +1117,15 @@ function tableSummary () {
         if (g == 1 && s == 0) glive += 1;
         if (p == 1 && s == 0) plive += 1;
     });
-        
+
     $('table.summary').find('td.mlive').text(mlive);
     $('table.summary').find('td.vlive').text(vlive);
     $('table.summary').find('td.olive').text(olive);
     $('table.summary').find('td.glive').text(glive);
     $('table.summary').find('td.plive').text(plive);
-    
+
     if (archive) $('table.matrixCont tr.qual').hide();
-    
+
 }
 
 /*
@@ -1138,7 +1138,7 @@ $('.col-abcd').keyup(function () {
 
 </script>
 
-<?php 
+<?php
     //$url = str_replace('&amp;calc='. $calc, '', $url);
 if (!$data) {
 ?>
@@ -1167,21 +1167,21 @@ if (!$data) {
         <td class='cont' id='ajaxResp'></td>
 <?php } ?>
     </tr>
-<?php 
+<?php
     $urlq = str_replace('&amp;qLimit=' . $qLimit, '', $url);
 ?>
     <tr class="qual">
         <td class='cont'>Qual:</td>
         <td class='cont' onClick="window.location = 'matrix.php';">Defult</td>
-<?php   
+<?php
     if ($qLimit == 'h') { ?>
         <td class='cont' onClick="window.location = 'backup/backup_scenario.php?name=<?php echo $mxTitle; ?>';">Save</td>
         <td class='cont'>Name:</td>
         <td class='cont' contenteditable="true" onBlur="sT(this,'lq','val','qaId','1','qId','1001')" onFocus="sE(this)"><?php echo $mxTitle; ?></td>
         <td class='cont'>Item width:</td>
         <td class='cont' contenteditable="true" onBlur="sT(this,'lq','val','qaId','2')" onFocus="sE(this)"><?php echo $nbsp; ?></td>
-<?php } 
-    if ($qLimit == 'j') { 
+<?php }
+    if ($qLimit == 'j') {
         $valIds = array(121 => '', 123 => '', 125 => '', 127 => '', 129 => '', 131 => '');
         $valUpds = $valIds;
         $needle = 'j1';
@@ -1205,7 +1205,7 @@ if (!$data) {
 <?php   } ?>
         <td class='cont' onClick="window.location = '<?php echo $url; ?>';">Reload</td>
         <td class='cont' onClick="window.location = '<?php echo $url; ?>&live=true';">Live</td>
-<?php       
+<?php
     }
     if (!$data && !$scen) { ?>
         <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=b'; ?>';">Cor Int</td>
@@ -1246,7 +1246,7 @@ if (!$data) {
         $col = 1;
         foreach ((array) $dispArray as $key=>$val) if ($show[$key]) $col++;
         foreach ((array) $angles as $val) {
-            foreach ((array) $val['qualities'] as $valN) { 
+            foreach ((array) $val['qualities'] as $valN) {
                 foreach ((array) $valN['attributes'] as $valO) $col--;
             }
         }
@@ -1254,7 +1254,7 @@ if (!$data) {
         foreach ((array) $angles as $vala) {
             $comma = '';
             echo "<td class='cont' onClick=\"toggleCol([";
-            foreach ((array) $vala['qualities'] as $valN) { 
+            foreach ((array) $vala['qualities'] as $valN) {
                 foreach ((array) $valN['attributes'] as $valO) {
                     echo $comma . "'" . $col . "'";
                     $comma = ',';
@@ -1294,8 +1294,8 @@ require('matrixDisp.inc.php');
 ?>
 </table>
 
-<?php 
-if (!$scen && !$data) { 
+<?php
+if (!$scen && !$data) {
 ?>
 <table>
     <tr>
@@ -1364,33 +1364,33 @@ if (!$scen && !$data) {
         if(isset($starttime)) {
             $endtime = microtime(true);
             echo round($endtime - $starttime,1);
-        } 
-        ?>            
+        }
+        ?>
         </td>
-        <td class='pgen mx'>Base qry: 
+        <td class='pgen mx'>Base qry:
         <?php
             echo round($et1 - $starttime,1);
-        ?>            
+        ?>
         </td>
-        <td class='pgen mx'>Disp 2: 
+        <td class='pgen mx'>Disp 2:
         <?php
             echo round($et2,1);
-        ?>            
+        ?>
         </td>
-        <td class='pgen mx'>Disp 3: 
+        <td class='pgen mx'>Disp 3:
         <?php
             echo round($et3,1);
-        ?>            
+        ?>
         </td>
-        <td class='pgen mx'>Disp 4: 
+        <td class='pgen mx'>Disp 4:
         <?php
             echo round($et4,1);
-        ?>            
+        ?>
         </td>
-        <td class='pgen mx'>Disp 5: 
+        <td class='pgen mx'>Disp 5:
         <?php
             echo round($et5,1);
-        ?>            
+        ?>
         </td>
         <td class='mx' onClick="window.location = 'matrix.php?test=true';">Test</td>
     </tr>

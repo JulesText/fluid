@@ -25,7 +25,7 @@ $menu[] = array("link"=>"reportContext.php?notContext=25", 'title'=>"Process act
 $menu[] = array("link"=>'','label'=>'');
 $menu2[] = array("link"=>"listItems.php?type=i", 'title'=>"Inbox", 'label' => "Inbox");
 $menu2[] = array("link"=>"reportLists.php?id=1&type=C", 'title'=>"Weekly Review", 'label' => "WW Weekly Review");
-$menu[] = array("link"=>"matrix.php", 'title'=>"Matrix", 'label' => "Matrix");
+$menu[] = array("link"=>"matrix.php?&live=true", 'title'=>"Matrix", 'label' => "Matrix");
 $menu2[] = array("link"=>"listItems.php?type=a&contextId=10&nextonly=true&liveparents=true&", 'title'=>"Process actions sorted by space context", 'label' => "Agenda Context");
 $menu2[] = array("link"=>"listItems.php?type=a&contextId=6&nextonly=true&liveparents=true&", 'title'=>"Process actions sorted by space context", 'label' => "Computer Context");
 $menu2[] = array("link"=>"listItems.php?type=a&contextId=13&nextonly=true&liveparents=true&", 'title'=>"Process actions sorted by space context", 'label' => "Errand Context");

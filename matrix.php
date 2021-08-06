@@ -508,7 +508,7 @@ foreach ((array) $maintable as $row) {
                             (`qaId`,`visId`,`itemId`,`qId`,`itemType`,`value`)
         				    VALUES (''," . $row['visId'] . "," . $row['itemId'] . "," . $attr['qId'] . ",'" . $row['type'] . "','')
         				";
-                        doQuery($sql);
+                        doQuery($config, $sql);
                         */
 
                     }

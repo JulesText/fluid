@@ -46,7 +46,7 @@ if($cnt>1) {
             $prev=$cnt-1;
         else
             $prev=$key-1;
-            
+
         if ($key==$cnt-1)
             $next=0;
         else
@@ -64,7 +64,7 @@ if($cnt>1) {
         $nexttitle    =$nextitem[0]['title'];
     }
 }
- 
+
 //PAGE DISPLAY AREA
 
 //set item labels
@@ -80,7 +80,7 @@ $afterTypeChange="itemReport.php?itemId={$values['itemId']}";
 if (preg_match('/~/', $item['title'])) {
 $rtitle = 'Agenda';
 } else {
-$rtitle = $typename[$item['type']]; 
+$rtitle = $typename[$item['type']];
 }
 
 require_once("headerHtml.inc.php");
@@ -88,25 +88,25 @@ require_once("headerHtml.inc.php");
 echo "<h1>";
 if ($item['metaphor']) {
     if (strpos($item['metaphor'], '.swf')) {
-        echo "<embed src=\"media/" . $item['metaphor'] . "\" quality=high height=101></embed>";             
+        echo "<embed src=\"media/" . $item['metaphor'] . "\" quality=high height=101></embed>";
         } else {
         echo "<a href=\"media/" . $item['metaphor'] . "\" target=\"_new\"><img src=\"media/" . $item['metaphor'] . "\" height=\"100px\"></a>";
         }
     }
-    
+
 echo $rtitle."&nbsp;Report:&nbsp;".makeclean($item['title']).(($item['isSomeday']=="y")?" (Someday) ":""). "&nbsp;&nbsp;&nbsp; [&nbsp;<a href='item.php?itemId={$values['itemId']}' title='Edit "
     ,makeclean($item['title']),"'>Edit</a>&nbsp;]";
-echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"listsUpdate.php?itemId={$values['itemId']}&type=l\">Lists</a>&nbsp;]"; 
-echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"listsUpdate.php?itemId={$values['itemId']}&type=c\">Checklists</a>&nbsp;]"; 
+echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"listsUpdate.php?itemId={$values['itemId']}&type=l\">Lists</a>&nbsp;]";
+echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"listsUpdate.php?itemId={$values['itemId']}&type=c\">Checklists</a>&nbsp;]";
 if (!isset($_REQUEST['content'])) echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"itemReport.php?itemId={$values['itemId']}&content=limit\">Limit</a>&nbsp;]";
 echo "</h1>\n";
 
 //Edit, next, and previous buttons
 echo "<div class='editbar'>\n";
 if ($item['type']==='i') echo "[<a href='assignType.php?itemId={$values['itemId']}&amp;referrer=$afterTypeChange'>Set type</a>] \n";
-/* 
+/*
 if(isset($previousId)) echo " [<a href='itemReport.php?itemId=$previousId' title='",makeclean($previoustitle),"'>Previous</a>] \n";
-if(isset($nextId))  echo " [<a href='itemReport.php?itemId=$nextId' title='",makeclean($nexttitle),"'>Next</a>] \n"; 
+if(isset($nextId))  echo " [<a href='itemReport.php?itemId=$nextId' title='",makeclean($nexttitle),"'>Next</a>] \n";
 */
 echo "</div>\n<table id='report' summary='item attributes'><tbody>";
 //Item details
@@ -151,7 +151,7 @@ if (!empty($item['deadline'])) {
     $deadline=prettyDueDate($item['deadline'],$config['datemask'],$item['suppress']);
     echo "<td class='{$deadline['class']}' title='{$deadline['title']}'>"
         ,$deadline['date'],"</td></tr>\n";
-    
+
 }
 if ($item['type']==='a' || $item['type']==='w') echo '<tr><th>Next Action?</th><td>',($item['NA'])?'Yes':'No',"</td></tr>\n";
 if ($item['repeat']) echo '<tr><th>Repeat every</th><td>'.$item['repeat'].' days'."</td></tr>\n";
@@ -165,7 +165,7 @@ echo "</tbody></table>\n";
 
 if (!empty($childtype)) {
     $values['parentId']=$values['itemId'];
-    
+
     $thisurl=parse_url($_SERVER['PHP_SELF']);
     $thisfile=makeclean(basename($thisurl['path']));
 
@@ -192,17 +192,22 @@ if (!empty($childtype)) {
 
         $q=($comp==='y')?'completeditems':'pendingitems';  //suppressed items will be shown on report page
         $values['filterquery'] .= " AND ".sqlparts($q,$config,$values);
-        
+
         $result = query("getchildren",$config,$values,$sort);
-        if ($comp==='y' && $config['ReportMaxCompleteChildren'] && count($result) > $config['ReportMaxCompleteChildren']) {
+				if (!empty($result) && is_array($result)) {
+					$count = count($result);
+				} else {
+					$count = 0;
+				}
+        if ($comp==='y' && $config['ReportMaxCompleteChildren'] && $count > $config['ReportMaxCompleteChildren']) {
             $limit=$config['ReportMaxCompleteChildren'];
             $url=   ($_SESSION['useLiveEnhancements'])
                 ?'javascript:toggleHidden("'.$thistableid.'","table-row","f'.$thistableid.'");'
                 :"listItems.php?type=$thistype&amp;parentId={$values['parentId']}&amp;completed=true";
-            $footertext="<a href='$url'>".(count($result)-$limit)
-                ." more... (".count($result)." items in total)</a>";
+            $footertext="<a href='$url'>".($count-$limit)
+                ." more... (".$count." items in total)</a>";
         } else {
-            $limit=count($result);
+            $limit=$count;
             $footertext='';
         }
         ?>
@@ -218,7 +223,7 @@ if (!empty($childtype)) {
                 if ($item[$field]) $createURL.="&amp;$field={$item[$field]}";
                 if ($values['isSomeday']!='y') $title="<a href='$createURL' title='Add new ".$typename[$thistype]."'>Add ".$title."</a>";
         }
-        
+
         // lists insert here
         if ($values['type']==="r" && $_REQUEST['content'] != 'limit' && $comp==="n") {
             $valuesTemp = $values;
@@ -231,8 +236,8 @@ if (!empty($childtype)) {
             include('itemLists.php');
             $values = $valuesTemp;
         }
-        
-        
+
+
         if (!$result) {
             echo "<h3>No $title</h3></div>";
             continue;
@@ -278,7 +283,7 @@ if (!empty($childtype)) {
                 $dispArray['category']='Category';
                 break;
         }
-            
+
 //        $dispArray['created']='Date Created';
         if ($comp=="n") {
             $dispArray['checkbox']='Complete';
@@ -304,22 +309,22 @@ if (!empty($childtype)) {
             }
             $maintable[$i]['itemId']=$row['itemId'];
             $tfield = $row['title'];
-            
+
             if($row['metaphor']) {
                 if (strpos($row['metaphor'], '.swf')) {
                     $tfield .= "<br><embed src=\"media/" . $row['metaphor'] . "\" quality=high height=101></embed>
                     ";
                     } else {
                     $tfield .= '<br><img src="media/' . $row['metaphor'] . '" height="100px"></a><a href="media/' . $row['metaphor'] . '" target="_new"><';
-                    }               
+                    }
             }
-            
+
             $maintable[$i]['title']= $tfield;
             $maintable[$i][$descriptionField]=$row['description'];
             if ($row['hyperlink']) {
                 if (!empty($row['description'])) $maintable[$i][$descriptionField] .= "<br><br>";
                 $maintable[$i][$descriptionField] .= faLink($row['hyperlink']);
-                
+
             }
             $rfield = $row['premiseA'];
             if($row['premiseB']) $rfield .= '<br><br>' . $row['premiseB'];

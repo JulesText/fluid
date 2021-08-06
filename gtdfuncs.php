@@ -26,7 +26,7 @@ function query($querylabel,$config,$values=NULL,$sort=NULL) {
     if ($config['debug'] & _GTD_DEBUG) echo "<p class='debug'>Query: ".$query."</p>";
 
     //perform query
-    $result=doQuery($query,$querylabel);
+    $result=doQuery($config, $query, $querylabel);
 
     //for developer testing only, print result array
     if ($config['debug'] & _GTD_DEBUG) {
@@ -34,7 +34,7 @@ function query($querylabel,$config,$values=NULL,$sort=NULL) {
         print_r($result);
         echo "</pre>";
         }
-        
+
     return $result;
 }
 /*
@@ -66,7 +66,7 @@ function moveElement(&$array, $from, $to) {
         $out = array_splice($array, $from, 1);
         array_splice($array, $to, 0, $out);
 }
-    
+
 function trimTaggedString($inStr,$inLength=0,$keepTags=TRUE) { // Ensure the visible part of a string, excluding html tags, is no longer than specified)    // TOFIX -  we don't handle "%XX" strings yet.
     // constants - might move permittedTags to config file
     $permittedTags=array(
@@ -79,7 +79,7 @@ function trimTaggedString($inStr,$inLength=0,$keepTags=TRUE) { // Ensure the vis
         );
     $ellipsis='&hellip;';
     $ampStrings='/^&[#a-zA-Z0-9]+;/';
-    
+
     // initialise variables
     if ($inLength==0) $inLength=strlen($inStr)+1;
     $outStr='';
@@ -195,7 +195,7 @@ function timecontextselectbox($config,$values,$sort) {
     if ($result) {
         foreach($result as $row) {
             $tshtml .= '                    <option value="'.$row['timeframeId'].'" title="'.makeclean($row['description']).'"';
-            if ($row['timeframeId'] == $values['timeframeId']) { 
+            if ($row['timeframeId'] == $values['timeframeId']) {
                 $tshtml .= ' selected="selected"';
             } elseif ($values['timeframeId'] == '' && $row['timeframeId'] == 2) {
                 $tshtml .= ' selected="selected"';
@@ -303,11 +303,11 @@ function faLink($link, $mx = false) {
                 $retval = "<a href=\"" . $link . "?reveal=1\"" . $mxa . ">FR link</a>";
             }
         } elseif (preg_match('/jules/', $link)) {
-            $retval = "<a href=\"" . $link . "\"" . $mxb . ">FA link</a>";          
+            $retval = "<a href=\"" . $link . "\"" . $mxb . ">FA link</a>";
         } elseif (!preg_match('/www|http/', $link)) {
-            $retval = "<a href=\"" . $link . "\"" . $mxb . ">FA link</a>";          
+            $retval = "<a href=\"" . $link . "\"" . $mxb . ">FA link</a>";
         } else {
-            $retval = "<a href=\"" . $link . "\"" . $mxb . ">ext link</a>";          
+            $retval = "<a href=\"" . $link . "\"" . $mxb . ">ext link</a>";
         }
     }
     return $retval;
@@ -405,7 +405,7 @@ return $out;
 
 
 function escapeChars($str) {  // TOFIX consider internationalization issues with charset coding
-    $outStr=str_replace(array('&','…'),array('&amp;','&hellip'),$str);
+    $outStr=str_replace(array('&','ï¿½'),array('&amp;','&hellip'),$str);
     $outStr=str_replace(array('&amp;amp;','&amp;hellip;'),array('&amp;','&hellip;'),$outStr);
     return $outStr;
 }
@@ -448,7 +448,7 @@ function getShow($where,$type) {
     if ($config['forceAllFields'])
         foreach ($show as $key=>$value)
             $show[$key]=true;
-                
+
     return $show;
 }
 /*
@@ -512,14 +512,14 @@ function childUpd ($type,$itemId,$visId,$catId = '') {
         case 'o' : $title = 'role'; break;
     }
     switch ($type) {
-        case 'l' : 
+        case 'l' :
         case 'c' : $childUpd = '<a href="listsUpdate.php?itemId=' . $itemId . '&visId=' . $visId . '&type=' . $type . '&matrix=true' . $catId . $catMultiId . '" class="mx" target="_blank" title="' . $title . 's">' . strtoupper($type) . '</a>';
         break;
         default :  $childUpd = '<a href="item.php?parentId=' . $visId;
             if ($visId !== $itemId) $childUpd .= ',' . $itemId;
             $childUpd .= '&type=' . $type . '&action=create" class="mx" target="_blank" title="new ' . $title . '">+</a><a href="childrenUpdate.php?itemId=' . $itemId . '&visId=' . $visId . '&type=' . $type . '&matrix=true' . $catId . $catMultiId . '" class="mx" target="_blank" title="' . $title . 's">' . strtoupper($type) . '</a>';
     }
-    
+
     return $childUpd;
 }
 /*
@@ -611,7 +611,7 @@ function formula ($id) {
                         ';
             break;
         case 'maxIntAll' : // formulaSum1
-            $form = 'if (is_numeric($output1) && 
+            $form = 'if (is_numeric($output1) &&
                         (
                         !is_numeric($summary1)
                         || (
@@ -620,20 +620,20 @@ function formula ($id) {
                         )))                       $summary1 = $output1;';
             break;
         case 'maxInt' : // formulaVis1
-            $form = 'if (is_numeric($value) && 
+            $form = 'if (is_numeric($value) &&
                         (
-                        !is_numeric($output1) 
+                        !is_numeric($output1)
                         || (
                         $value > $output1 &&
                         is_numeric($output1)
                         )))                      $output1 = $value;
                     if (is_numeric($value) &&
                         (
-                        !is_numeric($pseudo2) 
+                        !is_numeric($pseudo2)
                         || (
                         $value < $pseudo2 &&
                         is_numeric($pseudo2)
-                        )))                      $pseudo2 = $value;                        
+                        )))                      $pseudo2 = $value;
                         ';
             break;
         case 'minIntAll' : // formulaSum2
@@ -648,9 +648,9 @@ function formula ($id) {
                         )))                      $summary2 = $output2;';
             break;
         case 'minInt' : // formulaVis2
-            $form = 'if (is_numeric($value) && 
+            $form = 'if (is_numeric($value) &&
                         (
-                        !is_numeric($output2) 
+                        !is_numeric($output2)
                         || (
                         $value < $output2 &&
                         is_numeric($output2)

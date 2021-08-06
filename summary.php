@@ -18,13 +18,13 @@ $values=array();
 
 
 //JJK GET awareness details
-	
+
 	$values['itemId'] = 1414;
 	$awareness = query("selectitemshort",$config,$values,$sort);
 //JJK end
 
 //JJK GET projects to deliver details
-	
+
 	$values['itemId'] = 1418;
 	$deliver = query("selectitemshort",$config,$values,$sort);
 
@@ -60,7 +60,7 @@ $values['filterquery'] = " WHERE ".sqlparts("typefilter",$config,$values)
                                 ." AND ".sqlparts("issomeday",$config,$values)
                                 ." AND ".sqlparts("activeitems",$config,$values)
                                 ." AND ".sqlparts("pendingitems",$config,$values);
-                                
+
 //get # nextactions
 $res = query("countnextactions",$config,$values,$sort);
 $nextactionsdue=array('-1'=>0,'0'=>0,'1'=>0,'2'=>0,'3'=>0,'4'=>0);
@@ -116,22 +116,22 @@ require_once("headerHtml.inc.php");
 
 include('Lunar_Calc.php');
 
-echo "<P>Day " . $day; 
+echo "<P>Day " . $day;
 
-echo "<P>Month " . $month; 
+echo "<P>Month " . $month;
 
-			
-			//show today date 
+
+			//show today date
 
 if (date("d") < 10) {
   			$day = date("d");
   			} else {
-  			$day = date("d");			    
+  			$day = date("d");
 			}
 if (date("n") < 10) {
   			$month = date("0n");
   			} else {
-  			$month = date("n");			    
+  			$month = date("n");
 			}
   			$str = '<p>'.$day."/".$month.date(" D")."<br> ";
 
@@ -139,8 +139,8 @@ if (date("n") < 10) {
 //			echo $str;
 
 
-			
-			
+
+
 echo "</td><!-- <td><div class='reportsection'>\n";
 
 if($numbernextactions==1) {
@@ -192,7 +192,7 @@ echo "</p>\n</div>\n";
 */
 
 				echo "	</td> --> <td style='vertical-align: text-top;' class='JKSmallPadding'>\n";
-//JJK projects to deliver 
+//JJK projects to deliver
 		foreach ($deliver as $row) {
 			echo '<a href = "item.php?itemId='.$row['itemId'].'&pType=p" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title'])."</a><br>\n";
 //projects to deliver proper follows
@@ -219,7 +219,7 @@ echo "</p>\n</div>\n";
 */ //JJK awareness end
 //			echo "</tr>\n";
 
-//JJK second row 
+//JJK second row
 /* //JJK lunar schedule
 			echo "<tr><td><a href='reportLists.php?id=15&type=C'>LUNAR<br>SCHEDULE</a></td>\n";
 */ //JJk end
@@ -227,7 +227,8 @@ echo "</p>\n</div>\n";
 			echo "<td colspan='1' style='vertical-align: text-top;' class='JKSmallPadding'>\n";
 
 //JJK calendar follows
-		while($row = mysql_fetch_assoc($calendar_personal)) {
+/*
+		while($row = mysqli_fetch_assoc($calendar_personal)) {
 
 		echo nl2br(stripslashes($row['description']));
 		}
@@ -238,10 +239,11 @@ echo "</p>\n</div>\n";
 
 		echo nl2br(stripslashes($row['description']));
 		}
+*/
 //JJK calendar end
 
 
-/* //JJK weekly schedule 
+/* //JJK weekly schedule
 			echo "</td><td><a href='reportLists.php?id=13&type=C'>WEEKLY<br>SCHEDULE</a>\n";
 */ //JJK weekly schedule end
 
@@ -253,23 +255,23 @@ echo "</p>\n</div>\n";
 		   echo "<table class='datatable sortable' id='itemtable' summary='table of list items'>\n";
 
 
-			foreach($result1 as $row1) { 
+			foreach($result1 as $row1) {
             echo '<tr><td><a href="editListItems.php?itemId='.$row['itemId'], '&amp;' , $urlSuffix;
             echo 'title="Edit">' . makeclean($row['item']) . '</a></td>';
             echo '<td>' . trimTaggedString($row['notes']) . '</td>';
             echo '<td><input type="checkbox" name="completed[]" title="Complete" value="' . $row['itemId'],  '"',($isChecklist && $row['checked']==='y')?" checked='checked' ":'';
 
 			echo '</td></tr>';
-        } 
+        }
         	echo "</tbody></table><div class='formbuttons'><input type='submit' name='submit' value='update' />        <?php if ($isChecklist) { ?>            <input type='submit' name='listclear' value='Clear all checkmarks' />        <?php } ?>        <input type='hidden' name='id' value='<?php echo $row['id']; ?>' />        <input type='hidden' name='action' value='listcomplete' />        <input type='hidden' name='type' value='<?php echo $type; ?>' />    </div></form>";
 
 //JJK end  UNDER DEVELOPMENT
 */
 
 			echo "</tr>\n</table>\n";
-			
+
 //JJK set against calendar
-	echo "<div >";	
+	echo "<div >";
 //JJK end
 
 echo "<div class='reportsection'>\n";
@@ -299,7 +301,7 @@ echo "<div class='reportsection'>\n";
 	$tally7=0;
 	$tally8=0;
 	$tally9=0;
-//JJK end	
+//JJK end
 $numdue=0;
 $numoverdue=0;
 for ($i=0; $i<$numberprojects;$i++) {
@@ -339,7 +341,7 @@ for ($i=0; $i<$numberprojects;$i++) {
 		if ($jjk1 == '8') {$tally8++;}
 		if ($jjk1 == '9') {$tally9++;}
 		}
-//JJK end		
+//JJK end
 }
 
 //JJK begin someday tally
@@ -381,7 +383,7 @@ for ($i=0; $i<$numbersomeday;$i++) {
 		}
 }
 
-//JJK end	
+//JJK end
 
 //JJK begin completed projects tally
 	$tallyC0=0;
@@ -422,7 +424,7 @@ for ($i=0; $i<$numberdone;$i++) {
 		}
 }
 
-//JJK end	
+//JJK end
 
 /*
 if($numberprojects) {
@@ -553,7 +555,7 @@ echo "</div>\n";
 
 
 //JJK set against calendar
-	echo "</div>";	
+	echo "</div>";
 //JJK end
 
 

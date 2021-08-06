@@ -9,30 +9,30 @@ $values=array();
 //SQL Code
 
 //JJK GET calendar details
-	
+
 	$query = "SELECT itemId, title, description
 		FROM gtdphp_items
 		WHERE itemId = '566'";
-	$calendar = mysql_query($query) or die ("Error in query");
+	$calendar = mysqli_query($config["conn"], $query) or die ("Error in query");
 
 //JJK end
 
 
 //JJK GET awareness details
-	
+
 	$query = "SELECT itemId, title, description
 		FROM gtdphp_items
 		WHERE itemId = '1414'";
-	$awareness = mysql_query($query) or die ("Error in query");
+	$awareness = mysqli_query($config["conn"], $query) or die ("Error in query");
 
 //JJK end
 
 //JJK GET projects to deliver details
-	
+
 	$query = "SELECT itemId, title, description
 		FROM gtdphp_items
 		WHERE itemId = '1418'";
-	$deliver = mysql_query($query) or die ("Error in query");
+	$deliver = mysqli_query($config["conn"], $query) or die ("Error in query");
 
 //JJK end
 
@@ -66,7 +66,7 @@ $values['filterquery'] = " WHERE ".sqlparts("typefilter",$config,$values)
                                 ." AND ".sqlparts("issomeday",$config,$values)
                                 ." AND ".sqlparts("activeitems",$config,$values)
                                 ." AND ".sqlparts("pendingitems",$config,$values);
-                                
+
 //get # nextactions
 $res = query("countnextactions",$config,$values,$sort);
 $nextactionsdue=array('-1'=>0,'0'=>0,'1'=>0,'2'=>0,'3'=>0,'4'=>0);
@@ -111,7 +111,7 @@ $numberdone=($dn)?count($dn):0;
 //echo '<h4>Today is '.date($config['datemask']).'. (Week '.date("W").'/52 &amp; Day '.date("z").'/'.(365+date("L")).')</h4>'."\n";
 
 //JJK set against calendar
-	echo "<div style='position:absolute; left:0px; top:600px;'>";	
+	echo "<div style='position:absolute; left:0px; top:600px;'>";
 //JJK end
 
 echo "<div class='reportsection'>\n";
@@ -141,7 +141,7 @@ echo "<div class='reportsection'>\n";
 	$tally7=0;
 	$tally8=0;
 	$tally9=0;
-//JJK end	
+//JJK end
 $numdue=0;
 $numoverdue=0;
 for ($i=0; $i<$numberprojects;$i++) {
@@ -168,7 +168,7 @@ for ($i=0; $i<$numberprojects;$i++) {
 		if ($jjk1 == '7') {$tally7++;}
 		if ($jjk1 == '8') {$tally8++;}
 		if ($jjk1 == '9') {$tally9++;}
-//JJK end		
+//JJK end
 }
 
 //JJK begin someday tally
@@ -197,7 +197,7 @@ for ($i=0; $i<$numbersomeday;$i++) {
 		if ($jjk1 == '9') {$tallyS9++;}
 }
 
-//JJK end	
+//JJK end
 
 //JJK begin completed projects tally
 	$tallyC0=0;
@@ -225,7 +225,7 @@ for ($i=0; $i<$numberdone;$i++) {
 		if ($jjk1 == '9') {$tallyC9++;}
 }
 
-//JJK end	
+//JJK end
 
 /*
 if($numberprojects) {
@@ -351,7 +351,7 @@ echo "</div>\n";
 
 
 //JJK set against calendar
-	echo "</div>";	
+	echo "</div>";
 //JJK end
 
 //JJK DRAW calendar details
@@ -370,20 +370,20 @@ $current = fmod($sinceBase / $cycle, 1);
 
 $day = round($current * 29.53059, 0);
 
-echo "<P>Day " . $day; 
+echo "<P>Day " . $day;
 
 $monthSince = round($sinceBase / $cycle, 0);
 
 $month = fmod($monthSince, 13) + 10;
 
-echo "<P>Month " . $month; 
+echo "<P>Month " . $month;
 
 // end Lunar calc
 
 //calendar PHP code follows
 			echo "<div style='width:110px'><div style='padding:2px;background-color:#ffffff;border: 0px solid #000000'><div style='padding:0px;padding-bottom:0px;padding-top:0px;border: 0px solid #AFB2D8' align='center'><script language='JavaScript' type='text/javascript'>var ccm_cfg = { pth:'http://www.moonmodule.com/cs/', fn:'ccm_v1.swf', lg:'en', hs:2, tc:'ffffff', bg:'ffffff', mc:'', fw:79, fh:116.4, js:0, msp:0 }</script><script language='JavaScript' type='text/javascript' src='http://www.moonmodule.com/cs/ccm_fl.js'></script><div style='padding-top:0px' align='center'><a href='http://www.calculatorcat.com/moon_phases/moon_phases.phtml' target='cc_moon_ph' style='font-size:0px;font-family:arial,verdana,sans-serif;color:#888888;text-decoration:underline;border:none;'><span style='color:#888888'></span></a></div></div></div></div>";
-			
-			
+
+
 echo "</td><td><div class='reportsection'>\n";
 
 if($numbernextactions==1) {
@@ -435,7 +435,7 @@ echo "</p>\n</div>\n";
 */
 
 				echo "	</td><td style='vertical-align: text-top;'>\n";
-//JJK projects to deliver 
+//JJK projects to deliver
 		while($row = mysql_fetch_assoc($deliver)) {
 			echo '<a href = "item.php?itemId='.$row['itemId'].'&pType=p" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title'])."</a><br>\n";
 //projects to deliver proper follows
@@ -462,7 +462,7 @@ echo "</p>\n</div>\n";
 */ //JJK awareness end
 //			echo "</tr>\n";
 
-//JJK second row 
+//JJK second row
 /* //JJK lunar schedule
 			echo "<tr><td><a href='reportLists.php?id=15&type=C'>LUNAR<br>SCHEDULE</a></td>\n";
 */ //JJk end
@@ -471,7 +471,7 @@ echo "</p>\n</div>\n";
 
 //JJK calendar follows
 		while($row = mysql_fetch_assoc($calendar)) {
-//date 
+//date
 			$str = '<b>'.date("d/n D ")."</b> <br> ";
 		    $str = strtoupper($str);
 			echo $str;
@@ -483,7 +483,7 @@ echo "</p>\n</div>\n";
 //JJK calendar end
 
 
-/* //JJK weekly schedule 
+/* //JJK weekly schedule
 			echo "</td><td><a href='reportLists.php?id=13&type=C'>WEEKLY<br>SCHEDULE</a>\n";
 */ //JJK weekly schedule end
 
@@ -495,14 +495,14 @@ echo "</p>\n</div>\n";
 		   echo "<table class='datatable sortable' id='itemtable' summary='table of list items'>\n";
 
 
-			foreach($result1 as $row1) { 
+			foreach($result1 as $row1) {
             echo '<tr><td><a href="editListItems.php?itemId='.$row['itemId'], '&amp;' , $urlSuffix;
             echo 'title="Edit">' . makeclean($row['item']) . '</a></td>';
             echo '<td>' . trimTaggedString($row['notes']) . '</td>';
             echo '<td><input type="checkbox" name="completed[]" title="Complete" value="' . $row['itemId'],  '"',($isChecklist && $row['checked']==='y')?" checked='checked' ":'';
 
 			echo '</td></tr>';
-        } 
+        }
         	echo "</tbody></table><div class='formbuttons'><input type='submit' name='submit' value='update' />        <?php if ($isChecklist) { ?>            <input type='submit' name='listclear' value='Clear all checkmarks' />        <?php } ?>        <input type='hidden' name='id' value='<?php echo $row['id']; ?>' />        <input type='hidden' name='action' value='listcomplete' />        <input type='hidden' name='type' value='<?php echo $type; ?>' />    </div></form>";
 
 //JJK end  UNDER DEVELOPMENT

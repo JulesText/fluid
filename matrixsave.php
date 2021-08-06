@@ -9,7 +9,7 @@ $updVal = htmlspecialchars_decode($_POST["updVal"]);
 $updVal = str_replace(array(' .CL', ' .LIST'), '', $updVal);
 if (substr($updVal, -4) == '<br>') $updVal = substr_replace($updVal,'',-4);
 $updVal = str_replace(array('<br>', '<br />'), PHP_EOL, $updVal);
-if ($_POST["table"] !== 'lookupqualities') { 
+if ($_POST["table"] !== 'lookupqualities') {
     // if using visId for other purpose, do not save
     if ($_POST["col2"] == 'visId') $_POST["id2"] = '';
     if ($_POST["col3"] == 'visId') $_POST["id3"] = '';
@@ -23,7 +23,7 @@ if ($_POST['updCol'] == 'title' && in_array($_POST['table'], array('list','check
     $updVal = trim($updVal);
 }
 */
-$updVal = mysql_real_escape_string($updVal);
+$updVal = mysqli_real_escape_string($connection, $updVal);
 
 //    file_put_contents ('a.txt',$_POST['updCol'] . 'has' . $_POST['table'], FILE_APPEND);die;
 
@@ -53,23 +53,23 @@ if ($result->rowCount() > 0) {
 }
 
 if ($i) {
-    $query = "UPDATE " . $_POST["table"] . " SET `" . $_POST["updCol"] . "` = " . ($_POST["updVal"] == 'NULL' ? "NULL" : "'" . $updVal . "'") . " WHERE 1 = 1 "; 
+    $query = "UPDATE " . $_POST["table"] . " SET `" . $_POST["updCol"] . "` = " . ($_POST["updVal"] == 'NULL' ? "NULL" : "'" . $updVal . "'") . " WHERE 1 = 1 ";
     if ($_POST["pid1"]) $query .= " AND `" . $_POST["pcol1"] . "` = '" . $_POST["pid1"] . "'";
     if ($_POST["id2"] !== 'undefined') $query .= " AND `" . $_POST["col2"] . "` = '" . $_POST["id2"] . "'";
     if ($_POST["id3"] !== 'undefined') $query .= " AND `" . $_POST["col3"] . "` = '" . $_POST["id3"] . "'";
     if ($_POST["id4"] !== 'undefined') $query .= " AND `" . $_POST["col4"] . "` = '" . $_POST["id4"] . "'";
     if ($_POST["id5"] !== 'undefined') $query .= " AND `" . $_POST["col5"] . "` = '" . $_POST["id5"] . "'";
 } else {
-    $query = "INSERT INTO " . $_POST["table"] . " (`" . 
-        $_POST["pcol1"] . 
-        "`,`" . $_POST["updCol"]; 
+    $query = "INSERT INTO " . $_POST["table"] . " (`" .
+        $_POST["pcol1"] .
+        "`,`" . $_POST["updCol"];
     if ($_POST["col2"] !== 'undefined') $query .= "`, `" . $_POST["col2"];
     if ($_POST["col3"] !== 'undefined') $query .= "`, `" . $_POST["col3"];
     if ($_POST["col4"] !== 'undefined') $query .= "`, `" . $_POST["col4"];
     if ($_POST["col5"] !== 'undefined') $query .= "`, `" . $_POST["col5"];
     $query .= "`)
-        VALUES ('" . 
-        "','" . $updVal; 
+        VALUES ('" .
+        "','" . $updVal;
     if ($_POST["col2"]) $query .= "', '" . $_POST["id2"];
     if ($_POST["col3"]) $query .= "', '" . $_POST["id3"];
     if ($_POST["col4"]) $query .= "', '" . $_POST["id4"];

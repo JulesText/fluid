@@ -210,12 +210,12 @@ foreach ((array) $vres as $visn) {
     $clists = query("getchildlists",$config,$values,$sort);
     $values['type'] = 'l';
     $lists = query("getchildlists",$config,$values,$sort);
-    if (count($lists) > 0 && is_array($lists) && count($clists) > 0 && is_array($clists)) {
+    if (!empty($lists) && is_array($lists) && count($lists) > 0 && !empty($clists) && is_array($clists) && count($clists) > 0) {
         $lists = array_merge($clists,$lists);
-    } elseif (count($clists) > 0 && is_array($clists)) {
+    } elseif (!empty($clists) && is_array($clists) && count($clists) > 0) {
         $lists = $clists;
     }
-    if (count($lists) > 0 && is_array($lists)) {
+    if (!empty($lists) && is_array($lists) && count($lists) > 0) {
         foreach ((array) $lists as $list) {
             // if someday, continue
             foreach ((array) $sdays as $s) {

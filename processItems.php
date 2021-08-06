@@ -109,13 +109,13 @@ function doAction($localAction) { // do the current action on the current item; 
 			$msg="'$title' is now a next action";
 			$updateGlobals['referrer'] = str_replace('http://localhost/fluid/', '', $_SERVER['HTTP_REFERER']);
 			break;
-			
+
 		case 'removeNA':
 			removeNextAction();
             $msg="'$title' is no longer a next action";
 			$updateGlobals['referrer'] = str_replace('http://localhost/fluid/', '', $_SERVER['HTTP_REFERER']);
 			break;
-			
+
 		case 'deleteparlookup':
 			deleteparlookup();
             $updateGlobals['referrer'] = 'itemReport.php?itemId=' . $_GET['itemId'];
@@ -152,7 +152,7 @@ function doAction($localAction) { // do the current action on the current item; 
                     $cnt++;
                 }
             }
-            
+
             // caution the logic here is finnicky to change
             if (isset($_POST['visId'])) {
                 $values['parentId'] = $_POST['visId'];
@@ -173,43 +173,47 @@ function doAction($localAction) { // do the current action on the current item; 
             if (isset($updateGlobals['referrer'])) $updateGlobals['referrer']="{$updateGlobals['referrer']}";
 		break;
 
-        case 'changeType':
+    case 'changeType':
 			changeType();
 			$newtype=getTypes($values['type']);
 			$msg="Updated $newtype";
 			// $updateGlobals['referrer'] = str_replace('http://localhost/fluid/', '', $_SERVER['HTTP_REFERER']);
 			// $updateGlobals['referrer']="item.php?itemId={$values['itemId']}&amp;referrer={$updateGlobals['referrer']}";
-			$updateGlobals['referrer']="{$updateGlobals['referrer']}";
+			if (isset($updateGlobals['referrer'])) {
+				$updateGlobals['referrer']="{$updateGlobals['referrer']}";
+			} else {
+				$updateGlobals['referrer']="";
+			}
 			break;
 
-        case 'create':
+    case 'create':
 			retrieveFormVars();
 			createItem();
 			$msg="Created item: '$title'";
 			break;
-			
+
 		case 'complete':
 			completeItem();
 			$msg="Completed '$title'";
 			$updateGlobals['referrer'] = str_replace('http://localhost/fluid/', '', $_SERVER['HTTP_REFERER']);
 			break;
-		
+
 		case 'fullUpdate':
 			retrieveFormVars();
 			updateItem();
 			$msg="Updated '$title'";
 			break;
-			
+
 		case 'delete':
 			deleteItem();
 			$msg="Deleted '$title'";
 			break;
-		
+
 		case 'createbasic': // not in use yet. added for future use, when only title and type are set.
 			createItemQuickly();
 			$msg="Created item: '$title'";
 			break;
-			
+
 		default: // failed to identify which action we should be taking, so quit
 			return FALSE;
 	}
@@ -277,7 +281,7 @@ function completeItem() { // mark an item as completed, and recur if required
 	global $config,$values;
 
 	if (!isset($values['dateCompleted'])) $values['dateCompleted']="'".date('Y-m-d')."'";
-	
+
 	if (!isset($values['repeat']) || !isset($values['old']['dateCompleted'])) {
 		$testrow = query("testitemrepeat",$config,$values);
 		if (!isset($values['repeat'])) $values['repeat']=$testrow[0]['repeat'];
@@ -423,7 +427,7 @@ function recurItem() { // mark a recurring item completed, and set up the recurr
 			$values['nextAction']='y';
 	}
 
-	$values['dateCompleted']="NULL"; 
+	$values['dateCompleted']="NULL";
 	$values['deadline']="'".gmdate("Y-m-d", $nextdue)."'";
 
 	if ($config['storeRecurrences'])
@@ -457,7 +461,7 @@ function nextPage() { // set up the forwarding to the next page
 		$tst=$updateGlobals['referrer'];
     else
         $tst=$_SESSION[$key];
-        
+
     if ($action=='delete' && $tst=='item') $tst='list';
 
 	switch ($tst) {
@@ -520,7 +524,7 @@ function nextPage() { // set up the forwarding to the next page
     if ($nextURL=='') $nextURL="item.php?itemId=".$values['itemId'];
     $_SESSION[$key]=$tst;
     $nextURL=html_entity_decode($nextURL);
-	
+
 	if ($updateGlobals['captureOutput']) {
         $logtext=ob_get_contents();
         ob_end_clean();

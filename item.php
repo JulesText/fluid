@@ -106,7 +106,7 @@ $hiddenvars=array(
             ,'type'   =>$values['type']
             ,'itemId' =>$values['itemId']
             );
-            
+
 if ($values['itemId']) {
     $hiddenvars['action']='fullUpdate';
 } else
@@ -140,7 +140,7 @@ if (!empty($_REQUEST['createnote'])) { ?>
     suppressed until a specified number of days before their deadlines</p>
 <?php }
 
-if ($_GET['convert'] == true) { 
+if ($_GET['convert'] == true) {
     $canchangetypesafely=array('a','w','r','o','g','v','p');
     $other = " unlink qualities and/or children first?";
 } elseif (in_array($values['type'], array('a','w','r'))) {
@@ -148,6 +148,7 @@ if ($_GET['convert'] == true) {
     $other = '[ <a href="' . $_SERVER['REQUEST_URI'] . '&convert=true">Other</a> ]';
 } else {
     echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <a href="' . $_SERVER['REQUEST_URI'] . '&convert=true">Convert</a> ]';
+		$canchangetypesafely=array();
 }
 $sep='';
 if ((in_array($values['type'],$canchangetypesafely) || $values['type'] == 'i') && $values['itemId']) {
@@ -178,7 +179,7 @@ echo "</h2>\n";
 ?>
 <form action="processItems.php" method="post" onsubmit="return validate(this);"><div class='form'>
     <div class='formrow'><span class="error" id='errorMessage'></span></div>
-        <?php 
+        <?php
 
         if ($show['ptitle']) { ?>
             <div class='formrow'>
@@ -201,7 +202,7 @@ echo "</h2>\n";
                 <?php echo $cashtml; ?>
                 </select>
             <?php } else $hiddenvars['categoryId']=$values['categoryId'];
-            if ($show['context']) { ?> 
+            if ($show['context']) { ?>
                 <label for='context' class=''>Context:</label>
                 <select name='contextId' id='context'>
                 <?php echo $cshtml; ?>
@@ -217,7 +218,7 @@ echo "</h2>\n";
                 <label for='nextAction' class=''>Next Action:</label><input type="checkbox" name="nextAction" id="nextAction" value="y" <?php if ($nextaction) echo " checked='checked'"; ?> />
             <?php } else $hiddenvars['nextAction']=($nextaction)?'y':''; ?>
         </div>
-        <?php 
+        <?php
         if($show['title']) { ?>
             <div class='formrow'>
                     <label for='title' class='left first'>Title:</label>
@@ -246,7 +247,7 @@ echo "</h2>\n";
             </div>
         <?php
         } // else $hiddenvars['behaviour']=$values['behaviour'];
-        
+
         if ($show['behaviour'] && preg_match('/[mvogp]/', $values['type']) || !empty($values['behaviour']) || !empty($values['standard']) || !empty($values['conditions']) ) { ?> <!-- 'm', 'v', 'o', 'g', 'p', 'a', 'r', 'w', 'i' -->
             <div class='formrow'>
                     <label for='outcome' class='left first'>Behaviour:</label>
@@ -270,20 +271,20 @@ echo "</h2>\n";
             </div>
         <?php
         } else $hiddenvars['metaphor']=$values['metaphor'];
-        
-        
+
+
             ?>
             <div class='formrow'>
                 <label for='hyperlink' class='left first'>Hyperlink:
-                    <?php   
+                    <?php
                         if ($values['hyperlink']) {
-                            echo "<br>[&nbsp;" . faLink($values['hyperlink']) . "&nbsp;]";  
+                            echo "<br>[&nbsp;" . faLink($values['hyperlink']) . "&nbsp;]";
                         }
                     ?>
                 </label>
                 <input class="JKPadding" type="text" name="hyperlink" id="hyperlink" value="<?php echo makeclean($values['hyperlink']); ?>" />
             </div>
-            <div class='formrow'> 
+            <div class='formrow'>
                 <?php if ($show['deadline']) { ?>
                     <label for='deadline' class='left first'>Deadline:</label>
                     <input type='text' size='10' name='deadline' id='deadline' class='hasdate' value='<?php echo $values['deadline']; ?>'/>
@@ -323,7 +324,7 @@ echo "</h2>\n";
             </div>
         <?php } else $hiddenvars['repeat']=$values['repeat']; ?>
         <div class='formrow'>
-            
+
             <?php
             if (/*$show['isSomeday']*/ 1) { ?><br>
                 <label for='isSomeday' class='left first'>Sday/Maybe:</label> &nbsp;<input type='checkbox' name='isSomeday' id='isSomeday' value='y' title='Places item in Someday file'<?php if ($values['isSomeday']==='y') echo " checked='checked'";?> />
@@ -343,7 +344,7 @@ echo "</h2>\n";
         <?php } else {
             $hiddenvars['suppress']=$values['suppress'];
             $hiddenvars['suppressUntil']=$values['suppressUntil'];
-        } 
+        }
 
 if (!$values['itemId']) $hiddenvars['lastcreate']=$_SERVER['QUERY_STRING'];
 foreach ($hiddenvars as $key=>$val) echo hidePostVar($key,$val);
@@ -351,7 +352,7 @@ $key='afterCreate'.$values['type'];
 // always use config value when creating
 if (!empty($config['afterCreate'][$values['type']]) && empty($_SESSION[$key]))
     $_SESSION[$key]=$config['afterCreate'][$values['type']];
-    
+
 if ($values['itemId'] && !empty($_SESSION[$key]))
     $tst=$_SESSION[$key];
 else
@@ -360,12 +361,12 @@ else
 echo "<div class='formrow'>\n<label class='left first'>View"
     ,($values['itemId'])?/*'updating'*/'':''/*'creating'*/
     ,":</label>&nbsp;\n";
-    
+
 if ($show['ptitle'])
     echo "<input type='radio' name='afterCreate' id='parentNext' value='parent' class='first'"
         ,($tst=='parent')?" checked='checked' ":""
         ," /><label for='parentNext' class='right'>Parent</label>\n";
-        
+
 echo "<input type='radio' name='afterCreate' id='itemNext' value='item' class='notfirst'"
         ,($tst=='item')?" checked='checked' ":""
         ," /><label for='itemNext' class='right'>Item</label>\n"
@@ -435,7 +436,7 @@ if ($_SESSION['useLiveEnhancements'] && !empty($values['ptype'])) {
             );
             gtd_refinesearch('<?php echo $values['ptype']; ?>');
         });
-        
+
         /* ]]> */
     <?php //JK cursor focus
         if ($values['itemId'] > 0) {

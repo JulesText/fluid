@@ -10,10 +10,10 @@ if ($config['debug'] & _GTD_NOTICE)
   the library file must define the following functions:
 
   getDBVersion() - returns the name and version of the database software
-  
+
   getDBtables($db) - returns array of table names for the specified database
-  
-  doQuery($query,$label) - run the query, and return the result:
+
+  doQuery($config,$query,$label) - run the query, and return the result:
         (boolean FALSE) : indicates the query failed
         (integer 0)     : query affected no rows, and returned no rows - e.g. an empty(SELECT)
         (integer >0)    : the number of rows affected by an INSERT, UPDATE or DELETE
@@ -57,6 +57,6 @@ switch ($config['dbtype']) {
         die("Database type not configured.  Please edit the config.php file.");
 }
 //connect to database
-$connection = connectdb($config);
+$config = connectdb($config);
 require_once("gtdfuncs.php");
 // php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

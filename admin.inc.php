@@ -12,7 +12,7 @@ function checkErrors($prefix) {
 
     $q="SELECT COUNT(DISTINCT `nextaction`) FROM `{$prefix}nextactions`";
     $na=@mysql_fetch_row(send_query($q,false));
-    
+
     $q="SELECT COUNT(*) FROM `{$prefix}items` AS `i`
             JOIN `{$prefix}itemattributes` AS `ia`  USING (`itemId`)
             JOIN `{$prefix}itemstatus`     AS `its` USING (`itemId`)
@@ -44,7 +44,7 @@ function checkErrors($prefix) {
             ROW(`parentId`,`itemId`) NOT IN (SELECT * FROM `{$prefix}nextactions`)
             AND `itemID` IN (SELECT `nextaction` FROM `{$prefix}nextactions`)";
     $missingNA=@mysql_fetch_row(send_query($q,false));
-    
+
     $q="SELECT COUNT(*) FROM `{$prefix}nextactions` AS `na`
             JOIN `{$prefix}itemstatus` AS `its` ON (na.`nextaction`=its.`itemId`)
             WHERE its.`dateCompleted` IS NOT NULL";
@@ -56,7 +56,7 @@ function checkErrors($prefix) {
     $q="SELECT COUNT(*) FROM `{$prefix}items` where `title`=NULL OR `title`=''";
     $noTitle=@mysql_fetch_row(send_query($q,false));
 
-    $q="SELECT COUNT(*) FROM `{$prefix}lookup` WHERE 
+    $q="SELECT COUNT(*) FROM `{$prefix}lookup` WHERE
             `parentId` NOT IN (SELECT `itemId` FROM `{$prefix}itemattributes`)
            OR `itemId` NOT IN (SELECT `itemId` FROM `{$prefix}itemattributes`)";
     $redundantparent=@mysql_fetch_row(send_query($q,false));
@@ -143,7 +143,7 @@ function recreateNextactions($prefix) { // recreate the nextactions table, remov
 
     $q="DROP TABLE `{$prefix}tempNA`";
     send_query($q);
-    
+
     $result=array('total_rows'=>$tot,'Number_of_Next_Actions'=>$unique,'added_rows'=>$added,'removed_rows'=>$removed);
     return $result;
 }
@@ -208,7 +208,7 @@ function fixData($prefix) {
     // if any titles are blank, call them 'untitled'
     $q="update `{$prefix}items` set `title`='untitled' where `title`=NULL OR `title`=''";
     send_query($q);
-    
+
     // now fix lookup
     $q="DELETE FROM `{$prefix}lookup` WHERE
             `parentId` NOT IN (SELECT `itemId` FROM `{$prefix}itemattributes`)
@@ -220,7 +220,7 @@ function fixData($prefix) {
             SELECT `itemId` FROM `{$prefix}itemstatus` WHERE dateCompleted IS NOT NULL
             )";
     send_query($q);
-    
+
     // and finally, fix nextactions by recreating it completely
     recreateNextactions($prefix);
 }
@@ -445,22 +445,22 @@ function amendIndexes() {
 /*
    ======================================================================================
 */
-function drop_table($name){
+function drop_table($config, $name){
 	global $rollback;
 	$q = "drop table if exists `$name`";
-    send_query($q);
+    send_query($config, $q);
     unset($rollback[$name]);
 }
 /*
    ======================================================================================
 */
-function send_query($q,$dieOnFail=true) {
+function send_query($config, $q, $dieOnFail=true) {
     global $rollback;
    	if (_DEBUG) echo "<p class='debug'>{$q}</p>\n";
     if (_DRY_RUN)
         $result=true;
     else
-		$result = mysql_query($q);
+		$result = mysqli_query($config["conn"], $q);
 
     if ($result) {
         if (_DEBUG) echo "<p class='debug'>",mysql_affected_rows()," rows affected</p>\n";

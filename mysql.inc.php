@@ -7,13 +7,10 @@
 error_reporting(E_ALL ^ E_DEPRECATED);
 function connectdb($config) {
 
-    $connection = mysql_connect($config['host'], $config['user'], $config['pass'])
+    $config["conn"] = mysqli_connect($config['host'], $config['user'], $config['pass'], $config['db'])
         or die ("Unable to connect to MySQL server: check your host, user and pass settings in config.php!");
-        
-    mysql_select_db($config['db'])
-        or die ("Unable to select database '{$config['db']}' - check your db setting in config.php!");
-        
-    return $connection;
+
+    return $config;
 }
 /*
   ===============================================================
@@ -34,18 +31,20 @@ function getDBtables($db) {
 /*
   ===============================================================
 */
-function doQuery($query,$label=NULL) {
+function doQuery($config, $query, $label=NULL) {
+
     // parse result into multitdimensional array $result[row#][field name] = field value
-    $reply = mysql_query($query);
+    $reply = mysqli_query($config["conn"], $query);
+
     if ($reply===false) {                       // failed query - return FALSE
         $result=false;
     } elseif ($reply===true) {                  // query was not a SELECT OR SHOW, so return number of rows affected
-        $result=@mysql_affected_rows();
-    } else if (@mysql_num_rows($reply)===0) {   // empty SELECT/SHOW - return zero
+        $result = mysqli_affected_rows($config["conn"]);
+    } else if (mysqli_num_rows($reply)===0) {   // empty SELECT/SHOW - return zero
         $result=0;
     } else {                                    // successful SELECT/SHOW - return array of results
         $result=array();
-        while ($mysql_result = mysql_fetch_assoc($reply))
+        while ($mysql_result = mysqli_fetch_assoc($reply))
             $result[]=$mysql_result;
     }
 
@@ -54,21 +53,21 @@ function doQuery($query,$label=NULL) {
         not updated when explicit value given for autoincrement field
         (MySQL "feature")
     */
-    $GLOBALS['lastinsertid'] = mysql_insert_id();
+    $GLOBALS['lastinsertid'] = mysqli_insert_id($config["conn"]);
 
-    $error = mysql_errno();
+    $error = mysqli_errno($config["conn"]);
     if ($error) $_SESSION['message'][]=
-                "Error $error in query '$label': '".mysql_error()."'";
-                
+                "Error $error in query '$label': '".mysqli_error($config["conn"])."'";
+
     return $result;
 }
 /*
   ===============================================================
 */
-function safeIntoDB(&$value,$key=NULL) {
+function safeIntoDB($config, &$value, $key=NULL) {
 	// don't clean arrays - clean individual strings/values
 	if (is_array($value)) {
-		foreach ($value as $key=>$string) $value[$key] = safeIntoDB($string,$key);
+		foreach ($value as $key=>$string) $value[$key] = safeIntoDB($config, $string, $key);
 		return $value;
 	} else {
 		// don't clean filters - we've cleaned those separately in the sqlparts function
@@ -77,10 +76,7 @@ function safeIntoDB(&$value,$key=NULL) {
 			{
 			if ( get_magic_quotes_gpc() && !empty($value) && is_string($value) )
 				$value = stripslashes($value);
-			if(version_compare(phpversion(),"4.3.0",'<'))
-				$value = mysql_escape_string($value);
-			else
-				$value = mysql_real_escape_string($value);
+			$value = mysqli_real_escape_string($config["conn"], $value);
 		} else { return $value;}
 		return $value;
 	}
@@ -101,7 +97,7 @@ function getsql($config,$values,$sort,$querylabel) {
 
     if (is_array($values))
         foreach ($values as $key=>$value)
-            $values[$key] = safeIntoDB($value, $key);
+            $values[$key] = safeIntoDB($config, $value, $key);
 
 	switch ($querylabel) {
 		case "instanceselectbox":
@@ -123,7 +119,7 @@ function getsql($config,$values,$sort,$querylabel) {
     		    $instTable = 'inst';
 		        $instQuery = " AND `instanceId` = '{$values['instanceId']}' ";
 		    }
-		    
+
 			$sql="UPDATE `". $config['prefix'] ."checklistitems" . $instTable . "`
 				SET `{$values['field']}` = 'y'
 				WHERE `checklistItemId` IN ({$values['itemfilterquery']})"
@@ -173,7 +169,7 @@ function getsql($config,$values,$sort,$querylabel) {
     		    $instTable = 'inst';
 		        $instQuery = " AND `instanceId` = '{$values['instanceId']}' ";
 		    }
-		    
+
 			$sql="UPDATE `". $config['prefix'] ."checklistitems" . $instTable . "`
 				SET `assessed` = 0,
 				    `score` = 0
@@ -190,12 +186,12 @@ function getsql($config,$values,$sort,$querylabel) {
     		    $instTable = 'inst';
 		        $instQuery = " AND `instanceId` = '{$values['instanceId']}' ";
 		    }
-		    
+
 		    $prioritiseQuery = '';
 		    if (isset($values['prioritise']) && $values['prioritise'] > -1 && !$instUse) {
 		        $prioritiseQuery = " AND `expect` = 0 ";
 		    }
-		    
+
 			$sql="UPDATE `". $config['prefix'] ."checklistitems" . $instTable . "`
 				SET `assessed` = `assessed` + 1
 				WHERE `checklistId` = '{$values['id']}'
@@ -206,7 +202,7 @@ function getsql($config,$values,$sort,$querylabel) {
 			break;
 
 		case "scorechecklist":
-		    
+
 		    $instTable = '';
 		    $instQuery = '';
 		    $instUse = FALSE;
@@ -216,12 +212,12 @@ function getsql($config,$values,$sort,$querylabel) {
     		    $instTable = 'inst';
 		        $instQuery = " AND `instanceId` = '{$values['instanceId']}' ";
 		    }
-		    
+
 		    $prioritiseQuery = '';
 		    if (isset($values['prioritise']) && $values['prioritise'] > -1 && !$instUse) {
 		        $prioritiseQuery = " AND `expect` = 0 ";
 		    }
-		    
+
 			$sql="UPDATE `". $config['prefix'] ."checklistitems" . $instTable . "`
 				SET `score` = `score` + 1
 				WHERE `checklistId` = '{$values['id']}'
@@ -229,7 +225,7 @@ function getsql($config,$values,$sort,$querylabel) {
 				AND `checklistItemId` IN ({$values['itemfilterquery']})"
 				. $instQuery
 				. $prioritiseQuery;
-			//echo '<pre>' . $sql; die; 
+			//echo '<pre>' . $sql; die;
 			break;
 
 		case "clearitemlists":
@@ -265,7 +261,7 @@ function getsql($config,$values,$sort,$querylabel) {
 				VALUES ('{$values['parentId']}','{$values['newitemId']}')
 				ON DUPLICATE KEY UPDATE `nextaction`='{$values['newitemId']}'";
 			break;
-			
+
 		case "getchildlists":
 			$sql="SELECT `parentId` as itemId, `listId` as id,
 						`listType` as type
@@ -297,14 +293,14 @@ function getsql($config,$values,$sort,$querylabel) {
             break;
 
 		case "deletequalities":
-			$sql="DELETE 
+			$sql="DELETE
 				FROM `". $config['prefix'] . "lookupqualities`
 				WHERE `itemId` = '{$values['itemId']}'
 				AND `itemType` = '{$values['itemType']}'";
 			break;
 
 		case "nullqualities":
-			$sql="DELETE 
+			$sql="DELETE
 				FROM `". $config['prefix'] . "lookupqualities`
 				WHERE `value` = ''";
 			break;
@@ -344,12 +340,12 @@ function getsql($config,$values,$sort,$querylabel) {
             					   FROM `{$config['prefix']}itemattributes` as ia
             					   JOIN `{$config['prefix']}items` as i USING (`itemId`)
             					   JOIN `{$config['prefix']}itemstatus` as its USING (`itemId`)
-                                ) AS y USING (`parentId`) 
+                                ) AS y USING (`parentId`)
                     ) AS nat ON (x.`itemId`=nat.`nextAction`)
                      {$values['filterquery']}
                      GROUP BY ia.`contextId` ORDER BY cn.`name`";
             break;
-            
+
 		case "countnextactions":
 			$sql="SELECT INTERVAL(DATEDIFF(CURDATE(),ia.`deadline`),-6,0,1) AS `duecategory`,
 			           COUNT(DISTINCT i.`itemId`) AS nnextactions
@@ -475,16 +471,16 @@ function getsql($config,$values,$sort,$querylabel) {
 		    $sorts = $sort['getchecklistitems'];
 		    if (isset($values['instanceId']) && is_numeric($values['instanceId'])) {
 		        $table = 'i';
-    		    $join = " LEFT JOIN `{$config['prefix']}checklistitemsinst` AS i 
+    		    $join = " LEFT JOIN `{$config['prefix']}checklistitemsinst` AS i
 				ON (cli.`checklistitemId` = i.`checklistitemId`) ";
     		    $inst = " AND i.`instanceId` = '{$values['instanceId']}' ";
     		    $sorts = $sort['getchecklistitemsinst'];
 		    }
 			$sql="SELECT cli.`checklistitemId` AS `itemId`, cli.`item`, cli.`notes`, cli.`hyperlink`,
-						cli.`checklistId` AS `id`, cli.`expect`, cli.`effort`, 
-						" . $table . ".`checked`,  
-						" . $table . ".`ignored`, 
-						" . $table . ".`score`, 
+						cli.`checklistId` AS `id`, cli.`expect`, cli.`effort`,
+						" . $table . ".`checked`,
+						" . $table . ".`ignored`,
+						" . $table . ".`score`,
 						" . $table . ".`assessed`
 				FROM `{$config['prefix']}checklistitems` AS cli
 				" . $join . "
@@ -501,7 +497,7 @@ function getsql($config,$values,$sort,$querylabel) {
 				LEFT OUTER JOIN `{$config['prefix']}categories` as c USING (`categoryId`) "
 				.$values['filterquery']." ORDER BY {$sort['getchecklists']}";
 			break;
-			
+
 		case "getchildren":
 			$sql="SELECT i.`itemId`, i.`title`, i.`description`,
 					i.`premiseA`,i.`premiseB`,i.`conclusion`,i.`behaviour`, i.`standard`, i.`conditions`, i.`metaphor`, i.`hyperlink`, i.`sortBy`, ia.`type`,
@@ -553,7 +549,7 @@ function getsql($config,$values,$sort,$querylabel) {
 			$sql="SELECT itemId, type
 				FROM `". $config['prefix'] . "itemattributes`
 				";
-				
+
 			break;
 
 		case "getitemsandparent":
@@ -607,7 +603,7 @@ function getsql($config,$values,$sort,$querylabel) {
 							i.`conditions` AS pconditions,
 							i.`metaphor` AS pmetaphor,
 							i.`hyperlink` AS phyperlink,
-							i.`sortBy` AS psortBy, 
+							i.`sortBy` AS psortBy,
 							ia.`type` AS ptype, ia.`isSomeday` AS pisSomeday,
 							ia.`deadline` AS pdeadline, ia.`repeat` AS prepeat,
 							ia.`suppress` AS psuppress,
@@ -702,7 +698,7 @@ function getsql($config,$values,$sort,$querylabel) {
 
 		case "lookupparentshort":
 			$sql="SELECT `parentId`
-				FROM `". $config['prefix'] . "lookup` 
+				FROM `". $config['prefix'] . "lookup`
 				WHERE `itemId`='{$values['itemId']}'";
 			break;
 
@@ -885,11 +881,11 @@ function getsql($config,$values,$sort,$querylabel) {
 						`notes`,
 						`hyperlink`,
 						`checklistId` as id,
-						`checked`, 
-						`ignored`, 
-						`score`, 
-						`assessed`, 
-						`expect`, 
+						`checked`,
+						`ignored`,
+						`score`,
+						`assessed`,
+						`expect`,
 						`effort`
 				FROM `". $config['prefix'] . "checklistitems`
 				WHERE `checklistItemId` = '{$values['itemId']}'";
@@ -934,8 +930,8 @@ function getsql($config,$values,$sort,$querylabel) {
 
 		case "selectitemstatus":
 			$sql="SELECT ia.`itemId`, ia.`isSomeday`, its.`dateCompleted`
-				FROM `{$config['prefix']}itemattributes` AS ia  
-				JOIN `{$config['prefix']}itemstatus`     AS its 
+				FROM `{$config['prefix']}itemattributes` AS ia
+				JOIN `{$config['prefix']}itemstatus`     AS its
 				WHERE ia.`itemId` = '{$values['itemId']}'
 				AND ia.`itemId` = its.`itemId`";
 			break;
@@ -1020,17 +1016,17 @@ function getsql($config,$values,$sort,$querylabel) {
 
 		case "newlist":
 			$sql="INSERT INTO `". $config['prefix'] . "list`
-				VALUES (    NULL, 
+				VALUES (    NULL,
 				            '{$values['title']}',
-						    '{$values['categoryId']}', 
-						    '{$values['premiseA']}', 
-						    '{$values['premiseB']}', 
-						    '{$values['conclusion']}', 
-						    '{$values['behaviour']}', 
-						    '{$values['standard']}', 
-						    '{$values['conditions']}', 
-						    '{$values['metaphor']}', 
-						    '{$values['hyperlink']}', 
+						    '{$values['categoryId']}',
+						    '{$values['premiseA']}',
+						    '{$values['premiseB']}',
+						    '{$values['conclusion']}',
+						    '{$values['behaviour']}',
+						    '{$values['standard']}',
+						    '{$values['conditions']}',
+						    '{$values['metaphor']}',
+						    '{$values['hyperlink']}',
 						    '{$values['sortBy']}',
 						    '{$values['menu']}',
 						    '{$values['prioritise']}'
@@ -1039,30 +1035,30 @@ function getsql($config,$values,$sort,$querylabel) {
 
 		case "newchecklist":
 			$sql="INSERT INTO `". $config['prefix'] ."checklist`
-				VALUES (    '', 
+				VALUES (    '',
 				            '{$values['title']}',
-						    '{$values['categoryId']}', 
-						    '{$values['premiseA']}', 
-						    '{$values['premiseB']}', 
-						    '{$values['conclusion']}', 
-						    '{$values['behaviour']}', 
-						    '{$values['standard']}', 
-						    '{$values['conditions']}', 
-						    '{$values['metaphor']}', 
-						    '{$values['hyperlink']}', 
-						    '{$values['sortBy']}', 
-						    '{$values['frequency']}', 
+						    '{$values['categoryId']}',
+						    '{$values['premiseA']}',
+						    '{$values['premiseB']}',
+						    '{$values['conclusion']}',
+						    '{$values['behaviour']}',
+						    '{$values['standard']}',
+						    '{$values['conditions']}',
+						    '{$values['metaphor']}',
+						    '{$values['hyperlink']}',
+						    '{$values['sortBy']}',
+						    '{$values['frequency']}',
 						    '',
-						    '{$values['scored']}', 
-						    '{$values['menu']}', 
-						    '{$values['prioritise']}' 
+						    '{$values['scored']}',
+						    '{$values['menu']}',
+						    '{$values['prioritise']}'
 						    )";
 			break;
 
 		case "updatechecklist":
 		    $sql="UPDATE `". $config['prefix'] ."checklist`
 				SET     `title`         = '{$values['title']}',
-						`categoryId`    = '{$values['categoryId']}', 
+						`categoryId`    = '{$values['categoryId']}',
 						`premiseA`      = '{$values['premiseA']}',
 						`premiseB`      = '{$values['premiseB']}',
 						`conclusion`    = '{$values['conclusion']}',
@@ -1093,7 +1089,7 @@ function getsql($config,$values,$sort,$querylabel) {
 				SET `deadline` ={$values['deadline']}
 				WHERE `itemId` = '{$values['itemId']}'";
 			break;
-			
+
 		case "updateitem":
 			$sql="UPDATE `". $config['prefix'] . "items`
 				SET `description` = '{$values['description']}',
@@ -1149,9 +1145,9 @@ function getsql($config,$values,$sort,$querylabel) {
 						`conditions` = '{$values['conditions']}',
 						`metaphor` = '{$values['metaphor']}',
 						`hyperlink` = '{$values['hyperlink']}',
-						`sortBy` = '{$values['sortBy']}',						
-						`menu` = '{$values['menu']}',						
-						`prioritise` = '{$values['prioritise']}'						
+						`sortBy` = '{$values['sortBy']}',
+						`menu` = '{$values['menu']}',
+						`prioritise` = '{$values['prioritise']}'
 				WHERE `listId` ='{$values['id']}'";
 			break;
 
@@ -1201,7 +1197,7 @@ function getsql($config,$values,$sort,$querylabel) {
 						`type`='{$values['type']}'
 				WHERE `timeframeId` ='{$values['id']}'";
 			break;
-			
+
         default: // default to assuming that the label IS the query
             $sql=$querylabel;
             break;
@@ -1215,8 +1211,8 @@ function sqlparts($part,$config,$values) {
 
   if (is_array($values))
     foreach ($values as $key=>$value)
-        $values[$key] = safeIntoDB($value, $key);
-        
+        $values[$key] = safeIntoDB($config, $value, $key);
+
   switch ($part) {
 	case "activeitems":
 		$sqlpart = " ((CURDATE()>=DATE_ADD(ia.`deadline`, INTERVAL -(ia.`suppressUntil`) DAY)) OR ia.`suppress`!='y') ";
@@ -1301,17 +1297,17 @@ function sqlparts($part,$config,$values) {
                                       OR i.`conditions` LIKE '%{$values['needle']}%' )";
 		break;
 		/*
-		
+
         $cols = array('i.`title`', 'i.`description`', 'i.`premiseA`', 'i.`premiseB`', 'i.`conclusion`', 'i.`behaviour`', 'i.`standard`', 'i.`conditions`');
         // Basic processing and controls
         //$searchParams = strip_tags($searchParams);
-    
+
         // Start query
         $query = " (";
-    
+
         // Explode search criteria taking into account the double quotes
         $searchParams = str_getcsv($values['needle'], ' ');
-    
+
         // Query writing
         foreach($searchParams as $param) {
             // or operator

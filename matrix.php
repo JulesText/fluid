@@ -45,6 +45,7 @@ $values['qValue'] = 'angle';
 $values['qSearch'] = "`disp`";
 $values['qNeedle'] = $qLimit;
 $angles = query("getqualities",$config,$values,$sort);
+
 // call angles qualities
 $i = 0;
 $attrStat = array();
@@ -52,6 +53,7 @@ foreach ((array) $angles as $row) {
     $values['qQuery'] = "`parId`";
     $values['qValue'] = $row['qId'];
     $qualities = query("getqualities",$config,$values,$sort);
+
     // call qualities attributes
     $j = 0;
     foreach ((array) $qualities as $rowN) {
@@ -69,8 +71,8 @@ foreach ((array) $angles as $row) {
 $nonEdit = array();
 $i = 0;
 foreach ((array) $attrStat as $attr) {
-    if (!is_null($attr['existTable'])) $attrStat[$i]['existTable'] = unserialize($attr['existTable']); // values in other db tables
-    if (!is_null($attr['typeNoEd'])) $nonEdit[] = array('qId' => $attr['qId'], 'typeNoEd' => $attr['typeNoEd']); // non-editable attributes
+    if (isset($attr['existTable'])) $attrStat[$i]['existTable'] = unserialize($attr['existTable']); // values in other db tables
+    if (isset($attr['typeNoEd'])) $nonEdit[] = array('qId' => $attr['qId'], 'typeNoEd' => $attr['typeNoEd']); // non-editable attributes
     $i++;
 }
 //echo '<pre>';var_dump($nonEdit);die;
@@ -79,15 +81,18 @@ foreach ((array) $attrStat as $attr) {
 $visAttr = array();
 foreach ((array) $attrStat as $attr) {
     if (
-        is_null($attr['existTable']) &&
+				!empty($attr) &&
+        !isset($attr['existTable']) &&
+				(!isset($attr['typeNoEd']) ||
         strpos($attr['typeNoEd'],'v') === false
+				)
     ) $visAttr[] = $attr['qId'];
 }
 
 // store timeline variables
 $tLimit = '';
 foreach ((array) $attrStat as $attr) {
-    if ($attr['format'] == 'unqtimeline') $tLimit .= $attr['qId'] . ',';
+    if (!empty($attr) && !empty($attr['format']) && $attr['format'] == 'unqtimeline') $tLimit .= $attr['qId'] . ',';
 }
 $tLimit = substr($tLimit, 0, -1);
 
@@ -100,6 +105,7 @@ $attrMeta = query("getqualities",$config,$values,$sort);
 $values['qQuery'] = "`qType`";
 $values['qValue'] = 'variable';
 $attrVar = query("getqualities",$config,$values,$sort);
+
 foreach ((array) $attrVar as $row) {
     if ($row['format'] == 'unqhoursyear') $unqhoursyear = $row['title'];
     if ($row['format'] == 'unqhoursyearbrainless') $unqhoursyearbrainless = $row['title'];
@@ -343,12 +349,12 @@ foreach ((array) $vis as $visn) {
             $clists = query("getchildlists",$config,$values,$sort);
             $values['type'] = 'l';
             $lists = query("getchildlists",$config,$values,$sort);
-            if (count($lists) > 0 && is_array($lists) && count($clists) > 0 && is_array($clists)) {
-                $lists = array_merge($clists,$lists);
-            } elseif (count($clists) > 0 && is_array($clists)) {
-                $lists = $clists;
-            }
-            if (count($lists) > 0 && is_array($lists)) $mainsearch[$r['itemId']] = $lists;
+						if (!empty($lists) && is_array($lists) && count($lists) > 0 && !empty($clists) && is_array($clists) && count($clists) > 0) {
+				        $lists = array_merge($clists,$lists);
+				    } elseif (!empty($clists) && is_array($clists) && count($clists) > 0) {
+				        $lists = $clists;
+				    }
+						if (!empty($lists) && is_array($lists) && count($lists) > 0) $mainsearch[$r['itemId']] = $lists;
             //if ($r['itemId'] == 10389) { echo '<pre>';var_dump($lists);die; }
         }
     }
@@ -360,12 +366,12 @@ foreach ((array) $vis as $visn) {
     $clists = query("getchildlists",$config,$values,$sort);
     $values['type'] = 'l';
     $lists = query("getchildlists",$config,$values,$sort);
-    if (count($lists) > 0 && is_array($lists) && count($clists) > 0 && is_array($clists)) {
-        $lists = array_merge($clists,$lists);
-    } elseif (count($clists) > 0 && is_array($clists)) {
-        $lists = $clists;
-    }
-    if (count($lists) > 0 && is_array($lists)) {
+		if (!empty($lists) && is_array($lists) && count($lists) > 0 && !empty($clists) && is_array($clists) && count($clists) > 0) {
+				$lists = array_merge($clists,$lists);
+		} elseif (!empty($clists) && is_array($clists) && count($clists) > 0) {
+				$lists = $clists;
+		}
+		if (!empty($lists) && is_array($lists) && count($lists) > 0) {
         foreach ((array) $lists as $list) {
         $pId = 0;
             $values['id'] = $list['id'];
@@ -417,7 +423,14 @@ foreach ((array) $maintable as $row) {
             $sortBy = strcmp($a['sortBy'], $b['sortBy']);
             // second level sort by title not working...
             if($sortBy === 0) {
-                return $a['item'] - $b['item'];
+								if ($a['item'] > $b['item']) {
+									return 1;
+								} else if ($a['item'] < $b['item']) {
+									return -1;
+								} else {
+									return 0;
+								}
+                #return $a['item'] - $b['item'];
             }
             return $sortBy;
         });

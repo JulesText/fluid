@@ -7,7 +7,7 @@ travel: ok
 
 years: adds to year start
 year start: calculate what timeline years are committed
-brainless: alters tally 
+brainless: alters tally
 
 items: separate brainless, update to timeline[] on fly, in final calc delimit brainless, push to result[]
 
@@ -37,9 +37,9 @@ $result = array();
 /* example result
 $result[] = array(
     'type' => 'a', // ie goal, summary
-    'visId' => '0', 
+    'visId' => '0',
     'id' => '0', // item id
-    'attrId' => '0', 
+    'attrId' => '0',
     'tline' => 'a', // timeline pair a or b for brainless or not
     'form' => 'a', // summary pair a or b for pos or neg
     'value' => '0');
@@ -90,7 +90,7 @@ foreach ((array) $qualities as $qual) {
     if ($qual['format'] == 'unqcontext') $cntxtParId = $qual['qId'];
 }
 
-// call all attributes, exclude angles and qualities 
+// call all attributes, exclude angles and qualities
 $values = array();
 $values['qQuery'] = "`qType`";
 $values['qValue'] = 'attribute';
@@ -125,7 +125,7 @@ $scoreweights = array();
 $optim = false;
 
 foreach ((array) $attributes as $attr) {
-    
+
     // variable to flag when travel hours are being counted, and treat as brainless
     // attr: Travel / Year (int)
     if ($attr['format'] == 'unqhourstravel') { $travelId = $attr['qId']; $unqhoursIds[] = $travelId; }
@@ -137,10 +137,10 @@ foreach ((array) $attributes as $attr) {
     if ($attr['format'] == 'unqhoursresearch') { $reseId = $attr['qId']; $unqhoursIds[] = $attr['qId']; }
 
     // attr: Years (int)
-    if ($attr['format'] == 'unqyears') $yearqId = $attr['qId']; 
+    if ($attr['format'] == 'unqyears') $yearqId = $attr['qId'];
 
     // attr: Years probability (int)
-    if ($attr['format'] == 'unqyearsprob') $yearsprobId = $attr['qId']; 
+    if ($attr['format'] == 'unqyearsprob') $yearsprobId = $attr['qId'];
 
     // attr: Brainless hours (boolean)
     if ($attr['format'] == 'unqbrainless') $brainlessId = $attr['qId'];
@@ -150,10 +150,10 @@ foreach ((array) $attributes as $attr) {
 
     // attr: Year Start (date)
     if ($attr['format'] == 'unqyearstart') $yearstqId = $attr['qId'];
-    
+
     // attr: Year End (date)
     if ($attr['format'] == 'unqyearend') $yearenqId = $attr['qId'];
-    
+
     // variable to flag optimise preferences attribute id
     if ($attr['format'] == 'unqoptimisepref') { $unqoptimiseprefId = $attr['qId']; $skipqIds[] = $attr['qId']; $optim = true; }
 
@@ -175,7 +175,7 @@ foreach ((array) $attributes as $attr) {
     // array to flag when scores are being used to check their probability, and to optimise weighting after calculations
     if ($attr['format'] == 'score') { $scoreqIds[$attr['qId']] = $attr['weight']; $scoreweights[$attr['qId']] = NULL; }
 
-    // array to skip attributes not to calculate 
+    // array to skip attributes not to calculate
     if ($attr['formulaSum1'] == null &&
         $attr['formulaSum2'] == null &&
         $attr['formulaVis1'] == null &&
@@ -212,7 +212,7 @@ foreach ((array) $qualMeta as $qualMet) {
 
 // forces json return for these vision attributes even if calculation finds no positive matches (ie if all items set to someday then recalc otherwise doesn't refresh vision)
 // to do: move function to client side script
-$resForce = array ('unqhoursresearch', 'score', 'integer', 'unqhours', 'unqhourstravel'/*, 'unqyears'*/); 
+$resForce = array ('unqhoursresearch', 'score', 'integer', 'unqhours', 'unqhourstravel'/*, 'unqyears'*/);
 
 // special case for years
 $visYrs = array();
@@ -227,35 +227,37 @@ foreach ((array) $attributes as $attr) {
 
     // skip attribute if not to calculate
     if (in_array($attr['qId'], $skipqIds, true)) continue;
-    
+
     // variables to store grand totals, #1 is for row A, #2 for row B
-    $summary1 = '';
-    $summary2 = '';
+		#$summary1 = '';
+    #$summary2 = '';
+    $summary1 = (float) 0;
+    $summary2 = (float) 0;
 
     // special case effort/year
-    $summaryBless1 = 0;
-    $summaryBless2 = 0;
+    $summaryBless1 = (float) 0;
+    $summaryBless2 = (float) 0;
 
     // set variable for score weighting for attribute
-    if (!is_null($attr['weight']) && isset($attr['weight'])) { 
-        $weight = $attr['weight']; 
-    } else { 
-        $weight = 10; 
+    if (!is_null($attr['weight']) && isset($attr['weight'])) {
+        $weight = (float) $attr['weight'];
+    } else {
+        $weight = (float) 10;
     }
     //$weight = $weight / 10; // original weighting, range 0 to 1.0
     //$weight = ($weight / 20) + 0.5; // moderated to not disfavour low weighting too much, set range 0.5 to 1.0
-    $weight = 1;
-    
+    $weight = (float) 1;
+
     // loop visions
     foreach ((array) $visions as $visn) {
         // initialise sql parameters
         $values = array();
         $values['visId'] = $visn['itemId'];
         $values['qId'] = $attr['qId'];
-        
+
         // call the vision's child records from main table for current attribute
         $items = query("lookupqualities",$config,$values,$sort);
-        
+
         // special cases of value for calculation held in other table
         // case: checklist hours from checklist table
         if ($attr['qId'] == $hoursId) {
@@ -264,7 +266,7 @@ foreach ((array) $attributes as $attr) {
             $values['parentId'] = $visn['itemId'];
             $values['type'] = 'c';
             $itemVars = query("getchildlists",$config,$values,$sort);
-            if (count($itemVars) > 0 && is_array($itemVars)) {
+            if (!empty($itemVars) && is_array($itemVars) && count($itemVars) > 0) {
                 foreach ((array) $itemVars as $item) {
                     $values['id'] = $item['id'];
                     $res = query("selectchecklist",$config,$values,$sort);
@@ -278,25 +280,30 @@ foreach ((array) $attributes as $attr) {
 
         // initialise variables to store totals, #0 for combining text results from #1 and #2 after calculation
         // #1 for actual result, and #2 as supplementary paired result for #1
-        $output = '';
-        $output1 = '';
-        $output2 = '';
-        $pseudo2 = '';
-        
+        #$output = '';
+        #$output1 = '';
+        #$output2 = '';
+        #$pseudo2 = '';
+				$output = (float) 0;
+        $output1 = (float) 0;
+        $output2 = (float) 0;
+        $pseudo2 = (float) 0;
+
         // special case effort/year
-        $bless1 = 0;
-        $bless2 = 0;
+        $bless1 = (float) 0;
+        $bless2 = (float) 0;
 
         // special case for years
-        $outputYrs = 0;
-        $outputYear = false;
+        $outputYrs = (float) 0;
+				#$outputYear = false;
+				$outputYear = (float) 0;
 
         // confirm the vision has child record(s) in main table for current attribute
-        if (count($items) == 0 || !is_array($items)) continue;
+        if (!is_array($items) || empty($items) || count($items) == 0) continue;
 
         // loop vision's child records
         foreach ((array) $items as $item) {
-            
+
             // skip zero value items
             // except effort, as triggers year records
             // all probability items are currently called from the attribute itself
@@ -304,16 +311,16 @@ foreach ((array) $attributes as $attr) {
                 if ($optim && array_key_exists($attr['qId'], $scoreqIds)) $scores[] = array('type' => $item['itemType'], 'visId' => $visn['itemId'], 'id' => $item['itemId'], 'attrId' => $attr['qId'], 'value' => $item['value']);
                 continue;
             }
-            
+
             // control for the case that it was once a child of the vision
             // however artifact records remain in the main table and must not be counted
-            // to do: maybe update pages where lists are unassigned from items so that main table records are deleted 
+            // to do: maybe update pages where lists are unassigned from items so that main table records are deleted
 
             // for lists
             if ($item['itemType'] == 'c' || $item['itemType'] == 'l') {
-                
+
                 // default to counted in case no record in lookup
-                $someday = false; 
+                $someday = false;
                 $complete = false;
 
                 // query the list lookup table to check if vision is a parent
@@ -322,7 +329,7 @@ foreach ((array) $attributes as $attr) {
                 $values['type'] = $item['itemType'];
                 $values['listId'] = $item['itemId'];
                 $itemVars = query("getchildlists",$config,$values,$sort);
-                if (count($itemVars) > 0 && is_array($itemVars)) {
+                if (!empty($itemVars) && is_array($itemVars) && count($itemVars) > 0) {
                     // if so look up qualities if someday
                     $values = array();
                     $values['visId'] = $visn['itemId'];
@@ -330,12 +337,12 @@ foreach ((array) $attributes as $attr) {
                     $values['itemId'] = $item['itemId'];
                     $values['itemType'] = $item['itemType'];
                     $itemVars = query("lookupqualities",$config,$values,$sort);
-                    if (count($itemVars) > 0 && is_array($itemVars)) {
+										if (!empty($itemVars) && is_array($itemVars) && count($itemVars) > 0) {
                         if ($itemVars[0]['value'] == 'y') {
-                            $someday = true; 
+                            $someday = true;
                             $complete = true;
                         } else {
-                            $someday = false; 
+                            $someday = false;
                             $complete = false;
                         }
                     }
@@ -353,7 +360,7 @@ foreach ((array) $attributes as $attr) {
                 // for false positives, prepare to escape
                 $child = false;
                 // confirms that item is child to vision parent
-                if (count($itemPars) > 0 && is_array($itemPars)) {
+                if (!empty($itemPars) && is_array($itemPars) && count($itemPars) > 0) {
                     foreach ((array) $itemPars as $pars) if ($pars['parentId'] == $visn['itemId']) $child = true;
                 }
                 // item is not a child
@@ -376,17 +383,28 @@ foreach ((array) $attributes as $attr) {
                 $values['qId'] = $yearqId;
                 $values['itemId'] = $item['itemId'];
                 $values['itemType'] = $item['itemType'];
-                $itemVars = query("lookupqualities",$config,$values,$sort); 
-                $years = $itemVars[0]['value'];
-                if ($years == '' || $years == 0) $years = 1;
+                $itemVars = query("lookupqualities",$config,$values,$sort);
+								if (empty($itemVars) || !is_array($itemVars) || $itemVars[0]['value'] == '' || $itemVars[0]['value'] == 0) {
+									$years = (float) 1;
+								} else {
+									$years = (float) $itemVars[0]['value'];
+								}
 
                 $values['qId'] = $yearsprobId;
-                $itemVars = query("lookupqualities",$config,$values,$sort); 
-                $yearsprob = $itemVars[0]['value'];
-                if ($yearsprob == '') { $yearsprob = 1; } else { $yearsprob /= 10; }
+                $itemVars = query("lookupqualities",$config,$values,$sort);
+								if (empty($itemVars) || !is_array($itemVars)) {
+									$yearsprob = (float) 1;
+								} else {
+	                if ($itemVars[0]['value'] == '') {
+										$yearsprob = (float) 1;
+									} else {
+										$yearsprob = (float) $itemVars[0]['value'];
+										$yearsprob /= 10;
+									}
+								}
 
                 // estimate years
-                $years = ceil($years * ($yearsprob > 0 ? 1/$yearsprob : 0));
+                $years = (float) ceil($years * ($yearsprob > 0 ? 1/$yearsprob : 0));
 
             }
 
@@ -403,11 +421,15 @@ foreach ((array) $attributes as $attr) {
                 $values['itemId'] = $item['itemId'];
                 $values['itemType'] = $item['itemType'];
                 $itemVars = query("lookupqualities",$config,$values,$sort);
-                $brainless = $itemVars[0]['value'];
-                // default not brainless
-                if ($brainless == '') $brainless = 'n';
+								if (empty($itemVars) || !is_array($itemVars)) {
+									$brainless = 'n';
+								} else {
+									$brainless = $itemVars[0]['value'];
+	                // default not brainless
+	                if ($brainless == '') $brainless = 'n';
+								}
             }
-            
+
             // default probability
             $prob = 1;
             // check if attribute has probabilities
@@ -418,30 +440,45 @@ foreach ((array) $attributes as $attr) {
                 $values['itemId'] = $item['itemId'];
                 $values['itemType'] = $item['itemType'];
                 $itemVars = query("lookupqualities",$config,$values,$sort); // this could just be checked in $items array
-                $prob = $itemVars[0]['value'];
-                if ($prob == '') { 
-                    $prob = 1; 
-                } else { 
-                    $prob /= 10; 
-
-                    // capture p for calculating Certainty
-                    // record active status
-                    if (!$someday && !$complete) { $active = 1; } else { $active = 0; }
-                    // update value sums array value
-                    $certainties[] = array('type' => $item['itemType'], 'visId' => $visn['itemId'], 'id' => $item['itemId'], 'value' => $prob, 'active' => $active);
-                }
+								if (!empty($itemVars) && is_numeric($itemVars[0]['value'])) {
+									$prob = (float) $itemVars[0]['value'];
+									$prob /= 10;
+									// capture p for calculating Certainty
+									// record active status
+									if (!$someday && !$complete) { $active = 1; } else { $active = 0; }
+									// update value sums array value
+									$certainties[] = array('type' => $item['itemType'], 'visId' => $visn['itemId'], 'id' => $item['itemId'], 'value' => $prob, 'active' => $active);
+								} else {
+									$prob = (float) 1;
+								}
             }
-            
+
             // finish setting the variables for calculation
             // $value, $prob, $weight, $years, $someday, $complete, $brainless, $output1, $output2, $summary1, $summary2
-            $value = $item['value'];
+						$value = (float) $item['value'];
             // eval to execute as script value for attribute's formula for vision
             // updates the $output1 and $output2 variables, formulae defined in gtdfuncs.php
             if (!$someday && !$complete) {
-                eval(formula($attr['formulaVis1']));
-                eval(formula($attr['formulaVis2']));
+							eval(formula($attr['formulaVis1']));
+							/* file_put_contents ('a.txt',
+									formula($attr['formulaVis1']) . "\n" .
+			            print_r($attr,true) . "\n" .
+									gettype($output1) . "\n" .
+									'$output1 ' . $output1 ."\n" ."\n" .
+									gettype($output1) . "\n" .
+									'$pseudo2 ' . $pseudo2 ."\n" ."\n" .
+									gettype($value) . "\n" .
+									'$value ' . $value . "\n" ."\n" .
+									gettype($prob) . "\n" .
+									'$prob ' . $prob . "\n" ."\n" .
+									gettype($weight) . "\n" .
+									'$weight ' . $weight . "\n" ."\n" .
+									gettype($years) . "\n" .
+									'$years ' . $years . "\n"
+								);*/
+							eval(formula($attr['formulaVis2']));
             }
-            
+
             // calculate value
             $sum = 0;
             eval(formula('cubeYrItem'));
@@ -469,7 +506,7 @@ foreach ((array) $attributes as $attr) {
                     }
                     $i++;
                 }
-                    
+
                 // record active status
                 if (!$someday && !$complete) { $active = 1; } else { $active = 0; }
 
@@ -498,7 +535,7 @@ foreach ((array) $attributes as $attr) {
                     }
                     $i++;
                 }
-                    
+
                 // record active status
                 if (!$someday && !$complete) { $active = 1; } else { $active = 0; }
 
@@ -509,38 +546,38 @@ foreach ((array) $attributes as $attr) {
             // special case for attributes counting hours
             // to do: incorporate formulae, and prob formula, into eval
             if (in_array($item['qId'], $unqhoursIds, true)) {
-                
-                // query year start 
+
+                // query year start
                 $values = array();
                 $values['visId'] = $visn['itemId'];
                 $values['qId'] = $yearstqId;
                 $values['itemId'] = $item['itemId'];
                 $values['itemType'] = $item['itemType'];
                 $itemVars = query("lookupqualities",$config,$values,$sort);
-                $yearst = $itemVars[0]['value'];
-                // default this year
-                if ($yearst == '') {
-                    $yearst = date("Y");
-                } elseif (is_numeric($yearst)) {
-                    $tlineNull[] = array('type' => $item['itemType'], 'visId' => $visn['itemId'], 'itemId' => $item['itemId']);
-                }
+								if (!empty($itemVars) && is_numeric($itemVars[0]['value'])) {
+									$yearst = (float) $itemVars[0]['value'];
+									$tlineNull[] = array('type' => $item['itemType'], 'visId' => $visn['itemId'], 'itemId' => $item['itemId']);
+								} else {
+									// default this year
+									$yearst = (float) date("Y");
+								}
 
-                // query year end 
+                // query year end
                 $values = array();
                 $values['visId'] = $visn['itemId'];
                 $values['qId'] = $yearenqId;
                 $values['itemId'] = $item['itemId'];
                 $values['itemType'] = $item['itemType'];
                 $itemVars = query("lookupqualities",$config,$values,$sort);
-                $yearen = $itemVars[0]['value'];
-                // default item years
-                $in = 0; // inclusive of year itself
-                if ($yearen == '') {
-                    $yearen = $yearst + $years;
-                } elseif (is_numeric($yearen)) {
-                    $in++;
-                    $tlineNull[] = array('type' => $item['itemType'], 'visId' => $visn['itemId'], 'itemId' => $item['itemId']);
-                }
+								// default item years
+								$in = (float) 0; // inclusive of year itself
+								if (!empty($itemVars) && is_numeric($itemVars[0]['value'])) {
+									$yearen = (float) $itemVars[0]['value'];
+									$in++;
+									$tlineNull[] = array('type' => $item['itemType'], 'visId' => $visn['itemId'], 'itemId' => $item['itemId']);
+								} else {
+									$yearen = $yearst + $years;
+								}
                 // set years duration
                 $yearsdur = $yearen + $in - $yearst;
 
@@ -551,7 +588,7 @@ foreach ((array) $attributes as $attr) {
                 $d2->add(new DateInterval('PT1M'));
                 $diff = $d2->diff($d1);
                 $yrdiff = $diff->y;
-                
+
                 /* cases:
                 item year start in future, starts within timeline and ends before timeline end
                 2020 2 yr
@@ -586,11 +623,11 @@ foreach ((array) $attributes as $attr) {
                 // else item year start this year or in past
                 } else {
                     // year to begin counting
-                    $yrbegin = 1; 
+                    $yrbegin = 1;
                     // year to end counting
                     $yrend = $yearsdur - $yrdiff;
                 }
-                
+
                 // update max years remaining
                 if (!$someday && !$complete) eval(formula('maxYrs'));
 
@@ -604,12 +641,12 @@ foreach ((array) $attributes as $attr) {
                 // 0 is base value used for sum of weighted value results per hour per year
                 $yr = 0;
                 while ($yr <= $yrend || $yr == 0) {
-                    
+
                     // skip years if start is in future
                     // except for first loop of yr = 0 always proceed
                     if ($yr < $yrbegin && $yr !== 0) { $yr++; continue; }
 
-                    // initialise timeline item values 
+                    // initialise timeline item values
                     $tlinevala = 0;
                     $tlinevalb = 0;
 
@@ -632,26 +669,26 @@ foreach ((array) $attributes as $attr) {
                         }
                         $i++;
                     }
-                    
+
                     // increment hours value
-                    if ($brainless == 'n') { 
+                    if ($brainless == 'n') {
                         $tlinevala += ceil($value * ($prob > 0 ? 1/$prob : 0));
-                    } else { 
+                    } else {
                         $tlinevalb += ceil($value * ($prob > 0 ? 1/$prob : 0));
                     }
-                    
+
                     // record active status
                     if (!$someday && !$complete) { $active = 1; } else { $active = 0; }
 
                     // update timeline array value, ignoring nil values
                     if ($tlinevala !== 0 || $tlinevalb !== 0) $timeline[] = array('type' => $item['itemType'], 'visId' => $visn['itemId'], 'id' => $item['itemId'], 'attrId' => $unqtimelineIds[$yr], 'valuea' => $tlinevala, 'valueb' => $tlinevalb, 'active' => $active);
-                    
+
                     // loop to next year on timeline
                     $yr++;
-                }    
+                }
             }
         }
-        
+
         // if paired output A obtained, store in text variable $output
         if ($output1 !== '') $output = $output1;
         // if paired output B obtained, assum A was obtained, separate A and B with character, and store in text variable $output
@@ -660,7 +697,7 @@ foreach ((array) $attributes as $attr) {
         if ($output !== '' || in_array($attr['format'],$resForce)) {
             if ($output == '') $output = 0;
             //$result[] = array('type' => 'v', 'visId' => $visn['itemId'], 'attrId' => $attr['qId'], 'value' => $output);
-            
+
             // if score item and optimising, place in array
             if ($optim && array_key_exists($attr['qId'], $scoreqIds)) {
                 foreach ((array) $scoreopt as $key => $opt) {
@@ -668,10 +705,10 @@ foreach ((array) $attributes as $attr) {
                         $scoreopt[$key]['scores'][$attr['qId']] = $output;
                         break;
                     }
-                }    
+                }
             }
         }
-        
+
         // special case $brainless for effort/year
         if ($attr['qId'] == $hoursId) {
             // check calculation variable
@@ -705,14 +742,14 @@ foreach ((array) $attributes as $attr) {
         // set variables for vision active or not to affect following summary calculation
         if ($visn['isSomeday'] == 'y') { $someday = true; } else { $someday = false; }
         if ($visn['dateCompleted'] == '') { $complete = false; } else { $complete = true; }
-        
+
         // eval to execute as script value for attribute's formula for summary
         // updates the $summary1 and $summary2 variables, formulae defined in gtdfuncs.php
         if (!$someday && !$complete) {
             eval(formula($attr['formulaSum1']));
             eval(formula($attr['formulaSum2']));
         }
-        
+
     }
     // if output obtained, or the current attribute must force a response to the matrix, push the record onto the final result
     // if ($summary1 !== '' || in_array($attr['format'],$resForce)) $result[] = array('type' => 'x', 'attrId' => $attr['qId'], 'form' => 'a', 'value' => $summary1);
@@ -731,7 +768,7 @@ foreach ((array) $attributes as $attr) {
                 $i++;
             }
             if ($i == 2) break;
-        }    
+        }
     }
 
     // special case $brainless for effort/year
@@ -783,21 +820,21 @@ foreach ((array) $scores as $score) {
             break;
         }
     }
-}    
+}
 
 // push vision value sums onto the final result
 $formsummary = array('a' => 0, 'b' => 0);
 $valuessummaryn = array();
 foreach ((array) $valuessumvisn as $key => $visn) {
-    
+
     foreach ((array) $visn as $valkey => $value) {
-        
+
         if ($valkey == 'active') { $active = $value; continue; }
         if (!isset($valuessummaryn[$valkey])) $valuessummaryn[$valkey] = $formsummary;
-        
+
         if ($value >= 0) { $value = ceil($value); } else { $value = floor($value); }
         $result[] = array('type' => 'v', 'visId' => $key, 'attrId' => $valkey, 'value' => $value);
-    
+
         // if vision is live then increment summary value sums
         if ($active) {
             if ($value >= 0) {
@@ -818,7 +855,7 @@ foreach ((array) $valuessummaryn as $key => $summary) {
 
 // process optimsing scores
 if ($optim) {
-    
+
     // process items
     foreach ((array) $scores as $score) {
         $exist = false;
@@ -843,7 +880,7 @@ if ($optim) {
                 break;
             }
         }
-    }    
+    }
 
     // calculate items, values, and summary
     foreach ((array) $scoreopt as $opt) {
@@ -855,7 +892,7 @@ if ($optim) {
             if ($score !== '0') $zeros = false;
         }
         if (!$cont || $zeros) continue;
-        
+
         // correlations
         if (stDev($opt['scores']) !== 0 && stDev($scoreqIds) !== 0) {
             $pearson = corr($scoreqIds, $opt['scores']);
@@ -867,7 +904,7 @@ if ($optim) {
         $uniformity = uniformity($opt['scores']);
         $uniformity = round($uniformity, 1);
         if ($uniformity < 0 || $uniformity == '0') $uniformity = '0.0';
-        
+
         // push to result
         if ($opt['type'] == 'x') {
             if (isset($unqoptimiseprefId)) $result[] = array('type' => 'x', 'attrId' => $unqoptimiseprefId, 'form' => $opt['form'], 'value' => $pearson);
@@ -901,12 +938,14 @@ foreach ((array) $valuessum as $valuesum) {
 // push vision value sums onto the final result
 $valuessummary = array('a' => 0, 'b' => 0);
 foreach ((array) $visions as $visn) {
+		// crude error check here
+		if (!isset($unqvaluessumId)) continue;
     if ($valuessumvis[$visn['itemId']] >= 0) {
         $result[] = array('type' => 'v', 'visId' => $visn['itemId'], 'attrId' => $unqvaluessumId, 'value' => ceil($valuessumvis[$visn['itemId']]));
     } else {
         $result[] = array('type' => 'v', 'visId' => $visn['itemId'], 'attrId' => $unqvaluessumId, 'value' => floor($valuessumvis[$visn['itemId']]));
     }
-    
+
     // if vision is live then increment summary value sums
     if ($visn['isSomeday'] !== 'y' && $visn['dateCompleted'] == '') {
         if ($valuessumvis[$visn['itemId']] >= 0) {
@@ -918,8 +957,10 @@ foreach ((array) $visions as $visn) {
 }
 
 // push summary value sums onto final result
-$result[] = array('type' => 'x', 'attrId' => $unqvaluessumId, 'form' => 'a', 'value' => $valuessummary['a']);
-$result[] = array('type' => 'x', 'attrId' => $unqvaluessumId, 'form' => 'b', 'value' => $valuessummary['b']);
+if (isset($unqvaluessumId)) {
+	$result[] = array('type' => 'x', 'attrId' => $unqvaluessumId, 'form' => 'a', 'value' => $valuessummary['a']);
+	$result[] = array('type' => 'x', 'attrId' => $unqvaluessumId, 'form' => 'b', 'value' => $valuessummary['b']);
+}
 
 
 // calculate and push item value sum per hours
@@ -945,14 +986,14 @@ foreach ((array) $timeline as $tline) {
                 if ($denominator > 1) {
                     $value = number_format($valuesum['value'] / $denominator, 1);
                     $result[] = array('type' => $valuesum['type'], 'visId' => $valuesum['visId'], 'itemId' => $valuesum['id'], 'attrId' => $unqtimelineIds[0], 'value' => $value);
-        
+
                     // increment vision value sums
                     if ($valuesum['active']) {
                         $valuessumvishours[$valuesum['visId']]['value'] += $valuesum['value'];
                         $valuessumvishours[$valuesum['visId']]['hours'] += $denominator;
                     }
                 }
-                
+
                 // stop searching
                 break;
             }
@@ -962,9 +1003,11 @@ foreach ((array) $timeline as $tline) {
 
 // push vision value sums hours onto the final result
 $valuessummaryhours = array('value' => 0, 'hours' => 0);
+// crude error check
+if (isset($unqtimelineIds[0]))
 foreach ((array) $visions as $visn) {
     foreach ((array) $valuessumvishours as $key=>$sumv) {
-        if ($visn['itemId'] == $key) {    
+        if ($visn['itemId'] == $key) {
             if ($sumv['hours'] <= 0) $sumv['hours'] = 1; // error handling if hours for item = 0 or negative, assume no division
             $result[] = array('type' => 'v', 'visId' => $visn['itemId'], 'attrId' => $unqtimelineIds[0], 'value' => number_format($sumv['value'] / $sumv['hours'], 1));
             break;
@@ -979,7 +1022,9 @@ foreach ((array) $visions as $visn) {
 }
 
 // push summary value sums hours onto final result
-$result[] = array('type' => 'x', 'attrId' => $unqtimelineIds[0], 'form' => 'a', 'value' => number_format($valuessummaryhours['value'] / $valuessummaryhours['hours'], 1));
+// crude error check
+if (isset($unqtimelineIds[0]) && isset($valuessummaryhours['hours']) && $valuessummaryhours['hours'] > 0)
+	$result[] = array('type' => 'x', 'attrId' => $unqtimelineIds[0], 'form' => 'a', 'value' => number_format($valuessummaryhours['value'] / $valuessummaryhours['hours'], 1));
 
 
 // process context sums
@@ -990,6 +1035,8 @@ foreach ((array) $visions as $visn) {
     $contextssumvis[$visn['itemId']] = 0;
 }
 foreach ((array) $contextssum as $contextsum) {
+		// crude error catch here, maybe should not be calculating $contextsum to begin with unless called in qLimit?
+		if (!isset($unqcontextssumId)) continue;
     // push item context sums onto the final result
     $result[] = array('type' => $contextsum['type'], 'visId' => $contextsum['visId'], 'itemId' => $contextsum['id'], 'attrId' => $unqcontextssumId, 'value' => round($contextsum['value']));
 
@@ -1000,12 +1047,15 @@ foreach ((array) $contextssum as $contextsum) {
 // push vision context sums onto the final result
 $contextssummary = array('a' => 0, 'b' => 0);
 foreach ((array) $visions as $visn) {
+		// crude error catch here, maybe should not be calculating $contextsum to begin with unless called in qLimit?
+		if (!isset($unqcontextssumId)) continue;
+
     if ($contextssumvis[$visn['itemId']] >= 0) {
         $result[] = array('type' => 'v', 'visId' => $visn['itemId'], 'attrId' => $unqcontextssumId, 'value' => ceil($contextssumvis[$visn['itemId']]));
     } else {
         $result[] = array('type' => 'v', 'visId' => $visn['itemId'], 'attrId' => $unqcontextssumId, 'value' => floor($contextssumvis[$visn['itemId']]));
     }
-    
+
     // if vision is live then increment summary context sums
     if ($visn['isSomeday'] !== 'y' && $visn['dateCompleted'] == '') {
         if ($contextssumvis[$visn['itemId']] >= 0) {
@@ -1017,9 +1067,10 @@ foreach ((array) $visions as $visn) {
 }
 
 // push summary context sums onto final result
-$result[] = array('type' => 'x', 'attrId' => $unqcontextssumId, 'form' => 'a', 'value' => $contextssummary['a']);
-$result[] = array('type' => 'x', 'attrId' => $unqcontextssumId, 'form' => 'b', 'value' => $contextssummary['b']);
-
+if (isset($unqcontextssumId)) {
+	$result[] = array('type' => 'x', 'attrId' => $unqcontextssumId, 'form' => 'a', 'value' => $contextssummary['a']);
+	$result[] = array('type' => 'x', 'attrId' => $unqcontextssumId, 'form' => 'b', 'value' => $contextssummary['b']);
+}
 
 // calculate and push item context sum per hours
 
@@ -1041,17 +1092,20 @@ foreach ((array) $timeline as $tline) {
                 // push item onto the final result
                 $denominator = $tline['valuea'] + $tline['valueb'];
                 // attribute conflict handling if hours for item = 0 or negative, assume no comparable value
-                if ($denominator > 1) {
+                if ($denominator > 1 && isset($unqcontextssumhrs)) {
                     $value = number_format($contextsum['value'] / $denominator, 1);
+										// in cases when GET variables are not carefully requested,
+										// $unqcontextssumhrs might not have returned the relevant quality with format = 'unqcontextssumhrs' because it is not called for Qual: Defult
+										// which stems from the GET variable $qLimit (which is set default = a in matrix.php)
                     $result[] = array('type' => $contextsum['type'], 'visId' => $contextsum['visId'], 'itemId' => $contextsum['id'], 'attrId' => $unqcontextssumhrs, 'value' => $value);
-        
+
                     // increment vision context sums
                     if ($contextsum['active']) {
                         $contextssumvishours[$contextsum['visId']]['value'] += $contextsum['value'];
                         $contextssumvishours[$contextsum['visId']]['hours'] += $denominator;
                     }
                 }
-                
+
                 // stop searching
                 break;
             }
@@ -1065,7 +1119,9 @@ foreach ((array) $visions as $visn) {
     foreach ((array) $contextssumvishours as $key=>$sumv) {
         if ($visn['itemId'] == $key) {
             if ($sumv['hours'] <= 0) $sumv['hours'] = 1; // error handling if hours for item = 0 or negative, assume no division
-            $result[] = array('type' => 'v', 'visId' => $visn['itemId'], 'attrId' => $unqcontextssumhrs, 'value' => number_format($sumv['value'] / $sumv['hours'], 1));
+						// crude error catch here, maybe should not be calculating $contextsum to begin with unless called in qLimit?
+						if (isset($unqcontextssumhrs))
+            	$result[] = array('type' => 'v', 'visId' => $visn['itemId'], 'attrId' => $unqcontextssumhrs, 'value' => number_format($sumv['value'] / $sumv['hours'], 1));
             break;
         }
     }
@@ -1078,7 +1134,9 @@ foreach ((array) $visions as $visn) {
 }
 
 // push summary context sums hours onto final result
-$result[] = array('type' => 'x', 'attrId' => $unqcontextssumhrs, 'form' => 'a', 'value' => number_format($contextssummaryhours['value'] / $contextssummaryhours['hours'], 1));
+// crude error catch here, maybe should not be calculating $contextsum to begin with unless called in qLimit?
+if (isset($unqcontextssumhrs))
+	$result[] = array('type' => 'x', 'attrId' => $unqcontextssumhrs, 'form' => 'a', 'value' => number_format($contextssummaryhours['value'] / $contextssummaryhours['hours'], 1));
 
 
 // timeline summary
@@ -1137,13 +1195,13 @@ foreach ((array) $tlinevis as $visId=>$varray) {
 
         // if vision is live then increment summary timeline
         foreach ((array) $visions as $visn) {
-            if ($visn['itemId'] == $visId && 
-                $visn['isSomeday'] == 'n' && 
+            if ($visn['itemId'] == $visId &&
+                $visn['isSomeday'] == 'n' &&
                 $visn['dateCompleted'] == ''
                 ) {
                 $tmpsummary[$tlineId]['a'] += $outputa;
                 $tmpsummary[$tlineId]['b'] += $outputb;
-            }        
+            }
         }
 
         // push vision timeline onto the final result
@@ -1255,7 +1313,10 @@ foreach ((array) $certaintiesitem as $certainty) {
     $value = $certainty['value'] * 10 / $certainty['count'];
     if (floor($value) > $certaintyMax) $certaintyMax = floor($value);
     if (floor($value) < $certaintyMin) $certaintyMin = floor($value);
-    
+
+		// crude error catch here, maybe should not be calculating to begin with unless called in qLimit?
+		if (!isset($unqprobabilityId)) continue;
+
     $result[] = array('type' => $certainty['type'], 'visId' => $certainty['visId'], 'itemId' => $certainty['itemId'], 'attrId' => $unqprobabilityId, 'value' => floor($value));
     if ($certainty['active']) {
         $certaintiesvis[$certainty['visId']]['count']++;
@@ -1269,6 +1330,8 @@ $certaintyviscount = 0;
 foreach ((array) $visions as $visn) {
     if ($certaintiesvis[$visn['itemId']]['count'] == 0) break;
     $value = $certaintiesvis[$visn['itemId']]['value'] / $certaintiesvis[$visn['itemId']]['count'];
+		// crude error catch here, maybe should not be calculating to begin with unless called in qLimit?
+		if (!isset($unqprobabilityId)) continue;
     $result[] = array('type' => 'v', 'visId' => $visn['itemId'], 'attrId' => $unqprobabilityId, 'value' => floor($value));
 
     // if vision is live then increment summary value sums
@@ -1279,14 +1342,16 @@ foreach ((array) $visions as $visn) {
 }
 
 // push summary value certainty onto final result
-if ($certaintyviscount > 0) $result[] = array('type' => 'x', 'attrId' => $unqprobabilityId, 'form' => 'a', 'value' => $certaintyMax);
-if ($certaintyviscount > 0) $result[] = array('type' => 'x', 'attrId' => $unqprobabilityId, 'form' => 'b', 'value' => $certaintyMin);
-//if ($certaintyviscount > 0) $result[] = array('type' => 'x', 'attrId' => $unqprobabilityId, 'form' => 'a', 'value' => floor($certaintysummary / $certaintyviscount));
-
+// crude error catch here, maybe should not be calculating to begin with unless called in qLimit?
+if (isset($unqprobabilityId)) {
+	if ($certaintyviscount > 0) $result[] = array('type' => 'x', 'attrId' => $unqprobabilityId, 'form' => 'a', 'value' => $certaintyMax);
+	if ($certaintyviscount > 0) $result[] = array('type' => 'x', 'attrId' => $unqprobabilityId, 'form' => 'b', 'value' => $certaintyMin);
+	//if ($certaintyviscount > 0) $result[] = array('type' => 'x', 'attrId' => $unqprobabilityId, 'form' => 'a', 'value' => floor($certaintysummary / $certaintyviscount));
+}
 
 // result
 
-// remove empty elements from result array 
+// remove empty elements from result array
 $result = array_values($result);
 // stop query time test
 $endtime = microtime(true);
@@ -1301,20 +1366,22 @@ function uniformity($x){
     // reset keys
     $x = array_values($x);
 
-    $length = count($x);
-    $mean = array_sum($x) / $length;
+		if (empty($x) || count($x) == 0 || array_sum($x) == 0) return 0;
 
-    $a = 0;
-    $a2 = 0;
+    $length = count($x);
+    $mean = (float) array_sum($x) / $length;
+
+    $a = (float) 0;
+    $a2 = (float) 0;
 
     for ($i=0; $i<$length; $i++)
     {
-        $a = $x[$i] - $mean;
-        $a2 = $a2 + pow($a,2);
+        $a = (float) $x[$i] - $mean;
+        $a2 = $a2 + (float) pow($a,2);
     }
-    
+
     $uniformity = 1 - $a2 / (pow($mean,2) * $length);
-    
+
     return $uniformity;
 }
 
@@ -1323,50 +1390,54 @@ function corr($x, $y){
     // reset keys
     $x = array_values($x);
     $y = array_values($y);
-    
+
     $length = count($x);
-    $mean1 = array_sum($x) / $length;
-    $mean2 = array_sum($y) / $length;
-    
-    $a = 0;
-    $b = 0;
-    $axb = 0;
-    $a2 = 0;
-    $b2 = 0;
-    
+    $mean1 = (float) array_sum($x) / $length;
+    $mean2 = (float) array_sum($y) / $length;
+
+    $a = (float) 0;
+    $b = (float) 0;
+    $axb = (float) 0;
+    $a2 = (float) 0;
+    $b2 = (float) 0;
+
     for ($i=0; $i<$length; $i++)
     {
-        $a = $x[$i] - $mean1;
-        $b = $y[$i] - $mean2;
+        $a = (float) $x[$i] - $mean1;
+        $b = (float) $y[$i] - $mean2;
         $axb = $axb + ($a * $b);
         $a2 = $a2 + pow($a,2);
         $b2 = $b2 + pow($b,2);
     }
-    
-    $corr = $axb / sqrt($a2*$b2);
-    
+
+		if ($a2 > 0 && $b2 > 0) {
+    	$corr = $axb / sqrt($a2*$b2);
+		} else {
+			$corr = (float) 0;
+		}
+
     return $corr;
 }
 
 // standard deviation
-function stDev ($arr) 
-    { 
-        $num_of_elements = count($arr); 
-          
-        $variance = 0.0; 
-          
-        // calculating mean using array_sum() method 
-        $average = array_sum($arr) / $num_of_elements; 
-          
-        foreach($arr as $i) 
-        { 
-            // sum of squares of differences between  
-            // all numbers and means. 
-            $variance += pow(($i - $average), 2); 
-        } 
-          
-        return (float) sqrt($variance / $num_of_elements); 
-    } 
+function stDev ($arr)
+    {
+        $num_of_elements = count($arr);
+
+        $variance = (float) 0.0;
+
+        // calculating mean using array_sum() method
+        $average = (float) array_sum($arr) / $num_of_elements;
+
+        foreach($arr as $i)
+        {
+            // sum of squares of differences between
+            // all numbers and means.
+            $variance += pow(((float)$i - $average), 2);
+        }
+
+        return (float) sqrt($variance / $num_of_elements);
+    }
 
 $debugSave = 'vsumvisn';
 
@@ -1374,7 +1445,7 @@ $debugSave = 'vsumvisn';
 switch ($debugSave) {
     case 'yrsval':
         file_put_contents ('a.txt',
-            '$yrsval: ' . print_r($yrsval,true) . "\n" 
+            '$yrsval: ' . print_r($yrsval,true) . "\n"
             );
         break;
     case 'vsumvisn':
@@ -1402,44 +1473,44 @@ switch ($debugSave) {
         break;
     case 'valuessumhrs':
         file_put_contents ('a.txt',
-            '$unqtimelineIds[0]: ' . $unqtimelineIds[0] . "\n" . 
-            '$valuessum: ' . print_r($valuessumvishours,true) . "\n" 
+            '$unqtimelineIds[0]: ' . $unqtimelineIds[0] . "\n" .
+            '$valuessum: ' . print_r($valuessumvishours,true) . "\n"
             );
         break;
     case 'contextssum':
         file_put_contents ('a.txt',
-            '$valParId: ' . $cntxtParId . "\n" . 
-            '$unqvaluessumId: ' . $unqcontextssumId . "\n" . 
+            '$valParId: ' . $cntxtParId . "\n" .
+            '$unqvaluessumId: ' . $unqcontextssumId . "\n" .
             '$scoreqIds: ' . print_r($scoreqIds,true) . "\n" .
             '$valuessum: ' . print_r($contextssum,true) . "\n"
             );
         break;
     case 'valuessum':
         file_put_contents ('a.txt',
-            '$valParId: ' . $valParId . "\n" . 
-            '$unqvaluessumId: ' . $unqvaluessumId . "\n" . 
-            '$valuessum: ' . print_r($valuessum,true) . "\n" 
+            '$valParId: ' . $valParId . "\n" .
+            '$unqvaluessumId: ' . $unqvaluessumId . "\n" .
+            '$valuessum: ' . print_r($valuessum,true) . "\n"
             );
         break;
     case 'optimise':
         file_put_contents ('a.txt',
-            '$scoreqIds: ' . print_r($scoreqIds,true) . "\n" . 
-            '$scoreweights: ' . print_r($scoreweights,true) . "\n" . 
-            '$scoreopt: ' . print_r($scoreopt,true) . "\n" . 
-            '$scores: ' . print_r($scores,true) . "\n" 
+            '$scoreqIds: ' . print_r($scoreqIds,true) . "\n" .
+            '$scoreweights: ' . print_r($scoreweights,true) . "\n" .
+            '$scoreopt: ' . print_r($scoreopt,true) . "\n" .
+            '$scores: ' . print_r($scores,true) . "\n"
             );
         break;
     case 'timeline':
         file_put_contents ('a.txt',
-            '$yearqId: ' . $yearqId . "\n" . 
-            '$brainlessId: ' . $brainlessId . "\n" . 
-            '$hoursId: ' . $hoursId . "\n" . 
-            '$unqhoursIds: ' . print_r($unqhoursIds,true) . "\n" . 
-            //'$sumHours: ' . print_r($sumHours,true) . "\n" . 
+            '$yearqId: ' . $yearqId . "\n" .
+            '$brainlessId: ' . $brainlessId . "\n" .
+            '$hoursId: ' . $hoursId . "\n" .
+            '$unqhoursIds: ' . print_r($unqhoursIds,true) . "\n" .
+            //'$sumHours: ' . print_r($sumHours,true) . "\n" .
             '$unqtimelineIds: ' . print_r($unqtimelineIds,true) . "\n" .
             '$skipqIds: ' . print_r($skipqIds,true) . "\n" .
-            'test : ' . "\n" . 
-            '$timeline: ' . print_r($timeline,true) . "\n" 
+            'test : ' . "\n" .
+            '$timeline: ' . print_r($timeline,true) . "\n"
             );
         break;
     case 'tlinevis':
@@ -1449,24 +1520,24 @@ switch ($debugSave) {
             );
         break;
     case 'childitems':
-        file_put_contents ('a.txt', 
-            'attr count: ' . count($attributes) . 
-            ', item count: ' . count($items) . 
-            ', $itemVar[id]: ' . $itemVar['id'] . 
-            ', $item[itemId]: ' . $item['itemId'] . 
-            ', $itemVar[type]: ' . $itemVar['type'] . 
-            ', $item[itemType]: ' . $item['itemType'] . 
+        file_put_contents ('a.txt',
+            'attr count: ' . count($attributes) .
+            ', item count: ' . count($items) .
+            ', $itemVar[id]: ' . $itemVar['id'] .
+            ', $item[itemId]: ' . $item['itemId'] .
+            ', $itemVar[type]: ' . $itemVar['type'] .
+            ', $item[itemType]: ' . $item['itemType'] .
             PHP_EOL, FILE_APPEND
             );
         break;
     case 'inactiveitems':
-        file_put_contents ('a.txt', 
-            'attr[qId]: ' . $attr['qId'] . 
-            ', value: ' . $value . 
-            ', someday: ' . $someday . 
-            ', complete: ' . $complete . 
-            ', output1: ' . $output1 . 
-            ', output2: ' . $output2 . 
+        file_put_contents ('a.txt',
+            'attr[qId]: ' . $attr['qId'] .
+            ', value: ' . $value .
+            ', someday: ' . $someday .
+            ', complete: ' . $complete .
+            ', output1: ' . $output1 .
+            ', output2: ' . $output2 .
             PHP_EOL . PHP_EOL, FILE_APPEND);
         break;
 }

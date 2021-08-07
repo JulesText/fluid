@@ -279,7 +279,7 @@ function getsql($config,$values,$sort,$querylabel) {
     			if (isset($values['qSearch'])) $sql .= " AND {$values['qSearch']} LIKE '%{$values['qNeedle']}%' ";
     			//if (isset($values['qLimit'])) $sql .= " AND `disp` LIKE '%{$values['qLimit']}%' ";
 				$sql .= "ORDER BY {$sort['getqualities']}";
-            break;
+    break;
 
 		case "lookupqualities":
 			$sql="SELECT *
@@ -290,7 +290,7 @@ function getsql($config,$values,$sort,$querylabel) {
     			if (isset($values['qId'])) $sql .= " AND `qId` = '{$values['qId']}'";
     			if (isset($values['itemType'])) $sql .= " AND `itemType` = '{$values['itemType']}'";
     			if (isset($values['qaId'])) $sql .= " AND `qaId` = '{$values['qaId']}'";
-            break;
+    break;
 
 		case "deletequalities":
 			$sql="DELETE

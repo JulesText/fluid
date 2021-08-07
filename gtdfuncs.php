@@ -526,16 +526,18 @@ function childUpd ($type,$itemId,$visId,$catId = '') {
    ======================================================================================
 */
 function formula ($id) {
-    $form = '';
+
+		$form = '';
+
     switch ($id) {
         case 'posIncTot' : // formulaSum1
-            $form = '                           $summary1 += $output1 - $pseudo2;';
+            $form .= '                           $summary1 += $output1 - $pseudo2;';
             break;
         case 'negIncTot' : // formulaSum2
-            $form = '                           $summary2 += $output2 + $pseudo2;';
+            $form .= '                           $summary2 += $output2 + $pseudo2;';
             break;
         case 'inc' : // formulaVis1
-            $form = '                           $output1 += ceil($value * ($prob > 0 ? 1/$prob : 0) * $weight);
+            $form .= '                           $output1 += ceil($value * ($prob > 0 ? 1/$prob : 0) * $weight);
                     if (
                         is_numeric($value) &&
                         $value < 0
@@ -543,39 +545,53 @@ function formula ($id) {
                                                 ';
             break;
         case 'scorCubeYr' : // formulaVis1
-            $form = 'if (
+            $form .= 'if (
                         is_numeric($value) &&
                         $value > 0
-                        )            $output1 += ceil(pow($value,3) * $prob * $weight / $years);
+                        )
+												$output1
+												+= ceil(pow($value,3)
+												* $prob
+												* $weight
+												/ $years);
                     if (
                         is_numeric($value) &&
                         $value < 0
-                        ) {         $output1 += floor(pow($value,3) * $prob * $weight / $years);
-                                    $pseudo2 += floor(pow($value,3) * $prob * $weight / $years);
+                        ) {
+												$output1
+												+= floor(pow($value,3)
+												* $prob
+												* $weight
+												/ $years);
+                        $pseudo2
+												+= floor(pow($value,3)
+												* $prob
+												* $weight
+												/ $years);
                         }';
             break;
 /*
         case 'posCubeYr' : // formulaVis1
-            $form = 'if ($value > 0)            $output1 += ceil(pow($value,3) * $prob * $weight / $years);';
+            $form .= 'if ($value > 0)            $output1 += ceil(pow($value,3) * $prob * $weight / $years);';
             break;
         case 'negCubeYr' : // formulaVis2
-            $form = 'if ($value < 0)            $output2 += floor(pow($value,3) * $prob * $weight / $years);';
+            $form .= 'if ($value < 0)            $output2 += floor(pow($value,3) * $prob * $weight / $years);';
             break;
         case 'posInc' : // formulaVis1
-            $form = 'if (
+            $form .= 'if (
                         is_numeric($value) &&
                         $value > 0
                         )                       $output1 += ceil($value * ($prob > 0 ? 1/$prob : 0) * $weight);';
             break;
         case 'negInc' : // formulaVis2
-            $form = 'if (
+            $form .= 'if (
                         is_numeric($value) &&
                         $value < 0
                         )                       $output2 += floor($value * ($prob > 0 ? 1/$prob : 0) * $weight);';
             break;
 */
         case 'incBrain' : // formulaVis1
-            $form = 'if (
+            $form .= 'if (
                         $brainless != "y" &&
                         is_numeric($value) &&
                         $value > 0
@@ -588,7 +604,7 @@ function formula ($id) {
                         ';
             break;
         case 'incBrainless' : // formulaVis2
-            $form = 'if (
+            $form .= 'if (
                         $brainless == "y" &&
                         is_numeric($value) &&
                         $value > 0
@@ -601,17 +617,17 @@ function formula ($id) {
                         ';
             break;
         case 'cubeYrItem' : // matrixfomula.php
-            $form = '                           $sum = round(pow($value,3) * $prob * $weight / $years, 2);';
+            $form .= '                           $sum = round(pow($value,3) * $prob * $weight / $years, 2);';
             break;
         case 'maxYrs' : // formulaVis1
-            $form = 'if ($yrend > $outputYrs)    $outputYrs = $yrend;
+            $form .= 'if ($yrend > $outputYrs)    $outputYrs = $yrend;
                     if ($yearst < $outputYear &&
                         $outputYear)            $outputYear = $yearst;
                     if (!$outputYear)           $outputYear = $yearst;
                         ';
             break;
         case 'maxIntAll' : // formulaSum1
-            $form = 'if (is_numeric($output1) &&
+            $form .= 'if (is_numeric($output1) &&
                         (
                         !is_numeric($summary1)
                         || (
@@ -620,7 +636,7 @@ function formula ($id) {
                         )))                       $summary1 = $output1;';
             break;
         case 'maxInt' : // formulaVis1
-            $form = 'if (is_numeric($value) &&
+            $form .= 'if (is_numeric($value) &&
                         (
                         !is_numeric($output1)
                         || (
@@ -637,7 +653,7 @@ function formula ($id) {
                         ';
             break;
         case 'minIntAll' : // formulaSum2
-            $form = '
+            $form .= '
                     if (is_numeric($pseudo2))   $summary2 = $pseudo2;
                     if (is_numeric($output2) &&
                         (
@@ -648,7 +664,7 @@ function formula ($id) {
                         )))                      $summary2 = $output2;';
             break;
         case 'minInt' : // formulaVis2
-            $form = 'if (is_numeric($value) &&
+            $form .= 'if (is_numeric($value) &&
                         (
                         !is_numeric($output2)
                         || (

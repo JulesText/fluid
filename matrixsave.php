@@ -23,7 +23,7 @@ if ($_POST['updCol'] == 'title' && in_array($_POST['table'], array('list','check
     $updVal = trim($updVal);
 }
 */
-$updVal = mysqli_real_escape_string($connection, $updVal);
+$updVal = mysqli_real_escape_string($config["conn"], $updVal);
 
 //    file_put_contents ('a.txt',$_POST['updCol'] . 'has' . $_POST['table'], FILE_APPEND);die;
 

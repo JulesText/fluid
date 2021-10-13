@@ -6,7 +6,7 @@
 }
 
 table.datatable {
-    color: blue; 
+    color: blue;
 }
 
 td.JKPadding {
@@ -14,11 +14,25 @@ td.JKPadding {
 }
 
 td.col-description {
-	color: black; padding: 30px; 
+	color: black; padding: 30px;
 }
 
 td.col-desiredOutcome {
-	color: black; padding: 30px; 
+	color: black; padding: 30px;
+}
+
+td.col-checkbox {
+	padding: 20px;
+	opacity: 0.25;
+}
+
+td.col-NA {
+	padding: 20px;
+	opacity: 0.25;
+}
+
+checkbox {
+	opacity: 0.25;
 }
 
 th.col-description {
@@ -41,6 +55,11 @@ td.col-title {
 
 td.JKSmallPadding {
 	color: black; padding: 30px;
+}
+
+td.JKSmallPaddingFaded {
+	color: black; padding: 30px;
+	opacity: 0.25;
 }
 
 p.JKSmallPadding {
@@ -84,7 +103,7 @@ fieldset {
 
 td.jjk {
 	vertical-align: text-top;
-	color:#333; 
+	color:#333;
 	text-decoration: none;
 	font-weight: bold;
 }
@@ -98,7 +117,7 @@ tbody td {
 }
 
 .whitespace {
-    white-space: nowrap; 
+    white-space: nowrap;
 }
 
 .underline {
@@ -115,11 +134,12 @@ tbody td {
 /*===================================================================================*/
 body {
 	text-align: left;
+	background: #fafafa;
 }
 
 #container {
 	width: 100%;
-	margin: 10px;	
+	margin: 10px;
 }
 
 #sidebar {
@@ -190,7 +210,7 @@ div.reportsection {
 
 
 /* the ! preceding each project without a next action defined (in listProjects.php) */
-span.noNextAction { 
+span.noNextAction {
 	margin-right: .5em;
 }
 
@@ -204,13 +224,13 @@ span.nextActionMarker {
 .form {
 	padding: 1em;
 	margin-bottom: 1em;
-	
+
 }
 .formrow {
 	clear: left;
 	margin-bottom: .25em;
 }
-/* grrr... IE6 requires this, or things get ugly */		
+/* grrr... IE6 requires this, or things get ugly */
 * html .formrow {
 	width: 60.5em;
 	height: 2.1em;
@@ -332,17 +352,17 @@ h4 {
 
 
 a {
-	color:#006; 
+	color:#006;
 	text-decoration: none;
 	font-weight: bold;
 }
 a:visited {
-	color:#006; 
+	color:#006;
 	text-decoration: none;
 }
 a:hover{
 	text-decoration: underline;
-	color:#006; 
+	color:#006;
 }
 a img {
 	border:0;
@@ -515,12 +535,12 @@ input.warning {
 
 
 a.pageheading:hover {
-	color:#006; 
+	color:#006;
 	text-decoration: underline;
 }
 
 a.subheading:hover {
-	color:#006; 
+	color:#006;
 	text-decoration: underline;
 }
 
@@ -619,5 +639,5 @@ div#freezer {
 .trans {
     opacity:0;
     border:0px;
-    
+
 }

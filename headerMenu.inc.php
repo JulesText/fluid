@@ -19,6 +19,7 @@ $menu[] = array("link"=>"fantastical2://", 'title'=>"Calendar", 'label' => "Cale
 //$menu[] = array("link"=>"reportLists.php?id=170&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Process FFF");
 $menu[] = array("link"=>"Lunar.php", 'title'=>"Phase", 'label' => "Phase");
 $menu[] = array("link"=>"index.php", 'title'=>"Summary View", 'label' => "Summary View");
+$menu[] = array("link"=>"pertinent.html", 'title'=>"HHome Tabs", 'label' => "HHome Tabs");
 $menu[] = array("link"=>"listItems.php?tickler=false&type=w&contextId=25&notspacecontext=true&nextonly=true&dueonly=true&liveparents=*", 'title'=>"Due Waiting On", 'label' => "Due Waiting On");
 $menu[] = array("link"=>"listItems.php?tickler=false&type=a&contextId=25&notspacecontext=true&dueonly=true&liveparents=*", 'title'=>"Due Actions", 'label' => "Due Actions");
 $menu[] = array("link"=>"reportContext.php?notContext=25", 'title'=>"Process actions sorted by space context", 'label' => "All Contexts");

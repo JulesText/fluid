@@ -5,7 +5,7 @@
     require_once("headerDB.inc.php");
 
     $servip = explode(".",$_SERVER['REMOTE_ADDR']);
-    $serv = $servip[0] . "." . $servip[1] . "." . $servip[2];
+    $serv = $servip[0] . "." . $servip[1] . "." . $servip[2] . "." . $servip[3];
     if(!in_array($_SERVER['REMOTE_ADDR'], $ip) && !in_array($serv, $iprange)) include("password_protect.php");
 /*
     if ($_SESSION['version']!==_GTD_VERSION && !isset($areUpdating) ) {

@@ -5,7 +5,11 @@ include_once('lists.inc.php');
 $cashtml=categoryselectbox($config,$values,$sort);
 $values['filterquery']="";
 if ($values['categoryId']) $values['filterquery']= " WHERE ".sqlparts("listcategoryfilter",$config,$values);
+if ($values['catcodeId']) $values['filterquery']= " WHERE ".sqlparts("listcatcodefilter",$config,$values);
 $result = query("get{$check}lists",$config,$values,$sort);
+
+$codes = query("getcatcodes",$config,$values,$sort);
+
 $createURL="editLists.php?$urlSuffix"
             .(($values['categoryId']) ? "&amp;categoryId={$values['categoryId']}" : '');
 require_once("headerHtml.inc.php");
@@ -14,7 +18,13 @@ require_once("headerHtml.inc.php");
 <?php
     if ($display) {
         ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;[ <a href="listLists.php?type=<?php echo $type; ?>">limit</a> ]</h2>
+        &nbsp;&nbsp;&nbsp;&nbsp;[ <a href="listLists.php?type=<?php echo $type; ?>">limit</a> ]
+				<?php
+				foreach ($codes as $code) {
+					echo '&nbsp;&nbsp;&nbsp;&nbsp;[ <a href="listLists.php?display=true&type=' . $type . '&catcodeId=' . $code['sortBy'] . '">' . $code['title'] . '</a> ]';
+				}
+				?>
+				</h2>
         <?php
     } else {
         ?>
@@ -37,7 +47,7 @@ require_once("headerHtml.inc.php");
 
 */ ?>
 
-<?php if ($result) { 
+<?php if ($result) {
 ?>
     <table class="datatable sortable" id="categorytable" summary="table of categories">
         <thead><tr>
@@ -51,10 +61,14 @@ require_once("headerHtml.inc.php");
             <tr>
                 <td style="text-align: center" <?php if (!$display) { echo 'class="togglehidden"'; } ?>>
                 <?php
-                    echo makeclean($row['category']);
-                    echo '<br><span style="opacity: 0.3">' . makeclean($row['sortBy']) . '</span>';
+                    echo '<span style="opacity: 0.1">' . makeclean($row['sortBy']) . '</span><br>' .
+										'<span style="opacity: 0.3">' .
+										makeclean($row['ccctitle']) . '<br><br>' .
+										makeclean($row['cctitle']) . '<br><br>' .
+										makeclean($row['category']) .
+										'</span>';
                 ?></td>
-                
+
                 <?php
                     $metaphor = '';
                     if($row['metaphor']) {
@@ -65,15 +79,15 @@ require_once("headerHtml.inc.php");
                         } else {
                             if ($display) $metaphor .= "<br>";
                             $metaphor .= "&nbsp;&nbsp;&nbsp;<img src=\"media/" . $row['metaphor'] . "\" height=\"40px\"></a><a href=\"media/" . $row['metaphor'] . "\" target=\"_blank\">";
-                        }               
+                        }
                     }
                 ?>
 
                 <td class="JKSmallPadding"><a href="reportLists.php?id=<?php echo $row['id'],'&amp;',$urlSuffix; ?>"><?php
                     echo makeclean($row['title']) . $metaphor;
                 ?></a></td>
-                
-                <?php                
+
+                <?php
                     $descriptionString = '';
                     if ($row['premiseA']) $descriptionString .= "<br><br>" . $row['premiseA'];
                     if ($row['premiseB']) $descriptionString .= "<br><br>" . $row['premiseB'];
@@ -86,18 +100,18 @@ require_once("headerHtml.inc.php");
                     $desiredOutcomeStr = $row['behaviour'];
                     if ($row['standard']) $desiredOutcomeStr .= ", <br>" . $row['standard'];
                     if ($row['conditions']) $desiredOutcomeStr .=  ", <br>" . $row['conditions'];
-                ?>                
-                
+                ?>
+
                 <td class="JKSmallPadding<?php if (!$display) { echo ' togglehidden'; } ?>"><?php
                      echo $descriptionString;
                 ?></td>
-                
+
                 <td class="JKSmallPadding<?php if (!$display) { echo ' togglehidden'; } ?>"><?php
                      echo $desiredOutcomeStr;
                 ?></td>
-                
+
                 <td class="<?php if ($display) { echo "JKSmallPadding whitespace"; } else { echo "togglehidden"; } ?>">
-                    <?php 
+                    <?php
                         unset($values['itemId']);
                         $values['listId'] = $row['id'];
                         $values['type'] = $type;
@@ -106,6 +120,9 @@ require_once("headerHtml.inc.php");
                             foreach ($resultParents as $parent) {
                                 $values['itemId'] = $parent['itemId'];
                                 $title = query("getitembrief",$config,$values,$sort);
+																if(empty($title)) {
+																	echo "<pre>error missing parent<br>";#var_dump($resultParents); #die;
+																}
                                 foreach ($title as $text) {
                                     echo makeclean($text['title']) . '<br>';
                                 }
@@ -116,7 +133,7 @@ require_once("headerHtml.inc.php");
             </tr><?php } ?>
         </tbody>
     </table>
-<?php } 
+<?php }
 else {
     $message="You have not defined any lists yet.";
     $prompt="Would you like to create a new list?";

@@ -7,9 +7,9 @@
 $thisurl=parse_url($_SERVER['PHP_SELF']);
 
 $title = $config['title'];
-/*    if ($_GET['content'] == 'limit') { 
-        $title .= $config['title']; 
-    } else { 
+/*    if ($_GET['content'] == 'limit') {
+        $title .= $config['title'];
+    } else {
         switch($_GET['type']) {
             case 'C' :
                 if ($values['item']) $title .= $values['item'];
@@ -20,15 +20,15 @@ $title = $config['title'];
                 if ($row['title']) $title .= $row['title'] . " list";
                 break;
             default:*/
-                if (isset($item['title'])) $title = $item['title'];
-                if (isset($values['title'])) $title = $values['title'];
-                $arr = str_split($title, 3);
-                $arr[0] = preg_replace("/[0-9_,.]/", "", $arr[0]);
-                $title = implode("", $arr);
-                $title = ucwords(strtolower(ltrim($title)));
-                if (isset($type) && $type==='c') $title .= ' CL';
-                if (isset($type) && $type==='l') $title .= ' List';
-                if (isset($mxTitle)) $title = $mxTitle;
+if (isset($item['title'])) $title = $item['title'];
+if (isset($values['title'])) $title = $values['title'];
+$arr = str_split($title, 3);
+$arr[0] = preg_replace("/[0-9_,.]/", "", $arr[0]);
+$title = implode("", $arr);
+$title = ucwords(strtolower(ltrim($title)));
+#if (isset($type) && $type==='c') $title .= ' CL';
+#if (isset($type) && $type==='l') $title .= ' List';
+if (isset($mxTitle)) $title = $mxTitle;
      /*   }
     } */
 
@@ -79,7 +79,7 @@ if (!isset($_SESSION['useLiveEnhancements']))
 <?php
 }
 if ($config['debug'] || defined('_DEBUG'))
-	echo '<script type="text/javascript">aps_debugInit("',$config['debugKey'],'");</script>'; 
+	echo '<script type="text/javascript">aps_debugInit("',$config['debugKey'],'");</script>';
 
 // try to prevent low key errors
 error_reporting( error_reporting() & ~E_NOTICE );

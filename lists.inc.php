@@ -7,11 +7,12 @@ if ($isChecklist) {
     $type='l';
     $check='';
 }
-$values=array(
+$values=array( 
      'id'        => (isset($_REQUEST['id']))         ? (int) $_REQUEST['id'] : 0
     ,'itemId'    => (empty($_REQUEST['itemId']))     ? '' : $_REQUEST['itemId']
     ,'instanceId'=> (isset($_REQUEST['instanceId']) && is_numeric($_REQUEST['instanceId'])) ? $_REQUEST['instanceId']:''
     ,'categoryId'=> (isset($_REQUEST['categoryId'])) ? (int)$_REQUEST['categoryId']:0
+		,'catcodeId'=> (isset($_REQUEST['catcodeId'])) ? (string)$_REQUEST['catcodeId']:FALSE
     ,'scored'=> (isset($_REQUEST['scored'])) ? $_REQUEST['scored']:'n'
     ,'prioritise'=> (isset($_REQUEST['prioritise'])) ? $_REQUEST['prioritise']:'n'
     );

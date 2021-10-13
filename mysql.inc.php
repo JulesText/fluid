@@ -246,7 +246,7 @@ function getsql($config,$values,$sort,$querylabel) {
 		case "completeitem":
 			$sql="UPDATE `". $config['prefix'] ."itemstatus`
 				SET `dateCompleted`=" . $values['dateCompleted'].
-				", `lastModified` = NULL
+				", `lastModified` = CURRENT_DATE
 				WHERE `itemId`=" . $values['itemId'];
 			break;
 
@@ -492,11 +492,24 @@ function getsql($config,$values,$sort,$querylabel) {
 
 		case "getchecklists":
 			$sql="SELECT l.`checklistId` as id, l.`title`,
-						l.`premiseA`,l.`premiseB`,l.`conclusion`,l.`behaviour`, l.`standard`, l.`conditions`, l.`metaphor`, l.`categoryId`, l.`hyperlink`, l.`sortBy`, c.`category`
+						l.`premiseA`,l.`premiseB`,l.`conclusion`,l.`behaviour`, l.`standard`, l.`conditions`, l.`metaphor`, l.`categoryId`, l.`hyperlink`, l.`sortBy`, c.`category`,
+						cc.`parentId` as ccparentId, cc.`title` as cctitle, ccc.`title` as ccctitle
 				FROM `". $config['prefix'] ."checklist` as l
-				LEFT OUTER JOIN `{$config['prefix']}categories` as c USING (`categoryId`) "
+				LEFT OUTER JOIN `{$config['prefix']}categories` as c USING (`categoryId`)
+				LEFT JOIN `{$config['prefix']}catcodes` as cc
+				ON LEFT(l.`sortBy`,2) = cc.`sortBy`
+				LEFT JOIN `{$config['prefix']}catcodes` as ccc
+				ON cc.`parentId` = ccc.`sortBy`
+				"
 				.$values['filterquery']." ORDER BY {$sort['getchecklists']}";
-			break;
+		break;
+
+		case "getcatcodes":
+			$sql="SELECT `sortBy`, `title`
+				FROM `". $config['prefix'] ."catcodes`
+				WHERE ISNULL(`parentId`)
+				";
+		break;
 
 		case "getchildren":
 			$sql="SELECT i.`itemId`, i.`title`, i.`description`,
@@ -749,8 +762,11 @@ function getsql($config,$values,$sort,$querylabel) {
 		case "newitemstatus":
 			$sql="INSERT INTO `". $config['prefix'] . "itemstatus`
 						(`itemId`,`dateCreated`,`lastModified`,`dateCompleted`)
-				VALUES ('{$values['newitemId']}',
-						CURRENT_DATE,NULL,{$values['dateCompleted']})";
+				VALUES (
+						'{$values['newitemId']}',
+						CURRENT_DATE,
+						CURRENT_DATE,
+						{$values['dateCompleted']})";
 			break;
 
 		case "newlist":
@@ -761,8 +777,15 @@ function getsql($config,$values,$sort,$querylabel) {
 
 		case "newlistitem":
 			$sql="INSERT INTO `". $config['prefix'] . "listitems`
-				VALUES (NULL, '{$values['item']}',
-						'{$values['notes']}','{$values['hyperlink']}', '{$values['id']}', NULL)";
+				VALUES (
+					NULL,
+					'{$values['item']}',
+					'{$values['notes']}',
+					'{$values['hyperlink']}',
+					'{$values['id']}',
+					NULL,
+					0
+					)";
 			break;
 
 		case "newnextaction":
@@ -996,7 +1019,7 @@ function getsql($config,$values,$sort,$querylabel) {
 
 		case "touchitem":
 			$sql="UPDATE `". $config['prefix'] . "itemstatus`
-				SET `lastModified` = NULL
+				SET `lastModified` = CURRENT_DATE
 				WHERE `itemId` = '{$values['itemId']}'";
 			break;
 
@@ -1243,6 +1266,9 @@ function sqlparts($part,$config,$values) {
 		break;
 	case "checklistcategoryfilter":
 		$sqlpart = " cl.`categoryId`='{$values['categoryId']}' ";
+		break;
+	case "listcatcodefilter":
+		$sqlpart = " ccc.`sortBy`='{$values['catcodeId']}' ";
 		break;
 	case "completeditems":
 		$sqlpart = " its.`dateCompleted` IS NOT NULL ";

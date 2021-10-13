@@ -27,7 +27,7 @@ $filter['notspacecontext']=getVarFromGetPost('notspacecontext');
 $filter['nottimecontext'] =getVarFromGetPost('nottimecontext');
 $filter['tickler']        =getVarFromGetPost('tickler');           //suppressed (tickler file): true/false
 $filter['someday']        =getVarFromGetPost('someday');           //someday/maybe:true/empty
-$filter['nextonly']       =getVarFromGetPost('nextonly');          //next actions only: true/empty 
+$filter['nextonly']       =getVarFromGetPost('nextonly');          //next actions only: true/empty
 $filter['completed']      =getVarFromGetPost('completed');         //status:true/false (completed/pending)
 $filter['dueonly']        =getVarFromGetPost('dueonly');           //has due date:true/empty
 $filter['repeatingonly']  =getVarFromGetPost('repeatingonly');     //is repeating:true/empty
@@ -114,7 +114,7 @@ switch ($values['type']) {
     case "w" : $typename="Waiting On"; $parentname="Project"; $values['ptype']="p"; $show['parent']=TRUE; $checkchildren=FALSE; break;
     case "r" : $typename="Reference"; $parentname="Project"; $values['ptype']="p"; $show['parent']=TRUE; $show['category']=FALSE; $show['context']=FALSE; $show['timeframe']=FALSE; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=FALSE; $checkchildren=FALSE; break;
     case "i" : $typename="Inbox Item"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['category']=FALSE; $show['context']=FALSE; $show['timeframe']=FALSE; $show['deadline']=TRUE; $show['dateCreated']=FALSE; $show['repeat']=FALSE; $show['assignType']=TRUE; $afterTypeChange='listItems.php?type=i';$checkchildren=FALSE; break;
-    default  : $typename="Item"; $parentname=""; $values['ptype']=""; $checkchildren=FALSE; 
+    default  : $typename="Item"; $parentname=""; $values['ptype']=""; $checkchildren=FALSE;
 }
 $show['flags']=$checkchildren; // temporary measure; to be made user-configurable later
 
@@ -126,7 +126,7 @@ if ($filter['someday']=="true") {
     $show['NA']=FALSE;
     $show['deadline']=false;
     $show['timeframe']=FALSE;
-    $checkchildren=FALSE; 
+    $checkchildren=FALSE;
 }
 
 if ($filter['tickler']=="true") $show['suppressUntil']=TRUE;
@@ -148,7 +148,7 @@ if ($filter['completed']=="true") {
     $show['repeat']=FALSE;
     $show['dateCompleted']=TRUE;
     $show['checkbox']=FALSE;
-    $checkchildren=FALSE; 
+    $checkchildren=FALSE;
 }
 
 if ($filter['everything']=="true") {
@@ -212,39 +212,45 @@ if ($filter['everything']!="true") {
 
         case 'true': //Filter out items with completed/suppressed/someday parents  - deliberately flows through to default case
         default:
-            $values['filterquery'] .= ' WHERE '.sqlparts("liveparents",$config,$values);
-            break;
+					# get parent ids where liveparents
+					if ($values['parentId']!=='') {
+						#echo '<pre>sss';
+						#var_dump($values);
+						#die;
+					}
+					$values['filterquery'] .= ' WHERE '.sqlparts("liveparents",$config,$values);
+        break;
     }
 
     //filter box filters
     if ($filter['tickler']=="false") {
         $values['childfilterquery'] .= " AND ia.`suppress` = 'n' ";
     }
-    
+
     if ($filter['categoryId'] != NULL && $filter['notcategory']=="true")
         $values['childfilterquery'] .= " AND ".sqlparts("notcategoryfilter",$config,$values);
     elseif($filter['categoryId'] != NULL || $filter['notcategory']=="true") {
         $values['childfilterquery'] .= " AND ".sqlparts("categoryfilter",$config,$values);
         $linkfilter .= '&amp;categoryId='.$values['categoryId'];
     }
-    
+
     if ($filter['contextId'] != NULL && $filter['notspacecontext']=="true")
         $values['childfilterquery'] .= " AND ".sqlparts("notcontextfilter",$config,$values);
     elseif ($filter['contextId'] != NULL || $filter['notspacecontext']=="true") {
         $values['childfilterquery'] .= " AND ".sqlparts("contextfilter",$config,$values);
         $linkfilter .= '&amp;contextId='.$values['contextId'];
     }
-    
+
     if ($filter['timeframeId'] != NULL && $filter['nottimecontext']=="true")
         $values['childfilterquery'] .= " AND ".sqlparts("nottimeframefilter",$config,$values);
     elseif ($filter['timeframeId'] != NULL || $filter['nottimecontext']=="true") {
         $values['childfilterquery'] .= " AND ".sqlparts("timeframefilter",$config,$values);
         $linkfilter .= '&amp;timeframeId='.$values['timeframeId'];
     }
-    
+
     if ($filter['completed']=="true") $values['childfilterquery'] .= " AND ".sqlparts("completeditems",$config,$values);
     else $values['childfilterquery'] .= " AND " .sqlparts("pendingitems",$config,$values);
-    
+
     if ($filter['someday']=="true") {
         $values['isSomeday']="y";
         $values['childfilterquery'] .= " AND " .sqlparts("issomeday",$config,$values);
@@ -252,16 +258,16 @@ if ($filter['everything']!="true") {
         $values['isSomeday']="n";
         $values['childfilterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
     }
-    
+
     if ($filter['tickler']=="true") {
         $linkfilter .='&amp;tickler=true';
         $values['childfilterquery'] .= " AND ".sqlparts("suppresseditems",$config,$values);
     } else {
         $values['childfilterquery'] .= " AND ".sqlparts("activeitems",$config,$values);
     }
-    
+
     if ($filter['repeatingonly']=="true") $values['childfilterquery'] .= " AND " .sqlparts("repeating",$config,$values);
-    
+
     if ($filter['dueonly']=="true") $values['childfilterquery'] .= " AND " .sqlparts("due",$config,$values);
 
 }
@@ -302,7 +308,7 @@ if ($quickfind)
     $result=0;
 else
     $result=query("getitemsandparent",$config,$values,$sort);
-    
+
 $maintable=array();
 $thisrow=0;
 $allids=array();
@@ -312,7 +318,7 @@ if ($result) {
     $wasNAonEntry=array();  // stash this in case we introduce marking actions as next actions onto this screen
     foreach ($result as $row) {
         $allids[]=$row['itemId'];
-    
+
         $nochildren=false;
         $nonext=false;
         if ($checkchildren) {
@@ -322,7 +328,7 @@ if ($result) {
         if (isset($row['NA'])) {
             if ($row['NA']) array_push($wasNAonEntry,$row['itemId']);
         } else $row['NA']=false;
-        
+
         $maintable[$thisrow]=array();
         $maintable[$thisrow]['itemId']=$row['itemId'];
         $maintable[$thisrow]['class'] = ($nonext || $nochildren)?'noNextAction':'';
@@ -354,7 +360,7 @@ if ($result) {
         //item title
         if (!($row['type']=="a" || $row['type']==="r" || $row['type']==="w" || $row['type']==="i"))
             $maintable[$thisrow]['doreport']=true;
-        
+
         $cleantitle=makeclean($row['title']);
         $cleantitle=$row['title'];
         $maintable[$thisrow]['title.class'] = 'maincolumn';
@@ -365,21 +371,21 @@ echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
                 ,$values['isSomeday'];
             if (!empty($referrer)) echo "&amp;referrer=$referrer";
             echo "'>Convert to ",getTypes($totype),"</a>\n";
-*/          
+*/
         if($row['metaphor']) {
             if (strpos($row['metaphor'], '.swf')) {
                 $maintable[$thisrow]['title'] .= "</a><br><embed src=\"media/" . $row['metaphor'] . "\" quality=high height=101></embed>";
                 } else {
                 $maintable[$thisrow]['title'] .= "<br><img src=\"media/" . $row['metaphor'] . "\" height=\"100px\"></a><a href=\"media/" . $row['metaphor'] . "\" target=\"_blank\"><";
-                }               
+                }
         }
-        
+
         if($row['isSomeday'] == 'y') {
             $maintable[$thisrow]['title'] .= "</a><br><br><br><div style='float: right; text-align: right; width: 50%; opacity: 0.5;'> <a href='processItems.php?action=changeType&amp;itemId=" . $row['itemId'] . "&amp;safe=1&amp;type=" . $row['type'] . "&amp;isSomeday=n&amp;referrer=itemReport.php?itemId=" . $row['itemId'] . "' target='_blank'>Enact</a></div><a>";
         } else {
             $maintable[$thisrow]['title'] .= "</a><br><br><br><div style='float: right; text-align: right; width: 50%; opacity: 0.5;'> <a href='processItems.php?action=changeType&amp;itemId=" . $row['itemId'] . "&amp;safe=1&amp;type=" . $row['type'] . "&amp;isSomeday=y&amp;referrer=itemReport.php?itemId=" . $row['itemId'] . "' target='_blank'>Defer</a></div><a>";
         }
-        
+
         $maintable[$thisrow]['checkbox.title']='Complete '.$cleantitle;
         $maintable[$thisrow]['checkboxname']= 'isMarked[]';
         $maintable[$thisrow]['checkboxvalue']=$row['itemId'];
@@ -393,7 +399,7 @@ echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
             $descriptionString .= faLink($row['hyperlink']);
         }
         $maintable[$thisrow]['description'] = $descriptionString;
-        
+
         $desiredOutcomeStr = $row['behaviour'];
         if ($row['standard']) $desiredOutcomeStr .= ", <br>" . $row['standard'];
         if ($row['conditions']) $desiredOutcomeStr .=  ", <br>" . $row['conditions'];
@@ -404,7 +410,7 @@ echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
 
         $maintable[$thisrow]['context'] = makeclean($row['cname']);
         $maintable[$thisrow]['contextId'] = $row['contextId'];
-        
+
         $maintable[$thisrow]['timeframe'] = makeclean($row['timeframe']);
         $maintable[$thisrow]['timeframeId'] = $row['timeframeId'];
 
@@ -412,7 +418,7 @@ echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
         $childType=array();
         $childType=getChildType($row['type']);
         if (count($childType)) $maintable[$thisrow]['childtype'] =$childType[0];
-        
+
         if($row['deadline']) {
             $deadline=prettyDueDate($row['deadline'],$config['datemask'],$row['suppress']);
             $maintable[$thisrow]['deadline'] =$deadline['date'];
@@ -421,7 +427,7 @@ echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
                 $maintable[$thisrow]['deadline.title']=$deadline['title'];
             }
         } else $maintable[$thisrow]['deadline']='';
-             
+
         $maintable[$thisrow]['repeat'] =((($row['repeat'])=="0")?'&nbsp;':($row['repeat']));
 
         //tickler date - calculate reminder date as # suppress days prior to deadline
@@ -430,11 +436,11 @@ echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
             $maintable[$thisrow]['suppressUntil']=date($config['datemask'],$reminddate);
         } else
             $maintable[$thisrow]['suppressUntil']= '&nbsp;';
-                    
-        
+
+
         $thisrow++;
     } // end of: foreach ($result as $row)
-    
+
     $dispArray=array(
         'parent'=>'parents'
         ,'type'=>'type'

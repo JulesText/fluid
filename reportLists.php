@@ -18,7 +18,7 @@ if (!$isChecklist) {
     $values['filterquery']= " AND ".sqlparts("completedlistitems",$config,$sort);
     $result2=query("get{$check}listitems",$config,$values,$sort);
     if (!$result2) $result2=array();
-} 
+}
 $createURL="editListItems.php?id={$row['id']}&amp;$urlSuffix";
 
 $prioritise = $row['prioritise'];
@@ -51,7 +51,7 @@ $( document ).ready(function() {
 ]</span>
 <?php
     if ($row['hyperlink']) {
-        echo "&nbsp;&nbsp;&nbsp;[&nbsp;" . faLink($row['hyperlink']) . "&nbsp;]";  
+        echo "&nbsp;&nbsp;&nbsp;[&nbsp;" . faLink($row['hyperlink']) . "&nbsp;]";
     }
     if (!isset($_REQUEST['content'])) {
         echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst . "&content=bulk\">Edit Items</a>&nbsp;]";
@@ -67,8 +67,8 @@ $( document ).ready(function() {
 <?php
     echo 'Prioritised: ',$prioritise,", ";
     if (!empty($row['category'])) echo 'Category: ',$row['category'],", ";
-	?>Sort: <?php echo makeclean($row['sortBy']);                     
-	if ($check) { 
+	?>Sort: <?php echo makeclean($row['sortBy']);
+	if ($check) {
 	    $effort = $row['effort']
 	?>, Frequency: <?php echo makeclean($row['frequency']); ?> / Year, Effort: <?php echo $effort; ?> Hours.
 	<?php } ?>
@@ -87,11 +87,11 @@ $( document ).ready(function() {
     if ($row['standard']) $desiredOutcomeStr .= ", <br>" . $row['standard'];
     if ($row['conditions']) $desiredOutcomeStr .=  ", <br>" . $row['conditions'];
     $descriptionString .= $desiredOutcomeStr;
-    
+
     if (!empty($descriptionString)) echo '<p class="JKSmallPadding">',trimTaggedString($descriptionString),"</p>\n";
 ?>
 <h2><a href='<?php echo $createURL; ?>' title='add a new item'>Add items</a></h2>
-<?php if ($result1) { 
+<?php if ($result1) {
     //echo '<pre>';var_dump($result1);die;
     // standard layout
     if (!isset($_REQUEST['content']) || $_REQUEST['content'] !== 'bulk') {
@@ -120,7 +120,7 @@ $( document ).ready(function() {
                     </tr>
                 </thead>
                 <tbody>
-                <?php foreach($result1 as $row) { 
+                <?php foreach($result1 as $row) {
                     if ($row['expect'] > $prioritise && $prioritise > -1) continue;
                 ?>
                     <tr>
@@ -134,59 +134,62 @@ $( document ).ready(function() {
                             <?php } ?>
                             </td>
                         <td class="JKSmallPadding">
-                        <?php 
-                            echo trimTaggedString($row['notes']); 
+                        <?php
+                            echo trimTaggedString($row['notes']);
                                 if ($row['hyperlink']) {
-                                    if (strlen($row['notes'])>0) echo "<br><br>"; 
-                                    echo faLink($row['hyperlink']);  
+                                    if (strlen($row['notes'])>0) echo "<br><br>";
+                                    echo faLink($row['hyperlink']);
                                 }
                         ?>
                         </td>
-                        <?php /* 
+                        <?php /*
                         if ($check) {
                             if ($prioritise > -1) { ?>
                                 <td class="JKSmallPadding">
-                                <?php 
-                                    echo trimTaggedString($row['expect']); 
+                                <?php
+                                    echo trimTaggedString($row['expect']);
                                 ?>
-                                </td>   
-                            <?php } 
+                                </td>
+                            <?php }
                             if ($effort) {
                             ?>
                             <td class="JKSmallPadding">
-                        <?php 
+                        <?php
                             echo trimTaggedString($row['effort']);
                         ?>
                             </td>
-                        <?php 
+                        <?php
                             }
                             } */
                         ?>
-                        <td class="JKSmallPadding"><input type="checkbox" name="completed[]" title="Complete" value="<?php
-                            echo $row['itemId'],'"',($isChecklist && $row['checked']==='y')?" checked='checked' ":'';
+                        <td class="JKSmallPaddingFaded">
+													<input type="checkbox" name="completed[]" title="Complete" value="<?php
+                            echo $row['itemId'],
+														'"',
+														($isChecklist && $row['checked']==='y')?" checked='checked' ":'';
                             ?> />
                         </td>
                     <?php if ($check && $scored) { ?>
-                        <td class="JKSmallPadding"><input type="checkbox" name="ignored[]" title="Ignore" value="<?php
+                        <td class="JKSmallPaddingFaded"><input type="checkbox" name="ignored[]" title="Ignore" value="<?php
                             echo $row['itemId'],'"',($isChecklist && $row['ignored']==='y')?" checked='checked' ":'';
                             ?> />
                         </td>
                     <?php } ?>
-                        <?php 
+                        <?php
                             if ($scored) {
                         ?>
                         <td class="JKSmallPadding">
-                        <?php 
-                            /*if ($row['assessed'] > 0) {
-                                $score = number_format((float)$row['score'] / $row['assessed'], 1, '.', '');
-                            } else {
-                                $score = '';
-                            } */
-                            $score = round($row['score'] / $row['assessed'], 2) * 100;
-                            if($score == 100) $score = 99;
-                            if($score > 0 && $score < 10) $score = "0" . $score;
-                            $score = $score . "%<br>" . $row['assessed'];
-                            echo $score; 
+                        <?php
+                            if ($row['assessed'] > 0) {
+#                                $score = number_format((float)$row['score'] / $row['assessed'], 1, '.', '');
+	                            $score = round($row['score'] / $row['assessed'], 2) * 100;
+	                            if($score == 100) $score = 99;
+	                            if($score > 0 && $score < 10) $score = "0" . $score;
+	                            $score = $score . "%<br>" . $row['assessed'];
+														} else {
+																$score = $row['score'] . '/0';
+														}
+                           echo $score;
                         ?>
                         </td>
                         <?php } ?>
@@ -213,7 +216,7 @@ $( document ).ready(function() {
         </form>
 <?php
     } elseif ($_REQUEST['content'] == 'bulk') {
-?>        
+?>
         <script src="matrixAjax.js"></script>
         <script src="js/jquery-1.12.4.js"></script>
         <link rel="stylesheet" href="themes/default/dataTables.css" type="text/css" media="Screen" />
@@ -221,9 +224,9 @@ $( document ).ready(function() {
             <table class='listEd'>
                 <thead>
                     <tr>
-                        <?php 
-                            $x = 2; 
-                            $y = 0; 
+                        <?php
+                            $x = 2;
+                            $y = 0;
                             if ($prioritise > -1) $x++;
                             if ($check) $x++;
                             if ($scored) $x = $x + 2;
@@ -243,7 +246,7 @@ $( document ).ready(function() {
                     </tr>
                 </thead>
                 <tbody>
-                <?php 
+                <?php
                     $sTTable1 = "'" . $check . "listitems'";
                     $sTcol1 = "'" . $check . "listItemId','";
                     if (!is_numeric($values['instanceId'])) {
@@ -257,34 +260,34 @@ $( document ).ready(function() {
                 <?php foreach($result1 as $row) { ?>
                     <tr>
                             <td class="JKSmallPadding" contenteditable="true" onBlur="sT(this,<?php echo $sTTable1; ?>,'item',<?php echo $sTcol1 . $row['itemId']; ?>')" onFocus="sE(this)"><?php
-                            echo trim(nl2br($row['item'])); 
+                            echo trim(nl2br($row['item']));
                         ?></td>
                             <td class="JKSmallPadding" contenteditable="true" onBlur="sT(this,<?php echo $sTTable1; ?>,'notes',<?php echo $sTcol1 . $row['itemId']; ?>')" onFocus="sE(this)"><?php
-                            echo ajaxLineBreak($row['notes']); 
+                            echo ajaxLineBreak($row['notes']);
                         ?></td>
                         <?php if ($prioritise > -1) { ?>
                             <td class="JKSmallPadding" contenteditable="true" onBlur="sT(this,<?php echo $sTTable1; ?>,'expect',<?php echo $sTcol1 . $row['itemId']; ?>')" onFocus="sE(this)"><?php
-                                echo $row['expect']; 
+                                echo $row['expect'];
                             ?></td>
-                        <?php } 
+                        <?php }
                         if ($check) { ?>
                             <td class="JKSmallPadding" contenteditable="true" onBlur="sT(this,<?php echo $sTTable1; ?>,'effort',<?php echo $sTcol1 . $row['itemId']; ?>'); calcCL('<?php echo $row['id']; ?>')" onFocus="sE(this)"><?php
-                            echo $row['effort']; 
+                            echo $row['effort'];
                             ?></td>
-                        <?php } 
+                        <?php }
                         if ($scored) { ?>
                             <td class="JKSmallPadding" contenteditable="true" onBlur="sT(this,<?php echo $sTTable2; ?>,'score',<?php echo $sTcol2 . $sTcol1 . $row['itemId']; ?>')" onFocus="sE(this)"><?php
-                                echo $row['score']; 
+                                echo $row['score'];
                             ?></td>
                             <td class="JKSmallPadding" contenteditable="true" onBlur="sT(this,<?php echo $sTTable2; ?>,'assessed',<?php echo $sTcol2 . $sTcol1 . $row['itemId']; ?>')" onFocus="sE(this)"><?php
-                                echo $row['assessed']; 
+                                echo $row['assessed'];
                             ?></td>
                         <?php } ?>
                     </tr><?php
                 } ?>
                 </tbody>
             </table>
-            
+
 <?php
     }
 } else {

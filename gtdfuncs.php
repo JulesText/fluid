@@ -251,7 +251,7 @@ function listselectbox($config,&$values,$sort,$check=NULL) { // NB $values is pa
     $lshtml='';
     if ($result) {
         foreach($result as $row) {
-            $lshtml .= "<option value='{$row['id']}' title='".makeclean($row['description'])."'";
+            $lshtml .= "<option value='{$row['id']}' title='".makeclean($row['title'])."'";
             if($row['id']==$values['id']) {
                 $lshtml .= " selected='selected' ";
                 $values['listTitle']=$row['title'];

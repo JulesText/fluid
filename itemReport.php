@@ -408,7 +408,7 @@ if (!empty($childtype)) {
             $url=   ($_SESSION['useLiveEnhancements'])
                 ?'javascript:toggleHidden("'.$thistableid.'","table-row","f'.$thistableid.'");'
                 :"listItems.php?tickler=true&amp;type={$thistype}&amp;parentId={$values['parentId']}";
-            $footertext="<a href='$url'><span style='background-color: yellow'>There $is $also $suppressed tickler "
+            $footertext="<a href='$url'><span style='background-color: #cccc66'>There $is $also $suppressed tickler "
                       .$typename[$thistype].$plural." not yet due for action</span></a>";
         }
 //        $tfoot=(empty($footertext))?'': "<div id='f$thistableid'><tr><td colspan='3'>\n$footertext\n</td></tr></div>\n";

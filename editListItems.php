@@ -18,6 +18,13 @@ if ($values['itemId']) {
     else
         $values['dateCompleted']=$row[0]['dateCompleted'];
     $action='itemedit';
+
+		# page title
+		$arr = array();
+		preg_match_all('/\b([0-9A-Za-z]{3,})\b/', $values['notes'], $arr); # put words into array
+		$keywords = array_slice(array_unique($arr[0]), 0, 2); # choose first 2 words
+		$values['title'] = join(' ', $keywords);
+
 } else {
     $values['id']=(int) $_REQUEST['id'];
     $values['item']='';
@@ -52,14 +59,14 @@ require_once("headerHtml.inc.php");
         <div class='formrow'>
             <label class='left first' for='hyperlink'>Hyperlink:
             <?php   if ($values['hyperlink']) {
-                        echo "<br>[&nbsp;" . faLink($values['hyperlink']) . "&nbsp;]";  
+                        echo "<br>[&nbsp;" . faLink($values['hyperlink']) . "&nbsp;]";
                     }
             ?>
             </label>
             <input class='JKPadding' type='text' name='hyperlink' id='hyperlink' value='<?php echo makeclean($values['hyperlink']); ?>' size='80' />
         </div>
         <div class='formrow'>
-            <?php 
+            <?php
             if ($values['itemId']) {
                 if ($isChecklist) { ?>
                     <label class='left notfirst'>Item completed</label>

@@ -2,6 +2,9 @@
 //INCLUDES
 include_once('header.php');
 
+// display
+$time = FALSE; // show time column
+
 //RETRIEVE URL VARIABLES
 $values=array();
 $values['itemId'] = (int) $_GET['itemId'];
@@ -269,7 +272,7 @@ if (!empty($childtype)) {
             case 'w':
             $dispArray['deadline']='Due';
                 //$dispArray['context']='Context';
-                $dispArray['timeframe']='Time';
+                if ($time) $dispArray['timeframe']='Time';
                 break;
             case 'm': // deliberately flows through to 'p;
             case 'v': // deliberately flows through to 'p;
@@ -347,9 +350,11 @@ if (!empty($childtype)) {
             $maintable[$i]['context']=makeclean($row['cname']);
             $maintable[$i]['context.title']='Go to '.$maintable[$i]['context'].' context report';
 
+						if ($time) {
             $maintable[$i]['timeframeId']=$row['timeframeId'];
             $maintable[$i]['timeframe']=makeclean($row['timeframe']);
             $maintable[$i]['timeframe.title']='Go to '.$maintable[$i]['timeframe'].' time-context report';
+						}
 
             if ($comp==='n') {
                 //Calculate reminder date as # suppress days prior to deadline

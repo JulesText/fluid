@@ -262,11 +262,11 @@ function listselectbox($config,&$values,$sort,$check=NULL) { // NB $values is pa
     return $lshtml;
     }
 
-function prettyDueDate($dateToShow,$thismask,$tickle='n') {
+function prettyDueDate($dateToShow,$thismask,$tickle='n',$tickleIsDeadline='n') {
     $retval=array('class'=>'','title'=>'');
     if(trim($dateToShow)!='') {
         $retval['date'] = date($thismask,strtotime($dateToShow));
-        if($tickle !== 'n') {
+        if($tickle !== 'n' && $tickleIsDeadline == 'n') {
             $retval['class']='tickle';
             $retval['title']='Tickle';
         }

@@ -515,7 +515,7 @@ function getsql($config,$values,$sort,$querylabel) {
 			$sql="SELECT i.`itemId`, i.`title`, i.`description`,
 					i.`premiseA`,i.`premiseB`,i.`conclusion`,i.`behaviour`, i.`standard`, i.`conditions`, i.`metaphor`, i.`hyperlink`, i.`sortBy`, ia.`type`,
 					ia.`isSomeday`, ia.`deadline`, ia.`repeat`,
-					ia.`suppress`, ia.`suppressUntil`,
+					ia.`suppress`, ia.`suppressUntil`, ia.`suppressIsDeadline`,
 					its.`dateCreated`, its.`dateCompleted`,
 					its.`lastModified`, ia.`categoryId`,
 					c.`category`, ia.`contextId`,
@@ -569,7 +569,7 @@ function getsql($config,$values,$sort,$querylabel) {
 			$sql="SELECT
     				x.`itemId`, x.`title`, x.`description`,
     				x.`premiseA`, x.`premiseB`, x.`conclusion`, x.`behaviour`, x.`standard`, x.`conditions`, x.`metaphor`, x.`hyperlink`, x.`sortBy`, x.`type`, x.`isSomeday`,
-    				x.`deadline`, x.`repeat`, x.`suppress`,
+    				x.`deadline`, x.`repeat`, x.`suppress`, x.`suppressIsDeadline`,
     				x.`suppressUntil`, x.`dateCreated`, x.`dateCompleted`,
     				x.`lastModified`, x.`categoryId`, x.`category`,
     				x.`contextId`, x.`cname`, x.`timeframeId`,
@@ -583,7 +583,7 @@ function getsql($config,$values,$sort,$querylabel) {
 							i.`itemId`, i.`title`, i.`description`,
 							i.`premiseA`, i.`premiseB`, i.`conclusion`, i.`behaviour`, i.`standard`, i.`conditions`, i.`metaphor`, i.`hyperlink`, i.`sortBy`, ia.`type`, ia.`isSomeday`,
 							ia.`deadline`, ia.`repeat`, ia.`suppress`,
-							ia.`suppressUntil`, its.`dateCreated`,
+							ia.`suppressUntil`, ia.`suppressIsDeadline`, its.`dateCreated`,
 							its.`dateCompleted`, its.`lastModified`,
 							ia.`categoryId`, c.`category`, ia.`contextId`,
 							cn.`name` AS cname, ia.`timeframeId`,
@@ -620,6 +620,7 @@ function getsql($config,$values,$sort,$querylabel) {
 							ia.`type` AS ptype, ia.`isSomeday` AS pisSomeday,
 							ia.`deadline` AS pdeadline, ia.`repeat` AS prepeat,
 							ia.`suppress` AS psuppress,
+							ia.`suppressIsDeadline` AS psuppressIsDeadline,
 							ia.`suppressUntil` AS psuppressUntil,
 							its.`dateCompleted` AS pdateCompleted
 						FROM
@@ -752,11 +753,11 @@ function getsql($config,$values,$sort,$querylabel) {
 		case "newitemattributes":
 			$sql="INSERT INTO `". $config['prefix'] . "itemattributes`
 						(`itemId`,`type`,`isSomeday`,`categoryId`,`contextId`,
-						`timeframeId`,`deadline`,`repeat`,`suppress`,`suppressUntil`)
+						`timeframeId`,`deadline`,`repeat`,`suppress`,`suppressIsDeadline`,`suppressUntil`)
 				VALUES ('{$values['newitemId']}','{$values['type']}','{$values['isSomeday']}',
 						'{$values['categoryId']}','{$values['contextId']}','{$values['timeframeId']}',
 						{$values['deadline']},'{$values['repeat']}','{$values['suppress']}',
-						'{$values['suppressUntil']}')";
+						'{$values['suppressIsDeadline']}','{$values['suppressUntil']}')";
 			break;
 
 		case "newitemstatus":
@@ -926,7 +927,7 @@ function getsql($config,$values,$sort,$querylabel) {
 					ia.`categoryId`, ia.`contextId`,
 					ia.`timeframeId`, ia.`isSomeday`,
 					ia.`deadline`, ia.`repeat`,
-					ia.`suppress`, ia.`suppressUntil`,
+					ia.`suppress`, ia.`suppressIsDeadline`, ia.`suppressUntil`,
 					its.`dateCreated`, its.`dateCompleted`,
 					its.`lastModified`, c.`category`, ti.`timeframe`,
 					cn.`name` AS `cname`
@@ -1138,6 +1139,7 @@ function getsql($config,$values,$sort,$querylabel) {
 						`deadline` ={$values['deadline']},
 						`repeat` = '{$values['repeat']}',
 						`suppress`='{$values['suppress']}',
+						`suppressIsDeadline`='{$values['suppressIsDeadline']}',
 						`suppressUntil`='{$values['suppressUntil']}'
 				WHERE `itemId` = '{$values['itemId']}'";
 			break;

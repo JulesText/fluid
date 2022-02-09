@@ -19,11 +19,11 @@ foreach ($maintable as $row) {
             ,'>';
         switch ($key) {
             case 'title':
-			
+
 				if(!is_array($linkedItems)) $linkedItems = array();
 				$isProject = false;
-				$isActiveProject = false; 
-				$hasTickler = false; 
+				$isActiveProject = false;
+				$hasTickler = false;
 				$childString = '';
 				$tempValues = $values;
 				$values['itemId'] = $row['itemId'];
@@ -31,35 +31,35 @@ foreach ($maintable as $row) {
 				$result = query("selectitem",$config,$values,$sort);
 				if($result[0]['type'] == 'p') $isProject = true;
 				if($result[0]['type'] == 'p' && $result[0]['isSomeday'] == 'n') {
-					$arr = array('a','w','p');					
+					$arr = array('a','w','p');
 					foreach ($arr as $val) {
 						$values['type']=$val;
 						$values['isSomeday']='n';
-						$values['filterquery'] = " AND ".sqlparts("typefilter",$config,$values); 
+						$values['filterquery'] = " AND ".sqlparts("typefilter",$config,$values);
 						$values['filterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
 						$q=($comp==='y')?'completeditems':'pendingitems';  //suppressed items will be shown on report page
 						$values['filterquery'] .= " AND ".sqlparts($q,$config,$values);
 						$values['parentId']=$values['itemId'];
 						$result = query("getchildren",$config,$values,$sort);
-						if ($result) { 
+						if ($result) {
 							foreach ($result as $child) {
-								if($child['NA'] || $isProject) { 
+								if($child['NA'] || $isProject) {
 									if ($child['suppress'] == 'y' && strtotime($child['deadline'] . '- ' . $child['suppressUntil'] . ' day') > strtotime("now")) {
 										$hasTickler = true;
 										continue;
 									}
 								}
-								if($child['NA']) { 
-									if(!in_array($child['itemId'], $linkedItems, true)) { 
-										$childString .= '<br>' . strtoupper($child['type']) . ':&nbsp;<a href="item.php?itemId=' . $child['NA'] . '">'. str_replace(' ', '&nbsp;', substr($child['title'], 0, 30))  . '</a>'; 
+								if($child['NA']) {
+									if(!in_array($child['itemId'], $linkedItems, true)) {
+										$childString .= '<br>' . strtoupper($child['type']) . ':&nbsp;<a href="item.php?itemId=' . $child['NA'] . '">'. str_replace(' ', '&nbsp;', substr($child['title'], 0, 30))  . '</a>';
 										array_push($linkedItems, $child['itemId']);
-										
+
 									} else {
 										if ($val == 'a') $childString .= '<span style="opacity: 0.5"><br>SEE ACTIONS</span>';
 										if ($val == 'w') $childString .= '<span style="opacity: 0.5"><br>SEE WAITING ONS</span>';
 									}
-									$isActiveProject = true; 
-								}	
+									$isActiveProject = true;
+								}
 								/* if($val == 'p') {
 									$values['parentId']=$child['itemId'];
 									$values['type']='w';
@@ -71,9 +71,9 @@ foreach ($maintable as $row) {
 						}
 					}
 				}
-				
+
 				$values = $tempValues;
-				
+
                 $cleaned=$row[$key];
                 echo /* "<a href='itemReport.php?itemId={$row['itemId']}'>"
                     ,"<img src='themes/{$config['theme']}/report.gif' class='noprint' alt='Report' title='View Report' /></a>"
@@ -84,21 +84,21 @@ foreach ($maintable as $row) {
                     ,(empty($row['doreport']))?'Edit':'View Report'
                     ,"' href='item"
                     ,(empty($row['doreport']) && !$isProject)?'':'Report'
-                    ,".php?itemId={$row['itemId']}'>$cleaned</a>"; 
+                    ,".php?itemId={$row['itemId']}'>$cleaned</a>";
 				echo $childString . ($hasTickler ? '<span style="opacity: 0.5"><br>TICKLED ITEM(S)</span>' : '');
 				if (isset($item['title'])) {
 					$values['itemId'] = $row['itemId'];
-					$presult = query("lookupparent",$config,$values,$sort); 
+					$presult = query("lookupparent",$config,$values,$sort);
 					foreach ($presult as $prow) {
 //						if (preg_match("/~/i", $prow['ptitle']) && $item['title'] != $prow['ptitle']) echo '<br>'.$prow['ptitle'];
-						if ($item['title'] != $prow['ptitle'] && $prow['ptype'] == 'p') { 						
+						if ($item['title'] != $prow['ptitle'] && $prow['ptype'] == 'p') {
 							$svalues['itemId'] = $row['itemId'];
 							$sresult = query("selectitem",$config,$svalues,$sort);
 							$brk = false;
 							foreach ($sresult as $temp) { if ($temp['type'] == 'r') $brk = true; }
 							if ($brk) break;
 
-							if (!$isProject) { 
+							if (!$isProject) {
 								echo '<br><span style="opacity: .5">Pr:&nbsp;<a href="itemReport.php?itemId=' . $prow['parentId'] . '">' . str_replace(' ', '&nbsp;', substr($prow['ptitle'] . ' ', 0, 30)) . '</a></span>';
 								array_push($linkedItems, $row['itemId']);
 							} else {
@@ -112,10 +112,10 @@ foreach ($maintable as $row) {
 									}
 
 									if (!$skip) {
-										
+
 										echo '<br><br><span style="opacity: .5">Pr:&nbsp;</span><span style="opacity: 1"><a href="itemReport.php?itemId=' . $prow['parentId'] . '">' . str_replace(' ', '&nbsp;', substr($prow['ptitle'] . ' ', 0, 30)) . '</a></span>';
 										array_push($linkedItems, $prow['parentId']);
-/*										
+/*
 										$gprow = array(
 												"itemId"=>$prow['parentId'],
 												"title"=>$prow['ptitle'],
@@ -140,48 +140,48 @@ foreach ($maintable as $row) {
 												);
 										array_push($maintable, $gprow);
 										*/
-										
-				$isActiveProject = false; 
-				$hasTickler = false; 
+
+				$isActiveProject = false;
+				$hasTickler = false;
 				$childString = '';
 				$tempValues = $values;
 				$values['itemId'] = $prow['parentId'];
 				$values['extravarsfilterquery'] = sqlparts("countchildren",$config,$values);
 				$result = query("selectitem",$config,$values,$sort);
 				if($result[0]['type'] == 'p' && $result[0]['isSomeday'] == 'n') {
-					$arr = array('a','w','p');					
+					$arr = array('a','w','p');
 					foreach ($arr as $val) {
 						$values['type']=$val;
 						$values['isSomeday']='n';
-						$values['filterquery'] = " AND ".sqlparts("typefilter",$config,$values); 
+						$values['filterquery'] = " AND ".sqlparts("typefilter",$config,$values);
 						$values['filterquery'] .= " AND ".sqlparts("issomeday",$config,$values);
 						$q=($comp==='y')?'completeditems':'pendingitems';  //suppressed items will be shown on report page
 						$values['filterquery'] .= " AND ".sqlparts($q,$config,$values);
 						$values['parentId']=$values['itemId'];
 						$result = query("getchildren",$config,$values,$sort);
-						if ($result) { 
+						if ($result) {
 							foreach ($result as $child) {
 								if($child['NA']) {
 									if ($child['suppress'] == 'y' && strtotime($child['deadline'] . '- ' . $child['suppressUntil'] . ' day') > strtotime("now")) {
 										$hasTickler = true;
 										continue;
 									}
-									if(!in_array($child['itemId'], $linkedItems, true)) { 
-										$childString .= '<br>' . strtoupper($child['type']) . ':&nbsp;<a href="item.php?itemId=' . $child['NA'] . '">'. str_replace(' ', '&nbsp;', substr($child['title'], 0, 30))  . '</a>'; 
+									if(!in_array($child['itemId'], $linkedItems, true)) {
+										$childString .= '<br>' . strtoupper($child['type']) . ':&nbsp;<a href="item.php?itemId=' . $child['NA'] . '">'. str_replace(' ', '&nbsp;', substr($child['title'], 0, 30))  . '</a>';
 									} else {
 										if ($val == 'a') $childString .= '<span style="opacity: 0.5"><br>SEE ACTIONS</span>';
 										if ($val == 'w') $childString .= '<span style="opacity: 0.5"><br>SEE WAITING ONS</span>';
 									}
-									$isActiveProject = true; 
-								}	
+									$isActiveProject = true;
+								}
 							}
 						}
 					}
 				}
 				echo '<span style="opacity: .5">' . $childString . '</span>';
 				$values = $tempValues;
-										
-									} 
+
+									}
 								}
 							}
 						}
@@ -202,7 +202,7 @@ foreach ($maintable as $row) {
 /*				echo ' <a title="Set to action" href="processItems.php?action=changeType&type=a&safe=1&itemId=' . $row['itemId'] . '">A</a>';
 				echo ' <a title="Set to waiting on" href="processItems.php?action=changeType&type=w&safe=1&itemId=' . $row['itemId'] . '">W</a>';
 				echo ' <a title="Set to reference" href="processItems.php?action=changeType&type=r&safe=1&itemId=' . $row['itemId'] . '">R</a>';
-*/				
+*/
                 break;
             case 'NA':
                 echo "<input name='isNAs[]' value='{$row['itemId']}'"
@@ -240,7 +240,7 @@ foreach ($maintable as $row) {
                     $pnames=explode($config['separator'],$row['ptitle']);
                     foreach ($pids as $pkey=>$pid) {
 						echo "$brk";
-						if (isset($ptypes[$pkey]) && strlen($ptypes[$pkey]) > 0) echo "<span style='opacity: 0.5'>" , strtoupper(makeclean($ptypes[$pkey])),":</span>"; 
+						if (isset($ptypes[$pkey]) && strlen($ptypes[$pkey]) > 0) echo "<span style='opacity: 0.5'>" , strtoupper(makeclean($ptypes[$pkey])),":</span>";
                         echo "<a href='itemReport.php?itemId=$pid' title='View report'>"
                             ,makeclean($pnames[$pkey])
                             ,"</a> ";
@@ -296,7 +296,7 @@ foreach ($maintable as $row) {
 				$values['itemId'] = $row['itemId'];
 				$result = query("selectitem",$config,$values,$sort);
 				echo $result[0]['deadline'];
-				break;           	
+				break;
             default:
                 echo $row[$key];
                 break;

@@ -60,7 +60,7 @@ function makeContextRow($row) {
     $rowout['description']=$row['description'] . "<br><br>" . faLink($row['hyperlink']);
 	$rowout['repeat'] = ($row['repeat']=="0")?'&nbsp;':$row['repeat'];
     if($row['deadline']) {
-        $deadline=prettyDueDate($row['deadline'],$config['datemask'],$row['suppress']);
+        $deadline=prettyDueDate($row['deadline'],$config['datemask'],$row['suppress'],$row['suppressIsDeadline']);
         $rowout['deadline'] =$deadline['date'];
         $rowout['deadline.class']=$deadline['class'];
         $rowout['deadline.title']=$deadline['title'];
@@ -186,7 +186,7 @@ if (count($lostitems)) {
         $thisTname=(array_key_exists($row['timeframeId'],$timeframeNames))
                     ? $timeframeNames[$row['timeframeId']]
                     : 'ERROR unknown time context id='.$row['timeframeId'];
-                    
+
         $rowout['spatialcontext']   =$thisCname;
         $rowout['spatialcontextId'] =$row['contextId'];
         $rowout['timeframe']        =$thisTname;

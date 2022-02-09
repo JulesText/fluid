@@ -288,7 +288,7 @@ echo "</h2>\n";
             </div>
             <div class='formrow'>
                 <?php if ($show['deadline']) { ?>
-                    <label for='deadline' class='left first'>Deadline:</label>
+                    <label for='deadline' class='left first'>Due date:</label>
                     <input type='text' size='10' name='deadline' id='deadline' class='hasdate' value='<?php echo $values['deadline']; ?>'/>
                     <button type='reset' id='deadline_trigger'>...</button>
                         <script type='text/javascript'>
@@ -338,11 +338,13 @@ echo "</h2>\n";
 <?php
         if (/*$show['suppress']*/ 1) { ?>
             <!-- <div class='formrow'> -->
-                    <label for='suppress' class='left'>Tickler:</label>
-                    <input type='checkbox' name='suppress' id='suppress' value='y' title='Temporarily puts this into the tickler file, hiding it from the active view' <?php if ($values['suppress']=="y") echo " checked='checked' "; ?>/>
-                    <label for='suppressUntil'>&nbsp;</label>
-                    <input type='text' size='3' name='suppressUntil' id='suppressUntil' value='<?php echo $values['suppressUntil'];?>' /><label for='suppressUntil'>&nbsp;days before deadline</label>
-            </div>
+								<label for='suppress' class='left'>Tickler:</label>
+								<input type='checkbox' name='suppress' id='suppress' value='y' title='Temporarily puts this into the tickler file, hiding it from the active view' <?php if ($values['suppress']=="y") echo " checked='checked' "; ?>/>
+                <label for='suppressUntil'>&nbsp;</label>
+                <input type='text' size='3' name='suppressUntil' id='suppressUntil' value='<?php echo $values['suppressUntil'];?>' /><label for='suppressUntil'>&nbsp;days before due date</label>
+								<label for='suppressIsDeadline' class='left'>Tickler date is deadline?</label>
+								<input type='checkbox' name='suppressIsDeadline' id='suppressIsDeadline' value='y' title='' <?php if ($values['suppressIsDeadline']=="y") echo " checked='checked' "; ?>/>
+						</div>
         <?php } else {
             $hiddenvars['suppress']=$values['suppress'];
             $hiddenvars['suppressUntil']=$values['suppressUntil'];

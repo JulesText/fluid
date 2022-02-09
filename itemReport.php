@@ -151,7 +151,7 @@ if (!empty($item['deadline'])) {
     } else {
         echo "<tr><th>Deadline:</th>";
     }
-    $deadline=prettyDueDate($item['deadline'],$config['datemask'],$item['suppress']);
+    $deadline=prettyDueDate($item['deadline'],$config['datemask'],$item['suppress'],$item['suppressIsDeadline']);
     echo "<td class='{$deadline['class']}' title='{$deadline['title']}'>"
         ,$deadline['date'],"</td></tr>\n";
 
@@ -370,7 +370,7 @@ if (!empty($childtype)) {
                         }
         }
 //                  $maintable[$i]['suppress']=date($config['datemask'],$reminddate);
-                    $deadline=prettyDueDate($row['deadline'],$config['datemask'],$row['suppress']);
+                    $deadline=prettyDueDate($row['deadline'],$config['datemask'],$row['suppress'],$row['suppressIsDeadline']);
                     $maintable[$i]['deadline']      =$deadline['date'];
                     $maintable[$i]['deadline.class']=$deadline['class'];
                     $maintable[$i]['deadline.title']=$deadline['title'];
@@ -380,7 +380,7 @@ if (!empty($childtype)) {
                 if (empty($row['deadline']))
                     $maintable[$i]['deadline']=null;
                 else {
-                    $deadline=prettyDueDate($row['deadline'],$config['datemask'],$row['suppress']);
+                    $deadline=prettyDueDate($row['deadline'],$config['datemask'],$row['suppress'],$row['suppressIsDeadline']);
                     $maintable[$i]['deadline']      =$deadline['date'];
                     $maintable[$i]['deadline.class']=$deadline['class'];
                     $maintable[$i]['deadline.title']=$deadline['title'];

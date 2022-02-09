@@ -224,7 +224,7 @@ if ($filter['everything']!="true") {
 
     //filter box filters
     if ($filter['tickler']=="false") {
-        $values['childfilterquery'] .= " AND ia.`suppress` = 'n' ";
+        $values['childfilterquery'] .= " AND (ia.`suppress` = 'n' OR ia.`suppressIsDeadline` = 'y') ";
     }
 
     if ($filter['categoryId'] != NULL && $filter['notcategory']=="true")
@@ -420,7 +420,7 @@ echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
         if (count($childType)) $maintable[$thisrow]['childtype'] =$childType[0];
 
         if($row['deadline']) {
-            $deadline=prettyDueDate($row['deadline'],$config['datemask'],$row['suppress']);
+            $deadline=prettyDueDate($row['deadline'],$config['datemask'],$row['suppress'],$row['suppressIsDeadline']);
             $maintable[$thisrow]['deadline'] =$deadline['date'];
             if (empty($row['dateCompleted'])) {
                 $maintable[$thisrow]['deadline.class']=$deadline['class'];

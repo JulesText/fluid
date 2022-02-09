@@ -362,6 +362,7 @@ function retrieveFormVars() {
 	$values['nextAction'] = (isset($_POST['nextAction']) && $_POST['nextAction']==="y")?'y':'n';
 	$values['isSomeday']  = (isset($_POST['isSomeday']) && $_POST['isSomeday']==='y')?'y':'n';
 	$values['suppress']   = (isset($_POST['suppress']) && $_POST['suppress']==='y')?'y':'n';
+	$values['suppressIsDeadline']   = (isset($_POST['suppressIsDeadline']) && $_POST['suppressIsDeadline']==='y')?'y':'n';
 	$values['delete']     = (isset($_POST['delete']) && $_POST['delete']==='y')?'y':NULL;
 
 	// integers

@@ -389,8 +389,7 @@ echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
         $maintable[$thisrow]['checkbox.title']='Complete '.$cleantitle;
         $maintable[$thisrow]['checkboxname']= 'isMarked[]';
         $maintable[$thisrow]['checkboxvalue']=$row['itemId'];
-
-        $descriptionString = '<div contenteditable="true" onFocus="sEf(this,\'items\',\'description\',\'itemId\',\'' . $row['itemId'] . '\')">' . $row['description'] . '</div>';
+        $descriptionString = "<div contenteditable='true'" . ajaxUpd('itemDescription', $row['itemId']) . ">" . $row['description'] . "</div>";
         if ($row['premiseA']) $descriptionString .= "<br><br>" . $row['premiseA'];
         if ($row['premiseB']) $descriptionString .= "<br><br>" . $row['premiseB'];
         if ($row['conclusion']) $descriptionString .= "<br><br>" . $row['conclusion'];

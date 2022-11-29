@@ -145,12 +145,8 @@ $( document ).ready(function() {
                             <?php } ?>
                             </td>
                         <td class="JKSmallPadding">
-                          <div
-                          <?php if (TRUE) { ?>
-                             contenteditable="true" tabindex="3" onFocus="sEf(this,<?php echo $sTTable1; ?>,'notes',<?php echo $sTcol1 . $row['itemId']; ?>')"
-                          <?php }
-                          echo '>' . trimTaggedString($row['notes']);
-                        ?></div><div><?php
+                          <?php echo '<div contenteditable="true" tabindex="3"'
+                                  . ajaxUpd($check . "listitemNotes", $row['itemId']) . '>' . trimTaggedString($row['notes']) . '</div><div>';
                           if ($row['hyperlink']) {
                               if (strlen($row['notes'])>0) echo "<br>";
                               echo faLink($row['hyperlink']);
@@ -182,7 +178,7 @@ $( document ).ready(function() {
 														'"',
                             ($isChecklist && $row['checked']==='y')?" checked='checked' class='checked' ":'',
                             ($isChecklist && $row['checked']==='n')?" class='unchecked' ":'';
-                            if ($isChecklist) echo " onClick=\"cB(this,'checklistitems','checked','checklistItemId','{$row['itemId']}')\"";
+                            if ($isChecklist) echo ajaxUpd('checklistitem', $row['itemId']);
                             ?> />
                         </td>
                     <?php if ($check && $scored) { ?>

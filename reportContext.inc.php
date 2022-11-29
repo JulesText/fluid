@@ -57,7 +57,7 @@ function makeContextRow($row) {
     global $config;
     $rowout=array();
     $rowout['itemId']=$row['itemId'];
-    $rowout['description'] = '<div contenteditable="true" onFocus="sEf(this,\'items\',\'description\',\'itemId\',\'' . $row['itemId'] . '\')">' . $row['description'] . '</div><br><br>' . faLink($row['hyperlink']);
+    $rowout['description'] = '<div contenteditable="true"' . ajaxUpd('itemDescription',$row['itemId']) . '>' . $row['description'] . '</div><br>' . faLink($row['hyperlink']);
 	$rowout['repeat'] = ($row['repeat']=="0")?'&nbsp;':$row['repeat'];
     if($row['deadline']) {
         $deadline=prettyDueDate($row['deadline'],$config['datemask'],$row['suppress'],$row['suppressIsDeadline']);

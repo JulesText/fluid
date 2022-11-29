@@ -313,6 +313,29 @@ function faLink($link, $mx = false) {
     return $retval;
 }
 
+function ajaxUpd($query, $id) {
+    $retval='';
+    if($id != '') {
+      if ($query === 'itemCategory') $retval = " onChange=\"sT(this,'itemattributes','categoryId','itemId','{$id}')\" ";
+      if ($query === 'itemContext') $retval = " onChange=\"sT(this,'itemattributes','contextId','itemId','{$id}')\" ";
+      if ($query === 'itemTime') $retval = " onChange=\"sT(this,'itemattributes','timeframeId','itemId','{$id}')\" ";
+      if ($query === 'itemNA') $retval = " onClick=\"cB(this,'nextactions','nextaction','nextaction','{$id}')\" ";
+      if ($query === 'itemTitle') $retval = " onFocus=\"sEf(this,'items','title','itemId','{$id}')\" ";
+      if ($query === 'itemDescription') $retval = " onFocus=\"sEf(this,'items','description','itemId','{$id}')\" ";
+      if ($query === 'itemLink') $retval = " onFocus=\"sEf(this,'items','hyperlink','itemId','{$id}')\" ";
+      if ($query === 'itemDeadline') $retval = " onChange=\"sT(this,'itemattributes','deadline','itemId','{$id}')\" ";
+      if ($query === 'itemCompletedNow') $retval = " onFocus=\"sT(this,'itemstatus','dateCompleted','itemId','{$id}')\" ";
+      if ($query === 'itemCompletedEdit') $retval = " onChange=\"sT(this,'itemstatus','dateCompleted','itemId','{$id}')\" ";
+      if ($query === 'itemSomeday') $retval = " onClick=\"cB(this,'itemattributes','isSomeday','itemId','{$id}')\" ";
+      if ($query === 'itemTickler') $retval = " onClick=\"cB(this,'itemattributes','suppress','itemId','{$id}')\" ";
+      if ($query === 'itemTicklerDays') $retval = " onChange=\"sT(this,'itemattributes','suppressUntil','itemId','{$id}')\" ";
+      if ($query === 'itemTicklerDeadline') $retval = " onClick=\"cB(this,'itemattributes','suppressIsDeadline','itemId','{$id}')\" ";
+      if ($query === 'checklistitemNotes') $retval = " onFocus=\"sEf(this,'checklistitems','notes','checklistItemId','{$id}')\" ";
+      if ($query === 'checklistitem') $retval = " onClick=\"cB(this,'checklistitems','checked','checklistItemId','{$id}')\" ";
+    }
+    return $retval;
+}
+
 function getVarFromGetPost($varName,$default='') {
     $retval=(isset($_GET[$varName]))?$_GET[$varName]:( (isset($_POST[$varName]))?$_POST[$varName]:$default );
     return $retval;

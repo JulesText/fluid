@@ -6,7 +6,7 @@ $db = new PDO('mysql:host=' . $config["host"] . ';dbname=' . $config["db"], $con
 
 $updCol = $_POST["updCol"];
 
-if ($_POST["table"] !== 'lookupqualities') { 
+if ($_POST["table"] !== 'lookupqualities') {
     // if using visId for other purpose, do not use
     if ($_POST["col2"] == 'visId') $_POST["id2"] = '';
     if ($_POST["col3"] == 'visId') $_POST["id3"] = '';
@@ -27,13 +27,17 @@ if ($_POST["id3"] !== 'undefined') $query .= " AND `" . $_POST["col3"] . "` = '"
 if ($_POST["id4"] !== 'undefined') $query .= " AND `" . $_POST["col4"] . "` = '" . $_POST["id4"] . "'";
 if ($_POST["id5"] !== 'undefined') $query .= " AND `" . $_POST["col5"] . "` = '" . $_POST["id5"] . "'";
 
+#file_put_contents ('a.txt', PHP_EOL . $query . PHP_EOL . '--', FILE_APPEND);
+
 $result = $db->query($query);
 $value = $result->fetchColumn();
 
 if ($result->rowCount() > 0) {
-    echo $value; // avoid encoding string
+  if ($_POST["table"] == 'nextactions') echo 'y'; // special case of querying nextactions
+  else echo $value; // default value, avoid encoding string
 } else {
-    echo 'randomstring8adf34Lror';
+  if ($_POST["table"] == 'nextactions') echo 'n'; // special case of querying nextactions
+  else echo '*no result from query*';
 }
 
 $db = NULL; // destroy connection

@@ -461,8 +461,8 @@ span.due {
 a.add:hover, #searchresults a:hover, a.add:link, a.add:visited,#searchresults a:link, #searchresults a:visited {
 	color:green;
 	font-weight:bolder;
-    font-size:larger;
-    margin:1px;
+  font-size:larger;
+  margin:1px;
 }
 a.remove:link,a.remove:visited {
     color:red;
@@ -568,9 +568,11 @@ span.label {
 	color: #665;
 }
 span.detail {
+	font-family: Monaco;
 	color: #888;
 	float: left;
 	clear: left;
+	opacity: 0.25;
 }
 
 .error {

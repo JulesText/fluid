@@ -102,6 +102,12 @@ echo $rtitle."&nbsp;Report:&nbsp;".makeclean($item['title']).(($item['isSomeday'
 echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"listsUpdate.php?itemId={$values['itemId']}&type=l\">Lists</a>&nbsp;]";
 echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"listsUpdate.php?itemId={$values['itemId']}&type=c\">Checklists</a>&nbsp;]";
 if (!isset($_REQUEST['content'])) echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"itemReport.php?itemId={$values['itemId']}&content=limit\">Limit</a>&nbsp;]";
+if (!isset($_REQUEST['showCompleted'])) {
+  echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"itemReport.php?itemId={$values['itemId']}&showCompleted=true\">Completed</a>&nbsp;]";
+  $showCompleted = FALSE;
+} else {
+  $showCompleted = (bool) $_REQUEST['showCompleted'];
+}
 echo "</h1>\n";
 
 //Edit, next, and previous buttons
@@ -323,7 +329,7 @@ if (!empty($childtype)) {
             }
 
             $maintable[$i]['title']= $tfield;
-            $maintable[$i][$descriptionField] = '<div contenteditable="true" onFocus="sEf(this,\'items\',\'description\',\'itemId\',\'' . $row['itemId'] . '\')">' . $row['description'];
+            $maintable[$i][$descriptionField] = "<div contenteditable='true'" . ajaxUpd('itemDescription', $row['itemId']) . ">" . $row['description'];
             if ($row['hyperlink']) {
                 if (!empty($row['description'])) $maintable[$i][$descriptionField] .= "</div><div><br>";
                 $maintable[$i][$descriptionField] .= faLink($row['hyperlink']);
@@ -399,6 +405,7 @@ if (!empty($childtype)) {
                 }
             } else {
                 $maintable[$i]['completed']=date($config['datemask'],strtotime($row['dateCompleted']));
+                if (!$showCompleted) unset($maintable[$i]);
             }
 
             $i++;

@@ -198,18 +198,20 @@ foreach ($maintable as $row) {
 */                echo "&amp;referrer=$referrer'>Set type</a>";
                 break;
             case 'checkbox':
-                echo "<input name='{$row['checkboxname']}' value='{$row['checkboxvalue']}' type='checkbox' class='unchecked' onClick=\"cB(this,'itemstatus','dateCompleted','itemId','{$row['itemId']}')\" />";
+                echo "<input name='{$row['checkboxname']}' value='{$row['checkboxvalue']}' type='checkbox' class='unchecked'"
+                      . ajaxUpd('itemComplete',$row['itemId'])
+                      . "/>";
 /*				echo ' <a title="Set to action" href="processItems.php?action=changeType&type=a&safe=1&itemId=' . $row['itemId'] . '">A</a>';
 				echo ' <a title="Set to waiting on" href="processItems.php?action=changeType&type=w&safe=1&itemId=' . $row['itemId'] . '">W</a>';
 				echo ' <a title="Set to reference" href="processItems.php?action=changeType&type=r&safe=1&itemId=' . $row['itemId'] . '">R</a>';
 */
                 break;
             case 'NA':
-                echo "<input name='isNAs[]' value='{$row['itemId']}' "
-                    ,"type='",(empty($dispArray[$key.'.type']))?'checkbox':'radio',"'"
-                    ,($row[$key])?" checked='checked' class='checked' ":" class='unchecked'";
-                echo " onClick=\"cB(this,'exceptionNA','null','itemId','{$row['itemId']}')\"";
-                echo " />";
+                echo "<input name='isNAs[]' value='{$row['itemId']}' type='checkbox' ";
+                if ($row[$key]) echo " checked='checked' class='checked' ";
+                else echo " class='unchecked'";
+                echo ajaxUpd('itemNA',$row['itemId'])
+                    . "/>";
                 break;
             case 'flags':
                 if ($row[$key]==='')

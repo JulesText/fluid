@@ -186,7 +186,9 @@ echo "</h2>\n";
         if ($show['ptitle']) { ?>
             <div class='formrow'>
                 <label for='parenttable' class='left first'>Parent(s):</label>
-                <?php if ($_SESSION['useLiveEnhancements']) {
+                <?php
+                  // note this js enhancement could integrate live ajax updates but the effort isn't worth it for something i rarely use
+                  if ($_SESSION['useLiveEnhancements']) {
                     include_once('liveParents.inc.php');
                 } else { ?>
                     <select name="parentId[]" id='parenttable' multiple="multiple" size="6">
@@ -200,24 +202,34 @@ echo "</h2>\n";
         ?><div class='formrow'>
             <?php if ($show['category']) { ?>
                 <label for='category' class='left first'>Category:</label>
-                <select name='categoryId' id='category'>
+                <select name='categoryId' id='category' <?php
+                  if ($values['itemId']) echo ajaxUpd('itemCategory', $values['itemId']);
+                ?>>
                 <?php echo $cashtml; ?>
                 </select>
             <?php } else $hiddenvars['categoryId']=$values['categoryId'];
             if ($show['context']) { ?>
                 <label for='context' class=''>Context:</label>
-                <select name='contextId' id='context'>
+                <select name='contextId' id='context' <?php
+                  if ($values['itemId']) echo ajaxUpd('itemContext', $values['itemId']);
+                ?>>
                 <?php echo $cshtml; ?>
                 </select>
             <?php } else $hiddenvars['contextId']=$values['contextId'];
             if ($show['timeframe'] && $values['type'] != 'p') { ?>
                 <label for='timeframe' class=''>Time:</label>
-                <select name='timeframeId' id='timeframe'>
+                <select name='timeframeId' id='timeframe' <?php
+                  if ($values['itemId']) echo ajaxUpd('itemTime', $values['itemId']);
+                  ?>>
                 <?php echo $tshtml; ?>
                 </select>
             <?php } else $hiddenvars['timeframeId']=$values['timeframeId']; ?>
             <?php if ($show['NA']) { ?>
-                <label for='nextAction' class=''>Next Action:</label><input type="checkbox" name="nextAction" id="nextAction" value="y" <?php if ($nextaction) echo " checked='checked'"; ?> />
+                <label for='nextAction' class=''>Next Action:</label><input type="checkbox" name="nextAction" id="nextAction" value="y" <?php
+                  if ($nextaction) echo " checked='checked' class='checked' ";
+                  else echo " class='unchecked' ";
+                  if ($values['itemId']) echo ajaxUpd('itemNA', $values['itemId']);
+                ?> />
             <?php } else $hiddenvars['nextAction']=($nextaction)?'y':''; ?>
         </div>
         <?php
@@ -226,7 +238,7 @@ echo "</h2>\n";
                     <label for='title' class='left first'>Title:</label>
                     <input class="JKPadding" type="text" name="title" id="title" value="<?php echo makeclean($values['title']); ?>"
                     <?php # item being edited (has itemId) not created so allow ajax save
-                      if ($values['itemId']) echo " onFocus=\"sEf(this,'items','title','itemId','" . $values['itemId'] . "')\"";
+                      if ($values['itemId']) echo ajaxUpd('itemTitle', $values['itemId']);
                     ?> />
             </div>
         <?php } else $hiddenvars['title']=$values['title'];
@@ -236,7 +248,7 @@ echo "</h2>\n";
                     <label for='description' class='left first'>Description:<br>Why?</label>
                     <textarea rows='10' cols='50' name='description' id='description' class='JKPadding'
                     <?php # item being edited (has itemId) not created so allow ajax save
-                      if ($values['itemId']) echo " onFocus=\"sEf(this,'items','description','itemId','" . $values['itemId'] . "')\"";
+                      if ($values['itemId']) echo ajaxUpd('itemDescription', $values['itemId']);
                     ?>><?php echo makeclean($values['description']); ?></textarea>
             </div>
         <?php } else $hiddenvars['description']=$values['description'];
@@ -290,12 +302,17 @@ echo "</h2>\n";
                         }
                     ?>
                 </label>
-                <input class="JKPadding" type="text" name="hyperlink" id="hyperlink" value="<?php echo makeclean($values['hyperlink']); ?>" />
+                <input class="JKPadding" type="text" name="hyperlink" id="hyperlink" value="<?php
+                  echo makeclean($values['hyperlink']) . '"';
+                  if ($values['itemId']) echo ajaxUpd('itemLink', $values['itemId']);
+                  ?> />
             </div>
             <div class='formrow'>
                 <?php if ($show['deadline']) { ?>
                     <label for='deadline' class='left first'>Due date:</label>
-                    <input type='text' size='10' name='deadline' id='deadline' class='hasdate' value='<?php echo $values['deadline']; ?>'/>
+                    <input type='text' size='10' name='deadline' id='deadline' class='hasdate' value='<?php echo $values['deadline']; ?>' <?php
+                      if ($values['itemId']) echo ajaxUpd('itemDeadline', $values['itemId']);
+                    ?>/>
                     <button type='reset' id='deadline_trigger'>...</button>
                         <script type='text/javascript'>
                             Calendar.setup({
@@ -310,8 +327,11 @@ echo "</h2>\n";
                         </script>
                 <?php } else $hiddenvars['deadline']=$values['deadline'];
                 if ($show['dateCompleted']) { ?>
-                    <label for='dateCompleted' class=''>Completed:</label><input type='text' size='10' class='hasdate' name='dateCompleted' id='dateCompleted' value='<?php echo $values['dateCompleted'] ?>'/>
-                    <button type='reset' id='dateCompleted_trigger'>...</button>
+                    <label for='dateCompleted' class=''>Completed:</label><input type='text' size='10' class='hasdate' name='dateCompleted' id='dateCompleted' value='<?php echo $values['dateCompleted'] ?>' <?php
+                      if ($values['itemId'] && strlen($values['dateCompleted']) < 1) echo ajaxUpd('itemCompletedNow', $values['itemId']);
+                      if ($values['itemId'] && strlen($values['dateCompleted']) > 1) echo ajaxUpd('itemCompletedEdit', $values['itemId']);
+                    ?>/>
+                    <button type='reset' id='dateCompleted_trigger' <?php if (strlen($values['dateCompleted']) < 1) echo 'hidden'; ?>>...</button>
                         <script type='text/javascript'>
                             Calendar.setup({
                                 firstDay    :    <?php echo (int) $config['firstDayOfWeek']; ?>,
@@ -323,7 +343,7 @@ echo "</h2>\n";
                                 step        :   1               // show all years in drop-down boxes (instead of every other year as default)
                             });
                         </script>
-                    <button type='button' id='dateCompleted_today' onclick="javascript:completeToday('dateCompleted');">Today</button>
+                    <button type='button' id='dateCompleted_today' <?php if (strlen($values['dateCompleted']) > 1) echo 'hidden'; ?> onclick="javascript:completeToday('dateCompleted');focusOnForm('dateCompleted');">Today</button>
                 <?php } else $hiddenvars['dateCompleted']=$values['dateCompleted']; ?>
             </div>
             <?php if ($show['repeat']) { ?>
@@ -335,21 +355,36 @@ echo "</h2>\n";
 
             <?php
             if (/*$show['isSomeday']*/ 1) { ?><br>
-                <label for='isSomeday' class='left first'>Sday/Maybe:</label> &nbsp;<input type='checkbox' name='isSomeday' id='isSomeday' value='y' title='Places item in Someday file'<?php if ($values['isSomeday']==='y') echo " checked='checked'";?> />
+                <label for='isSomeday' class='left first'>Sday/Maybe:</label> &nbsp;<input type='checkbox' name='isSomeday' id='isSomeday' value='y' title='Places item in Someday file'<?php
+                  if ($values['isSomeday']==='y') echo " checked='checked' class='checked'";
+                  else echo " class = 'unchecked'";
+                  if ($values['itemId']) echo ajaxUpd('itemSomeday', $values['itemId']);
+                ?> />
             <?php } else $hiddenvars['isSomeday']=$values['isSomeday']; ?>
         <!-- </div> -->
         <input type='hidden' name='required'
         value='title:notnull:Title can not be blank.,deadline:date:Deadline must be a valid date.,dateCompleted:date:Completion date is not valid.,suppress:depends:You must set a deadline to base the tickler on:deadline,suppress:depends:You must set a number of days for the tickler to be active from:suppressUntil' />
         <input type='hidden' name='dateformat' value='ccyy-mm-dd' />
-<?php
+        <?php
         if (/*$show['suppress']*/ 1) { ?>
             <!-- <div class='formrow'> -->
 								<label for='suppress' class='left'>Tickler:</label>
-								<input type='checkbox' name='suppress' id='suppress' value='y' title='Temporarily puts this into the tickler file, hiding it from the active view' <?php if ($values['suppress']=="y") echo " checked='checked' "; ?>/>
+								<input type='checkbox' name='suppress' id='suppress' value='y' title='Temporarily puts this into the tickler file, hiding it from the active view' <?php
+                  if ($values['suppress']=="y") echo " checked='checked' class='checked'";
+                  else echo " class = 'unchecked'";
+                  if ($values['itemId']) echo ajaxUpd('itemTickler', $values['itemId']);
+                ?>/>
                 <label for='suppressUntil'>&nbsp;</label>
-                <input type='text' size='3' name='suppressUntil' id='suppressUntil' value='<?php echo $values['suppressUntil'];?>' /><label for='suppressUntil'>&nbsp;days before due date</label>
+                <input type='text' size='3' name='suppressUntil' id='suppressUntil' value='<?php
+                  echo $values['suppressUntil'] . "'";
+                  if ($values['itemId']) echo ajaxUpd('itemTicklerDays', $values['itemId']);
+                ?> /><label for='suppressUntil'>&nbsp;days before due date</label>
 								<label for='suppressIsDeadline' class='left'>Tickler date is deadline?</label>
-								<input type='checkbox' name='suppressIsDeadline' id='suppressIsDeadline' value='y' title='' <?php if ($values['suppressIsDeadline']=="y") echo " checked='checked' "; ?>/>
+								<input type='checkbox' name='suppressIsDeadline' id='suppressIsDeadline' value='y' title='' <?php
+                  if ($values['suppressIsDeadline']=="y") echo " checked='checked' class='checked'";
+                  else echo " class='unchecked'";
+                  if ($values['itemId']) echo ajaxUpd('itemTicklerDeadline', $values['itemId']);
+                ?>/>
 						</div>
         <?php } else {
             $hiddenvars['suppress']=$values['suppress'];
@@ -409,12 +444,12 @@ if ($values['itemId']) {
 }
 echo "</div>\n</form>\n";
 
-/*if ($values['itemId']) {
-        echo "  <div class='details'>\n";
-        echo "      <span class='detail'>Date Added: ".$values['dateCreated']."</span>\n";
-        echo "      <span class='detail'>Last Modified: ".$values['lastModified']."</span>\n";
+if ($values['itemId']) {
+        echo "  <div class='detail'>\n";
+        echo "      <span class='detail'>&nbsp;Created: " . substr($values['dateCreated'],0,10) . "</span>\n";
+        echo "      <span class='detail'>Modified: " . substr($values['lastModified'],0,10) . "</span>\n";
         echo "  </div>\n";
-}*/
+}
 if ($_SESSION['useLiveEnhancements'] && !empty($values['ptype'])) {
     include_once ('searcher.inc.php');
     $partt= $ptitle= $pid ='[';

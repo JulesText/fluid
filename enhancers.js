@@ -49,7 +49,7 @@ function gtd_searchdiv_init(ids,titles,types,onetype) {
 
         anchor=document.createElement('a');
         anchor.href='#';
-        anchor.appendChild(document.createTextNode('+-'));
+        anchor.appendChild(document.createTextNode('++'));
         anchor.id=parentIds[i];
         anchor.ptitle=ptitles[i];
         anchor.ptype=thistype;
@@ -108,6 +108,7 @@ function gtd_gotparent(id,title,type) {
     newrow.appendChild(cell);
 
     document.getElementById("parentlist").appendChild(newrow);
+
 }
 // ======================================================================================
 var inSearch;

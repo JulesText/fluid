@@ -28,7 +28,9 @@ if ($_POST["table"] !== 'lookupqualities') {
     if ($_POST["col5"] == 'visId') $_POST["id5"] = '';
 }
 
-if ($_POST["table"] == 'exceptionNA') {
+if ($_POST["updVal"] == '' && in_array($_POST["table"],['itemstatus','itemattributes']) && in_array($_POST["updCol"],['dateCompleted','dateModified','dateCreated','deadline'])) $_POST["updVal"] = 'NULL';
+
+if ($_POST["table"] == 'nextactions') {
 
   // if no longer NA its straightforward
   if ($updVal == 'n') {
@@ -85,6 +87,8 @@ if ($_POST["id3"] !== 'undefined') $query .= " AND `" . $_POST["col3"] . "` = '"
 if ($_POST["id4"] !== 'undefined') $query .= " AND `" . $_POST["col4"] . "` = '" . $_POST["id4"] . "'";
 if ($_POST["id5"] !== 'undefined') $query .= " AND `" . $_POST["col5"] . "` = '" . $_POST["id5"] . "'";
 
+// file_put_contents ('a.txt',PHP_EOL . $query, FILE_APPEND);
+
 $result = $db->query($query);
 
 if ($result->rowCount() > 0) {
@@ -120,7 +124,11 @@ if ($i) {
     $query .= "')";
 }
 
+// file_put_contents ('a.txt',PHP_EOL . $query, FILE_APPEND);
+
+// this $result is not used, only for debugging, but the query is needed
 $result = $db->query($query);
+
 //file_put_contents ('a.txt',PHP_EOL . $i . ' x ' . $query, FILE_APPEND);
 //file_put_contents ('a.txt',PHP_EOL . $result, FILE_APPEND);
 

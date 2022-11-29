@@ -224,14 +224,20 @@ echo "</h2>\n";
         if($show['title']) { ?>
             <div class='formrow'>
                     <label for='title' class='left first'>Title:</label>
-                    <input class="JKPadding" type="text" name="title" id="title" value="<?php echo makeclean($values['title']); ?>" />
+                    <input class="JKPadding" type="text" name="title" id="title" value="<?php echo makeclean($values['title']); ?>"
+                    <?php # item being edited (has itemId) not created so allow ajax save
+                      if ($values['itemId']) echo " onFocus=\"sEf(this,'items','title','itemId','" . $values['itemId'] . "')\"";
+                    ?> />
             </div>
         <?php } else $hiddenvars['title']=$values['title'];
 
         if ($show['description']) { ?>
             <div class='formrow'>
                     <label for='description' class='left first'>Description:<br>Why?</label>
-                    <textarea rows='10' cols='50' name='description' id='description' class='JKPadding'><?php echo makeclean($values['description']); ?></textarea>
+                    <textarea rows='10' cols='50' name='description' id='description' class='JKPadding'
+                    <?php # item being edited (has itemId) not created so allow ajax save
+                      if ($values['itemId']) echo " onFocus=\"sEf(this,'items','description','itemId','" . $values['itemId'] . "')\"";
+                    ?>><?php echo makeclean($values['description']); ?></textarea>
             </div>
         <?php } else $hiddenvars['description']=$values['description'];
         if ($show['conclusion'] && preg_match('/[mvogp]/', $values['type']) || !empty($values['premiseA']) || !empty($values['premiseB']) || !empty($values['conclusion']) ) { ?> <!-- 'm', 'v', 'o', 'g', 'p', 'a', 'r', 'w', 'i' -->

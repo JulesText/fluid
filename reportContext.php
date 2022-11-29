@@ -1,7 +1,8 @@
 <?php include_once('header.php');
-include_once('reportContext.inc.php'); 
+include_once('reportContext.inc.php');
 require_once("headerHtml.inc.php");
 ?>
+
 <!--
 <h2>Contexts Skimmary</h2>
 <h3>Spatial Context (row), Temporal Context (column)</h3>
@@ -87,13 +88,13 @@ foreach ($contextNames as $cid => $cname) {
                     <input type="hidden" name="multi" value="y" />
         		    <input type="hidden" name="wasNAonEntry" value="<?php echo implode(' ',$wasNAonEntry[$cid][$tid]); ?> " />
                     <input type="hidden" name="action" value="complete" />
-                    <input type="submit" style="height: 0px; width: 0px; border: 0px;" value="Update Actions" name="submit" />					
+                    <input type="submit" style="height: 0px; width: 0px; border: 0px;" value="Update Actions" name="submit" />
                 </div>
             </form>
             <?php
         }
     }
-	
+
 	echo "<br><br><br><br><br>";
 }
 include_once('footer.php');

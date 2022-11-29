@@ -89,6 +89,17 @@ $( document ).ready(function() {
     $descriptionString .= $desiredOutcomeStr;
 
     if (!empty($descriptionString)) echo '<p class="JKSmallPadding">',trimTaggedString($descriptionString),"</p>\n";
+
+    $sTTable1 = "'" . $check . "listitems'";
+    $sTcol1 = "'" . $check . "listItemId','";
+    if (!is_numeric($values['instanceId'])) {
+        $sTTable2 = "'" . $check . "listitems'";
+        $sTcol2 = "";
+    } else {
+        $sTTable2 = "'checklistitemsinst'";
+        $sTcol2 = "'instanceId','" . $values['instanceId'] . "',";
+    }
+
 ?>
 <h2><a href='<?php echo $createURL; ?>' title='add a new item'>Add items</a></h2>
 <?php if ($result1) {
@@ -124,7 +135,7 @@ $( document ).ready(function() {
                     if ($row['expect'] > $prioritise && $prioritise > -1) continue;
                 ?>
                     <tr>
-                        <td class="JKSmallPadding">
+                        <td class="JKSmallPadding" tabindex="2">
                             <?php if (is_numeric($values['instanceId'])) {
                                 echo makeclean($row['item']);
                             } else { ?>
@@ -134,14 +145,17 @@ $( document ).ready(function() {
                             <?php } ?>
                             </td>
                         <td class="JKSmallPadding">
-                        <?php
-                            echo trimTaggedString($row['notes']);
-                                if ($row['hyperlink']) {
-                                    if (strlen($row['notes'])>0) echo "<br><br>";
-                                    echo faLink($row['hyperlink']);
-                                }
-                        ?>
-                        </td>
+                          <div
+                          <?php if (TRUE) { ?>
+                             contenteditable="true" tabindex="3" onFocus="sEf(this,<?php echo $sTTable1; ?>,'notes',<?php echo $sTcol1 . $row['itemId']; ?>')"
+                          <?php }
+                          echo '>' . trimTaggedString($row['notes']);
+                        ?></div><div><?php
+                          if ($row['hyperlink']) {
+                              if (strlen($row['notes'])>0) echo "<br>";
+                              echo faLink($row['hyperlink']);
+                          }
+                        ?></div></td>
                         <?php /*
                         if ($check) {
                             if ($prioritise > -1) { ?>
@@ -163,10 +177,12 @@ $( document ).ready(function() {
                             } */
                         ?>
                         <td class="JKSmallPaddingFaded">
-													<input type="checkbox" name="completed[]" title="Complete" value="<?php
+													<input tabindex="1" type="checkbox" name="completed[]" title="Complete" value="<?php
                             echo $row['itemId'],
 														'"',
-														($isChecklist && $row['checked']==='y')?" checked='checked' ":'';
+                            ($isChecklist && $row['checked']==='y')?" checked='checked' class='checked' ":'',
+                            ($isChecklist && $row['checked']==='n')?" class='unchecked' ":'';
+                            if ($isChecklist) echo " onClick=\"cB(this,'checklistitems','checked','checklistItemId','{$row['itemId']}')\"";
                             ?> />
                         </td>
                     <?php if ($check && $scored) { ?>
@@ -217,8 +233,6 @@ $( document ).ready(function() {
 <?php
     } elseif ($_REQUEST['content'] == 'bulk') {
 ?>
-        <script src="matrixAjax.js"></script>
-        <script src="js/jquery-1.12.4.js"></script>
         <link rel="stylesheet" href="themes/default/dataTables.css" type="text/css" media="Screen" />
 
             <table class='listEd'>
@@ -246,17 +260,7 @@ $( document ).ready(function() {
                     </tr>
                 </thead>
                 <tbody>
-                <?php
-                    $sTTable1 = "'" . $check . "listitems'";
-                    $sTcol1 = "'" . $check . "listItemId','";
-                    if (!is_numeric($values['instanceId'])) {
-                        $sTTable2 = "'" . $check . "listitems'";
-                        $sTcol2 = "";
-                    } else {
-                        $sTTable2 = "'checklistitemsinst'";
-                        $sTcol2 = "'instanceId','" . $values['instanceId'] . "',";
-                    }
-                ?>
+
                 <?php foreach($result1 as $row) { ?>
                     <tr>
                             <td class="JKSmallPadding" contenteditable="true" onBlur="sT(this,<?php echo $sTTable1; ?>,'item',<?php echo $sTcol1 . $row['itemId']; ?>')" onFocus="sE(this)"><?php

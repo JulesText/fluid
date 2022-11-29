@@ -9,12 +9,55 @@ $updVal = htmlspecialchars_decode($_POST["updVal"]);
 $updVal = str_replace(array(' .CL', ' .LIST'), '', $updVal);
 if (substr($updVal, -4) == '<br>') $updVal = substr_replace($updVal,'',-4);
 $updVal = str_replace(array('<br>', '<br />'), PHP_EOL, $updVal);
+
+// quick workaround for error when extra carriage return being included when only one blank line expected
+#file_put_contents ('a.txt', '---' . PHP_EOL . $updVal . PHP_EOL . '---' . PHP_EOL, FILE_APPEND);
+$updVal = str_replace('
+
+
+', '
+
+', $updVal);
+#file_put_contents ('a.txt', '---' . PHP_EOL . $updVal . PHP_EOL . '---' . PHP_EOL, FILE_APPEND);
+
 if ($_POST["table"] !== 'lookupqualities') {
     // if using visId for other purpose, do not save
     if ($_POST["col2"] == 'visId') $_POST["id2"] = '';
     if ($_POST["col3"] == 'visId') $_POST["id3"] = '';
     if ($_POST["col4"] == 'visId') $_POST["id4"] = '';
     if ($_POST["col5"] == 'visId') $_POST["id5"] = '';
+}
+
+if ($_POST["table"] == 'exceptionNA') {
+
+  // if no longer NA its straightforward
+  if ($updVal == 'n') {
+   $query = "DELETE FROM nextactions WHERE `nextaction` = '" . $_POST["pid1"] . "'";
+   $db->query($query);
+   #file_put_contents ('a.txt', PHP_EOL . $query . PHP_EOL . '--', FILE_APPEND);
+  }
+
+  // otherwise iterate
+  if ($updVal == 'y') {
+
+    // get parent ids
+    $query = "SELECT parentId FROM lookup WHERE `itemId` = '" . $_POST["pid1"] . "'";
+    $result = $db->query($query);
+    $array = $result->fetchAll();
+    // foreach ($array as $row)
+    //   foreach ($row as $key => $val)
+    //     file_put_contents ('a.txt', PHP_EOL . $key . ' x ' . $val . PHP_EOL . '--', FILE_APPEND);
+
+    // update nextactions table
+    foreach ($array as $row) {
+      $query = "INSERT INTO nextactions (`parentId`,`nextaction`) VALUES ('" . $row['parentId'] . "','" . $_POST["pid1"] . "')";
+      $result = $db->query($query);
+      // file_put_contents ('a.txt', PHP_EOL . $query . PHP_EOL . '--', FILE_APPEND);
+    }
+  }
+
+  $db = NULL; // destroy connection
+  die;
 }
 
 /*
@@ -25,7 +68,7 @@ if ($_POST['updCol'] == 'title' && in_array($_POST['table'], array('list','check
 */
 $updVal = mysqli_real_escape_string($config["conn"], $updVal);
 
-//    file_put_contents ('a.txt',$_POST['updCol'] . 'has' . $_POST['table'], FILE_APPEND);die;
+// file_put_contents ('a.txt',$_POST['updCol'] . 'has' . $_POST['table'], FILE_APPEND);die;
 
 // logic seems klunky but do not change without thorough testing
 
@@ -79,7 +122,7 @@ if ($i) {
 
 $result = $db->query($query);
 //file_put_contents ('a.txt',PHP_EOL . $i . ' x ' . $query, FILE_APPEND);
-//file_put_contents ('a.txt',PHP_EOL . var_dump($result), FILE_APPEND);
+//file_put_contents ('a.txt',PHP_EOL . $result, FILE_APPEND);
 
 $db = NULL; // destroy connection
 

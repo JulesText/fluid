@@ -323,12 +323,12 @@ if (!empty($childtype)) {
             }
 
             $maintable[$i]['title']= $tfield;
-            $maintable[$i][$descriptionField]=$row['description'];
+            $maintable[$i][$descriptionField] = '<div contenteditable="true" onFocus="sEf(this,\'items\',\'description\',\'itemId\',\'' . $row['itemId'] . '\')">' . $row['description'];
             if ($row['hyperlink']) {
-                if (!empty($row['description'])) $maintable[$i][$descriptionField] .= "<br><br>";
+                if (!empty($row['description'])) $maintable[$i][$descriptionField] .= "</div><div><br>";
                 $maintable[$i][$descriptionField] .= faLink($row['hyperlink']);
-
             }
+            $maintable[$i][$descriptionField] .= '</div>';
             $rfield = $row['premiseA'];
             if($row['premiseB']) $rfield .= '<br><br>' . $row['premiseB'];
             if($row['conclusion']) $ofield .= '<br><br>' . $row['conclusion'];

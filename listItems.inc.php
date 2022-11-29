@@ -390,12 +390,12 @@ echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
         $maintable[$thisrow]['checkboxname']= 'isMarked[]';
         $maintable[$thisrow]['checkboxvalue']=$row['itemId'];
 
-        $descriptionString = $row['description'];
+        $descriptionString = '<div contenteditable="true" onFocus="sEf(this,\'items\',\'description\',\'itemId\',\'' . $row['itemId'] . '\')">' . $row['description'] . '</div>';
         if ($row['premiseA']) $descriptionString .= "<br><br>" . $row['premiseA'];
         if ($row['premiseB']) $descriptionString .= "<br><br>" . $row['premiseB'];
         if ($row['conclusion']) $descriptionString .= "<br><br>" . $row['conclusion'];
         if ($row['hyperlink']) {
-            if (strlen($descriptionString) > 0) $descriptionString .= "<br><br>";
+            if (strlen($descriptionString) > 0) $descriptionString .= "<br>";
             $descriptionString .= faLink($row['hyperlink']);
         }
         $maintable[$thisrow]['description'] = $descriptionString;

@@ -76,6 +76,18 @@ if (!isset($_SESSION['useLiveEnhancements']))
 <!-- enhancements for live feedback -->
 <script type="text/javascript" src="enhancers.js"></script>
 
+<!-- ajax code for matrix or other files -->
+<script src="matrixAjax.js"></script>
+<script src="js/jquery-1.12.4.js"></script>
+<script type='text/javascript' >
+$(document).ready(function() {
+    // prevent boxes staying checked after page reload if ajax used to check box
+    $(".unchecked").prop("checked", false);
+    $(".checked").prop("checked", true);
+});
+</script>
+
+
 <?php
 }
 if ($config['debug'] || defined('_DEBUG'))

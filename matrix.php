@@ -695,10 +695,6 @@ foreach ((array) $dispArray as $key=>$val) {
 
 ?>
 
-<script src="matrixAjax.js"></script>
-
-<script src="js/jquery-1.12.4.js"></script>
-
 <script src="js/matrixTable.js"></script>
 <script src="js/dataTables.fixedColumns.min.js"></script>
 <script src="js/dataTables.fixedHeader.min.js"></script>

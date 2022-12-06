@@ -145,7 +145,13 @@ $( document ).ready(function() {
                             <?php } ?>
                             </td>
                         <td class="JKSmallPadding">
-                          <?php echo '<div contenteditable="true" tabindex="3"'
+                          <?php
+                          # exception if contains hyperlink avoid ajax update
+                          if (strstr(trimTaggedString($row['notes']), '<a href='))
+                            echo trimTaggedString($row['notes']) . '<div>';
+                          # otherwise do it
+                          else
+                            echo '<div contenteditable="true" tabindex="3"'
                                   . ajaxUpd($check . "listitemNotes", $row['itemId']) . '>' . trimTaggedString($row['notes']) . '</div><div>';
                           if ($row['hyperlink']) {
                               if (strlen($row['notes'])>0) echo "<br>";

@@ -101,15 +101,15 @@ function sT(editableObj,table,updCol,pcol1,pid1,col2,id2,col3,id3,col4,id4,col5,
 			$(editableObj).css("outline-color","#c22");
 		} else if (eType == 'textarea') {
 			bgcol = "#fff";
-		} else if (eType == 'td' || 'div') {
+		} else if (eType == 'td' || eType == 'div') {
 			bgcol = "#ded";
 		}
 
 		// call element content
 		if (updVal === '' || typeof updVal == 'undefined') {
-			if(eType == 'textarea' || 'select' || 'input') {
+			if(eType == 'textarea' || eType == 'select' || eType == 'input') {
 				updVal = editableObj.value;
-			} else if(eType == 'td' || 'div') {
+			} else if(eType == 'td' || eType == 'div') {
 				//updVal = editableObj.innerHTML; // adds unwanted html tags
 				updVal = editableObj.innerText;
 			} else { alert('error: unrecognised element type ' + eType); return; }

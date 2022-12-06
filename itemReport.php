@@ -119,7 +119,7 @@ if(isset($nextId))  echo " [<a href='itemReport.php?itemId=$nextId' title='",mak
 */
 echo "</div>\n<table id='report' summary='item attributes'><tbody>";
 //Item details
-if ($item['description']) echo "<tr><th width=200>Description:</th><td class=\"JKPadding\">",nl2br(escapeChars($item['description'])),"</td></tr>\n";
+if ($item['description']) echo "<tr><th width=200>Description:</th><td class=\"JKPadding\">" . nl2br(escapeChars($item['description'])) . "</td></tr>\n";
 if ($item['conclusion']) {
     echo "<tr><th>Reasons:</th><td class=\"JKPadding\">",nl2br(escapeChars($item['premiseA']));
     if ($item['premiseB']) echo "<br><br>", nl2br(escapeChars($item['premiseB']));
@@ -329,7 +329,12 @@ if (!empty($childtype)) {
             }
 
             $maintable[$i]['title']= $tfield;
-            $maintable[$i][$descriptionField] = "<div contenteditable='true'" . ajaxUpd('itemDescription', $row['itemId']) . ">" . $row['description'];
+            # exception if contains hyperlink avoid ajax update
+            if (strstr($row['description'], '<a href='))
+              $maintable[$i][$descriptionField] = $row['description'] . '<div>';
+            # otherwise do it
+            else
+              $maintable[$i][$descriptionField] = "<div contenteditable='true'" . ajaxUpd('itemDescription', $row['itemId']) . ">" . $row['description'];
             if ($row['hyperlink']) {
                 if (!empty($row['description'])) $maintable[$i][$descriptionField] .= "</div><div><br>";
                 $maintable[$i][$descriptionField] .= faLink($row['hyperlink']);

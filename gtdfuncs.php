@@ -320,6 +320,7 @@ function ajaxUpd($query, $id) {
       if ($query === 'itemContext') $retval = " onChange=\"sT(this,'itemattributes','contextId','itemId','{$id}')\" ";
       if ($query === 'itemTime') $retval = " onChange=\"sT(this,'itemattributes','timeframeId','itemId','{$id}')\" ";
       if ($query === 'itemNA') $retval = " onClick=\"cB(this,'nextactions','nextaction','nextaction','{$id}')\" ";
+      if ($query === 'itemComplete') $retval = " onClick=\"cB(this,'itemstatus','dateCompleted','itemId','{$id}')\" ";
       if ($query === 'itemTitle') $retval = " onFocus=\"sEf(this,'items','title','itemId','{$id}')\" ";
       if ($query === 'itemDescription') $retval = " onFocus=\"sEf(this,'items','description','itemId','{$id}')\" ";
       if ($query === 'itemLink') $retval = " onFocus=\"sEf(this,'items','hyperlink','itemId','{$id}')\" ";

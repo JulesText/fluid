@@ -74,6 +74,13 @@ input.JKPadding {
 	color: black; padding: 10px; padding-left: 30px;
 }
 
+input.closeButton {
+	position: absolute; right:10px; top:10px;
+	color: red; padding: 200px;
+	font-size: 24px;
+	font-family: verdana;
+}
+
 /* This JK indent */
 div {
 /* padding-left: 40px; */

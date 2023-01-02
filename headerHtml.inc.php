@@ -87,6 +87,25 @@ $(document).ready(function() {
 });
 </script>
 
+<!-- allow easy close for windows opened from pertinent.html -->
+<script>
+
+  function closeMe() {
+    // try 2 methods, either should work normally
+    try {
+      window.close();
+    } catch (e) {
+      console.log(e);
+    }
+    try {
+      self.close();
+    } catch (e) {
+      console.log(e);
+    }
+  }
+</script>
+
+
 
 <?php
 }
@@ -111,7 +130,11 @@ echo "
 </head><body" . (preg_match("/itemReport.php/", $_SERVER['REQUEST_URI']) ? " onload='moveWindow()'" : '') . "><a name=\"top\"></a><div id='container'>\n";
 //require_once("headerMenu.inc.php");
 echo "<div id='main'>\n";
+
 if ($config['debug'] & _GTD_DEBUG)
     echo '<br /><hr /><pre>Session:',print_r($_SESSION,true)
         ,'<br />Post:',print_r($_POST,true),'</pre><hr />';
+
+if (isMobile()) echo "<input type='button' value='Close' onclick='closeMe();' class='closeButton' />";
+
 include_once('showMessage.inc.php');

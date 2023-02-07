@@ -1,30 +1,30 @@
 <html>
-<body onload="particles()">
+<body onload="particle()">
 <script>
-function particles() {
+function particle() {
 
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     var windows = [
-        'reportLists.php?id=134&type=C&instanceId=11', // last window
-        'reportLists.php?id=134&type=C',
-        'reportLists.php?id=118&type=C&instanceId=11',
-        'reportLists.php?id=118&type=C',
-        'reportLists.php?id=116&type=c&instanceId=11',
-        'reportLists.php?id=116&type=C',
-        'reportLists.php?id=178&type=c',
-        'reportLists.php?id=184&type=c&instanceId=11', 
-        'reportLists.php?id=179&type=c',
-        'reportLists.php?id=177&type=c',
-        'reportLists.php?id=172&type=c&instanceId=11',
-        'reportLists.php?id=172&type=c',
-        'reportLists.php?id=119&type=c&instanceId=11',
-        'reportLists.php?id=119&type=C',
-        'reportLists.php?id=176&type=c', // third window etc.
-        'itemReport.php?itemId=18056', // second window
-        'reportLists.php?id=137&type=c' // first/current window
+        'editListItems.php?itemId=2547&type=c', // last window
+        'reportLists.php?id=72&type=C',
+        'reportLists.php?id=46&type=l',
+        'reportLists.php?id=129&type=C',
+        'reportLists.php?id=42&type=l',
+        'reportLists.php?id=65&type=c',
+        'reportLists.php?id=115&type=c',
+        'itemReport.php?itemId=5233',
+        'reportLists.php?id=174&type=c',
+        'itemReport.php?itemId=18056',
+        'reportLists.php?id=160&type=c',
+        'reportLists.php?id=23&type=l',
+        'reportLists.php?id=40&type=L',
+        'reportLists.php?id=182&type=c',
+        'reportLists.php?id=175&type=c', // third window etc.
+        'itemReport.php?itemId=6242', // second window
+        'itemReport.php?itemId=6030', // first/current window
     ];
 
     var arrayLength = windows.length;

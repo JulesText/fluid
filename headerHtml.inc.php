@@ -105,6 +105,13 @@ $(document).ready(function() {
   }
 </script>
 
+<?php # if is checklist and in ToDB ids
+if (isset($check) && $check == 'check' && in_array($row['id'], array(53,36,37,38,39,40,41,42,43))) { ?>
+		<script>
+		window.setTimeout(function() { window.location.href = "ToD.php"; }, 1800000); // refresh each 30 minutes
+		</script>
+<?php } ?>
+
 
 
 <?php

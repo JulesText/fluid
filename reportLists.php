@@ -11,6 +11,11 @@ if ($result==1) {
 }
 $row=$result[0];
 
+if (!isset($_REQUEST['content']) || $_REQUEST['content'] !== 'bulk') {
+  $sort['getlistitems'] = $sort['getlistitemsprioritise'];
+  $sort['getchecklistitems'] = $sort['getchecklistitemsprioritise'];
+}
+
 $values['filterquery']= " AND ".sqlparts("activelistitems",$config,$values);
 $result1=query("get{$check}listitems",$config,$values,$sort);
 
@@ -24,11 +29,6 @@ $createURL="editListItems.php?id={$row['id']}&amp;$urlSuffix";
 $prioritise = $row['prioritise'];
 
 $item['title'] = $row['title']; // page title
-
-if (isset($check) && $check == 'check' && in_array($row['id'], array(53,36,37,38,39,40,41,42,43))) {
-    // todb
-    echo '<meta http-equiv="REFRESH" content="1800;url=ToD.php">';
-}
 
 $scored = false;
 if (isset($check) && $check == 'check' && $row['scored'] == 'y') $scored = true;
@@ -46,7 +46,13 @@ $( document ).ready(function() {
 </script>
 
 <h1>The <?php echo $row['title'],' ',$check; ?>list</h1>
-<p><span class='editbar'>[
+<p>
+<?php
+  if (isset($_REQUEST['content']) && $_REQUEST['content'] == 'bulk') {
+      echo "[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst . "\">Show List</a>&nbsp;]&nbsp;&nbsp;&nbsp;";
+  }
+?>
+  <span class='editbar'>[
     <a href='editLists.php<?php echo $urlVars . $urlInst; ?>'>Edit List</a>
 ]</span>
 <?php
@@ -65,7 +71,14 @@ $( document ).ready(function() {
 </p>
 <p>
 <?php
-    echo 'Prioritised: ',$prioritise,", ";
+    #echo 'Prioritised: ',$prioritise,", ";
+    $values['urlVars'] = $urlVars;
+    $values['queryTable'] = $check . 'listitems';
+    $values['queryKey'] = $check . 'listId';
+    $values['queryValue'] = $row['id'];
+    $values['priorityId'] = $prioritise;
+    echo 'Prioritised: ' . priorityselectbox($config,$values,$sort) . ', ';
+
     if (!empty($row['category'])) echo 'Category: ',$row['category'],", ";
 	?>Sort: <?php echo makeclean($row['sortBy']);
 	if ($check) {
@@ -136,10 +149,12 @@ $( document ).ready(function() {
                 ?>
                     <tr>
                         <td class="JKSmallPadding" tabindex="2">
-                            <?php if (is_numeric($values['instanceId'])) {
+                            <?php
+                            if ($prioritise > 0) echo '<span style="opacity: 0.2; font-size: medium;">P' . $row['expect'] . '</span>&nbsp;';
+                            if (is_numeric($values['instanceId'])) {
                                 echo makeclean($row['item']);
-                            } else { ?>
-                            <a href="editListItems.php?itemId=<?php
+                            } else {
+                            ?><a href="editListItems.php?itemId=<?php
                             echo $row['itemId'],'&amp;',$urlSuffix;
                             ?>" title="Edit"><?php echo makeclean($row['item']); ?></a>
                             <?php } ?>
@@ -184,12 +199,17 @@ $( document ).ready(function() {
 														'"',
                             ($isChecklist && $row['checked']==='y')?" checked='checked' class='checked' ":'',
                             ($isChecklist && $row['checked']==='n')?" class='unchecked' ":'';
-                            if ($isChecklist) echo ajaxUpd('checklistitem', $row['itemId']);
+                            if ($isChecklist) {
+                              if (!is_numeric($values['instanceId'])) echo ajaxUpd('checklistitem', $row['itemId']);
+                              else echo ajaxUpd('checklistiteminst', $row['itemId'], $values['instanceId']);
+                            }
                             ?> />
                         </td>
                     <?php if ($check && $scored) { ?>
                         <td class="JKSmallPaddingFaded"><input type="checkbox" name="ignored[]" title="Ignore" value="<?php
                             echo $row['itemId'],'"',($isChecklist && $row['ignored']==='y')?" checked='checked' ":'';
+                            if (!is_numeric($values['instanceId'])) echo ajaxUpd('checklistitemignore', $row['itemId']);
+                            else echo ajaxUpd('checklistiteminstignore', $row['itemId'], $values['instanceId']);
                             ?> />
                         </td>
                     <?php } ?>

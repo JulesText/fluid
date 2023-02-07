@@ -176,6 +176,24 @@ function instanceselectbox($config,$values,$sort) {
     return $cashtml;
     }
 
+function priorityselectbox($config,$values,$sort) {
+    $result = query("priorityselectbox",$config,$values,$sort);
+    $result = array_merge([['expect' => '-1']], $result);
+    $arrsize = count($result) - 1;
+    $max = $result[$arrsize]['expect'];
+    #echo '<pre>'; var_dump($result);die;
+    $cashtml='<select onchange="if (this.value) window.location.href=this.value">';
+    foreach($result as $row) {
+        $cashtml .= '   <option value="processLists.php' . $values['urlVars'] . '&action=listpriority&prioritise=' . $row['expect'] . '" title="'.$row['expect'].'"';
+        if($row['expect']==$values['priorityId']) $cashtml .= ' selected="selected"';
+        $cashtml .= '>'.$row['expect'];
+        if ($row['expect'] !== '-1') $cashtml .= '/' . $max;
+        $cashtml .= '</option>' . PHP_EOL;
+    }
+    $cashtml .= '</select>';
+    return $cashtml;
+    }
+
 function contextselectbox($config,$values,$sort) {
     $result = query("spacecontextselectbox",$config,$values,$sort);
     $cshtml='<option value="0">--</option>'."\n";
@@ -197,7 +215,7 @@ function timecontextselectbox($config,$values,$sort) {
             $tshtml .= '                    <option value="'.$row['timeframeId'].'" title="'.makeclean($row['description']).'"';
             if ($row['timeframeId'] == $values['timeframeId']) {
                 $tshtml .= ' selected="selected"';
-            } elseif ($values['timeframeId'] == '' && $row['timeframeId'] == 2) {
+            } elseif ($values['timeframeId'] == '' && $row['timeframeId'] == 0) {
                 $tshtml .= ' selected="selected"';
             }
             $tshtml .= '>'.makeclean($row['timeframe'])."</option>\n";
@@ -313,7 +331,7 @@ function faLink($link, $mx = false) {
     return $retval;
 }
 
-function ajaxUpd($query, $id) {
+function ajaxUpd($query, $id, $inst = NULL) {
     $retval='';
     if($id != '') {
       if ($query === 'itemCategory') $retval = " onChange=\"sT(this,'itemattributes','categoryId','itemId','{$id}')\" ";
@@ -333,6 +351,9 @@ function ajaxUpd($query, $id) {
       if ($query === 'itemTicklerDeadline') $retval = " onClick=\"cB(this,'itemattributes','suppressIsDeadline','itemId','{$id}')\" ";
       if ($query === 'checklistitemNotes') $retval = " onFocus=\"sEf(this,'checklistitems','notes','checklistItemId','{$id}')\" ";
       if ($query === 'checklistitem') $retval = " onClick=\"cB(this,'checklistitems','checked','checklistItemId','{$id}')\" ";
+      if ($query === 'checklistiteminst') $retval = " onClick=\"cB(this,'checklistitemsinst','checked','checklistItemId','{$id}','instanceId','{$inst}')\" ";
+      if ($query === 'checklistitemignore') $retval = " onClick=\"cB(this,'checklistitems','ignored','checklistItemId','{$id}')\" ";
+      if ($query === 'checklistiteminstignore') $retval = " onClick=\"cB(this,'checklistitemsinst','ignored','checklistItemId','{$id}','instanceId','{$inst}')\" ";
     }
     return $retval;
 }

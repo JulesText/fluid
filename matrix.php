@@ -1181,7 +1181,7 @@ if (!$data) {
 ?>
     <tr class="qual">
         <td class='cont'>Qual:</td>
-        <td class='cont' onClick="window.location = 'matrix.php';">Defult</td>
+        <td class='cont' onClick="window.location = 'matrix.php';">Base</td>
 <?php
     if ($qLimit == 'h') { ?>
         <td class='cont' onClick="window.location = 'backup_scenario.php?name=<?php echo $mxTitle; ?>';">Save</td>

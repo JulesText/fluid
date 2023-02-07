@@ -106,6 +106,13 @@ function getsql($config,$values,$sort,$querylabel) {
 				ORDER BY `description` ASC";
 			break;
 
+    case "priorityselectbox":
+			$sql="SELECT DISTINCT `expect`
+				FROM `". $config['prefix'] . $values['queryTable'] . "`
+        WHERE `" . $values['queryKey'] . "` = " . $values['queryValue'] . "
+				ORDER BY `expect` ASC";
+			break;
+
 		case "categoryselectbox":
 			$sql="SELECT c.`categoryId`, c.`category`, c.`description`
 				FROM `". $config['prefix'] ."categories` as c
@@ -508,6 +515,14 @@ function getsql($config,$values,$sort,$querylabel) {
 			$sql="SELECT `sortBy`, `title`
 				FROM `". $config['prefix'] ."catcodes`
 				WHERE ISNULL(`parentId`)
+        ORDER BY `sortBy` ASC
+				";
+		break;
+
+    case "getcatcodedetails":
+			$sql="SELECT `sortBy`, `title`, `parentId`
+				FROM `". $config['prefix'] ."catcodes`
+        ORDER BY `sortBy` ASC
 				";
 		break;
 
@@ -895,8 +910,7 @@ function getsql($config,$values,$sort,$querylabel) {
 						cl.`premiseA`,cl.`premiseB`,cl.`conclusion`,cl.`behaviour`, cl.`standard`, cl.`conditions`, cl.`metaphor`, cl.`categoryId`, cl.`hyperlink`, cl.`sortBy`, cl.`frequency`, cl.`effort`, cl.`scored`, cl.`menu`, cl.`prioritise`, c.`category`
 				FROM `". $config['prefix'] ."checklist` as cl
 				LEFT OUTER JOIN `{$config['prefix']}categories` AS c USING (`categoryId`)
-				WHERE cl.`checklistId`='{$values['id']}'
-				ORDER BY {$sort['selectchecklist']}";
+				WHERE cl.`checklistId`='{$values['id']}'";
 			break;
 
 		case "selectchecklistitem":
@@ -1103,8 +1117,13 @@ function getsql($config,$values,$sort,$querylabel) {
 
 		case "updatechecklistitem":
 			$sql="UPDATE `". $config['prefix'] . "checklistitems`
-				SET `notes` = '{$values['notes']}', `hyperlink` = '{$values['hyperlink']}', `item` = '{$values['item']}',
-						`checklistId` = '{$values['id']}', `checked`='{$values['checked']}', `ignored`='{$values['ignored']}'
+				SET `notes` = '{$values['notes']}',
+        `hyperlink` = '{$values['hyperlink']}',
+        `item` = '{$values['item']}',
+				`checklistId` = '{$values['id']}',
+        `checked`='{$values['checked']}',
+        `ignored`='{$values['ignored']}',
+        `expect`={$values['expect']}
 				WHERE `checklistItemId` ='{$values['itemId']}'";
 			break;
 
@@ -1178,9 +1197,12 @@ function getsql($config,$values,$sort,$querylabel) {
 
 		case "updatelistitem":
 			$sql="UPDATE `". $config['prefix'] . "listitems`
-				SET `notes` = '{$values['notes']}', `hyperlink` = '{$values['hyperlink']}', `item` = '{$values['item']}',
-						`listId` = '{$values['id']}',
-						`dateCompleted`={$values['dateCompleted']}
+				SET `notes` = '{$values['notes']}',
+        `hyperlink` = '{$values['hyperlink']}',
+        `item` = '{$values['item']}',
+				`listId` = '{$values['id']}',
+        `dateCompleted`={$values['dateCompleted']},
+        `expect`={$values['expect']}
 				WHERE `listItemId` ='{$values['itemId']}'";
 			break;
 

@@ -1,5 +1,9 @@
 <?php
 require_once("headerDB.inc.php");
+
+$expand = FALSE;
+if (isset($_REQUEST['expand']) && $_REQUEST['expand'] == 'TRUE') $expand = TRUE;
+
 /*
    ----------------------------------------------
    first, define the default menus
@@ -7,44 +11,63 @@ require_once("headerDB.inc.php");
 $menu=array();
 $menu2=array();
 
-$menu2[] = array("link"=>'','label'=>'');
-//-------------------------------------------
-$menu2[] = array("link"=>'','label'=>'Process');
-//-------------------------------------------
-$menu2[] = array("link"=>"ToD.php", 'title'=>"Process the time of day", 'label' => "ToDB");
-$menu[] = array("link"=>"fantastical2://", 'title'=>"Calendar", 'label' => "Calendar");
+//$menu[] = array("link"=>"fantastical2://", 'title'=>"Calendar", 'label' => "Calendar");
 //$menu[] = array("link"=>"reportLists.php?id=120&type=C", 'title'=>"Circadian Rhythm", 'label' => "Circadian Rhythm");
 //$menu[] = array("link"=>"reportLists.php?id=13&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Health DDD");
 //$menu[] = array("link"=>"reportLists.php?id=168&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Chores EEE");
 //$menu[] = array("link"=>"reportLists.php?id=170&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Process FFF");
-$menu[] = array("link"=>"Lunar.php", 'title'=>"Phase", 'label' => "Phase");
-$menu[] = array("link"=>"index.php", 'title'=>"Summary View", 'label' => "Summary View");
+#$menu[] = array("link"=>"Lunar.php", 'title'=>"Phase", 'label' => "Phase");
 $menu[] = array("link"=>"pertinent.html", 'title'=>"HHome Tabs", 'label' => "HHome Tabs");
-$menu[] = array("link"=>"listItems.php?tickler=false&type=w&contextId=25&notspacecontext=true&nextonly=true&dueonly=true&liveparents=*", 'title'=>"Due Waiting On", 'label' => "Due Waiting On");
-$menu[] = array("link"=>"listItems.php?tickler=false&type=a&contextId=25&notspacecontext=true&dueonly=true&liveparents=*", 'title'=>"Due Actions", 'label' => "Due Actions");
-$menu[] = array("link"=>"reportContext.php?notContext=25", 'title'=>"Process actions sorted by space context", 'label' => "All Contexts");
+$menu[] = array("link"=>"ToD.php", 'title'=>"Process the time of day", 'label' => "ToDB");
+/*
+$menu[] = array("link"=>"reportContext!Personal.php", 'title'=>"Process actions sorted by space context", 'label' => "Context report for non-personal categories");
+$menu[] = array("link"=>"reportContextPersonal.php", 'title'=>"Process actions sorted by space context", 'label' => "Context report for personal category");
+$menu[] = array("link"=>"listItems.php?type=a&contextId=6&notspacecontext=true&liveparents=true&", 'title'=>"Process actions sorted to exclude computer context", 'label' => "Context report without At Computer context");
+*/
+$menu[] = array("link"=>"listLists.php?type=C", 'title'=>"Show reusable checklists", 'label' => "Show Checklists");
+$menu[] = array("link"=>"listLists.php?type=L", 'title'=>"Show general-purpose lists", 'label' => "Show Lists");
+$menu[] = array("link"=>"item.php?type=i", 'title'=>"Drop an item into the inbox", 'label' => "Capture Inbox Item");
+$menu[] = array("link"=>"itemReport.php?itemId=18792", 'title'=>"~ BETTY", 'label' => "~ BETTY");
 $menu[] = array("link"=>'','label'=>'');
-$menu2[] = array("link"=>"listItems.php?type=i", 'title'=>"Inbox", 'label' => "Inbox");
-$menu2[] = array("link"=>"reportLists.php?id=1&type=C", 'title'=>"Weekly Review", 'label' => "WW Weekly Review");
+/*
+$menu[] = array("link"=>"item.php?type=a&amp;nextonly=true", 'title'=>"Create a new next action", 'label' => "Next Action");
+$menu[] = array("link"=>"item.php?type=a", 'title'=>"Create a new action", 'label' => "Action");
+$menu[] = array("link"=>"item.php?type=w", 'title'=>"Create a new waiting on item", 'label' => "Waiting On");
+$menu[] = array("link"=>"item.php?type=r", 'title'=>"Create a reference", 'label' => "Reference");
+$menu[] = array("link"=>"item.php?type=p&amp;someday=true", 'title'=>"Create a future project", 'label' => "Someday/Maybe");
+*/
+
+
+$menu2[] = array("link"=>'','label'=>'');
+//-------------------------------------------
+$menu2[] = array("link"=>'','label'=>'Process');
+//-------------------------------------------
+$menu2[] = array("link"=>"listItems.php?tickler=false&type=w&contextId=25&notspacecontext=true&nextonly=true&dueonly=true&liveparents=*", 'title'=>"Due Waiting On", 'label' => "Due Waiting On");
+$menu2[] = array("link"=>"listItems.php?tickler=false&type=a&contextId=25&notspacecontext=true&dueonly=true&liveparents=*", 'title'=>"Due Actions", 'label' => "Due Actions");
+$menu2[] = array("link"=>"index.php", 'title'=>"Summary View", 'label' => "Summary View");
+$menu2[] = array("link"=>"reportContext.php?notContext=25", 'title'=>"Process actions sorted by space context", 'label' => "All Contexts");
 //warning: poorly formed GET variables for matrix can generate errors in matrixformula.php and matrix.php
-$menu[] = array("link"=>"matrix.php?&live=true&qLimit=b", 'title'=>"Matrix", 'label' => "Matrix");
+$menu2[] = array("link"=>"matrix.php?&live=true&qLimit=b", 'title'=>"Matrix", 'label' => "Matrix");
+$menu2[] = array("link"=>"reportLists.php?id=1&type=C", 'title'=>"Weekly Review", 'label' => "WW Weekly Review");
+$menu2[] = array("link"=>"listItems.php?quickfind", 'title'=>'Find an item based on text in its title, description or outcome', 'label'=>'Keyword Search');
+
+if (!$expand) {
+  $menu2[] = array("link"=>'','label'=>'Expand');
+  $menu2[] = array("link"=> $_SERVER['REQUEST_URI'] . "&expand=TRUE", 'title'=>"Expand menu", 'label' => "Expand menu");
+}
+
+if ($expand) {
+
+$menu2[] = array("link"=>"listItems.php?type=i", 'title'=>"Inbox", 'label' => "Inbox");
 $menu2[] = array("link"=>"listItems.php?type=a&contextId=10&nextonly=true&liveparents=true&", 'title'=>"Process actions sorted by space context", 'label' => "Agenda Context");
 $menu2[] = array("link"=>"listItems.php?type=a&contextId=6&nextonly=true&liveparents=true&", 'title'=>"Process actions sorted by space context", 'label' => "Computer Context");
 $menu2[] = array("link"=>"listItems.php?type=a&contextId=13&nextonly=true&liveparents=true&", 'title'=>"Process actions sorted by space context", 'label' => "Errand Context");
 $menu2[] = array("link"=>"listItems.php?type=a&contextId=11&nextonly=true&liveparents=true&", 'title'=>"Process actions sorted by space context", 'label' => "Home Context");
 $menu2[] = array("link"=>"listItems.php?type=a&contextId=8&nextonly=true&liveparents=true&", 'title'=>"Process actions sorted by space context", 'label' => "Call/Msg Context");
 $menu2[] = array("link"=>"listItems.php?type=a&contextId=34&nextonly=true&liveparents=true&", 'title'=>"Process actions sorted by space context", 'label' => "Mobile Context");
-/*
-$menu[] = array("link"=>"reportContext!Personal.php", 'title'=>"Process actions sorted by space context", 'label' => "Context report for non-personal categories");
-$menu[] = array("link"=>"reportContextPersonal.php", 'title'=>"Process actions sorted by space context", 'label' => "Context report for personal category");
-$menu[] = array("link"=>"listItems.php?type=a&contextId=6&notspacecontext=true&liveparents=true&", 'title'=>"Process actions sorted to exclude computer context", 'label' => "Context report without At Computer context");
-*/
 $menu2[] = array("link"=>"listItems.php?type=*&tickler=true&liveparents=true&", 'title'=>"Tickler File", 'label' => "Tickler");
 $menu2[] = array("link"=>'','label'=>'separator');
-$menu[] = array("link"=>"listLists.php?type=L", 'title'=>"Show general-purpose lists", 'label' => "Show Lists");
-$menu[] = array("link"=>"listLists.php?type=C", 'title'=>"Show reusable checklists", 'label' => "Show Checklists");
 $menu2[] = array("link"=>'','label'=>'separator');
-$menu[] = array("link"=>"listItems.php?quickfind", 'title'=>'Find an item based on text in its title, description or outcome', 'label'=>'Keyword Search');
 $menu2[] = array("link"=>'','label'=>'separator');
 $menu2[] = array("link"=>"listItems.php?type=p&liveparents=*&", 'title'=>"Review projects", 'label' => "Projects");
 $menu2[] = array("link"=>"listItems.php?type=p&liveparents=*&someday=true", 'title'=>"Review projects", 'label' => "Someday");
@@ -58,40 +81,21 @@ $menu2[] = array("link"=>"listItems.php?type=v&liveparents=*&someday=true", 'tit
 $menu2[] = array("link"=>"listItems.php?type=m&liveparents=*&", 'title'=>"Review values / Mission", 'label' => "Values");
 $menu2[] = array("link"=>"listItems.php?type=m&liveparents=*&someday=true", 'title'=>"Review values / Mission", 'label' => "Someday");
 $menu2[] = array("link"=>"orphans.php", 'title'=>"Review orphan items", 'label' => "Orphan Items");
-$menu[] = array("link"=>"item.php?type=i", 'title'=>"Drop an item into the inbox", 'label' => "Capture Inbox Item");
-$menu[] = array("link"=>'','label'=>'');
 
-/*
-   ----------------------------------------------
-*/
 $menu2[] = array("link"=>'','label'=>'Capture');
-//-------------------------------------------
-/*
-$menu[] = array("link"=>"item.php?type=a&amp;nextonly=true", 'title'=>"Create a new next action", 'label' => "Next Action");
-$menu[] = array("link"=>"item.php?type=a", 'title'=>"Create a new action", 'label' => "Action");
-$menu[] = array("link"=>"item.php?type=w", 'title'=>"Create a new waiting on item", 'label' => "Waiting On");
-$menu[] = array("link"=>"item.php?type=r", 'title'=>"Create a reference", 'label' => "Reference");
-*/
+$menu2[] = array("link"=>"item.php?type=i", 'title'=>"Drop an item into the inbox", 'label' => "Capture Inbox Item");
 $menu2[] = array("link"=>"editLists.php?type=L", 'title'=>"Create a general purpose list", 'label' => "New List");
 $menu2[] = array("link"=>"editLists.php?type=C", 'title'=>"Create a reusable list", 'label' => "New Checklist");
 $menu2[] = array("link"=>"item.php?type=p", 'title'=>"Create a new project", 'label' => "Project");
-/*
-$menu[] = array("link"=>"item.php?type=p&amp;someday=true", 'title'=>"Create a future project", 'label' => "Someday/Maybe");
-*/
 $menu2[] = array("link"=>'','label'=>'separator');
 $menu2[] = array("link"=>"item.php?type=g", 'title'=>"Define a new goal", 'label' => "Goal");
 $menu2[] = array("link"=>"item.php?type=o", 'title'=>"Define a new role", 'label' => "Role");
 $menu2[] = array("link"=>"item.php?type=v", 'title'=>"Define a new vision", 'label' => "Vision");
 $menu2[] = array("link"=>"item.php?type=m", 'title'=>"Define a new value", 'label' => "Value");
-/*
-   ----------------------------------------------
-*/
-$menu2[] = array("link"=>'','label'=>'Configure');
-//-------------------------------------------
 
+$menu2[] = array("link"=>'','label'=>'Configure');
 $menu2[] = array("link"=>"itemReport.php?itemId=2118", 'title'=>"Export/Import DB and Files", 'label' => "Export/Import");
 $menu2[] = array("link"=>'','label'=>'separator');
-
 $menu2[] = array("link"=>"editCat.php?field=instance", 'title'=>"Edit Meta-categories", 'label' => "Instances");
 $menu2[] = array("link"=>"editCat.php?field=category", 'title'=>"Edit Meta-categories", 'label' => "Categories");
 $menu2[] = array("link"=>"editCat.php?field=context", 'title'=>"Edit spatial contexts", 'label' => "Space Contexts");
@@ -100,6 +104,8 @@ $menu2[] = array("link"=>'','label'=>'separator');
 $menu2[] = array("link"=>"phpmyadmin/index.php?db=gtd8", 'title'=>"PHPMyAdmin", 'label' => "PHPMyAdmin");
 if ($config['showAdmin'])
     $menu2[] = array("link"=>"admin.php", 'title'=>"Administration", 'label' => "Admin");
+
+}
 /*
    ----------------------------------------------
 */
@@ -193,7 +199,9 @@ $vres = query("getitems",$config,$values,$sort);
 // get someday lists
 $sdays = array();
 $listMena = array();
+$listNoMena = array();
 $listMen = '';
+$listNoMen = '';
 $values = array();
 $values['qId'] = 1000;
 $lists = query('lookupqualities',$config,$values,$sort);
@@ -233,13 +241,14 @@ foreach ((array) $vres as $visn) {
             $values['type'] = $list['type'];
             if ($list['type'] == 'c') { $qry = "selectchecklist"; } else { $qry = "selectlist"; }
             $listN = query($qry,$config,$values,$sort);
-            if ($listN[0]['menu'] == 'y')
-                $listMena[] = array(
-                    'id' => $list['id'],
-                    'type' => $list['type'],
-                    'title' => makeclean($listN[0]['title'] . ($list['type'] == 'c' ? ' .CL' : ' .LIST')),
-                    'sortBy' => substr($listN[0]['sortBy'], 0, 2)
-                );
+            $listNarr = array(
+                'id' => $list['id'],
+                'type' => $list['type'],
+                'title' => makeclean($listN[0]['title'] . ($list['type'] == 'c' ? ' .CL' : ' .LIST')),
+                'sortBy' => substr($listN[0]['sortBy'], 0, 2)
+            );
+            if ($listN[0]['menu'] == 'y') $listMena[] = $listNarr;
+            else $listNoMena[] = $listNarr;
         }
     }
 }
@@ -256,6 +265,20 @@ foreach ((array) $listMena as $l) {
         . $l['title'] . "</a></td>\n</tr>\n";
 }
 $listMen .= "<tr>\n<td></td>\n</tr>\n";
+
+// sort order for excluded lists for footer
+array_multisort(array_column($listNoMena, 'title'), SORT_ASC, SORT_STRING, $listNoMena);
+// print format
+$cols = 6;
+$i = 1;
+foreach ((array) $listNoMena as $l) {
+  if ($i == 1) $listNoMen .= "<tr>\n";
+  $listNoMen .= "<td><a href='reportLists.php?id={$l['id']}&type={$l['type']}'>"
+    . $l['title'] . "</a></td>\n";
+  if ($i == $cols) $listNoMen .= "</tr>\n";
+  if ($i == $cols) $i = 1;
+  else $i++;
+}
 
 // get and count active projects
 $values['type']= "p";
@@ -303,11 +326,11 @@ for ($i=0; $i<$numberprojects;$i++) {
     }
 }
 */
-if($numberprojects) {
-    echo "<table summary='table of projects'><tbody>\n" . $menProc . $listMen
-        ,columnedTable(1,$pres)
-        ,"</tbody></table>\n";
-}
+
+echo "<table summary='table of projects'><tbody>\n" . $menProc . $listMen;
+if ($expand && $numberprojects) echo columnedTable(1,$pres);
+echo "</tbody></table>\n";
+
 ?>
 	<ul id="menulist">
     <?php

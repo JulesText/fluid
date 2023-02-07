@@ -18,6 +18,7 @@ require_once("headerHtml.inc.php");
 <?php
     if ($display) {
         ?>
+        &nbsp;&nbsp;&nbsp;&nbsp;[ <a href="listCatCodes.php">cat codes</a> ]
         &nbsp;&nbsp;&nbsp;&nbsp;[ <a href="listLists.php?type=<?php echo $type; ?>">limit</a> ]
 				<?php
 				foreach ($codes as $code) {

@@ -26,11 +26,11 @@ else if (isset($_REQUEST['clearitemlists']))
 if (isset($_POST['instanceId'])) $values['instanceId'] = $_POST['instanceId'];
 
 if(isset($_REQUEST['source'])) $nextURL="itemReport.php?itemId=" . $_REQUEST['itemId'];
-        
+
 if(isset($_REQUEST['matrix'])) $nextURL=$_SERVER['HTTP_REFERER']; //"matrix.php";
 
 repeat:
-    
+
 switch ($action) {
     //-----------------------------------------------------------------------------------
     case 'itemcreate':
@@ -65,10 +65,11 @@ switch ($action) {
         break;
     //-----------------------------------------------------------------------------------
     case 'itemedit':
-        
+
         $values['item']=$_POST['title'];
         $values['notes']=$_POST['notes'];
         $values['hyperlink']=$_POST['hyperlink'];
+        $values['expect']=$_POST['expect'];
         if ($isChecklist) {
             $values['checked']=(isset($_POST['checked']))?'y':'n';
             if (isset($_POST['ignored'])) {
@@ -87,7 +88,7 @@ switch ($action) {
     case 'listclear':
         if (isset($values['scored']) && $values['scored'] == 'y') {
             query("assesschecklist",$config,$values);
-            
+
             $sep='';
             $ids='';
             foreach ($_POST['completed'] as $id) {
@@ -102,9 +103,9 @@ switch ($action) {
         $_SESSION['message'][]='All checklist items have been unchecked';
         if($allclear) {
             $action='ignoreclear';
-            goto repeat;        
+            goto repeat;
         }
-        
+
         break;
     //-----------------------------------------------------------------------------------
     case 'reset':
@@ -133,42 +134,69 @@ switch ($action) {
         break;
     //-----------------------------------------------------------------------------------
     case 'listupdate':
-                die;
 
+        // assume always $_POST['visId'] > 0
+
+        // any vision child items with list as child must also have vision with same list as child
+        // does not apply to parent item in grandparent / grandchild relationship
+
+        echo '<pre>';
         $values['type'] = $_POST['type'];
-        /*
-        // if dealing with grandchildren 
-        if ($_POST['visId'] > 0) {
-            $valuesV = array();
-            $valuesV['parentId'] = $_POST['visId'];
-            $valuesV['itemId'] = $_POST['visId'];
-            $valuesV['type'] = $values['type'];
-            $resultV = query("getchildlists",$config,$valuesV,$sort);
-            // if any grand children, delete those
-            if (count($resultV) > 0 && is_array($resultV)) {
-                query("clearitemlists",$config,$valuesV);
-            }
-        } else { */
-            query("clearitemlists",$config,$values);
-        /* }
-        if ($_POST['visId'] > 0) {
-            // create grandparent records
-            foreach ($_POST['addedList'] as $id) {
-                $valuesV['id'] = $id;
-                query("newlistparent",$config,$valuesV);
-            }
-        } 
-        if ($_POST['visId'] !== $values['itemId']) { */
-            $cnt=0;
-            foreach ($_POST['addedList'] as $id) {
-                $values['id'] = $id;
+        $values['parentId'] = $_POST['visId'];
+        $result = query("getchildlists",$config,$values,$sort);
+        $listsV = array();
+        foreach ($result as $r) $listsV[] = $r['id'];
+
+        // if is vision
+        if ($_POST['itemId'] == $_POST['visId']) {
+          // clear previous
+          query("clearitemlists",$config,$values);
+          // add current
+          foreach ($_POST['addedList'] as $id) {
+              $values['id'] = $id;
+              query("newlistparent",$config,$values);
+          }
+          // check all child/grandchild items have current lists, if not then remove
+          $valuesV = array();
+          $valuesV['parentId'] = $_POST['visId'];
+          $valuesV['itemId'] = $_POST['visId'];
+          $valuesV['type'] = $values['type'];
+          // query all child/grandchild items
+          $resultV = query("getchildren",$config,$valuesV,$sort);
+          foreach ($resultV as $valuesC) {
+            $valuesC['parentId'] = $valuesC['itemId'];
+            $valuesC['type'] = $values['type'];
+            $valuesC['listType'] = $values['type'];
+            $result = query("getchildlists",$config,$valuesC,$sort);
+            if ($result !== 0)
+              foreach ($result as $list)
+                if (!in_array($list['id'], $_POST['addedList'])) {
+                  $valuesC['listId'] = $list['id'];
+                  $result = query("delitemlist",$config,$valuesC,$sort);
+                }
+          }
+        }
+
+        // if is vision child item
+        if ($_POST['itemId'] !== $_POST['visId']) {
+          // clear existing
+          query("clearitemlists",$config,$values);
+          // add current
+          foreach ($_POST['addedList'] as $id) {
+              $values['itemId'] = $_POST['itemId'];
+              $values['id'] = $id;
+              query("newlistparent",$config,$values);
+              // check list is child to visid, if not then add for visid
+              if (!in_array($id, $listsV)) {
+                $values['itemId'] = $_POST['visId'];
                 query("newlistparent",$config,$values);
-                $cnt++;
-            }
-            $msg = "$cnt {$check}list";
-            if ($cnt!==1) $msg .= 's';
-            $_SESSION['message'][]=$msg;
-        //}
+              }
+          }
+        }
+
+        $msg = "updated {$check}lists";
+        $_SESSION['message'][] = $msg;
+
         break;
     //-----------------------------------------------------------------------------------
     case 'listcomplete':
@@ -296,6 +324,15 @@ switch ($action) {
 //        echo '<pre>';var_dump($result);die;
         break;
     //-----------------------------------------------------------------------------------
+    case 'listpriority':
+        $result = query("select{$check}list",$config,$values);
+        $values = $result[0];
+        $values['prioritise'] = $_REQUEST['prioritise'];
+        $result=query("update{$check}list",$config,$values);
+        $msg=($result) ? "Updated" : "No changes needed to";
+        $_SESSION['message'][]= "$msg {$check}list: '{$values['title']}'";
+        break;
+        //-----------------------------------------------------------------------------------
     default:
         break;
 }

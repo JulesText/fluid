@@ -107,10 +107,10 @@ function getsql($config,$values,$sort,$querylabel) {
 			break;
 
     case "priorityselectbox":
-			$sql="SELECT DISTINCT `expect`
+			$sql="SELECT DISTINCT `priority`
 				FROM `". $config['prefix'] . $values['queryTable'] . "`
         WHERE `" . $values['queryKey'] . "` = " . $values['queryValue'] . "
-				ORDER BY `expect` ASC";
+				ORDER BY `priority` ASC";
 			break;
 
 		case "categoryselectbox":
@@ -196,7 +196,7 @@ function getsql($config,$values,$sort,$querylabel) {
 
 		    $prioritiseQuery = '';
 		    if (isset($values['prioritise']) && $values['prioritise'] > -1 && !$instUse) {
-		        $prioritiseQuery = " AND `expect` = 0 ";
+		        $prioritiseQuery = " AND `priority` = 0 ";
 		    }
 
 			$sql="UPDATE `". $config['prefix'] ."checklistitems" . $instTable . "`
@@ -222,7 +222,7 @@ function getsql($config,$values,$sort,$querylabel) {
 
 		    $prioritiseQuery = '';
 		    if (isset($values['prioritise']) && $values['prioritise'] > -1 && !$instUse) {
-		        $prioritiseQuery = " AND `expect` = 0 ";
+		        $prioritiseQuery = " AND `priority` = 0 ";
 		    }
 
 			$sql="UPDATE `". $config['prefix'] ."checklistitems" . $instTable . "`
@@ -484,7 +484,7 @@ function getsql($config,$values,$sort,$querylabel) {
     		    $sorts = $sort['getchecklistitemsinst'];
 		    }
 			$sql="SELECT cli.`checklistitemId` AS `itemId`, cli.`item`, cli.`notes`, cli.`hyperlink`,
-						cli.`checklistId` AS `id`, cli.`expect`, cli.`effort`,
+						cli.`checklistId` AS `id`, cli.`priority`, cli.`effort`,
 						" . $table . ".`checked`,
 						" . $table . ".`ignored`,
 						" . $table . ".`score`,
@@ -657,7 +657,7 @@ function getsql($config,$values,$sort,$querylabel) {
 
 		case "getlistitems":
 			$sql="SELECT li.`listItemId` as itemId, li.`item`, li.`notes`, li.`hyperlink`,
-                         li.`listId` as id, li.`dateCompleted`, li.`expect`
+                         li.`listId` as id, li.`dateCompleted`, li.`priority`
 				FROM `". $config['prefix'] . "listitems` as li
 					LEFT JOIN `". $config['prefix'] . "list` as l
 						on li.`listId` = l.`listId`
@@ -907,7 +907,7 @@ function getsql($config,$values,$sort,$querylabel) {
 
 		case "selectchecklist":
 			$sql="SELECT cl.`checklistId` as id, cl.`title`,
-						cl.`premiseA`,cl.`premiseB`,cl.`conclusion`,cl.`behaviour`, cl.`standard`, cl.`conditions`, cl.`metaphor`, cl.`categoryId`, cl.`hyperlink`, cl.`sortBy`, cl.`frequency`, cl.`effort`, cl.`scored`, cl.`menu`, cl.`prioritise`, c.`category`
+						cl.`premiseA`,cl.`premiseB`,cl.`conclusion`,cl.`behaviour`, cl.`standard`, cl.`conditions`, cl.`metaphor`, cl.`categoryId`, cl.`hyperlink`, cl.`sortBy`, cl.`frequency`, cl.`effort`, cl.`scored`, cl.`menu`, cl.`prioritise`, cl.`thrs_score`, cl.`thrs_obs`, cl.`score_total`, c.`category`
 				FROM `". $config['prefix'] ."checklist` as cl
 				LEFT OUTER JOIN `{$config['prefix']}categories` AS c USING (`categoryId`)
 				WHERE cl.`checklistId`='{$values['id']}'";
@@ -923,7 +923,7 @@ function getsql($config,$values,$sort,$querylabel) {
 						`ignored`,
 						`score`,
 						`assessed`,
-						`expect`,
+						`priority`,
 						`effort`
 				FROM `". $config['prefix'] . "checklistitems`
 				WHERE `checklistItemId` = '{$values['itemId']}'";
@@ -989,7 +989,7 @@ function getsql($config,$values,$sort,$querylabel) {
 
 		case "selectlistitem":
 			$sql="SELECT `listItemId` as itemId, `item`,
-						`notes`, `hyperlink`, `listId` as id, `dateCompleted`, `expect`
+						`notes`, `hyperlink`, `listId` as id, `dateCompleted`, `priority`
 				FROM `". $config['prefix'] . "listitems`
 				WHERE `listItemId` = {$values['itemId']}";
 			break;
@@ -1089,7 +1089,9 @@ function getsql($config,$values,$sort,$querylabel) {
 						    '',
 						    '{$values['scored']}',
 						    '{$values['menu']}',
-						    '{$values['prioritise']}'
+                '{$values['thrs_score']}'
+                '{$values['thrs_obs']}'
+                ''
 						    )";
 			break;
 
@@ -1110,7 +1112,10 @@ function getsql($config,$values,$sort,$querylabel) {
 						`effort`        = '{$values['effort']}',
 						`scored`        = '{$values['scored']}',
 						`menu`          = '{$values['menu']}',
-						`prioritise`    = '{$values['prioritise']}'
+            `prioritise`    = '{$values['prioritise']}',
+            `thrs_score`    = '{$values['thrs_score']}',
+            `thrs_obs`      = '{$values['thrs_obs']}',
+            `score_total`   = '{$values['score_total']}'
 				WHERE `checklistId` ='{$values['id']}'";
 				//echo '<pre>';var_dump($sql);die;
 			break;
@@ -1123,7 +1128,7 @@ function getsql($config,$values,$sort,$querylabel) {
 				`checklistId` = '{$values['id']}',
         `checked`='{$values['checked']}',
         `ignored`='{$values['ignored']}',
-        `expect`={$values['expect']}
+        `priority`={$values['priority']}
 				WHERE `checklistItemId` ='{$values['itemId']}'";
 			break;
 
@@ -1202,7 +1207,7 @@ function getsql($config,$values,$sort,$querylabel) {
         `item` = '{$values['item']}',
 				`listId` = '{$values['id']}',
         `dateCompleted`={$values['dateCompleted']},
-        `expect`={$values['expect']}
+        `priority`={$values['priority']}
 				WHERE `listItemId` ='{$values['itemId']}'";
 			break;
 

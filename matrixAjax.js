@@ -50,18 +50,25 @@ function sEf(editableObj,table,updCol,pcol1,pid1) {
 	$(editableObj).keyup(function (e) {
 
 		// avoid triggering on irrelevant window switch keystrokes
-		var speccy = [8,46];
+
+		// adding inclusions that fall within excluded range
+		//alert(e.which);return false;
+		var speccy = [8 // delete
+								,46 // backspace
+								,173 // hyphen
+								,219 // [ or {
+								,221 // ] or }
+								// , 224 // command button undo/redo/paste but also switch window
+								];
+
+		// filter irrelevant keystrokes
 		if (
-				// we just filter every key stroke bar for printable alphanumeric/characters (32-127)
-				(e.which < 32 || e.which > 127
-					// filtering cursor keys (37-40)
-					|| (e.which > 36 && e.which < 41)
+				(e.which < 32 || e.which > 127 // outside alphanumeric/characters (32-127)
+					|| (e.which >= 37 && e.which <= 40) // cursor keys (37-40)
 				)
-				// adding inclusions such as backspace/delete (8, 46)
+				// adding inclusions
 				&& !speccy.includes(e.which)
-				// to do: command + z|y for undo/redo (224)
 				) {
-			// alert (e.which);
 			return false;
 		}
 

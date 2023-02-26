@@ -178,16 +178,16 @@ function instanceselectbox($config,$values,$sort) {
 
 function priorityselectbox($config,$values,$sort) {
     $result = query("priorityselectbox",$config,$values,$sort);
-    $result = array_merge([['expect' => '-1']], $result);
+    $result = array_merge([['priority' => '-1']], $result);
     $arrsize = count($result) - 1;
-    $max = $result[$arrsize]['expect'];
+    $max = $result[$arrsize]['priority'];
     #echo '<pre>'; var_dump($result);die;
     $cashtml='<select onchange="if (this.value) window.location.href=this.value">';
     foreach($result as $row) {
-        $cashtml .= '   <option value="processLists.php' . $values['urlVars'] . '&action=listpriority&prioritise=' . $row['expect'] . '" title="'.$row['expect'].'"';
-        if($row['expect']==$values['priorityId']) $cashtml .= ' selected="selected"';
-        $cashtml .= '>'.$row['expect'];
-        if ($row['expect'] !== '-1') $cashtml .= '/' . $max;
+        $cashtml .= '   <option value="processLists.php' . $values['urlVars'] . '&action=listpriority&prioritise=' . $row['priority'] . '" title="'.$row['priority'].'"';
+        if($row['priority']==$values['priorityId']) $cashtml .= ' selected="selected"';
+        $cashtml .= '>'.$row['priority'];
+        if ($row['priority'] !== '-1') $cashtml .= '/' . $max;
         $cashtml .= '</option>' . PHP_EOL;
     }
     $cashtml .= '</select>';

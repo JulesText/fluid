@@ -180,7 +180,8 @@ $values['filterquery'] = ' WHERE ia.type = "v" ';
 if ($test) $values['filterquery'] .= ' AND i.title = "a test" ';
 if ($live) $values['filterquery'] .= ' AND ia.isSomeday = "n" AND its.dateCompleted IS NULL ';
 if ($vLimit) $values['filterquery'] .= ' AND i.itemId = ' . $vLimit;
-$vis=query("getitems",$config,$values,$sort);
+$altsort['getitems'] = $sort['getitemsvisn'];
+$vis=query("getitems",$config,$values,$altsort);
 $visIds = array();
 
 // limit visions to calculate

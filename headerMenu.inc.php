@@ -16,19 +16,18 @@ $menu2=array();
 //$menu[] = array("link"=>"reportLists.php?id=13&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Health DDD");
 //$menu[] = array("link"=>"reportLists.php?id=168&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Chores EEE");
 //$menu[] = array("link"=>"reportLists.php?id=170&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Process FFF");
-#$menu[] = array("link"=>"Lunar.php", 'title'=>"Phase", 'label' => "Phase");
 $menu[] = array("link"=>"pertinent.html", 'title'=>"HHome Tabs", 'label' => "HHome Tabs");
-$menu[] = array("link"=>"ToD.php", 'title'=>"Process the time of day", 'label' => "ToDB");
 /*
 $menu[] = array("link"=>"reportContext!Personal.php", 'title'=>"Process actions sorted by space context", 'label' => "Context report for non-personal categories");
 $menu[] = array("link"=>"reportContextPersonal.php", 'title'=>"Process actions sorted by space context", 'label' => "Context report for personal category");
 $menu[] = array("link"=>"listItems.php?type=a&contextId=6&notspacecontext=true&liveparents=true&", 'title'=>"Process actions sorted to exclude computer context", 'label' => "Context report without At Computer context");
 */
 $menu[] = array("link"=>"listLists.php?type=C", 'title'=>"Show reusable checklists", 'label' => "Show Checklists");
-$menu[] = array("link"=>"listLists.php?type=L", 'title'=>"Show general-purpose lists", 'label' => "Show Lists");
-$menu[] = array("link"=>"item.php?type=i", 'title'=>"Drop an item into the inbox", 'label' => "Capture Inbox Item");
-$menu[] = array("link"=>"itemReport.php?itemId=18792", 'title'=>"~ BETTY", 'label' => "~ BETTY");
+#$menu[] = array("link"=>"listLists.php?type=L", 'title'=>"Show general-purpose lists", 'label' => "Show Lists");
 $menu[] = array("link"=>'','label'=>'');
+$menu[] = array("link"=>"itemReport.php?itemId=18792", 'title'=>"~ BETTY", 'label' => "~ BETTY");
+$menu[] = array("link"=>"ToD.php", 'title'=>"Process the time of day", 'label' => "ToDB");
+$menu[] = array("link"=>"Lunar.php", 'title'=>"Phase", 'label' => "Phase");
 /*
 $menu[] = array("link"=>"item.php?type=a&amp;nextonly=true", 'title'=>"Create a new next action", 'label' => "Next Action");
 $menu[] = array("link"=>"item.php?type=a", 'title'=>"Create a new action", 'label' => "Action");
@@ -42,10 +41,13 @@ $menu2[] = array("link"=>'','label'=>'');
 //-------------------------------------------
 $menu2[] = array("link"=>'','label'=>'Process');
 //-------------------------------------------
+$menu2[] = array("link"=>"item.php?type=i", 'title'=>"Drop an item into the inbox", 'label' => "Capture FA Inbox Item");
+$menu2[] = array("link"=>"x-devonthink-item://4262B1C8-A836-47AC-90BA-09499EEFF1D5?reveal=1", 'title'=>"Drop an item into the inbox", 'label' => "Capture Betty Inbox Item");
 $menu2[] = array("link"=>"listItems.php?tickler=false&type=w&contextId=25&notspacecontext=true&nextonly=true&dueonly=true&liveparents=*", 'title'=>"Due Waiting On", 'label' => "Due Waiting On");
 $menu2[] = array("link"=>"listItems.php?tickler=false&type=a&contextId=25&notspacecontext=true&dueonly=true&liveparents=*", 'title'=>"Due Actions", 'label' => "Due Actions");
 $menu2[] = array("link"=>"index.php", 'title'=>"Summary View", 'label' => "Summary View");
 $menu2[] = array("link"=>"reportContext.php?notContext=25", 'title'=>"Process actions sorted by space context", 'label' => "All Contexts");
+$menu2[] = array("link"=>"listLists.php?type=l", 'title'=>"Show Lists", 'label' => "Show Lists");
 //warning: poorly formed GET variables for matrix can generate errors in matrixformula.php and matrix.php
 $menu2[] = array("link"=>"matrix.php?&live=true&qLimit=b", 'title'=>"Matrix", 'label' => "Matrix");
 $menu2[] = array("link"=>"reportLists.php?id=1&type=C", 'title'=>"Weekly Review", 'label' => "WW Weekly Review");

@@ -1,4 +1,4 @@
--- phpMyAdmin SQL Dump
+priority-- phpMyAdmin SQL Dump
 -- version 4.9.5
 -- https://www.phpmyadmin.net/
 --
@@ -89,7 +89,7 @@ CREATE TABLE `checklistitems` (
   `score` int(8) NOT NULL DEFAULT '0',
   `assessed` int(8) NOT NULL DEFAULT '0',
   `effort` int(4) DEFAULT NULL,
-  `expect` int(1) NOT NULL DEFAULT '0'
+  `priority` int(1) NOT NULL DEFAULT '0'
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- --------------------------------------------------------

@@ -9,7 +9,7 @@ if ($values['id']) {
         include_once('footer.php');
         exit();
     }
-    foreach (array('title','categoryId','premiseA','premiseB','conclusion','behaviour','standard','conditions','metaphor','hyperlink','sortBy','frequency','effort','scored','menu','prioritise') as $field)
+    foreach (array('title','categoryId','premiseA','premiseB','conclusion','behaviour','standard','conditions','metaphor','hyperlink','sortBy','frequency','effort','scored','menu','prioritise','thrs_score','thrs_obs','score_total') as $field)
         $values[$field]=$row[0][$field];
     $action='listedit';
     $urlVars = "?id=" . $values['id'] . "&type=". $type;
@@ -31,12 +31,16 @@ if ($values['id']) {
     $values['scored']='';
     $values['menu']='';
     $values['prioritise']='';
+    $values['thrs_score']='';
+    $values['thrs_obs']='';
+    $values['socre_total']='';
     $action='listcreate';
 }
 $cashtml = categoryselectbox($config,$values,$sort);
 require_once("headerHtml.inc.php");
 ?>
-<h2><?php echo ($values['id'])?'Edit':'Create'," $check"; ?>list</h2>
+<h2><?php echo ($values['id'])?'Edit':'Create'," $check"; ?>list <?php
+echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst . "\">Show List</a>&nbsp;]&nbsp;&nbsp;&nbsp;"; ?>&nbsp;[ <a href="listCatCodes.php">cat codes</a> ]</h2>
 <form action='processLists.php' method='post' onsubmit="return validate(this);">
 	<div class='form'>
 	   <div class='formrow'><span class="error" id='errorMessage'></span></div>
@@ -54,7 +58,7 @@ require_once("headerHtml.inc.php");
 			<span class='label'>
 			Prioritise: <input class="JKPadding" type='text' id='prioritise' name='prioritise' size='3' value='<?php echo makeclean($values['prioritise']); ?>' />
 			Sort: <input class="JKPadding" type='text' id='sortBy' name='sortBy' size='4' value='<?php echo makeclean($values['sortBy']); ?>' />
-			<?php 
+			<?php
 			    if (isset($check) && $check == 'check') { ?>
         			Frequency / Year:<input class="JKPadding" type='text' id='frequency' name='frequency' size='4' value='<?php echo makeclean($values['frequency']); ?>' />
         			Effort / Year: <?php echo $values['effort']; ?> Hours
@@ -97,22 +101,31 @@ require_once("headerHtml.inc.php");
 	</div>
 	<div class='formbuttons'>
 		<input type="submit" value="<?php echo ($values['id'])?'Update':'Create'; ?>" name="submit" />
-    	<input type="checkbox" name="scored" id='scored' class='notfirst' title="" value="y" <?php if ($values['scored']==='y') echo " checked='checked'";?>/>
-    	<label for='scored'>Scored</label>
     	<input type="checkbox" name="menu" id='menu' class='notfirst' title="" value="y" <?php if ($values['menu']==='y') echo " checked='checked'";?>/>
     	<label for='menu'>Menu</label>
 		<?php if ($values['id']) { ?>
 		  <input type="checkbox" name="delete" id='delete' class='notfirst' title="ALL items will be deleted!" value="y" />
 		  <label for='delete'>Delete&nbsp;List</label>
-		<?php } ?>
+		<?php }
+    if ($check) { ?>
 		<br>
 		<br>
-		<br>
-		<?php 
+    <input type="checkbox" name="scored" id='scored' class='notfirst' title="" value="y" <?php if ($values['scored']==='y') echo " checked='checked'";?>/>
+    <label for='scored'>Scored</label>
+		<?php
 	        $values['urlInst'] = $urlVars . $urlBulk . '&instanceId=';
             echo instanceselectbox($config,$values,$sort);
         ?>
 		<input type="submit" value="Reset Scores" name="reset" />
+    <br>
+    <br>
+    <span class='label'>
+    Score total / obs: <?php echo $values['score_total']; ?>.
+    <input type='hidden' name='score_total'      value='<?php echo $values['score_total'];         ?>' />
+    Item threshold score (%): <input class="JKPadding" type='text' id='thrs_score' name='thrs_score' size='3' value='<?php echo makeclean($values['thrs_score']); ?>' />
+    Item threshold observations: <input class="JKPadding" type='text' id='thrs_obs' name='thrs_obs' size='3' value='<?php echo makeclean($values['thrs_obs']); ?>' />
+    </span>
+    <?php } ?>
 
         <input type='hidden' name='instanceId'      value='<?php echo $values['instanceId'];         ?>' />
         <input type='hidden' name='type'      value='<?php echo $type;         ?>' />

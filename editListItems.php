@@ -9,7 +9,7 @@ if ($values['itemId']) {
         include_once('footer.php');
         exit();
     }
-    foreach (array('id','item','notes', 'hyperlink', 'expect') as $field)
+    foreach (array('id','item','notes', 'hyperlink', 'priority') as $field)
             $values[$field]=$row[0][$field];
     if ($isChecklist) {
         $values['checked']=$row[0]['checked'];
@@ -68,8 +68,8 @@ require_once("headerHtml.inc.php");
         <div class='formrow'>
             <?php
             if ($values['itemId']) {
-                ?><label class='left notfirst'>Expect:</label>
-                <input type='text' name='expect' id='expect' value='<?php echo $values['expect']; ?>' /><?php
+                ?><label class='left notfirst'>Priority:</label>
+                <input type='text' name='priority' id='priority' value='<?php echo $values['priority']; ?>' /><?php
                 if ($isChecklist) { ?>
                     <label class='left notfirst'>Item completed</label>
                     <input class='JKSmallPadding' type='checkbox' name='checked' <?php echo ($values['checked']==='y')?" checked='checked' ":'' ?> />

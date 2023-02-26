@@ -16,6 +16,11 @@ if (!isset($_REQUEST['content']) || $_REQUEST['content'] !== 'bulk') {
   $sort['getchecklistitems'] = $sort['getchecklistitemsprioritise'];
 }
 
+if (isset($_REQUEST['content']) && $_REQUEST['content'] == 'bulk') {
+  $sort['getlistitems'] = $sort['getlistitemsbulk'];
+  $sort['getchecklistitems'] = $sort['getchecklistitemsbulk'];
+}
+
 $values['filterquery']= " AND ".sqlparts("activelistitems",$config,$values);
 $result1=query("get{$check}listitems",$config,$values,$sort);
 
@@ -45,8 +50,8 @@ $( document ).ready(function() {
 });
 </script>
 
-<h1>The <?php echo $row['title'],' ',$check; ?>list</h1>
-<p>
+<h1><?php echo $row['title']; ?>&nbsp;&nbsp;&nbsp;
+
 <?php
   if (isset($_REQUEST['content']) && $_REQUEST['content'] == 'bulk') {
       echo "[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst . "\">Show List</a>&nbsp;]&nbsp;&nbsp;&nbsp;";
@@ -68,7 +73,7 @@ $( document ).ready(function() {
         echo '&nbsp;&nbsp;&nbsp;' . instanceselectbox($config,$values,$sort);
     }
 ?>
-</p>
+</h1>
 <p>
 <?php
     #echo 'Prioritised: ',$prioritise,", ";
@@ -83,9 +88,11 @@ $( document ).ready(function() {
 	?>Sort: <?php echo makeclean($row['sortBy']);
 	if ($check) {
 	    $effort = $row['effort']
-	?>, Frequency: <?php echo makeclean($row['frequency']); ?> / Year, Effort: <?php echo $effort; ?> Hours.
-	<?php } ?>
-	</p>
+	?>, Frequency: <?php echo makeclean($row['frequency']); ?> / Year, Effort: <?php echo $effort; ?> Hours
+    <?php
+      if ($scored) echo ', Score: ' . $row['score_total'];
+      echo '.';
+     } ?>
 <?php
     // $descriptionString = $row['description'];
     $descriptionString = '';
@@ -128,7 +135,7 @@ $( document ).ready(function() {
                         <th>Description</th>
                     <?php if ($check) { ?>
                         <?php if ($prioritise > -1) { ?>
-                            <!-- <th>Expect</th> -->
+                            <!-- <th>Priority</th> -->
                         <?php } ?>
                         <?php if ($effort) { ?>
                             <!-- <th>Mins</th> -->
@@ -145,12 +152,12 @@ $( document ).ready(function() {
                 </thead>
                 <tbody>
                 <?php foreach($result1 as $row) {
-                    if ($row['expect'] > $prioritise && $prioritise > -1) continue;
+                    if ($row['priority'] > $prioritise && $prioritise > -1) continue;
                 ?>
                     <tr>
                         <td class="JKSmallPadding" tabindex="2">
                             <?php
-                            if ($prioritise > 0) echo '<span style="opacity: 0.2; font-size: medium;">P' . $row['expect'] . '</span>&nbsp;';
+                            if ($prioritise > 0) echo '<span style="opacity: 0.6; font-size: medium;">P' . $row['priority'] . '</span>&nbsp;';
                             if (is_numeric($values['instanceId'])) {
                                 echo makeclean($row['item']);
                             } else {
@@ -178,7 +185,7 @@ $( document ).ready(function() {
                             if ($prioritise > -1) { ?>
                                 <td class="JKSmallPadding">
                                 <?php
-                                    echo trimTaggedString($row['expect']);
+                                    echo trimTaggedString($row['priority']);
                                 ?>
                                 </td>
                             <?php }
@@ -270,7 +277,7 @@ $( document ).ready(function() {
                         <th class='contList' onClick="<?php $y++; echo editableCol($x, $y); ?>">Item</th>
                         <th class='contList' onClick="<?php $y++; echo editableCol($x, $y); ?>">Description</th>
                     <?php if ($prioritise > -1) { ?>
-                        <th class='contList' onClick="<?php $y++; echo editableCol($x, $y); ?>">Expect</th>
+                        <th class='contList' onClick="<?php $y++; echo editableCol($x, $y); ?>">Priority</th>
                     <?php } ?>
                     <?php if ($check) { ?>
                         <th class='contList' onClick="<?php $y++; echo editableCol($x, $y); ?>">Mins</th>
@@ -292,8 +299,8 @@ $( document ).ready(function() {
                             echo ajaxLineBreak($row['notes']);
                         ?></td>
                         <?php if ($prioritise > -1) { ?>
-                            <td class="JKSmallPadding" contenteditable="true" onBlur="sT(this,<?php echo $sTTable1; ?>,'expect',<?php echo $sTcol1 . $row['itemId']; ?>')" onFocus="sE(this)"><?php
-                                echo $row['expect'];
+                            <td class="JKSmallPadding" contenteditable="true" onBlur="sT(this,<?php echo $sTTable1; ?>,'priority',<?php echo $sTcol1 . $row['itemId']; ?>')" onFocus="sE(this)"><?php
+                                echo $row['priority'];
                             ?></td>
                         <?php }
                         if ($check) { ?>

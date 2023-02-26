@@ -69,7 +69,7 @@ switch ($action) {
         $values['item']=$_POST['title'];
         $values['notes']=$_POST['notes'];
         $values['hyperlink']=$_POST['hyperlink'];
-        $values['expect']=$_POST['expect'];
+        $values['priority']=$_POST['priority'];
         if ($isChecklist) {
             $values['checked']=(isset($_POST['checked']))?'y':'n';
             if (isset($_POST['ignored'])) {
@@ -262,6 +262,8 @@ switch ($action) {
             $values['prioritise'] = $_POST['prioritise'];
             $values['effort'] = $_POST['effort'];
             if (isset($_POST['scored']) && $_POST['scored'] == 'y') { $values['scored'] = 'y'; } else { $values['scored'] = 'n'; }
+            $values['thrs_score'] = $_POST['thrs_score'];
+            $values['thrs_obs'] = $_POST['thrs_obs'];
             // update also matrixsaveCL.php
         }
 
@@ -315,6 +317,8 @@ switch ($action) {
             $values['effort'] = $_POST['effort'];
             if (isset($_POST['prioritise'])) { $values['prioritise'] = $_POST['prioritise']; } else { $values['prioritise'] = -1; }
             if (isset($_POST['scored']) && $_POST['scored'] == 'y') { $values['scored'] = 'y'; } else { $values['scored'] = 'n'; }
+            $values['thrs_score'] = $_POST['thrs_score'];
+            $values['thrs_obs'] = $_POST['thrs_obs'];
             // update also matrixsaveCL.php
         }
         $result=query("update{$check}list",$config,$values);
@@ -329,6 +333,7 @@ switch ($action) {
         $values = $result[0];
         $values['prioritise'] = $_REQUEST['prioritise'];
         $result=query("update{$check}list",$config,$values);
+        if ($check == 'check') include('matrixsaveCL.php');
         $msg=($result) ? "Updated" : "No changes needed to";
         $_SESSION['message'][]= "$msg {$check}list: '{$values['title']}'";
         break;

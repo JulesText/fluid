@@ -40,6 +40,45 @@ function query($querylabel,$config,$values=NULL,$sort=NULL) {
 /*
    ======================================================================================
 */
+
+
+function scoreCL($config, $values, $sort) {
+
+  $score_items_pass = 0;
+  $score_items_obs = 0;
+  $items_total = 0;
+
+  $list = query("selectchecklist",$config,$values,$sort);
+  $list = $list[0];
+
+  $prioritise = $list['prioritise'];
+
+  $result = query("getchecklistitems",$config,$values,$sort);
+
+  if (count($result) > 0) {
+      foreach ((array) $result as $row) if($prioritise == -1 || ($row['priority'] <= $prioritise && $prioritise > -1)) {
+
+        $items_total++;
+        if ($row['assessed'] >= $list['thrs_obs']) {
+          $score_items_obs++;
+          if (100 * $row['score'] / $row['assessed'] >= $list['thrs_score']) $score_items_pass++;
+        }
+
+      }
+  }
+
+  if ($score_items_obs)
+    $score_total = 100 * round($score_items_pass / $score_items_obs, 2)
+                        . '% pass / '
+                        . 100 * round($score_items_obs / $items_total, 2)
+                        . '% obs';
+  else
+    $score_total = 'insufficient obs';
+
+  return $score_total;
+
+}
+
 function ajaxLineBreak($textIn) {
     global $config;
     if (is_array($textIn)) {

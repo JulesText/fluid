@@ -499,7 +499,7 @@ function getsql($config,$values,$sort,$querylabel) {
 
 		case "getchecklists":
 			$sql="SELECT l.`checklistId` as id, l.`title`,
-						l.`premiseA`,l.`premiseB`,l.`conclusion`,l.`behaviour`, l.`standard`, l.`conditions`, l.`metaphor`, l.`categoryId`, l.`hyperlink`, l.`sortBy`, c.`category`,
+						l.`premiseA`,l.`premiseB`,l.`conclusion`,l.`behaviour`, l.`standard`, l.`conditions`, l.`metaphor`, l.`categoryId`, l.`hyperlink`, l.`sortBy`, l.`scored`, c.`category`,
 						cc.`parentId` as ccparentId, cc.`title` as cctitle, ccc.`title` as ccctitle
 				FROM `". $config['prefix'] ."checklist` as l
 				LEFT OUTER JOIN `{$config['prefix']}categories` as c USING (`categoryId`)
@@ -907,7 +907,7 @@ function getsql($config,$values,$sort,$querylabel) {
 
 		case "selectchecklist":
 			$sql="SELECT cl.`checklistId` as id, cl.`title`,
-						cl.`premiseA`,cl.`premiseB`,cl.`conclusion`,cl.`behaviour`, cl.`standard`, cl.`conditions`, cl.`metaphor`, cl.`categoryId`, cl.`hyperlink`, cl.`sortBy`, cl.`frequency`, cl.`effort`, cl.`scored`, cl.`menu`, cl.`prioritise`, cl.`thrs_score`, cl.`thrs_obs`, cl.`score_total`, c.`category`
+						cl.`premiseA`,cl.`premiseB`,cl.`conclusion`,cl.`behaviour`, cl.`standard`, cl.`conditions`, cl.`metaphor`, cl.`categoryId`, cl.`hyperlink`, cl.`sortBy`, cl.`frequency`, cl.`effort`, cl.`scored`, cl.`menu`, cl.`prioritise`, cl.`thrs_score`, cl.`thrs_obs`, c.`category`
 				FROM `". $config['prefix'] ."checklist` as cl
 				LEFT OUTER JOIN `{$config['prefix']}categories` AS c USING (`categoryId`)
 				WHERE cl.`checklistId`='{$values['id']}'";
@@ -1114,8 +1114,7 @@ function getsql($config,$values,$sort,$querylabel) {
 						`menu`          = '{$values['menu']}',
             `prioritise`    = '{$values['prioritise']}',
             `thrs_score`    = '{$values['thrs_score']}',
-            `thrs_obs`      = '{$values['thrs_obs']}',
-            `score_total`   = '{$values['score_total']}'
+            `thrs_obs`      = '{$values['thrs_obs']}'
 				WHERE `checklistId` ='{$values['id']}'";
 				//echo '<pre>';var_dump($sql);die;
 			break;

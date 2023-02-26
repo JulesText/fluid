@@ -90,7 +90,11 @@ $( document ).ready(function() {
 	    $effort = $row['effort']
 	?>, Frequency: <?php echo makeclean($row['frequency']); ?> / Year, Effort: <?php echo $effort; ?> Hours
     <?php
-      if ($scored) echo ', Score: ' . $row['score_total'];
+      if ($scored) {
+        $row['instanceId'] = $values['instanceId'];
+        $row['score_total'] = scoreCL($config, $row, $sort);
+        echo ', Score: ' . $row['score_total'];
+      }
       echo '.';
      } ?>
 <?php

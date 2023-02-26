@@ -264,7 +264,7 @@ switch ($action) {
             if (isset($_POST['scored']) && $_POST['scored'] == 'y') { $values['scored'] = 'y'; } else { $values['scored'] = 'n'; }
             $values['thrs_score'] = $_POST['thrs_score'];
             $values['thrs_obs'] = $_POST['thrs_obs'];
-            // update also matrixsaveCL.php
+            // no need to update matrixsaveCL.php as initial create
         }
 
         //TOFIX datecompleted, completed

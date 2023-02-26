@@ -9,8 +9,9 @@ if ($values['id']) {
         include_once('footer.php');
         exit();
     }
-    foreach (array('title','categoryId','premiseA','premiseB','conclusion','behaviour','standard','conditions','metaphor','hyperlink','sortBy','frequency','effort','scored','menu','prioritise','thrs_score','thrs_obs','score_total') as $field)
+    foreach (array('title','categoryId','premiseA','premiseB','conclusion','behaviour','standard','conditions','metaphor','hyperlink','sortBy','frequency','effort','scored','menu','prioritise','thrs_score','thrs_obs') as $field)
         $values[$field]=$row[0][$field];
+    $values['score_total'] = scoreCL($config, $values, $sort);
     $action='listedit';
     $urlVars = "?id=" . $values['id'] . "&type=". $type;
     $urlInst = "&instanceId=". $values['instanceId'];
@@ -33,7 +34,6 @@ if ($values['id']) {
     $values['prioritise']='';
     $values['thrs_score']='';
     $values['thrs_obs']='';
-    $values['socre_total']='';
     $action='listcreate';
 }
 $cashtml = categoryselectbox($config,$values,$sort);
@@ -121,7 +121,6 @@ echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst .
     <br>
     <span class='label'>
     Score total / obs: <?php echo $values['score_total']; ?>.
-    <input type='hidden' name='score_total'      value='<?php echo $values['score_total'];         ?>' />
     Item threshold score (%): <input class="JKPadding" type='text' id='thrs_score' name='thrs_score' size='3' value='<?php echo makeclean($values['thrs_score']); ?>' />
     Item threshold observations: <input class="JKPadding" type='text' id='thrs_obs' name='thrs_obs' size='3' value='<?php echo makeclean($values['thrs_obs']); ?>' />
     </span>

@@ -56,6 +56,7 @@ require_once("headerHtml.inc.php");
             <td>Title</td>
             <td <?php if (!$display) { echo 'class="togglehidden"'; } ?>>Description</td>
             <td <?php if (!$display) { echo 'class="togglehidden"'; } ?>>Desired Outcome</td>
+            <td <?php if (!$display) { echo 'class="togglehidden"'; } ?>>Score</td>
             <td <?php if (!$display) { echo 'class="togglehidden"'; } ?>>Parents</td>
         </tr></thead>
         <tbody><?php foreach ($result as $row) { ?>
@@ -109,6 +110,12 @@ require_once("headerHtml.inc.php");
 
                 <td class="JKSmallPadding<?php if (!$display) { echo ' togglehidden'; } ?>"><?php
                      echo $desiredOutcomeStr;
+                ?></td>
+
+                <td class="JKSmallPadding<?php if (!$display) { echo ' togglehidden'; } ?>"><?php
+                     $row['instanceId'] = '';
+                     if ($row['scored'] == 'y') echo scoreCL($config, $row, $sort);
+                     else echo 'not scored';
                 ?></td>
 
                 <td class="<?php if ($display) { echo "JKSmallPadding whitespace"; } else { echo "togglehidden"; } ?>">

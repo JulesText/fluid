@@ -77,9 +77,12 @@ switch ($action) {
             } else {
                 echo 'error ignored not posted';die;
             }
+            $values['score']=$_POST['score'];
+            $values['assessed']=$_POST['assessed'];
         }
         else
             $values['dateCompleted']=(empty($_POST['dateCompleted']))?'NULL':"'{$_POST['dateCompleted']}'";
+        # query allows instance update
         $result=query("update{$check}listitem",$config,$values);
         $msg=($result) ? "Updated" : "No changes needed to";
         $_SESSION['message'][]= "$msg {$check}list item: '{$values['item']}'";

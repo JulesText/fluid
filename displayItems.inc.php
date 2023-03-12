@@ -82,9 +82,16 @@ foreach ($maintable as $row) {
                     ,*/"<a ",(empty($row['NA']) && !$isActiveProject)?'':"class='nextactionlink'"
                     ," title='"
                     ,(empty($row['doreport']))?'Edit':'View Report'
-                    ,"' href='item"
-                    ,(empty($row['doreport']) && !$isProject)?'':'Report'
-                    ,".php?itemId={$row['itemId']}'>$cleaned</a>";
+                    ,"' href='";
+                if (empty($row['doreport']) && $isProject) echo "itemReport.php?itemId={$row['itemId']}'";
+                else if (empty($row['doreport']) && !$isProject) echo "item.php?itemId={$row['itemId']}'";
+                else if ($row['doreport'] == 'item') echo "item.php?itemId={$row['itemId']}'";
+                else if ($row['doreport'] == 'parent') echo "itemReport.php?itemId={$row['itemId']}'";
+                else if ($row['doreport'] == 'cl') echo "reportLists.php?id={$row['itemId']}&type=c'";
+                else if ($row['doreport'] == 'cli') echo "editListItems.php?itemId={$row['itemId']}&type=c'";
+                else if ($row['doreport'] == 'l') echo "reportLists.php?id={$row['itemId']}&type=l'";
+                else if ($row['doreport'] == 'li') echo "editListItems.php?itemId={$row['itemId']}&type=l'";
+                echo ">$cleaned</a>";
 				echo $childString . ($hasTickler ? '<span style="opacity: 0.5"><br>TICKLED ITEM(S)</span>' : '');
 				if (isset($item['title'])) {
 					$values['itemId'] = $row['itemId'];

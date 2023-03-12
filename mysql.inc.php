@@ -497,6 +497,86 @@ function getsql($config,$values,$sort,$querylabel) {
             //echo '<pre>'. $sql;die;
 			break;
 
+    case "searchlists":
+  		$sql="
+        SELECT 'cl' AS `type`
+        , `checklistId` AS `itemId`
+        , `title`
+        , '' AS `description`
+        , `premiseA`
+        , `premiseB`
+        , `conclusion`
+        , `behaviour`
+        , `standard`
+        , `conditions`
+  			FROM `{$config['prefix']}checklist`
+        WHERE `title` LIKE '%{$values['listsearch']}%'
+        OR `premiseA` LIKE '%{$values['listsearch']}%'
+        OR `premiseB` LIKE '%{$values['listsearch']}%'
+        OR `conclusion` LIKE '%{$values['listsearch']}%'
+        OR `behaviour` LIKE '%{$values['listsearch']}%'
+        OR `standard` LIKE '%{$values['listsearch']}%'
+        OR `conditions` LIKE '%{$values['listsearch']}%'
+        OR `metaphor` LIKE '%{$values['listsearch']}%'
+
+        UNION ALL
+
+        SELECT 'cli' AS `type`
+        , `checklistitemId` AS `itemId`
+        , `item` AS `title`
+        , `notes` AS `description`
+        , '' AS `premiseA`
+        , '' AS `premiseB`
+        , '' AS `conclusion`
+        , '' AS `behaviour`
+        , '' AS `standard`
+        , '' AS `conditions`
+        FROM `{$config['prefix']}checklistitems`
+        WHERE `item` LIKE '%{$values['listsearch']}%'
+        OR `notes` LIKE '%{$values['listsearch']}%'
+
+        UNION ALL
+
+        SELECT 'l' AS `type`
+        , `listId` AS `itemId`
+        , `title`
+        , '' AS `description`
+        , `premiseA`
+        , `premiseB`
+        , `conclusion`
+        , `behaviour`
+        , `standard`
+        , `conditions`
+  			FROM `{$config['prefix']}list`
+        WHERE `title` LIKE '%{$values['listsearch']}%'
+        OR `premiseA` LIKE '%{$values['listsearch']}%'
+        OR `premiseB` LIKE '%{$values['listsearch']}%'
+        OR `conclusion` LIKE '%{$values['listsearch']}%'
+        OR `behaviour` LIKE '%{$values['listsearch']}%'
+        OR `standard` LIKE '%{$values['listsearch']}%'
+        OR `conditions` LIKE '%{$values['listsearch']}%'
+        OR `metaphor` LIKE '%{$values['listsearch']}%'
+
+        UNION ALL
+
+        SELECT 'li' AS `type`
+        , `listitemId` AS `itemId`
+        , `item` AS `title`
+        , `notes` AS `description`
+        , '' AS `premiseA`
+        , '' AS `premiseB`
+        , '' AS `conclusion`
+        , '' AS `behaviour`
+        , '' AS `standard`
+        , '' AS `conditions`
+        FROM `{$config['prefix']}listitems`
+        WHERE `item` LIKE '%{$values['listsearch']}%'
+        OR `notes` LIKE '%{$values['listsearch']}%'
+
+        ORDER BY {$sort['getchecklists']}";
+             // echo '<pre>'. $sql;die;
+		break;
+
 		case "getchecklists":
 			$sql="SELECT l.`checklistId` as id, l.`title`,
 						l.`premiseA`,l.`premiseB`,l.`conclusion`,l.`behaviour`, l.`standard`, l.`conditions`, l.`metaphor`, l.`categoryId`, l.`hyperlink`, l.`sortBy`, l.`scored`, c.`category`,
@@ -1120,15 +1200,31 @@ function getsql($config,$values,$sort,$querylabel) {
 			break;
 
 		case "updatechecklistitem":
-			$sql="UPDATE `". $config['prefix'] . "checklistitems`
-				SET `notes` = '{$values['notes']}',
+
+      $instTable = '';
+      $instQuery = '';
+      $instUse = FALSE;
+      if (isset($values['instanceId']) && is_numeric($values['instanceId'])) {
+          $instUse = TRUE;
+          $instTable = 'inst';
+          $instQuery = " AND `instanceId` = '{$values['instanceId']}' ";
+      }
+
+			$sql="UPDATE `". $config['prefix'] . "checklistitems" . $instTable . "`
+				SET ";
+        if (!$instUse) $sql .= "
+        `notes` = '{$values['notes']}',
         `hyperlink` = '{$values['hyperlink']}',
         `item` = '{$values['item']}',
+        `priority` = {$values['priority']}, ";
+        $sql .= "
 				`checklistId` = '{$values['id']}',
-        `checked`='{$values['checked']}',
-        `ignored`='{$values['ignored']}',
-        `priority`={$values['priority']}
-				WHERE `checklistItemId` ='{$values['itemId']}'";
+        `checked` = '{$values['checked']}',
+        `ignored` = '{$values['ignored']}',
+        `score` = {$values['score']},
+        `assessed` = {$values['assessed']}
+				WHERE `checklistItemId` = '{$values['itemId']}' " . $instQuery;
+        #die($sql);
 			break;
 
 		case "updatedeadline":
@@ -1348,7 +1444,9 @@ function sqlparts($part,$config,$values) {
                                       OR i.`conclusion` LIKE '%{$values['needle']}%'
                                       OR i.`behaviour` LIKE '%{$values['needle']}%'
                                       OR i.`standard` LIKE '%{$values['needle']}%'
-                                      OR i.`conditions` LIKE '%{$values['needle']}%' )";
+                                      OR i.`conditions` LIKE '%{$values['needle']}%'
+                                      OR i.`metaphor` LIKE '%{$values['needle']}%')
+                                      ";
 		break;
 		/*
 

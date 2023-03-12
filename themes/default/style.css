@@ -282,6 +282,13 @@ table input[type="checkbox"].mx{
 	height:1.0em;
 	width:1.0em;
 }
+table input[type="checkbox"].score{
+	margin:0;
+	padding:0;
+	opacity: 0.25;
+	height:1.5em;
+	width:1.5em;
+}
 .formrow input[type="radio"].notfirst, .formrow input[type="checkbox"].notfirst, .formbuttons input[type="checkbox"].notfirst {
 	margin-left: 1.5em;
 }

@@ -114,6 +114,7 @@ switch ($values['type']) {
     case "w" : $typename="Waiting On"; $parentname="Project"; $values['ptype']="p"; $show['parent']=TRUE; $checkchildren=FALSE; break;
     case "r" : $typename="Reference"; $parentname="Project"; $values['ptype']="p"; $show['parent']=TRUE; $show['category']=FALSE; $show['context']=FALSE; $show['timeframe']=FALSE; $show['checkbox']=FALSE; $show['repeat']=FALSE; $show['dateCreated']=FALSE; $checkchildren=FALSE; break;
     case "i" : $typename="Inbox Item"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['category']=FALSE; $show['context']=FALSE; $show['timeframe']=FALSE; $show['deadline']=TRUE; $show['dateCreated']=FALSE; $show['repeat']=FALSE; $show['assignType']=TRUE; $afterTypeChange='listItems.php?type=i';$checkchildren=FALSE; break;
+    case "cli" : $typename="Checklist Item"; $parentname=""; $values['ptype']=""; $show['parent']=FALSE; $show['behaviour']=FALSE; $show['category']=FALSE; $show['deadline']=FALSE;
     default  : $typename="Item"; $parentname=""; $values['ptype']=""; $checkchildren=FALSE;
 }
 $show['flags']=$checkchildren; // temporary measure; to be made user-configurable later
@@ -307,7 +308,18 @@ $sectiontitle .= $typename;
 if ($quickfind)
     $result=0;
 else
-    $result=query("getitemsandparent",$config,$values,$sort);
+    $result = query("getitemsandparent",$config,$values,$sort);
+
+# lists
+if ($filter['needle'] !== '' && $filter['everything']=="true") {
+  $values['listsearch'] = $filter['needle'];
+  $resultlists = query('searchlists', $config, $values, $sort);
+  if ($resultlists !== 0) {
+    if ($result !== 0) $result = array_merge($result, $resultlists);
+    else $result = $resultlists;
+  }
+  #echo '<pre>';var_dump($resultlists[0]);die;
+}
 
 $maintable=array();
 $thisrow=0;
@@ -357,9 +369,12 @@ if ($result) {
         else
             $maintable[$thisrow]['flags'] = '';
 
-        //item title
-        if (!($row['type']=="a" || $row['type']==="r" || $row['type']==="w" || $row['type']==="i"))
-            $maintable[$thisrow]['doreport']=true;
+        //item title link
+        if (in_array($row['type'], ['m', 'v', 'o', 'g', 'p']))
+          $maintable[$thisrow]['doreport'] = 'parent';
+        else if (in_array($row['type'], ['a', 'i', 's', 'r', 'w']))
+          $maintable[$thisrow]['doreport'] = 'item';
+        else $maintable[$thisrow]['doreport'] = $row['type']; # ['cl', 'cli', 'l', 'li']
 
         $cleantitle=makeclean($row['title']);
         $cleantitle=$row['title'];
@@ -380,10 +395,12 @@ echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
                 }
         }
 
-        if($row['isSomeday'] == 'y') {
-            $maintable[$thisrow]['title'] .= "</a><br><br><br><div style='float: right; text-align: right; width: 50%; opacity: 0.5;'> <a href='processItems.php?action=changeType&amp;itemId=" . $row['itemId'] . "&amp;safe=1&amp;type=" . $row['type'] . "&amp;isSomeday=n&amp;referrer=itemReport.php?itemId=" . $row['itemId'] . "' target='_blank'>Enact</a></div><a>";
-        } else {
-            $maintable[$thisrow]['title'] .= "</a><br><br><br><div style='float: right; text-align: right; width: 50%; opacity: 0.5;'> <a href='processItems.php?action=changeType&amp;itemId=" . $row['itemId'] . "&amp;safe=1&amp;type=" . $row['type'] . "&amp;isSomeday=y&amp;referrer=itemReport.php?itemId=" . $row['itemId'] . "' target='_blank'>Defer</a></div><a>";
+        if (!in_array($row['type'], ['cl', 'cli', 'l', 'li'])) {
+          if($row['isSomeday'] == 'y') {
+              $maintable[$thisrow]['title'] .= "</a><br><br><br><div style='float: right; text-align: right; width: 50%; opacity: 0.5;'> <a href='processItems.php?action=changeType&amp;itemId=" . $row['itemId'] . "&amp;safe=1&amp;type=" . $row['type'] . "&amp;isSomeday=n&amp;referrer=itemReport.php?itemId=" . $row['itemId'] . "' target='_blank'>Enact</a></div><a>";
+          } else {
+              $maintable[$thisrow]['title'] .= "</a><br><br><br><div style='float: right; text-align: right; width: 50%; opacity: 0.5;'> <a href='processItems.php?action=changeType&amp;itemId=" . $row['itemId'] . "&amp;safe=1&amp;type=" . $row['type'] . "&amp;isSomeday=y&amp;referrer=itemReport.php?itemId=" . $row['itemId'] . "' target='_blank'>Defer</a></div><a>";
+          }
         }
 
         $maintable[$thisrow]['checkbox.title']='Complete '.$cleantitle;

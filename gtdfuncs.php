@@ -476,7 +476,11 @@ $types=array("m" => "Value",
             "i" => "Inbox Item",
             "s" => "Someday/Maybe",
             "r" => "Reference",
-            "w" => "Waiting On"
+            "w" => "Waiting On",
+            "cl" => "Checklist",
+            "cli" => "Checklist Item",
+            "l" => "List",
+            "li" => "List Item"
         );
 if ($type===false)
     $out=$types;

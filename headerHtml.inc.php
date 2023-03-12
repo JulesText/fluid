@@ -105,6 +105,23 @@ $(document).ready(function() {
   }
 </script>
 
+<!-- mark all checkboxes in column at once -->
+<script>
+	// set checkbox id="check_name" as reportLists.php
+	$(document).ready(function() {
+		var checked = 0;
+		$('[id^="check_"]').on('click', function(){
+				if (checked == 1) checked = 0;
+				else checked = 1;
+				var index = $(this).parent().index();
+
+				$('tr').each(function(i, val){
+						$(val).children().eq(index).children('input[type=checkbox]').prop('checked', checked);
+				});
+		});
+	});
+</script>
+
 <?php # if is checklist and in ToDB ids
 if (isset($check) && $check == 'check' && in_array($row['id'], array(53,36,37,38,39,40,41,42,43))) { ?>
 		<script>
@@ -132,9 +149,14 @@ echo "<meta http-equiv='pragma' content='no-cache' /><meta http-equiv='Expires' 
 
 echo "
 <script type='text/javascript' language='javascript'>
-	function moveWindow (){window.location.hash='top';}
+	function moveWindow (){
+		document.documentElement.scrollTop = 0;
+		if ('scrollRestoration' in history) {
+    	history.scrollRestoration = 'manual';
+		}
+	}
 </script>
-</head><body" . (preg_match("/itemReport.php/", $_SERVER['REQUEST_URI']) ? " onload='moveWindow()'" : '') . "><a name=\"top\"></a><div id='container'>\n";
+</head><body" . /*(preg_match("/itemReport.php/", $_SERVER['REQUEST_URI']) ? " onload='moveWindow()'" : '') . */" onload='moveWindow()'><div id='container'>\n";
 //require_once("headerMenu.inc.php");
 echo "<div id='main'>\n";
 

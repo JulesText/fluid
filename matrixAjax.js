@@ -55,7 +55,8 @@ function sEf(editableObj,table,updCol,pcol1,pid1) {
 		//alert(e.which);return false;
 		var speccy = [8 // delete
 								,46 // backspace
-								,173 // hyphen
+								,173 // - hyphen
+								,191 // ?
 								,219 // [ or {
 								,221 // ] or }
 								// , 224 // command button undo/redo/paste but also switch window

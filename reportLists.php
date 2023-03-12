@@ -46,7 +46,9 @@ $urlBulk = "&content=". $_REQUEST['content'];
 
 <script type='text/javascript' >
 $( document ).ready(function() {
-    document.getElementById("itemtable").focus();
+    //document.getElementById("itemtable").focus();
+    //$('input[name="submit"]').focus();
+
 });
 </script>
 
@@ -132,7 +134,11 @@ $( document ).ready(function() {
     if (!isset($_REQUEST['content']) || $_REQUEST['content'] !== 'bulk') {
 ?>
         <form action='processLists.php' method='post'>
-            <table class="datatable sortable" id="itemtable" summary="table of list items">
+            <?php if ($check && $scored) { ?>
+              <table class="datatable sortable" summary="table of list items">
+            <?php } else { ?>
+              <table class="datatable sortable" id="itemtable" summary="table of list items">
+              <?php } ?>
                 <thead>
                     <tr>
                         <th>Item</th>
@@ -145,9 +151,12 @@ $( document ).ready(function() {
                             <!-- <th>Mins</th> -->
                         <?php } ?>
                     <?php } ?>
-                        <th>Completed</th>
                     <?php if ($check && $scored) { ?>
-                        <th>Ignored</th>
+                        <th>Compl<a id='check_completed'>&#10004;</a></th>
+                    <?php } else { ?>
+                      <th>Completed</th>
+                    <?php } if ($check && $scored) { ?>
+                        <th>Ignored<a id='check_ignored'>&#10004;</a></th>
                     <?php } ?>
                     <?php if ($scored) { ?>
                         <th>Score</th>
@@ -155,6 +164,15 @@ $( document ).ready(function() {
                     </tr>
                 </thead>
                 <tbody>
+                <?php
+                  if ($check && $scored) {
+                    $str = "<tr><td></td><td></td>"
+                      . "<td class='JKSmallPaddingFaded'><input type='checkbox' id='check_completed'></td>"
+                      . "<td class='JKSmallPaddingFaded'><input type='checkbox' id='check_ignored'></td>"
+                      . "<td></td></tr>";
+                    #echo $str;
+                  }
+                ?>
                 <?php foreach($result1 as $row) {
                     if ($row['priority'] > $prioritise && $prioritise > -1) continue;
                 ?>
@@ -162,13 +180,9 @@ $( document ).ready(function() {
                         <td class="JKSmallPadding" tabindex="2">
                             <?php
                             if ($prioritise > 0) echo '<span style="opacity: 0.6; font-size: medium;">P' . $row['priority'] . '</span>&nbsp;';
-                            if (is_numeric($values['instanceId'])) {
-                                echo makeclean($row['item']);
-                            } else {
                             ?><a href="editListItems.php?itemId=<?php
                             echo $row['itemId'],'&amp;',$urlSuffix;
                             ?>" title="Edit"><?php echo makeclean($row['item']); ?></a>
-                            <?php } ?>
                             </td>
                         <td class="JKSmallPadding">
                           <?php

@@ -14,6 +14,8 @@ if ($values['itemId']) {
     if ($isChecklist) {
         $values['checked']=$row[0]['checked'];
         $values['ignored']=$row[0]['ignored'];
+        $values['score']=$row[0]['score'];
+        $values['assessed']=$row[0]['assessed'];
     }
     else
         $values['dateCompleted']=$row[0]['dateCompleted'];
@@ -50,11 +52,15 @@ require_once("headerHtml.inc.php");
         <div class='formrow'><span class="error" id='errorMessage'></span></div>
         <div class='formrow'>
             <label class='left first' for='title'>Title:</label>
+            <?php if (!$isInst) { ?>
             <input class='JKPadding' type='text' name='title' id='title' value='<?php echo makeclean($values['item']); ?>' size='80' />
+          <?php } else echo "<p>" . makeclean($values['item']) . "</p>"; ?>
         </div>
         <div class='formrow'>
             <label for='notes' class='left first'>Description:</label>
-            <textarea class='JKPadding' rows='20' name='notes' id='notes' cols='80'><?php echo makeclean($values['notes']);?></textarea>
+            <?php if (!$isInst) { ?>
+            <textarea class='JKPadding' rows='20' name='notes' id='notes' cols='80'><?php echo makeclean($values['notes']); ?></textarea>
+            <?php } else echo "<p>" . makeclean($values['notes']) . "</p>"; ?>
         </div>
         <div class='formrow'>
             <label class='left first' for='hyperlink'>Hyperlink:
@@ -63,16 +69,20 @@ require_once("headerHtml.inc.php");
                     }
             ?>
             </label>
-            <input class='JKPadding' type='text' name='hyperlink' id='hyperlink' value='<?php echo makeclean($values['hyperlink']); ?>' size='80' />
+            <input class='JKPadding' type='text' name='hyperlink' id='hyperlink' value='<?php echo makeclean($values['hyperlink']); ?>' size='80' <?php if ($isInst) echo "hidden"; ?> />
         </div>
         <div class='formrow'>
             <?php
             if ($values['itemId']) {
-                ?><label class='left notfirst'>Priority:</label>
-                <input type='text' name='priority' id='priority' value='<?php echo $values['priority']; ?>' /><?php
+                ?>
+                <?php if (!$isInst) { ?>
+                <label class='left notfirst'>Priority:</label>
+                <input class='JKPadding' size=2 type='text' name='priority' id='priority' value='<?php echo $values['priority']; ?>' /><?php }
                 if ($isChecklist) { ?>
-                    <label class='left notfirst'>Item completed</label>
-                    <input class='JKSmallPadding' type='checkbox' name='checked' <?php echo ($values['checked']==='y')?" checked='checked' ":'' ?> />
+                    <label class='left notfirst'>Score:</label>
+                    <input class='JKPadding' type='text' name='score' id='score' value='<?php echo $values['score']; ?>' size=2 />
+                    <label class='left notfirst'>Assessed:</label>
+                    <input class='JKPadding' type='text' name='assessed' id='assessed' value='<?php echo $values['assessed']; ?>' size=2 />
                 	<input type='hidden' name='required' value='title:notnull:Title cannot be blank' />
                 <?php } else { ?>
                     <label class='left notfirst'>Date Completed:</label>
@@ -100,17 +110,22 @@ require_once("headerHtml.inc.php");
         </div>
     </div>
    <div class='formbuttons'>
-        <?php if ($values['itemId']) { ?>
+       <?php if (!$isInst) { ?>
+       <label class='left notfirst'>Item completed</label>
+       <input class='score' type='checkbox' name='checked' <?php echo ($values['checked']==='y')?" checked='checked' ":'' ?> />
+       <?php }
+        if ($values['itemId']) { ?>
             <input type='submit' value='Update item' name='submit' />
         <?php } else { ?>
             <input type='submit' value='Create, then add another item' name='again' />
             <input type='submit' value='Create and return to list' name='submit' />
         <?php } ?>
         <!-- <input type='reset' value='Reset' /> -->
-        <?php if ($values['itemId']) { ?>
+        <?php if ($values['itemId'] && !$isInst) { ?>
             <input type='checkbox' name='delete' id='delete' class='notfirst' value='y' />
             <label for='delete'>Delete&nbsp;Item</label>
         <?php } ?>
+        <input type='hidden' name='instanceId'      value='<?php echo $values['instanceId'];         ?>' />
         <input type='hidden' name='type'       value='<?php echo $type;             ?>' />
         <input type='hidden' name='itemId'     value='<?php echo $values['itemId']; ?>' />
         <input type='hidden' name='id'         value='<?php echo $values['id'];     ?>' />

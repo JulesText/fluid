@@ -554,7 +554,14 @@ function columnedTable($cols,$data,$link='itemReport.php') {
                 echo "<td"
                     ,(empty($row['td.class'])) ? '' : " class='{$row['td.class']}' "
                     ,(empty($row['td.title'])) ? '' : " title='{$row['td.title']}' "
-                    ,"><a href='$link?itemId={$row['itemId']}' title='"
+                    ,"><a href='";
+                if (isset($row['type']) && $row['type'] == 'c')
+                  echo "reportLists.php?id={$row['id']}&type=c";
+                else if (isset($row['type']) && $row['type'] == 'l')
+                  echo "reportLists.php?id={$row['id']}&type=l";
+                else
+                  echo "$link?itemId={$row['itemId']}";
+                echo "' title='"
                     ,makeclean($row['description']),"'>"
                     ,makeclean($row['title']),"</a></td>\n";
             }

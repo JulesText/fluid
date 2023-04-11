@@ -21,9 +21,16 @@ if ($_GET['content'] != "limit") {
     $numberagendas = ($ares)?count($ares):0;
 
     echo "<table summary='table of projects' style='opacity: 0.3'><tbody>\n";
-    if ($numberagendas) echo columnedTable(6,$ares);
-    if (!$expand && $numberprojects) echo columnedTable(6,$pres);
-    echo $listNoMen;
+    $menus = [];
+    if ($numberagendas) {
+      foreach ($ares as &$row) $row['title'] = ' ' . $row['title'];
+      $menus = array_merge($menus,$ares);
+    }
+    if (!$expand && $numberprojects) $menus = array_merge($menus,$pres);
+    if (isset($listNoMena) && count($listNoMena) > 0 )$menus = array_merge($menus,$listNoMena);
+    array_multisort(array_column($menus, 'title'), SORT_ASC, SORT_STRING, $menus);
+    echo columnedTable(6,$menus);
+    // echo $listNoMen;
     echo "</tbody></table>\n";
 
 

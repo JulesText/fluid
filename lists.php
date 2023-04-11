@@ -50,13 +50,23 @@ foreach ((array) $vres as $visn) {
     }
     if (!empty($lists) && is_array($lists) && count($lists) > 0) {
         foreach ((array) $lists as $list) {
-            // if someday, continue
+            // if someday list, continue
             foreach ((array) $sdays as $s) {
                 if (
                     $s['visId'] == $visn['itemId'] &&
                     $s['itemId'] == $list['id'] &&
                     $s['itemType'] == $list['type']
                     ) continue 2;
+            }
+            // exclude lists without priorities unless all (unprioritised) requested
+            if (!isset($_REQUEST['unprioritised'])) {
+              if ($list['type'] == 'c') $check = 'check';
+              else $check = '';
+              $values['queryTable'] = $check . 'listitems';
+              $values['queryKey'] = $check . 'listId';
+              $values['queryValue'] = $list['id'];
+              $priorities = query("priorityselectbox",$config,$values,$sort);
+              if (count($priorities) == 1) continue 1;
             }
             // otherwise, add to menu
             // get list details

@@ -27,6 +27,7 @@ $menu[] = array("link"=>"listLists.php?type=C", 'title'=>"Show reusable checklis
 $menu[] = array("link"=>'','label'=>'');
 $menu[] = array("link"=>"itemReport.php?itemId=18792", 'title'=>"~ BETTY", 'label' => "~ BETTY");
 $menu[] = array("link"=>"ToD.php", 'title'=>"Process the time of day", 'label' => "ToDB");
+$menu[] = array("link"=>"openAI.php", 'title'=>"AI chat", 'label' => "AI chat");
 $menu[] = array("link"=>"Lunar.php", 'title'=>"Phase", 'label' => "Phase");
 /*
 $menu[] = array("link"=>"item.php?type=a&amp;nextonly=true", 'title'=>"Create a new next action", 'label' => "Next Action");
@@ -267,20 +268,6 @@ foreach ((array) $listMena as $l) {
         . $l['title'] . "</a></td>\n</tr>\n";
 }
 $listMen .= "<tr>\n<td></td>\n</tr>\n";
-
-// sort order for excluded lists for footer
-array_multisort(array_column($listNoMena, 'title'), SORT_ASC, SORT_STRING, $listNoMena);
-// print format
-$cols = 6;
-$i = 1;
-foreach ((array) $listNoMena as $l) {
-  if ($i == 1) $listNoMen .= "<tr>\n";
-  $listNoMen .= "<td><a href='reportLists.php?id={$l['id']}&type={$l['type']}'>"
-    . $l['title'] . "</a></td>\n";
-  if ($i == $cols) $listNoMen .= "</tr>\n";
-  if ($i == $cols) $i = 1;
-  else $i++;
-}
 
 // get and count active projects
 $values['type']= "p";

@@ -509,6 +509,7 @@ function getsql($config,$values,$sort,$querylabel) {
         , `behaviour`
         , `standard`
         , `conditions`
+        , `hyperlink`
   			FROM `{$config['prefix']}checklist`
         WHERE `title` LIKE '%{$values['listsearch']}%'
         OR `premiseA` LIKE '%{$values['listsearch']}%'
@@ -518,6 +519,7 @@ function getsql($config,$values,$sort,$querylabel) {
         OR `standard` LIKE '%{$values['listsearch']}%'
         OR `conditions` LIKE '%{$values['listsearch']}%'
         OR `metaphor` LIKE '%{$values['listsearch']}%'
+        OR `hyperlink` LIKE '%{$values['listsearch']}%'
 
         UNION ALL
 
@@ -531,9 +533,11 @@ function getsql($config,$values,$sort,$querylabel) {
         , '' AS `behaviour`
         , '' AS `standard`
         , '' AS `conditions`
+        , `hyperlink`
         FROM `{$config['prefix']}checklistitems`
         WHERE `item` LIKE '%{$values['listsearch']}%'
         OR `notes` LIKE '%{$values['listsearch']}%'
+        OR `hyperlink` LIKE '%{$values['listsearch']}%'
 
         UNION ALL
 
@@ -547,6 +551,7 @@ function getsql($config,$values,$sort,$querylabel) {
         , `behaviour`
         , `standard`
         , `conditions`
+        , `hyperlink`
   			FROM `{$config['prefix']}list`
         WHERE `title` LIKE '%{$values['listsearch']}%'
         OR `premiseA` LIKE '%{$values['listsearch']}%'
@@ -556,6 +561,7 @@ function getsql($config,$values,$sort,$querylabel) {
         OR `standard` LIKE '%{$values['listsearch']}%'
         OR `conditions` LIKE '%{$values['listsearch']}%'
         OR `metaphor` LIKE '%{$values['listsearch']}%'
+        OR `hyperlink` LIKE '%{$values['listsearch']}%'
 
         UNION ALL
 
@@ -569,9 +575,11 @@ function getsql($config,$values,$sort,$querylabel) {
         , '' AS `behaviour`
         , '' AS `standard`
         , '' AS `conditions`
+        , `hyperlink`
         FROM `{$config['prefix']}listitems`
         WHERE `item` LIKE '%{$values['listsearch']}%'
         OR `notes` LIKE '%{$values['listsearch']}%'
+        OR `hyperlink` LIKE '%{$values['listsearch']}%'
 
         ORDER BY {$sort['getchecklists']}";
              // echo '<pre>'. $sql;die;
@@ -1445,7 +1453,8 @@ function sqlparts($part,$config,$values) {
                                       OR i.`behaviour` LIKE '%{$values['needle']}%'
                                       OR i.`standard` LIKE '%{$values['needle']}%'
                                       OR i.`conditions` LIKE '%{$values['needle']}%'
-                                      OR i.`metaphor` LIKE '%{$values['needle']}%')
+                                      OR i.`metaphor` LIKE '%{$values['needle']}%'
+                                      OR i.`hyperlink` LIKE '%{$values['needle']}%')
                                       ";
 		break;
 		/*

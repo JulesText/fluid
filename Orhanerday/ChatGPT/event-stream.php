@@ -20,31 +20,31 @@ const ASSISTANT = "assistant";
 $open_ai_key = getenv('OPENAI_API_KEY');
 $open_ai = new OpenAi($open_ai_key);
 
-$chat_history_id = $_GET['chat_history_id'];
-$id = $_GET['id'];
+$chat_id = $_GET['chat_id'];
+$comment_id = $_GET['comment_id'];
 
-// Retrieve the data in ascending order by the id column
-$stmt = $db->prepare('SELECT * FROM chat_history ORDER BY id ASC');
+// Retrieve the data in ascending order by the comment_id column
+$stmt = $db->prepare('SELECT * FROM chat_history ORDER BY comment_id ASC');
 $stmt->execute();
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $history[] = [ROLE => SYS, CONTENT => "You are a helpful assistant."];
 foreach ($result as $row) {
-  $history[] = [ROLE => USER, CONTENT => $row['human']];
-  $history[] = [ROLE => ASSISTANT, CONTENT => $row['ai']];
+  $history[] = [ROLE => USER, CONTENT => $row['comment_human']];
+  $history[] = [ROLE => ASSISTANT, CONTENT => $row['comment_ai']];
 }
 
 // remove the empty ai comment
 array_pop($history);
 
 /*
-// Prepare a SELECT statement to retrieve the 'human' field
-$stmt = $db->prepare('SELECT human FROM chat_history WHERE id = :id');
+// Prepare a SELECT statement to retrieve the 'comment_human' field
+$stmt = $db->prepare('SELECT comment_human FROM chat_history WHERE id = :id');
 $stmt->bindValue(':id', $chat_history_id, PDO::PARAM_INT);
 
-// Execute the SELECT statement and retrieve the 'human' field
+// Execute the SELECT statement and retrieve the 'comment_human' field
 $stmt->execute();
-$msg = $stmt->fetchAll(PDO::FETCH_ASSOC)['human'];
+$msg = $stmt->fetchAll(PDO::FETCH_ASSOC)['comment_human'];
 $history[] = [ROLE => USER, CONTENT => $msg];
 */
 
@@ -159,13 +159,13 @@ $complete = $open_ai->chat(
 
 });
 
-file_put_contents('test.txt', PHP_EOL . $txt, FILE_APPEND);
+file_put_contents('test.txt', PHP_EOL . $comment_id . ': ' . $chat_id . ': ' . $txt, FILE_APPEND);
 
 // Prepare the UPDATE statement
-$stmt = $db->prepare('UPDATE chat_history SET ai = :ai WHERE id = :id');
+$stmt = $db->prepare('UPDATE chat_history SET comment_ai = :comment_ai WHERE comment_id = :comment_id');
 // Bind the parameters and execute the statement
-$stmt->bindValue(':id', $chat_history_id, PDO::PARAM_INT);
-$stmt->bindValue(':ai', $txt, PDO::PARAM_STR);
+$stmt->bindValue(':comment_id', $comment_id, PDO::PARAM_INT);
+$stmt->bindValue(':comment_ai', $txt, PDO::PARAM_STR);
 $stmt->execute();
 
 //

@@ -31,13 +31,13 @@ $api_path = 'Orhanerday/ChatGPT/';
 
     <header class="msger-header">
         <div class="msger-header-title">
-            <i class="fas fa-comment-alt"></i> ChatGPT
-            &nbsp;| ID: <input type="text" id="id" hidden> <span class="id_session"></span>
+            <i class="fas fa-comment-alt"></i>
+            chat_id: <input type="text" id="chat_id" hidden> <span class="id_session"></span>
         </div>
         <div class="msger-header-options">
           <button id="quit-button">Exit</button>
-          <button id="chat-button">New Chat</button>
-          <!--<button id="delete-button">Delete History</button>-->
+          <button id="chat-button">New</button>
+          <button id="delete-button" hidden>Delete History</button>
         </div>
     </header>
 

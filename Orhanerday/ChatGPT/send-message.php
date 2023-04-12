@@ -7,11 +7,11 @@ $db = new PDO('mysql:host=' . $config["host"] . ';dbname=' . $config["db"], $con
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Prepare the INSERT statement
-    $stmt = $db->prepare('INSERT INTO chat_history (user_id, human) VALUES (:user_id, :human)');
+    $stmt = $db->prepare('INSERT INTO chat_history (chat_id, comment_human) VALUES (:chat_id, :comment_human)');
 
     // Bind the parameters and execute the statement
-    $stmt->bindValue(':user_id', $_POST['user_id'], PDO::PARAM_STR);
-    $stmt->bindValue(':human', $_POST['msg'], PDO::PARAM_STR);
+    $stmt->bindValue(':chat_id', $_POST['chat_id'], PDO::PARAM_STR);
+    $stmt->bindValue(':comment_human', $_POST['msg'], PDO::PARAM_STR);
     $stmt->execute();
 
     // Set the HTTP response header to indicate that the response is JSON
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // data
     $data = [
-        "id" => $db->lastInsertId()
+        "comment_id" => $db->lastInsertId()
     ];
 #    file_put_contents('test.txt', PHP_EOL . $data['id'], FILE_APPEND);
 

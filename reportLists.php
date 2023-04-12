@@ -78,6 +78,7 @@ $( document ).ready(function() {
 </h1>
 <p>
 <?php
+
     #echo 'Prioritised: ',$prioritise,", ";
     $values['urlVars'] = $urlVars;
     $values['queryTable'] = $check . 'listitems';

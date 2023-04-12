@@ -1,15 +1,15 @@
 const api_path = 'Orhanerday/ChatGPT/';
 
-if (getCookie("id") == "") {
+if (getCookie("chat_id") == "") {
     uuid = uuidv4()
-    document.cookie = "id=" + uuid
-    document.getElementById("id").value = uuid
+    document.cookie = "chat_id=" + uuid
+    document.getElementById("chat_id").value = uuid
 } else {
-    document.getElementById("id").value = getCookie("id");
+    document.getElementById("chat_id").value = getCookie("chat_id");
 }
 const idSession = get(".id_session");
-const USER_ID = document.getElementById("id").value;
-idSession.textContent = USER_ID
+const CHAT_ID = document.getElementById("chat_id").value;
+idSession.textContent = CHAT_ID
 getHistory()
 
 const msgerForm = get(".msger-inputarea");
@@ -25,12 +25,12 @@ const BOT_NAME = "ChatGPT";
 const PERSON_NAME = "You";
 
 // Function to delete chat history records for a user ID using the API
-function deleteChatHistory(userId) {
+function deleteChatHistory() {
     if (!confirm("Are you sure? Your Session and History will delete for good.")) {
         return false
     }
 
-    fetch(api_path + 'api.php?user=' + USER_ID, {
+    fetch(api_path + 'api.php?user=' + CHAT_ID, {
         method: 'DELETE',
         headers: {'Content-Type': 'application/json'}
     })
@@ -56,8 +56,8 @@ const chatButton = document.querySelector('#chat-button');
 chatButton.addEventListener('click', event => {
     event.preventDefault();
     uuid = uuidv4();
-    document.cookie = "id=" + uuid;
-    document.getElementById("id").value = uuid;
+    document.cookie = "chat_id=" + uuid;
+    document.getElementById("chat_id").value = uuid;
     location.reload();
 });
 
@@ -65,7 +65,7 @@ chatButton.addEventListener('click', event => {
 const deleteButton = document.querySelector('#delete-button');
 deleteButton.addEventListener('click', event => {
     event.preventDefault();
-    deleteChatHistory(USER_ID);
+    deleteChatHistory(CHAT_ID);
 });
 
 msgerForm.addEventListener("submit", event => {
@@ -82,24 +82,24 @@ msgerForm.addEventListener("submit", event => {
 
 function getHistory() {
     var formData = new FormData();
-    formData.append('user_id', USER_ID);
+    formData.append('chat_id', CHAT_ID);
     fetch(api_path + 'api.php', {method: 'POST', body: formData})
         .then(response => response.json())
         .then(chatHistory => {
             for (const row of chatHistory) {
-                appendMessage(PERSON_NAME, PERSON_IMG, "right", row.human, row.date);
-                appendMessage(BOT_NAME, BOT_IMG, "left", row.ai, "", row.date);
+                appendMessage(PERSON_NAME, PERSON_IMG, "right", row.comment_human, row.comment_date);
+                appendMessage(BOT_NAME, BOT_IMG, "left", row.comment_ai, "", row.comment_date);
             }
         })
         .catch(error => console.error(error));
 }
 
-function appendMessage(name, img, side, text, id, date) {
+function appendMessage(name, img, side, text, chat_id, comment_date) {
     text = text.replace(/\n/g, "<br>");
     name = "";
     img = "";
-    date = formatDate(new Date());
-    date = "";
+    comment_date = formatDate(new Date());
+    comment_date = "";
     // if (date == "") date = new Date();
     //   Simple solution for small apps
     const msgHTML = `
@@ -108,10 +108,10 @@ function appendMessage(name, img, side, text, id, date) {
       <div class="msg-bubble">
         <div class="msg-info">
           <div class="msg-info-name">${name}</div>
-          <div class="msg-info-time">${date}</div>
+          <div class="msg-info-time">${comment_date}</div>
         </div>
 
-        <div class="msg-text" id=${id}>${text}</div>
+        <div class="msg-text" id=${chat_id}>${text}</div>
       </div>
     </div>
   `;
@@ -124,12 +124,12 @@ function sendMsg(msg) {
     msgerSendBtn.disabled = true
     var formData = new FormData();
     formData.append('msg', msg);
-    formData.append('user_id', USER_ID);
+    formData.append('chat_id', CHAT_ID);
     fetch(api_path + 'send-message.php', {method: 'POST', body: formData})
         .then(response => response.json())
         .then(data => {
             let uuid = uuidv4()
-            const eventSource = new EventSource(api_path + `event-stream.php?chat_history_id=${data.id}&id=${encodeURIComponent(USER_ID)}`);
+            const eventSource = new EventSource(api_path + `event-stream.php?comment_id=${data.comment_id}&chat_id=${encodeURIComponent(CHAT_ID)}`);
             appendMessage(BOT_NAME, BOT_IMG, "left", "", uuid, "");
             const div = document.getElementById(uuid);
 

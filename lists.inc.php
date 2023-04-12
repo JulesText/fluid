@@ -8,7 +8,7 @@ if ($isChecklist) {
     $check='';
 }
 $values=array(
-     'id'        => (isset($_REQUEST['id']))         ? (int) $_REQUEST['id'] : 0
+     'id'        => (isset($_GET['id']))         ? (int) $_GET['id'] : 0
     ,'itemId'    => (empty($_REQUEST['itemId']))     ? '' : $_REQUEST['itemId']
     ,'instanceId'=> (isset($_REQUEST['instanceId']) && is_numeric($_REQUEST['instanceId'])) ? $_REQUEST['instanceId']:''
     ,'categoryId'=> (isset($_REQUEST['categoryId'])) ? (int)$_REQUEST['categoryId']:0
@@ -27,5 +27,6 @@ if(isset($_REQUEST['display']) && $_REQUEST['display']==='true') {
 } else {
     $display = false;
 }
+#echo $_GET['id']; var_dump($values);die;
 
 // php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

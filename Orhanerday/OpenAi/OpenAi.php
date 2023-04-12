@@ -195,6 +195,19 @@ class OpenAi
     /**
      * @param $opts
      * @return bool|string
+     * @deprecated
+     */
+    public function summarize($opts)
+    {
+        $url = Url::summarizeURL();
+        $this->baseUrl($url);
+
+        return $this->sendRequest($url, 'POST', $opts);
+    }
+
+    /**
+     * @param $opts
+     * @return bool|string
      */
     public function moderation($opts)
     {

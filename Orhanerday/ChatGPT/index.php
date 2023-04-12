@@ -1,4 +1,14 @@
 <?
+# todo:
+# request response in markdown and format (in js?)
+# fix summarise.php calls
+# allow select chat from history (db > chat_summary)
+# auto scroll down as response is incoming
+# delete redundant composer packages (only one is Orhanerday)
+# delete redundant code here
+# lighten css
+
+#https://github.com/orhanerday/open-ai
 $api_path = 'Orhanerday/ChatGPT/';
 ?>
 <!-- <!DOCTYPE html>
@@ -32,12 +42,14 @@ $api_path = 'Orhanerday/ChatGPT/';
     <header class="msger-header">
         <div class="msger-header-title">
             <i class="fas fa-comment-alt"></i>
-            chat_id: <input type="text" id="chat_id" hidden> <span class="id_session"></span>
+            <input type="text" id="chat_id" hidden>
+            <span class="id_session"></span>
         </div>
         <div class="msger-header-options">
+          <button id="summary-button">Summarise</button>
           <button id="quit-button">Exit</button>
           <button id="chat-button">New</button>
-          <button id="delete-button" hidden>Delete History</button>
+          <button id="delete-button">Delete Chat</button>
         </div>
     </header>
 

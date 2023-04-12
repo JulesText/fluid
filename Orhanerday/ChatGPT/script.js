@@ -1,14 +1,18 @@
 const api_path = 'Orhanerday/ChatGPT/';
 
-if (getCookie("chat_id") == "") {
-    uuid = uuidv4()
-    document.cookie = "chat_id=" + uuid
-    document.getElementById("chat_id").value = uuid
+const urlParams = new URLSearchParams(window.location.search);
+let CHAT_ID;
+
+if (urlParams.get('chat_id') === null) {
+  window.location.href = 'openAI.php?chat_id=' + uuidv4();
 } else {
-    document.getElementById("chat_id").value = getCookie("chat_id");
+  CHAT_ID = urlParams.get('chat_id');
 }
+
+document.getElementById("chat_id").value = CHAT_ID;
+
 const idSession = get(".id_session");
-const CHAT_ID = document.getElementById("chat_id").value;
+// const CHAT_ID = document.getElementById("chat_id").value;
 idSession.textContent = CHAT_ID
 getHistory()
 
@@ -17,8 +21,6 @@ const msgerInput = get(".msger-input");
 const msgerChat = get(".msger-chat");
 const msgerSendBtn = get(".msger-send-btn");
 
-
-
 const BOT_IMG = api_path + "chatgpt.svg";
 const PERSON_IMG = api_path + "chatgpt.svg";
 const BOT_NAME = "ChatGPT";
@@ -26,11 +28,11 @@ const PERSON_NAME = "You";
 
 // Function to delete chat history records for a user ID using the API
 function deleteChatHistory() {
-    if (!confirm("Are you sure? Your Session and History will delete for good.")) {
+    if (!confirm("Are you sure? Your chat will delete for good.")) {
         return false
     }
 
-    fetch(api_path + 'api.php?user=' + CHAT_ID, {
+    fetch(api_path + 'api.php?chat_id=' + CHAT_ID, {
         method: 'DELETE',
         headers: {'Content-Type': 'application/json'}
     })
@@ -38,8 +40,9 @@ function deleteChatHistory() {
             if (!response.ok) {
                 throw new Error('Error deleting chat history: ' + response.statusText);
             }
-            deleteAllCookies()
-            location.reload(); // Reload the page to update the chat history table
+            // deleteAllCookies()
+            // location.reload(); // Reload the page to update the chat history table
+            window.location.href = 'openAI.php?chat_id=' + uuidv4();
         })
         .catch(error => console.error(error));
 }
@@ -51,14 +54,31 @@ quitButton.addEventListener('click', event => {
     window.location.href = 'index.php';
 });
 
+// Event listener for the summarise chat button click
+const summaryButton = document.querySelector('#summary-button');
+summaryButton.addEventListener('click', event => {
+    event.preventDefault();
+
+    summariseChat(CHAT_ID)
+        .then(text => {
+          idSession.textContent = text;
+        })
+        .catch(error => {
+        console.error(error);
+        });
+
+    // window.location.href = 'index.php';
+});
+
 // Event listener for the new chat button click
 const chatButton = document.querySelector('#chat-button');
 chatButton.addEventListener('click', event => {
     event.preventDefault();
     uuid = uuidv4();
-    document.cookie = "chat_id=" + uuid;
-    document.getElementById("chat_id").value = uuid;
-    location.reload();
+    // document.cookie = "chat_id=" + uuid;
+    // document.getElementById("chat_id").value = uuid;
+    // location.reload();
+    window.location.href = 'openAI.php?chat_id=' + uuid;
 });
 
 // Event listener for the Delete button click
@@ -79,6 +99,32 @@ msgerForm.addEventListener("submit", event => {
 
     sendMsg(msgText)
 });
+
+function summariseChat(chat_id) {
+  var formData = new FormData();
+  formData.append('chat_id', chat_id);
+  return fetch(api_path + 'summarise.php', {method: 'POST', body: formData})
+    .then(response => response.text())
+    .then(text => { return text; })
+    .catch(error => {
+      console.error(error);
+      return null;
+    });
+
+}
+
+function getComment(chat_id) {
+  var formData = new FormData();
+  formData.append('chat_id', chat_id);
+  formData.append('last', 'TRUE');
+  return fetch(api_path + 'api.php', {method: 'POST', body: formData})
+    .then(response => response.text())
+    .then(text => { return text; })
+    .catch(error => {
+      console.error(error);
+      return null;
+    });
+}
 
 function getHistory() {
     var formData = new FormData();
@@ -144,11 +190,20 @@ function sendMsg(msg) {
                     }
                 }
             };
+
             eventSource.onerror = function (e) {
-                msgerSendBtn.disabled = false
                 console.log(e);
+                getComment(CHAT_ID)
+                    .then(text => {
+                    div.innerHTML += text;
+                    })
+                    .catch(error => {
+                    console.error(error);
+                    });
+                msgerSendBtn.disabled = false
                 eventSource.close();
             };
+
         })
         .catch(error => console.error(error));
 
@@ -170,7 +225,7 @@ function formatDate(date) {
 function random(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
 }
-
+/*
 function getCookie(cname) {
     let name = cname + "=";
     let decodedCookie = decodeURIComponent(document.cookie);
@@ -186,13 +241,13 @@ function getCookie(cname) {
     }
     return "";
 }
-
+*/
 function uuidv4() {
     return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
         (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
     );
 }
-
+/*
 function deleteAllCookies() {
     const cookies = document.cookie.split(";");
 
@@ -203,3 +258,4 @@ function deleteAllCookies() {
         document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
     }
 }
+*/

@@ -3,7 +3,7 @@
   --msger-bg: #444654;
   --border: 2px solid #1e1e1e;
   --left-msg-bg: #8b8da9;
-  --right-msg-bg: #16171c;
+  --right-msg-bg: #36373c;
 }
 
 html {
@@ -35,6 +35,7 @@ body {
   background-color: var(--body-bg);
   font-family: Verdana, Helvetica, sans-serif;
   line-height: 1.5;
+  color: #fff;
 }
 
 .contabro {
@@ -90,6 +91,10 @@ body {
   display: flex;
   align-items: flex-end;
   margin-bottom: 10px;
+}
+
+.msg-text {
+
 }
 
 .msg:last-of-type {
@@ -226,34 +231,11 @@ body {
      margin-bottom: 26px;
      cursor: auto;
 }
-#delete-button {
-  background: none!important;
-  border: none;
-  padding: 0!important;
-  /*optional*/
-  font-family: arial, sans-serif;
-  /*input has OS specific font-family*/
-  color: rgb(255, 255, 255);
-  text-decoration: underline;
-  cursor: pointer;
-}
 
-#chat-button {
+#delete-button, #quit-button, #chat-button, #summary-button {
   background: none!important;
   border: none;
   padding: 0!important;
-  color: rgb(255, 255, 255);
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-#quit-button {
-  background: none!important;
-  border: none;
-  padding: 0!important;
-  /*optional*/
-  font-family: arial, sans-serif;
-  /*input has OS specific font-family*/
   color: rgb(255, 255, 255);
   text-decoration: underline;
   cursor: pointer;

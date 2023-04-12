@@ -24,7 +24,8 @@ $chat_id = $_GET['chat_id'];
 $comment_id = $_GET['comment_id'];
 
 // Retrieve the data in ascending order by the comment_id column
-$stmt = $db->prepare('SELECT * FROM chat_history ORDER BY comment_id ASC');
+$stmt = $db->prepare('SELECT * FROM chat_history WHERE chat_id = "' . $chat_id . '" ORDER BY comment_id ASC');
+#$stmt = $db->prepare('SELECT * FROM chat_history ORDER BY comment_id ASC');
 $stmt->execute();
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -37,17 +38,6 @@ foreach ($result as $row) {
 // remove the empty ai comment
 array_pop($history);
 
-/*
-// Prepare a SELECT statement to retrieve the 'comment_human' field
-$stmt = $db->prepare('SELECT comment_human FROM chat_history WHERE id = :id');
-$stmt->bindValue(':id', $chat_history_id, PDO::PARAM_INT);
-
-// Execute the SELECT statement and retrieve the 'comment_human' field
-$stmt->execute();
-$msg = $stmt->fetchAll(PDO::FETCH_ASSOC)['comment_human'];
-$history[] = [ROLE => USER, CONTENT => $msg];
-*/
-
 $opts = [
     'model' => 'gpt-3.5-turbo'
     #'model' => 'gpt-4'
@@ -57,69 +47,50 @@ $opts = [
     , 'frequency_penalty' => 0
     , 'presence_penalty' => 0
     , 'stream' => TRUE
+    // , 'content_type' = 'text/markdown'
 ];
-
-#file_put_contents('test.txt', PHP_EOL . json_encode($opts, JSON_PRETTY_PRINT), FILE_APPEND);
-
-#file_put_contents('test.txt', PHP_EOL . 'x', FILE_APPEND);
-
-#$chat = $open_ai->chat($opts);
 
 header('Content-type: text/event-stream');
 header('Cache-Control: no-cache');
-/*
-$obj = json_decode($chat);
 
-if ($obj->error->message != "") {
-
-  file_put_contents('test.txt', PHP_EOL . json_encode($obj->error->message), FILE_APPEND);
-
-  error_log(json_encode($obj->error->message));
-
-} else {
-
-    echo($obj->choices[0]->message->content);
-
-    file_put_contents('test.txt', PHP_EOL . $obj->choices[0]->message->content, FILE_APPEND);
-
-}
-*/
 $txt = "";
-$i = 0;
 file_put_contents('test.txt', '');
 
-$complete = $open_ai->chat(
-  $opts,
+$complete = $open_ai->chat($opts,
 
-  function ($curl_info, $data) use (&$txt, &$i) {
+  function ($curl_info, $data) use (&$txt) {
 
-    if ($obj = json_decode($data) && $obj->error->message != "") {
+    $obj = json_decode($data);
+    #file_put_contents('test.txt', PHP_EOL . json_encode($obj), FILE_APPEND);
 
-      file_put_contents('test.txt', PHP_EOL . 'Error: ' . json_encode($obj->error->message), FILE_APPEND);
+    if ($obj->error->type != "") {
 
-      error_log(json_encode($obj->error->message));
+      $data = json_encode($obj);
+      file_put_contents('test.txt', PHP_EOL . $data, FILE_APPEND);
 
-      $txt .= 'an error occurred';
-      $data["choices"][0]["delta"]["content"] = 'an error occurred';
-      echo $data;
+      $txt .= $obj->error->message;
+      #echo $obj->error->message;
+      // $data = 'data: {"id":"0","object":"chat.completion.chunk","created":0,"model"'
+      //   . ':"0","choices":[{"delta":{"content":"' . $txt . '"},"index":0,"finish_reason":null}]}';
+      #echo $data;
+      #file_put_contents('test.txt', PHP_EOL . $data, FILE_APPEND);die;
 
     } else {
 
       // tries iterative printing result and cleaning
 
       echo $data; # send to js to print
-      #file_put_contents('test.txt', PHP_EOL . $data, FILE_APPEND);
+      #file_put_contents('test.txt', PHP_EOL . $data, FILE_APPEND);die;
 
       # can have multiple results in one chat.completion.chunk
       # in first row
       # should separate to clean for db entry
-      if ($i == 0) {
+      if ($txt == "") {
         $d = str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),"ran_str123",$data);
         $lines = explode("ran_str123", $d);
       } else {
         $lines = array(0 => $data);
       }
-      $i++;
 
       foreach ($lines as $index => $row) {
 
@@ -136,19 +107,6 @@ $complete = $open_ai->chat(
         }
 
       }
-
-      #$clean = str_replace("data: ", "", $data);
-      #$arr = json_decode($clean, TRUE);
-      #if ($data != "data: [DONE]\n\n" &&
-      #if (isset($arr["choices"][0]["delta"]["content"])) {
-
-        #$txt .= $arr["choices"][0]["delta"]["content"];
-
-        #$choice_content = $arr["choices"][0]["delta"]["content"];
-        #$dump = 'v' . $index . PHP_EOL . $data . 'w' . PHP_EOL . $clean . 'x' . PHP_EOL . json_decode($arr) . PHP_EOL . 'y' . PHP_EOL . $choice_content . PHP_EOL . 'z' . PHP_EOL;
-        #file_put_contents('test.txt', $dump, FILE_APPEND);
-
-      #}
 
     }
 

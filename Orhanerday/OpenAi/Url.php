@@ -63,6 +63,14 @@ class Url
     }
 
     /**
+     * @return string
+     */
+    public static function summarizeURL(): string
+    {
+        return self::OPEN_AI_URL . "/summarize";
+    }
+
+    /**
      * @param
      * @return string
      */

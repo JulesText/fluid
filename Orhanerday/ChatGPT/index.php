@@ -57,12 +57,14 @@ $api_path = 'Orhanerday/ChatGPT/';
     </main>
 
     <form class="msger-inputarea">
-        <input class="msger-input" placeholder="Enter your message..." require>
+        <!--<input class="msger-input" placeholder="Enter your message..." require>-->
+        <textarea rows="2" class="msger-input" placeholder="Enter your message..." require></textarea>
         <button type="submit" class="msger-send-btn">Send</button>
     </form>
 </section>
 <script src="<?php echo $api_path; ?>script.js"></script>
 </div>
+
 <!--
 <script>
 function openTab(evt, tabName) {

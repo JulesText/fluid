@@ -2,7 +2,7 @@
 require_once("headerDB.inc.php");
 
 $expand = FALSE;
-if (isset($_REQUEST['expand']) && $_REQUEST['expand'] == 'TRUE') $expand = TRUE;
+if (isset($_GET['expand']) && $_GET['expand'] == 'TRUE') $expand = TRUE;
 
 /*
    ----------------------------------------------

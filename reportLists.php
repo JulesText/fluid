@@ -3,7 +3,7 @@ include_once('header.php');
 include_once('lists.inc.php');
 
 $result = query("select{$check}list",$config,$values,$sort);
-
+// var_dump($result);die;
 if ($result==1) {
     echo "<p class='error'>That {$check}list does not exist</p>\n";
     include_once('footer.php');
@@ -11,12 +11,12 @@ if ($result==1) {
 }
 $row=$result[0];
 
-if (!isset($_REQUEST['content']) || $_REQUEST['content'] !== 'bulk') {
+if (!isset($_GET['content']) || $_GET['content'] !== 'bulk') {
   $sort['getlistitems'] = $sort['getlistitemsprioritise'];
   $sort['getchecklistitems'] = $sort['getchecklistitemsprioritise'];
 }
 
-if (isset($_REQUEST['content']) && $_REQUEST['content'] == 'bulk') {
+if (isset($_GET['content']) && $_GET['content'] == 'bulk') {
   $sort['getlistitems'] = $sort['getlistitemsbulk'];
   $sort['getchecklistitems'] = $sort['getchecklistitemsbulk'];
 }
@@ -41,7 +41,7 @@ if (isset($check) && $check == 'check' && $row['scored'] == 'y') $scored = true;
 require_once("headerHtml.inc.php");
 $urlVars = "?id=" . $row['id'] . "&type=". $type;
 $urlInst = "&instanceId=". $values['instanceId'];
-$urlBulk = "&content=". $_REQUEST['content'];
+$urlBulk = "&content=". $_GET['content'];
 ?>
 
 <script type='text/javascript' >
@@ -55,7 +55,7 @@ $( document ).ready(function() {
 <h1><?php echo $row['title']; ?>&nbsp;&nbsp;&nbsp;
 
 <?php
-  if (isset($_REQUEST['content']) && $_REQUEST['content'] == 'bulk') {
+  if (isset($_GET['content']) && $_GET['content'] == 'bulk') {
       echo "[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst . "\">Show List</a>&nbsp;]&nbsp;&nbsp;&nbsp;";
   }
 ?>
@@ -66,7 +66,7 @@ $( document ).ready(function() {
     if ($row['hyperlink']) {
         echo "&nbsp;&nbsp;&nbsp;[&nbsp;" . faLink($row['hyperlink']) . "&nbsp;]";
     }
-    if (!isset($_REQUEST['content'])) {
+    if (!isset($_GET['content'])) {
         echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst . "&content=bulk\">Edit Items</a>&nbsp;]";
         echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst . "&content=limit\">Limit</a>&nbsp;]";
     }
@@ -132,7 +132,7 @@ $( document ).ready(function() {
 <?php if ($result1) {
     //echo '<pre>';var_dump($result1);die;
     // standard layout
-    if (!isset($_REQUEST['content']) || $_REQUEST['content'] !== 'bulk') {
+    if (!isset($_GET['content']) || $_GET['content'] !== 'bulk') {
 ?>
         <form action='processLists.php' method='post'>
             <?php if ($check && $scored) { ?>
@@ -279,7 +279,7 @@ $( document ).ready(function() {
             </div>
         </form>
 <?php
-    } elseif ($_REQUEST['content'] == 'bulk') {
+    } elseif ($_GET['content'] == 'bulk') {
 ?>
         <link rel="stylesheet" href="themes/default/dataTables.css" type="text/css" media="Screen" />
 

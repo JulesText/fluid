@@ -1,5 +1,8 @@
 <?php
 include_once('header.php');
+$item['title'] = 'open ai text';
+# if chat_id isset and db record exists
+# $values['title'] = summarise
 require_once("headerHtml.inc.php");
 #echo '<pre>';
 

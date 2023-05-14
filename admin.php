@@ -27,10 +27,10 @@ mysql> INSERT INTO t SELECT * FROM t AS t1;
 ------------------------------------------------------------
 
 */
-$action=(isset($_REQUEST['action']))?$_REQUEST['action']:'validate';
+$action=(isset($_GET['action']))?$_GET['action']:'validate';
 $showInstallations=true;
 $showCommands=true;
-$prefix=(isset($_REQUEST['prefix']))?$_REQUEST['prefix']:$config['prefix'];
+$prefix=(isset($_GET['prefix']))?$_GET['prefix']:$config['prefix'];
 if (!checkPrefix($prefix)) $prefix='';
 $availableActions=array('validate','repair','backup');
 if (_ALLOWUNINSTALL) $availableActions[]='delete';
@@ -141,7 +141,7 @@ if ($showInstallations || $showCommands) { ?>
                         AND ia.`type` = 'r'";
                 $refscomp = query($q);
                 echo count($refscomp);
-                if (isset($_REQUEST['comprefs']) && $_REQUEST['comprefs'] ==='delete') {
+                if (isset($_GET['comprefs']) && $_GET['comprefs'] ==='delete') {
                     foreach ($refscomp as $ref) {
                         $values['itemId'] = $ref['itemId'];
                         query("deleteitemstatus",$config,$values);
@@ -169,7 +169,7 @@ if ($showInstallations || $showCommands) { ?>
                             ) OR ia.`type`='' OR ia.`type` IS NULL)";
                 $orphs = query($q);
                 echo count($orphs);
-                if (isset($_REQUEST['orphans']) && $_REQUEST['orphans'] ==='delete') {
+                if (isset($_GET['orphans']) && $_GET['orphans'] ==='delete') {
                     foreach ($orphs as $orph) {
                         $values['itemId'] = $orph['itemId'];
                         query("deleteitemstatus",$config,$values);

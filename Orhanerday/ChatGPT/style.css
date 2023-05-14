@@ -6,6 +6,16 @@
   --right-msg-bg: #36373c;
 }
 
+pre, code, code.dark-bg {
+	background-color: #202123;
+	border-radius: 3px;
+	font-family: monospace;
+	white-space: pre-wrap;
+	padding: 2px 4px 2px 4px;
+  line-height: 1.5;
+  box-shadow: 0px 0px 1px rgba(0,0,0, .2);
+}
+
 html {
   box-sizing: border-box;
 }

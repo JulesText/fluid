@@ -111,6 +111,7 @@ function getsql($config,$values,$sort,$querylabel) {
 				FROM `". $config['prefix'] . $values['queryTable'] . "`
         WHERE `" . $values['queryKey'] . "` = " . $values['queryValue'] . "
 				ORDER BY `priority` ASC";
+        #die($sql);
 			break;
 
 		case "categoryselectbox":

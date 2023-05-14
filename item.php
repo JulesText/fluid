@@ -3,7 +3,7 @@
 include_once('header.php');
 
 $values = array();
-$values['itemId']= (isset($_REQUEST['itemId']))?(int) $_REQUEST['itemId']:0;
+$values['itemId']= (isset($_GET['itemId']))?(int) $_GET['itemId']:0;
 $values['parentId']=array();
 
 //SQL CODE
@@ -39,11 +39,11 @@ if ($values['itemId']) { // editing an item
     $values['dateCompleted']=null;
     $values['repeat']=null;
     $values['suppressUntil']=null;
-    $values['type']=$_REQUEST['type'];
+    $values['type']=$_GET['type'];
     $values['isSomeday']=(isset($_GET['someday']) &&  $_GET['someday']=='true')?'y':'n';
-    $nextaction=isset($_REQUEST['nextonly']) && ($_REQUEST['nextonly']=='true' || $_REQUEST['nextonly']==='y');
+    $nextaction=isset($_GET['nextonly']) && ($_GET['nextonly']=='true' || $_GET['nextonly']==='y');
     foreach ( array('category','context','timeframe') as $cat)
-        $values[$cat.'Id']= (isset($_REQUEST[$cat.'Id']))?(int) $_REQUEST[$cat.'Id']:0;
+        $values[$cat.'Id']= (isset($_GET[$cat.'Id']))?(int) $_GET[$cat.'Id']:0;
 
     if ($values['type']==='s') {
         $values['isSomeday']='y';
@@ -57,14 +57,14 @@ if ($values['itemId']) { // editing an item
 }
 $show=getShow($where,$values['type']);
 if (!$values['itemId']) {
-    if ($show['suppress'] && isset($_REQUEST['suppress']) && ($_REQUEST['suppress']=='true' || $_REQUEST['suppress']==='y')) {
+    if ($show['suppress'] && isset($_GET['suppress']) && ($_GET['suppress']=='true' || $_GET['suppress']==='y')) {
         $values['suppress']='y';
-        $values['suppressUntil']=$_REQUEST['suppressUntil'];
+        $values['suppressUntil']=$_GET['suppressUntil'];
     } else $values['suppress']='n';
-    if ($show['deadline'] && !empty($_REQUEST['deadline']))$values['deadline']=$_REQUEST['deadline'];
+    if ($show['deadline'] && !empty($_GET['deadline']))$values['deadline']=$_GET['deadline'];
     $parents=array();
-    if ($show['ptitle'] && !empty($_REQUEST['parentId'])) {
-        $values['parentId']=explode(',',$_REQUEST['parentId']);
+    if ($show['ptitle'] && !empty($_GET['parentId'])) {
+        $values['parentId']=explode(',',$_GET['parentId']);
         foreach ($values['parentId'] as $parent) {
             $result=query("selectitemshort",$config,array('itemId'=>$parent),$sort);
             if ($result) {
@@ -102,7 +102,7 @@ $oldtype=$values['type'];
 $title=(($values['itemId']>0)?'Edit ':'New ').$typename;
 
 $hiddenvars=array(
-            'referrer'=>(isset($_REQUEST['referrer']))?$_REQUEST['referrer']:''
+            'referrer'=>(isset($_GET['referrer']))?$_GET['referrer']:''
             ,'type'   =>$values['type']
             ,'itemId' =>$values['itemId']
             );
@@ -135,7 +135,7 @@ require_once("headerHtml.inc.php");
             ,"alt='Report' title='View Report' /></a>\n";
     echo $title;
 ?><?php
-if (!empty($_REQUEST['createnote'])) { ?>
+if (!empty($_GET['createnote'])) { ?>
     <p class='warning'>Notes have been superseded by tickler actions. These actions get
     suppressed until a specified number of days before their deadlines</p>
 <?php }

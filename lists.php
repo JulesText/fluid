@@ -59,7 +59,7 @@ foreach ((array) $vres as $visn) {
                     ) continue 2;
             }
             // exclude lists without priorities unless all (unprioritised) requested
-            if (!isset($_REQUEST['unprioritised'])) {
+            if (!isset($_GET['unprioritised'])) {
               if ($list['type'] == 'c') $check = 'check';
               else $check = '';
               $values['queryTable'] = $check . 'listitems';

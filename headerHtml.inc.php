@@ -129,7 +129,25 @@ if (isset($check) && $check == 'check' && in_array($row['id'], array(53,36,37,38
 		</script>
 <?php } ?>
 
-
+<!-- code block formatting -->
+<!-- renders -->
+<script src="js/showdown.min.js"></script>
+<script>
+function scrollToBottom() {
+const chatWindow = document.querySelector('.chat-window');
+chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+</script>
+<!-- colours and bolds
+set theme as end of .css name
+i.e. styles/github.min.css
+they will all have .min. there
+https://github.com/highlightjs/highlight.js/tree/main/src/styles
+-->
+<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+<!-- copy to clipboard -->
+<script src="js/clipboard.min.js"></script>
 
 <?php
 }

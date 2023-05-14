@@ -19,7 +19,7 @@ if ($values['itemId']) {
         $values['dateCompleted']=$row[0]['dateCompleted'];
     $action='itemedit';
 } else {
-    $values['id']=(int) $_REQUEST['id'];
+    $values['id']=(int) $_GET['id'];
     $values['item']='';
     $values['notes']='';
     $values['hyperlink']='';

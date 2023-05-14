@@ -16,8 +16,8 @@
             echo $values['itemId'];
         ?>&amp;action=changeType&amp;type=<?php
             echo $key;
-            if (!empty($_REQUEST['referrer']))
-                echo "&amp;referrer=",$_REQUEST['referrer'];
+            if (!empty($_GET['referrer']))
+                echo "&amp;referrer=",$_GET['referrer'];
         ?>'><?php echo $val; ?></a>
     <?php } ?>
 </div>

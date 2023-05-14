@@ -28,7 +28,7 @@ if ($values['itemId']) {
 		$values['title'] = join(' ', $keywords);
 
 } else {
-    $values['id']=(int) $_REQUEST['id'];
+    $values['id']=(int) $_GET['id'];
     $values['item']='';
     $values['notes']='';
     $values['hyperlink']='';

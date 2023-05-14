@@ -25,6 +25,15 @@ const BOT_IMG = api_path + "chatgpt.svg";
 const PERSON_IMG = api_path + "chatgpt.svg";
 const BOT_NAME = "ChatGPT";
 const PERSON_NAME = "You";
+//
+// // Observe changes to the chat window element
+// const observer = new MutationObserver(function(mutations) {
+//   // Scroll to the bottom of the chat window
+//   msgerChat.scrollTop = msgerChat.scrollHeight;
+// });
+//
+// // Set up the mutation observer to watch for changes to the chat window
+// observer.observe(msgerChat, { childList: true });
 
 // Function to delete chat history records for a user ID using the API
 function deleteChatHistory() {
@@ -88,6 +97,34 @@ deleteButton.addEventListener('click', event => {
     deleteChatHistory(CHAT_ID);
 });
 
+function waiter(editableObj) {
+
+	$(editableObj).keydown(function (e) {
+			// User can submit by pressing enter (shift enter is carriage return)
+			if (e.which == 13 && !e.shiftKey) {
+					$(editableObj).trigger('blur');
+			}
+	});
+
+}
+
+// this one checks all textareas on page
+$('textarea').keypress(function(e) {
+  // Check if the Enter key is pressed
+  if (e.keyCode == 13 && !e.shiftKey) {
+    e.preventDefault();
+    // Trigger the form submission
+    const msgText = msgerInput.value;
+    if (!msgText) return;
+
+    appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText, "");
+    msgerInput.value = "";
+
+    sendMsg(msgText)
+    // $(this).closest('form').submit();
+  }
+});
+
 msgerForm.addEventListener("submit", event => {
     event.preventDefault();
 
@@ -141,7 +178,25 @@ function getHistory() {
 }
 
 function appendMessage(name, img, side, text, chat_id, comment_date) {
-    text = text.replace(/\n/g, "<br>");
+
+    // text = text.replace(/\n/g, "<br>");
+    // Apply custom CSS class to code blocks
+    var converter = new showdown.Converter();
+    // converter.setOption('parseImgDimensions', true);
+    // converter.setOption('ghCodeBlocks', true);
+    // converter.setOption('prefixHeaderId', 'showdownjs-');
+    // converter.setOption('tables', true);
+    // converter.setOption('tasklists', true);
+    // converter.setFlavor('github');
+    // alert(text);
+    text = converter.makeHtml(text);
+    // text = text.replace(/<code>/g, '<code class="language-R">');
+    // text = text.replace(/<code>/g, '<code class="html" data-clipboard-target="#mycodeblock">');
+    // text = text.replace(/<\/code><\/pre>/g, '</code></pre><button class="btn" data-clipboard-target="#mycodeblock">Copy to clipboard</button>');
+    // new ClipboardJS('.btn'); // code block clipboard
+
+    // alert(text);
+
     name = "";
     img = "";
     comment_date = formatDate(new Date());
@@ -163,7 +218,20 @@ function appendMessage(name, img, side, text, chat_id, comment_date) {
   `;
 
     msgerChat.insertAdjacentHTML("beforeend", msgHTML);
-    msgerChat.scrollTop += 500;
+    hljs.highlightAll(); // add code colour formatting, language defined above
+    // msgerChat.scrollTop += 500;
+    // msgerChat.scrollTop = msgerChat.scrollHeight;
+
+    // document.addEventListener('DOMContentLoaded', (event) => {
+    //   document.querySelectorAll('pre code').forEach((block) => {
+    //     hljs.highlightBlock(block);
+    //     hljs.addPlugin(new ClipboardJS(block, {
+    //       container: block.parentNode
+    //     }));
+    //   });
+    // });
+
+
 }
 
 function sendMsg(msg) {

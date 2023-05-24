@@ -1,5 +1,5 @@
 <?php
-$isChecklist=(isset($_GET['type']) && ($_GET['type']==='C' || $_GET['type']==='c'));
+$isChecklist=(isset($_REQUEST['type']) && ($_REQUEST['type']==='C' || $_REQUEST['type']==='c'));
 if ($isChecklist) {
     $type='c';
     $check='check';
@@ -12,29 +12,29 @@ if ($isChecklist) {
 // if(isset($_REQUEST['id'])) unset($_REQUEST['id']);
 // echo "<pre>";
 // var_dump($_GET);
-// var_dump($_REQUEST); #die;
+// var_dump($_REQUEST); die;
 
 $values=array(
-     'id'        => (isset($_GET['id']))         ? (int) $_GET['id'] : 0
-    ,'itemId'    => (empty($_GET['itemId']))     ? '' : $_GET['itemId']
-    ,'instanceId'=> (isset($_GET['instanceId']) && is_numeric($_GET['instanceId'])) ? $_GET['instanceId']:''
-    ,'categoryId'=> (isset($_GET['categoryId'])) ? (int)$_GET['categoryId']:0
-		,'catcodeId'=> (isset($_GET['catcodeId'])) ? (string)$_GET['catcodeId']:FALSE
-    ,'scored'=> (isset($_GET['scored'])) ? $_GET['scored']:'n'
-    ,'prioritise'=> (isset($_GET['prioritise'])) ? $_GET['prioritise']:'n'
+     'id'        => (isset($_REQUEST['id']))         ? (int) $_REQUEST['id'] : 0
+    ,'itemId'    => (empty($_REQUEST['itemId']))     ? '' : $_REQUEST['itemId']
+    ,'instanceId'=> (isset($_REQUEST['instanceId']) && is_numeric($_REQUEST['instanceId'])) ? $_REQUEST['instanceId']:''
+    ,'categoryId'=> (isset($_REQUEST['categoryId'])) ? (int)$_REQUEST['categoryId']:0
+		,'catcodeId'=> (isset($_REQUEST['catcodeId'])) ? (string)$_REQUEST['catcodeId']:FALSE
+    ,'scored'=> (isset($_REQUEST['scored'])) ? $_REQUEST['scored']:'n'
+    ,'prioritise'=> (isset($_REQUEST['prioritise'])) ? $_REQUEST['prioritise']:'n'
     );
 
 $urlSuffix="type=$type";
-if (isset($_GET['instanceId'])) $urlSuffix .= '&instanceId=' . $_GET['instanceId'];
+if (isset($_REQUEST['instanceId'])) $urlSuffix .= '&instanceId=' . $_REQUEST['instanceId'];
 
-if (isset($_GET['instanceId']) && is_numeric($_GET['instanceId'])) $isInst = TRUE;
+if (isset($_REQUEST['instanceId']) && is_numeric($_REQUEST['instanceId'])) $isInst = TRUE;
 else $isInst = FALSE;
 
-if(isset($_GET['display']) && $_GET['display']==='true') {
+if(isset($_REQUEST['display']) && $_REQUEST['display']==='true') {
     $display = true;
 } else {
     $display = false;
 }
-#echo $_GET['id']; var_dump($values);die;
+#echo $_REQUEST['id']; var_dump($values);die;
 
 // php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

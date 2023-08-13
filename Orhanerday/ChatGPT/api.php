@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     #$chat_id="%";
 
     // Prepare and execute a SELECT statement to retrieve the chat history data
-    $stmt = $db->prepare('SELECT comment_human, comment_ai, comment_date FROM chat_history WHERE chat_id LIKE "'. $chat_id . '" ORDER BY comment_id ASC');
+    $stmt = $db->prepare('SELECT chat_summary, comment_human, comment_ai, comment_date FROM chat_history WHERE chat_id LIKE "'. $chat_id . '" ORDER BY comment_id ASC');
     $stmt->execute();
 
     // Fetch the results and store them in an array

@@ -39,15 +39,16 @@ foreach ($result as $row) {
 array_pop($history);
 
 $opts = [
-    'model' => 'gpt-3.5-turbo'
-    #'model' => 'gpt-4'
-    , 'messages' => $history
-    , 'temperature' => 1.0
-    , 'max_tokens' => 1000 /* max number of words in response */
-    , 'frequency_penalty' => 0
-    , 'presence_penalty' => 0
-    , 'stream' => TRUE
-    // , 'content_type' = 'text/markdown'
+  #'model' => 'gpt-3.5-turbo-16k' # unclear what 16k does (still 4k tokens)
+  #'model' => 'gpt-3.5-turbo' # 4k tokens
+  'model' => 'gpt-4'
+  , 'messages' => $history
+  , 'temperature' => 1.0
+  , 'max_tokens' => 1000 /* max number of tokens in response */
+  , 'frequency_penalty' => 0
+  , 'presence_penalty' => 0
+  , 'stream' => TRUE
+  // , 'content_type' = 'text/markdown'
 ];
 
 header('Content-type: text/event-stream');

@@ -242,11 +242,29 @@ body {
      cursor: auto;
 }
 
-#delete-button, #quit-button, #chat-button, #summary-button {
+#delete-button, #quit-button, #chat-button, #summary-button, #history-button {
   background: none!important;
   border: none;
   padding: 0!important;
   color: rgb(255, 255, 255);
   text-decoration: underline;
+  cursor: pointer;
+}
+
+#popup-menu {
+  display: none;
+  position: absolute;
+  top: 0;
+  z-index: 10;
+  background: #666;
+  padding: 25px;
+}
+
+a.history-link {
+  background: none!important;
+  font-weight: normal;
+  border: none;
+  padding: 0!important;
+  color: rgb(255, 255, 255);
   cursor: pointer;
 }

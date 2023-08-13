@@ -12,7 +12,7 @@ if ($isChecklist) {
 // if(isset($_REQUEST['id'])) unset($_REQUEST['id']);
 // echo "<pre>";
 // var_dump($_GET);
-// var_dump($_REQUEST); die;
+// var_dump($_REQUEST); #die;
 
 $values=array(
      'id'        => (isset($_REQUEST['id']))         ? (int) $_REQUEST['id'] : 0
@@ -23,6 +23,9 @@ $values=array(
     ,'scored'=> (isset($_REQUEST['scored'])) ? $_REQUEST['scored']:'n'
     ,'prioritise'=> (isset($_REQUEST['prioritise'])) ? $_REQUEST['prioritise']:'n'
     );
+
+# workaround for office network
+if(isset($_GET['id'])) $values['id'] = $_GET['id'];
 
 $urlSuffix="type=$type";
 if (isset($_REQUEST['instanceId'])) $urlSuffix .= '&instanceId=' . $_REQUEST['instanceId'];

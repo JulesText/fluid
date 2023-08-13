@@ -8,6 +8,10 @@
 # delete redundant code here
 # lighten css
 
+// Create a new SQLite database connection
+require_once('headerDB.inc.php');
+$db = new PDO('mysql:host=' . $config["host"] . ';dbname=' . $config["db"], $config["user"], $config["pass"]);
+
 #https://github.com/orhanerday/open-ai
 $api_path = 'Orhanerday/ChatGPT/';
 ?>
@@ -47,11 +51,28 @@ $api_path = 'Orhanerday/ChatGPT/';
         </div>
         <div class="msger-header-options">
           <button id="summary-button">Summarise</button>
-          <button id="quit-button">Exit</button>
           <button id="chat-button">New</button>
-          <button id="delete-button">Delete Chat</button>
+          <button id="history-button">History</button>
+          <button id="quit-button">Exit</button>
+          <button id="delete-button">Delete</button>
         </div>
     </header>
+
+    <div id="popup-menu">
+      <?php
+
+      $stmt = $db->prepare('SELECT DISTINCT chat_id, chat_summary FROM chat_history WHERE chat_id != "' . $_GET['chat_id'] . '" ORDER BY comment_id DESC');
+      $stmt->execute();
+      $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+      foreach ($result as $row) {
+        $descrip = $row["chat_summary"];
+        if ($descrip == NULL) $descrip = $row["chat_id"];
+        echo '<br><a class="history-link" href="ai.php?chat_id=' . $row["chat_id"] . '">' . $descrip . '</a>';
+      }
+
+      ?>
+    </div>
 
     <main class="msger-chat">
     </main>

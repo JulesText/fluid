@@ -25,9 +25,9 @@ $menu[] = array("link"=>"listItems.php?type=a&contextId=6&notspacecontext=true&l
 $menu[] = array("link"=>"listLists.php?type=C", 'title'=>"Show reusable checklists", 'label' => "Show Checklists");
 #$menu[] = array("link"=>"listLists.php?type=L", 'title'=>"Show general-purpose lists", 'label' => "Show Lists");
 $menu[] = array("link"=>'','label'=>'');
-$menu[] = array("link"=>"itemReport.php?itemId=18792", 'title'=>"~ BETTY", 'label' => "~ BETTY");
+#$menu[] = array("link"=>"itemReport.php?itemId=18792", 'title'=>"~ BETTY", 'label' => "~ BETTY");
 $menu[] = array("link"=>"ToD.php", 'title'=>"Process the time of day", 'label' => "ToDB");
-$menu[] = array("link"=>"openAI.php", 'title'=>"AI chat", 'label' => "AI chat");
+$menu[] = array("link"=>"ai.php", 'title'=>"AI chat", 'label' => "AI chat");
 $menu[] = array("link"=>"Lunar.php", 'title'=>"Phase", 'label' => "Phase");
 /*
 $menu[] = array("link"=>"item.php?type=a&amp;nextonly=true", 'title'=>"Create a new next action", 'label' => "Next Action");
@@ -43,7 +43,7 @@ $menu2[] = array("link"=>'','label'=>'');
 $menu2[] = array("link"=>'','label'=>'Process');
 //-------------------------------------------
 $menu2[] = array("link"=>"item.php?type=i", 'title'=>"Drop an item into the inbox", 'label' => "Capture FA Inbox Item");
-$menu2[] = array("link"=>"x-devonthink-item://4262B1C8-A836-47AC-90BA-09499EEFF1D5?reveal=1", 'title'=>"Drop an item into the inbox", 'label' => "Capture Betty Inbox Item");
+#$menu2[] = array("link"=>"x-devonthink-item://4262B1C8-A836-47AC-90BA-09499EEFF1D5?reveal=1", 'title'=>"Drop an item into the inbox", 'label' => "Capture Betty Inbox Item");
 $menu2[] = array("link"=>"listItems.php?tickler=false&type=w&contextId=25&notspacecontext=true&nextonly=true&dueonly=true&liveparents=*", 'title'=>"Due Waiting On", 'label' => "Due Waiting On");
 $menu2[] = array("link"=>"listItems.php?tickler=false&type=a&contextId=25&notspacecontext=true&dueonly=true&liveparents=*", 'title'=>"Due Actions", 'label' => "Due Actions");
 $menu2[] = array("link"=>"index.php", 'title'=>"Summary View", 'label' => "Summary View");

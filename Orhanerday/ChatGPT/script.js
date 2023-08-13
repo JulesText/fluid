@@ -4,7 +4,7 @@ const urlParams = new URLSearchParams(window.location.search);
 let CHAT_ID;
 
 if (urlParams.get('chat_id') === null) {
-  window.location.href = 'openAI.php?chat_id=' + uuidv4();
+  window.location.href = 'ai.php?chat_id=' + uuidv4();
 } else {
   CHAT_ID = urlParams.get('chat_id');
 }
@@ -13,7 +13,7 @@ document.getElementById("chat_id").value = CHAT_ID;
 
 const idSession = get(".id_session");
 // const CHAT_ID = document.getElementById("chat_id").value;
-idSession.textContent = CHAT_ID
+idSession.textContent = CHAT_ID;
 getHistory()
 
 const msgerForm = get(".msger-inputarea");
@@ -51,7 +51,7 @@ function deleteChatHistory() {
             }
             // deleteAllCookies()
             // location.reload(); // Reload the page to update the chat history table
-            window.location.href = 'openAI.php?chat_id=' + uuidv4();
+            window.location.href = 'ai.php?chat_id=' + uuidv4();
         })
         .catch(error => console.error(error));
 }
@@ -79,6 +79,18 @@ summaryButton.addEventListener('click', event => {
     // window.location.href = 'index.php';
 });
 
+// Event listener for the chat history button click
+const historyButton = document.querySelector('#history-button');
+historyButton.addEventListener('click', event => {
+    event.preventDefault();
+
+    const popup = document.getElementById("popup-menu");
+    popup.style.display = "block"; // Show the popup
+    // popup.style.right = event.clientX + "px"; // Position the popup next to the button
+    // popup.style.top = event.clientY + "px"; // Position the popup next to the button
+
+});
+
 // Event listener for the new chat button click
 const chatButton = document.querySelector('#chat-button');
 chatButton.addEventListener('click', event => {
@@ -87,7 +99,7 @@ chatButton.addEventListener('click', event => {
     // document.cookie = "chat_id=" + uuid;
     // document.getElementById("chat_id").value = uuid;
     // location.reload();
-    window.location.href = 'openAI.php?chat_id=' + uuid;
+    window.location.href = 'ai.php?chat_id=' + uuid;
 });
 
 // Event listener for the Delete button click
@@ -172,6 +184,9 @@ function getHistory() {
             for (const row of chatHistory) {
                 appendMessage(PERSON_NAME, PERSON_IMG, "right", row.comment_human, row.comment_date);
                 appendMessage(BOT_NAME, BOT_IMG, "left", row.comment_ai, "", row.comment_date);
+                if (row.chat_summary !== null) {
+                  idSession.textContent = row.chat_summary;
+                }
             }
         })
         .catch(error => console.error(error));

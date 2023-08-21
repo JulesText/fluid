@@ -16,6 +16,10 @@ const idSession = get(".id_session");
 idSession.textContent = CHAT_ID;
 getHistory()
 
+model_id = "3";
+const idModel = get(".model_id");
+idModel.textContent = model_id;
+
 const msgerForm = get(".msger-inputarea");
 const msgerInput = get(".msger-input");
 const msgerChat = get(".msger-chat");
@@ -107,6 +111,18 @@ const deleteButton = document.querySelector('#delete-button');
 deleteButton.addEventListener('click', event => {
     event.preventDefault();
     deleteChatHistory(CHAT_ID);
+});
+
+// Event listener for the model change button
+const modelButton = document.querySelector('#model-button');
+modelButton.addEventListener('click', event => {
+    event.preventDefault();
+    if (model_id == '3') {
+      model_id = '4';
+    } else {
+      model_id = '3';
+    }
+    idModel.textContent = model_id;
 });
 
 function waiter(editableObj) {
@@ -258,7 +274,7 @@ function sendMsg(msg) {
         .then(response => response.json())
         .then(data => {
             let uuid = uuidv4()
-            const eventSource = new EventSource(api_path + `event-stream.php?comment_id=${data.comment_id}&chat_id=${encodeURIComponent(CHAT_ID)}`);
+            const eventSource = new EventSource(api_path + `event-stream.php?comment_id=${data.comment_id}&chat_id=${encodeURIComponent(CHAT_ID)}&model_id=${model_id}`);
             appendMessage(BOT_NAME, BOT_IMG, "left", "", uuid, "");
             const div = document.getElementById(uuid);
 

@@ -55,6 +55,8 @@ $api_path = 'Orhanerday/ChatGPT/';
           <button id="history-button">History</button>
           <button id="quit-button">Exit</button>
           <button id="delete-button">Delete</button>
+          <button id="model-button">Model</button>
+          <span class="model_id" style="font: mono"></span>
         </div>
     </header>
 

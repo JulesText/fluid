@@ -9,7 +9,8 @@ class OpenAi
     private string $engine = "davinci";
     private string $model = "text-davinci-002";
     #private string $chatModel = "gpt-3.5-turbo-16k";
-    private string $chatModel = "gpt-4";
+    #private string $chatModel = "gpt-4";
+    private string $chatModel = "darn no error";
     private array $headers;
     private array $contentTypes;
     private int $timeout = 0;

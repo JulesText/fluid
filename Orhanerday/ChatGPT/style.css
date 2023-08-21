@@ -242,7 +242,7 @@ body {
      cursor: auto;
 }
 
-#delete-button, #quit-button, #chat-button, #summary-button, #history-button {
+#delete-button, #quit-button, #chat-button, #summary-button, #history-button, #model-button {
   background: none!important;
   border: none;
   padding: 0!important;

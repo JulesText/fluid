@@ -23,6 +23,13 @@ $open_ai = new OpenAi($open_ai_key);
 $chat_id = $_GET['chat_id'];
 $comment_id = $_GET['comment_id'];
 
+#'model' => 'gpt-3.5-turbo-16k' # unclear what 16k does (still 4k tokens)
+#'model' => 'gpt-3.5-turbo' # 4k tokens
+#'model' => 'gpt-4'
+$model_id = $_GET['model_id'];
+if ($model_id == '4') $model_id = 'gpt-4';
+if ($model_id == '3') $model_id = 'gpt-3.5-turbo';
+
 // Retrieve the data in ascending order by the comment_id column
 $stmt = $db->prepare('SELECT * FROM chat_history WHERE chat_id = "' . $chat_id . '" ORDER BY comment_id ASC');
 #$stmt = $db->prepare('SELECT * FROM chat_history ORDER BY comment_id ASC');
@@ -39,9 +46,7 @@ foreach ($result as $row) {
 array_pop($history);
 
 $opts = [
-  #'model' => 'gpt-3.5-turbo-16k' # unclear what 16k does (still 4k tokens)
-  #'model' => 'gpt-3.5-turbo' # 4k tokens
-  'model' => 'gpt-4'
+  'model' => $model_id
   , 'messages' => $history
   , 'temperature' => 1.0
   , 'max_tokens' => 1000 /* max number of tokens in response */

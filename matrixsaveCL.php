@@ -1,7 +1,7 @@
 <?php
 require_once('headerDB.inc.php');
 
-if (isset($_POST['id'])) $values['id'] = $_POST['id'];
+if (isset($_POST['listId'])) $values['listId'] = $_POST['listId'];
 
 $effort = 0;
 $frequency = 1; // default once a year
@@ -13,7 +13,7 @@ if (count($result) > 0) {
     $res = $result[0];
     if (isset($res['frequency']) && $res['frequency'] > 0) $frequency = $res['frequency'];
     $values=array(
-		'id' => $res['id'],
+		'listId' => $res['listId'],
 		'title' => $res['title'],
 		'categoryId' => $res['categoryId'],
 		'premiseA' => $res['premiseA'],

@@ -218,7 +218,7 @@ function calcCL(checklistId) {
 				$.ajax({
 				url: "matrixsaveCL.php",
 				type: "POST",
-				data:'id='+checklistId,
+				data:'listId='+checklistId,
 				success: function(result) {
 						// notification action?
 						// alert(result);

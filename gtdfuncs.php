@@ -308,8 +308,8 @@ function listselectbox($config,&$values,$sort,$check=NULL) { // NB $values is pa
     $lshtml='';
     if ($result) {
         foreach($result as $row) {
-            $lshtml .= "<option value='{$row['id']}' title='".makeclean($row['title'])."'";
-            if($row['id']==$values['id']) {
+            $lshtml .= "<option value='{$row['listId']}' title='".makeclean($row['title'])."'";
+            if($row['listId']==$values['listId']) {
                 $lshtml .= " selected='selected' ";
                 $values['listTitle']=$row['title'];
             }
@@ -556,9 +556,9 @@ function columnedTable($cols,$data,$link='itemReport.php') {
                     ,(empty($row['td.title'])) ? '' : " title='{$row['td.title']}' "
                     ,"><a href='";
                 if (isset($row['type']) && $row['type'] == 'c')
-                  echo "reportLists.php?id={$row['id']}&type=c";
+                  echo "reportLists.php?listId={$row['listId']}&type=c";
                 else if (isset($row['type']) && $row['type'] == 'l')
-                  echo "reportLists.php?id={$row['id']}&type=l";
+                  echo "reportLists.php?listId={$row['listId']}&type=l";
                 else
                   echo "$link?itemId={$row['itemId']}";
                 echo "' title='"

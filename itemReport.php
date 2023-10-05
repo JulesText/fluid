@@ -337,6 +337,7 @@ if (!empty($childtype)) {
               $maintable[$i][$descriptionField] = "<div contenteditable='true'" . ajaxUpd('itemDescription', $row['itemId']) . ">" . $row['description'];
             if ($row['hyperlink']) {
                 if (!empty($row['description'])) $maintable[$i][$descriptionField] .= "</div><div><br>";
+                else $maintable[$i][$descriptionField] .= "</div><div>";
                 $maintable[$i][$descriptionField] .= faLink($row['hyperlink']);
             }
             $maintable[$i][$descriptionField] .= '</div>';

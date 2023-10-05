@@ -2,7 +2,7 @@
 include_once('header.php');
 include_once('lists.inc.php');
 
-if ($_GET['type']=='C' || $_GET['type']=='c') { 
+if ($_GET['type']=='C' || $_GET['type']=='c') {
     $values['type'] = 'c';
     $check = 'check';
     $type = 'c';
@@ -21,7 +21,7 @@ $result = query("get{$check}lists",$config,$values,$sort);
 $createURL="editLists.php?$urlSuffix"
             .(($values['categoryId']) ? "&amp;categoryId={$values['categoryId']}" : '');
 
-$values['parentId'] = $_GET['itemId'];            
+$values['parentId'] = $_GET['itemId'];
 $resultListX = query("getchildlists",$config,$values,$sort);
 
 /*echo '<pre>';
@@ -47,7 +47,7 @@ require_once("headerHtml.inc.php");
     </div>
 </form>
 
-*/ 
+*/
 
 // check children / vision parents
 $highlights = array();
@@ -59,7 +59,7 @@ if ($_GET['visId'] > 0 && $_GET['visId'] != $_GET['itemId']) {
     $resultV = query("getchildlists",$config,$values,$sort);
     //var_dump($values);
     if (count($resultV) > 0 && is_array($resultV)) {
-        foreach ((array) $resultV as $l) array_push($highlights, $l['id']);
+        foreach ((array) $resultV as $l) array_push($highlights, $l['listId']);
     }
 } elseif ($_GET['visId'] == $_GET['itemId']) {
     // highlight children's lists
@@ -67,7 +67,7 @@ if ($_GET['visId'] > 0 && $_GET['visId'] != $_GET['itemId']) {
     //RETRIEVE VARIABLES
     $values=array();
     $values['itemId'] = (int) $_GET['visId'];
-    
+
     //Get item details
     $values['childfilterquery']=' WHERE '.sqlparts('singleitem',$config,$values);
     $values['filterquery']=sqlparts('isNA',$config,$values);
@@ -82,7 +82,7 @@ if ($_GET['visId'] > 0 && $_GET['visId'] != $_GET['itemId']) {
     $values['filterquery'] ='';
     $resultV = array();
     $resultV = query("getchildren",$config,$values,$sort);
-    
+
     foreach ((array) $resultV as $child) {
         $values = array();
         $values['type'] = $type;
@@ -90,17 +90,17 @@ if ($_GET['visId'] > 0 && $_GET['visId'] != $_GET['itemId']) {
         $resultV = query("getchildlists",$config,$values,$sort);
         //var_dump($values);
         if (count($resultV) > 0 && is_array($resultV)) {
-            foreach ((array) $resultV as $l) array_push($highlights, $l['id']);
+            foreach ((array) $resultV as $l) array_push($highlights, $l['listId']);
         }
     }
 }
 
 ?>
 
-<?php if ($result) { 
+<?php if ($result) {
 ?>
     <form action='processLists.php<?php if ($_GET['matrix']) echo '?matrix=true'; ?>' method='post'>
-    <?php $tstr = '       
+    <?php $tstr = '
     <table class="" id="categorytable" summary="table of categories" style="float: left;">
         <thead><tr>
             <td class="mx">Title</td>
@@ -112,49 +112,49 @@ if ($_GET['visId'] > 0 && $_GET['visId'] != $_GET['itemId']) {
     </table>';
 
             echo $tstr;
-            $i = 0; 
+            $i = 0;
             foreach ($result as $row) { ?>
             <tr>
                 <td class="mx"><?php
                     echo makeclean($row['title']);
                 ?></td>
-                <td class="mx"><input class="mx" name="addedList[]" value="<?php echo $row['id']; ?>" type="checkbox" <?php 
+                <td class="mx"><input class="mx" name="addedList[]" value="<?php echo $row['listId']; ?>" type="checkbox" <?php
                         foreach ($resultListX as $resultListN) {
-                            if ($resultListN['id'] == $row['id']) echo 'checked="checked"';
+                            if ($resultListN['listId'] == $row['listId']) echo 'checked="checked"';
                         }
 
-                        if (in_array($row['id'], $highlights)) echo ' style="outline: 3px solid #aca;"';
+                        if (in_array($row['listId'], $highlights)) echo ' style="outline: 3px solid #aca;"';
 
                     ?>/></td>
                 <?php
-                    
+
                     echo '<td class="mx">';
                     echo '<span style="opacity: 0.3">';
                     echo substr(makeclean($row['category']),0,3);
                     echo '</span></td>';
-                    
+
                 ?>
-                
-            </tr><?php 
+
+            </tr><?php
                 $i++;
                 if ($i == 26) {
                     echo $tstre . $tstr;
                     $i = 0;
                 }
-            } 
+            }
             echo $tstre;
             ?>
     <div class='formbuttons'>
         <input type='submit' name='submit' value='update' />JK
             <input type='submit' name='clearitemlists' value='Clear all' />
         <input type='hidden' name='itemId' value='<?php echo $_GET['itemId']; ?>' />
-        <?php if ($_GET['visId'] > 0) echo "<input type='hidden' name='visId' value='" . $_GET['visId'] . "' />"; ?>                
+        <?php if ($_GET['visId'] > 0) echo "<input type='hidden' name='visId' value='" . $_GET['visId'] . "' />"; ?>
         <input type='hidden' name='action' value='listupdate' />
         <input type='hidden' name='source' value='true' />
         <input type='hidden' name='type' value='<?php echo $type; ?>' />
     </div>
-</form>    
-<?php } 
+</form>
+<?php }
 else {
     $message="You have not defined any lists yet.";
     $prompt="Would you like to create a new list?";

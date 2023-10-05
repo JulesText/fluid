@@ -54,7 +54,7 @@ foreach ((array) $vres as $visn) {
             foreach ((array) $sdays as $s) {
                 if (
                     $s['visId'] == $visn['itemId'] &&
-                    $s['itemId'] == $list['id'] &&
+                    $s['itemId'] == $list['listId'] &&
                     $s['itemType'] == $list['type']
                     ) continue 2;
             }
@@ -64,18 +64,18 @@ foreach ((array) $vres as $visn) {
               else $check = '';
               $values['queryTable'] = $check . 'listitems';
               $values['queryKey'] = $check . 'listId';
-              $values['queryValue'] = $list['id'];
+              $values['queryValue'] = $list['listId'];
               $priorities = query("priorityselectbox",$config,$values,$sort);
               if (count($priorities) == 1) continue 1;
             }
             // otherwise, add to menu
             // get list details
-            $values['id'] = $list['id'];
+            $values['listId'] = $list['listId'];
             $values['type'] = $list['type'];
             if ($list['type'] == 'c') { $qry = "selectchecklist"; } else { $qry = "selectlist"; }
             $listN = query($qry,$config,$values,$sort);
             $listNarr = array(
-                'id' => $list['id'],
+                'listId' => $list['listId'],
                 'type' => $list['type'],
                 'title' => makeclean($listN[0]['title'] . ($list['type'] == 'c' ? ' .CL' : ' .LIST')),
                 'sortBy' => substr($listN[0]['sortBy'], 0, 2)
@@ -108,11 +108,11 @@ function pertinent() {
 <?php
 $comma = '';
 foreach ($listMena as $l) {
-    echo $comma. "'reportLists.php?id={$l['id']}&type={$l['type']}'";
+    echo $comma. "'reportLists.php?listId={$l['listId']}&type={$l['type']}'";
     $comma = ',';
 }
 ?>
-    ,'reportLists.php?id=1&type=c' // first/current window
+    ,'reportLists.php?listId=1&type=c' // first/current window
     ];
 
     var arrayLength = windows.length;

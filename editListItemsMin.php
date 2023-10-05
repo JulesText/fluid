@@ -9,7 +9,7 @@ if ($values['itemId']) {
         include_once('footer.php');
         exit();
     }
-    foreach (array('id','item','notes', 'hyperlink') as $field)
+    foreach (array('listId','item','notes', 'hyperlink') as $field)
             $values[$field]=$row[0][$field];
     if ($isChecklist) {
         $values['checked']=$row[0]['checked'];
@@ -19,7 +19,7 @@ if ($values['itemId']) {
         $values['dateCompleted']=$row[0]['dateCompleted'];
     $action='itemedit';
 } else {
-    $values['id']=(int) $_GET['id'];
+    $values['listId']=(int) $_GET['listId'];
     $values['item']='';
     $values['notes']='';
     $values['hyperlink']='';

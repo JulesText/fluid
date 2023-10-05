@@ -2,7 +2,7 @@
 
 include('Lunar_Calc.php');
 
-/* 
+/*
 if ($current < 0.5) {
   $percent = $current * 2;
 } else {
@@ -17,22 +17,22 @@ if ($current < 0.5) {
 // calibrated to JK hormone cycle (2010-05-08 trough ends at day 24.6)
 
 if ( $current > 0.83 || $current < 0.00 ) { // new
-  header('Location:reportLists.php?id=38&type=L');
+  header('Location:reportLists.php?listId=38&type=L');
 }
 if ( $current > 0.00 && $current < 0.20 ) { // wax crescent
-  header('Location:reportLists.php?id=38&type=L');
+  header('Location:reportLists.php?listId=38&type=L');
 }
 if ( $current > 0.20 && $current < 0.40 ) { // wax gibbous
-  header('Location:reportLists.php?id=38&type=L');
+  header('Location:reportLists.php?listId=38&type=L');
 }
 if ( $current > 0.40 && $current < 0.50 ) { // full
-  header('Location:reportLists.php?id=38&type=L');
+  header('Location:reportLists.php?listId=38&type=L');
 }
 if ( $current > 0.50 && $current < 0.70 ) { // wane gibbous
-  header('Location:reportLists.php?id=38&type=C');
+  header('Location:reportLists.php?listId=38&type=C');
 }
 if ( $current > 0.70 && $current < 0.83 ) { // wane crescent
-  header('Location:reportLists.php?id=38&type=L');
+  header('Location:reportLists.php?listId=38&type=L');
 }
 
 ?>

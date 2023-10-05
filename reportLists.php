@@ -29,7 +29,7 @@ if (!$isChecklist) {
     $result2=query("get{$check}listitems",$config,$values,$sort);
     if (!$result2) $result2=array();
 }
-$createURL="editListItems.php?id={$row['id']}&amp;$urlSuffix";
+$createURL="editListItems.php?listId={$row['listId']}&amp;$urlSuffix";
 
 $prioritise = $row['prioritise'];
 
@@ -39,7 +39,7 @@ $scored = false;
 if (isset($check) && $check == 'check' && $row['scored'] == 'y') $scored = true;
 
 require_once("headerHtml.inc.php");
-$urlVars = "?id=" . $row['id'] . "&type=". $type;
+$urlVars = "?listId=" . $row['listId'] . "&type=". $type;
 $urlInst = "&instanceId=". $values['instanceId'];
 $urlBulk = "&content=". $_GET['content'];
 ?>
@@ -83,7 +83,7 @@ $( document ).ready(function() {
     $values['urlVars'] = $urlVars;
     $values['queryTable'] = $check . 'listitems';
     $values['queryKey'] = $check . 'listId';
-    $values['queryValue'] = $row['id'];
+    $values['queryValue'] = $row['listId'];
     $values['priorityId'] = $prioritise;
     echo 'Prioritised: ' . priorityselectbox($config,$values,$sort) . ', ';
 
@@ -273,7 +273,7 @@ $( document ).ready(function() {
                         <input type='hidden' name='instanceId' value='<?php echo $values['instanceId']; ?>' />
                 <?php } ?>
                 <!-- <input type='hidden' name='prioritise' value='y' /> -->
-                <input type='hidden' name='id' value='<?php echo $row['id']; ?>' />
+                <input type='hidden' name='listId' value='<?php echo $row['listId']; ?>' />
                 <input type='hidden' name='action' value='listcomplete' />
                 <input type='hidden' name='type' value='<?php echo $type; ?>' />
             </div>
@@ -323,7 +323,7 @@ $( document ).ready(function() {
                             ?></td>
                         <?php }
                         if ($check) { ?>
-                            <td class="JKSmallPadding" contenteditable="true" onBlur="sT(this,<?php echo $sTTable1; ?>,'effort',<?php echo $sTcol1 . $row['itemId']; ?>'); calcCL('<?php echo $row['id']; ?>')" onFocus="sE(this)"><?php
+                            <td class="JKSmallPadding" contenteditable="true" onBlur="sT(this,<?php echo $sTTable1; ?>,'effort',<?php echo $sTcol1 . $row['itemId']; ?>'); calcCL('<?php echo $row['listId']; ?>')" onFocus="sE(this)"><?php
                             echo $row['effort'];
                             ?></td>
                         <?php }
@@ -344,7 +344,7 @@ $( document ).ready(function() {
     }
 } else {
 ?>
-<p>There are no <?php
+sub<p>There are no <?php
     echo ($isChecklist) ? 'check' : 'incomplete '
         ,"list items. <a href='$createURL'>"; ?>Create one</a></p>
 <?php }

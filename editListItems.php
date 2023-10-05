@@ -9,7 +9,7 @@ if ($values['itemId']) {
         include_once('footer.php');
         exit();
     }
-    foreach (array('id','item','notes', 'hyperlink', 'priority') as $field)
+    foreach (array('listId','item','notes', 'hyperlink', 'priority') as $field)
             $values[$field]=$row[0][$field];
     if ($isChecklist) {
         $values['checked']=$row[0]['checked'];
@@ -28,7 +28,7 @@ if ($values['itemId']) {
 		$values['title'] = join(' ', $keywords);
 
 } else {
-    $values['id']=(int) $_GET['id'];
+    $values['listId']=(int) $_GET['listId'];
     $values['item']='';
     $values['notes']='';
     $values['hyperlink']='';
@@ -45,7 +45,7 @@ $lshtml = listselectbox($config,$values,$sort,$check);
 require_once("headerHtml.inc.php");
 
 ?>
-<h1><?php echo ($values['itemId'])?'Edit ':'Create ',$check; ?>list item in <a href="reportLists.php?id=<?php echo $values['id']; ?>&type=<?php echo $type; ?>"><?php echo $ptitle . ($isChecklist ? ' CL' : ' LIST'); ?></a>
+<h1><?php echo ($values['itemId'])?'Edit ':'Create ',$check; ?>list item in <a href="reportLists.php?listId=<?php echo $values['listId']; ?>&type=<?php echo $type; ?>"><?php echo $ptitle . ($isChecklist ? ' CL' : ' LIST'); ?></a>
 </h1>
 <form action="processLists.php" method="post" onsubmit="return validate(this);">
     <div class='form'>
@@ -117,8 +117,10 @@ require_once("headerHtml.inc.php");
         if ($values['itemId']) { ?>
             <input type='submit' value='Update item' name='submit' />
         <?php } else { ?>
-            <input type='submit' value='Create, then add another item' name='again' />
+            <!-- by some wacky code the order of following 2 lines matters -->
+            <!-- for submitting form by enter key, the first of the two is used as default -->
             <input type='submit' value='Create and return to list' name='submit' />
+            <input type='submit' value='Create, then add another item' name='again' />
         <?php } ?>
         <!-- <input type='reset' value='Reset' /> -->
         <?php if ($values['itemId'] && !$isInst) { ?>
@@ -128,7 +130,7 @@ require_once("headerHtml.inc.php");
         <input type='hidden' name='instanceId'      value='<?php echo $values['instanceId'];         ?>' />
         <input type='hidden' name='type'       value='<?php echo $type;             ?>' />
         <input type='hidden' name='itemId'     value='<?php echo $values['itemId']; ?>' />
-        <input type='hidden' name='id'         value='<?php echo $values['id'];     ?>' />
+        <input type='hidden' name='listId'         value='<?php echo $values['listId'];     ?>' />
         <input type='hidden' name='ignored'         value='<?php echo $values['ignored'];     ?>' />
         <input type='hidden' name='action'     value='<?php echo $action;           ?>' />
     	<input type='hidden' name='dateformat' value='ccyy-mm-dd'                       />

@@ -85,7 +85,7 @@ require_once("headerHtml.inc.php");
                     }
                 ?>
 
-                <td class="JKSmallPadding"><a href="reportLists.php?id=<?php echo $row['id'],'&amp;',$urlSuffix; ?>"><?php
+                <td class="JKSmallPadding"><a href="reportLists.php?listId=<?php echo $row['listId'],'&amp;',$urlSuffix; ?>"><?php
                     echo makeclean($row['title']) . $metaphor;
                 ?></a></td>
 
@@ -121,7 +121,7 @@ require_once("headerHtml.inc.php");
                 <td class="<?php if ($display) { echo "JKSmallPadding whitespace"; } else { echo "togglehidden"; } ?>">
                     <?php
                         unset($values['itemId']);
-                        $values['listId'] = $row['id'];
+                        $values['listId'] = $row['listId'];
                         $values['type'] = $type;
                         $resultParents = query("getchildlists",$config,$values,$sort);
                         if (!empty($resultParents)) {

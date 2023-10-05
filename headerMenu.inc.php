@@ -12,10 +12,10 @@ $menu=array();
 $menu2=array();
 
 //$menu[] = array("link"=>"fantastical2://", 'title'=>"Calendar", 'label' => "Calendar");
-//$menu[] = array("link"=>"reportLists.php?id=120&type=C", 'title'=>"Circadian Rhythm", 'label' => "Circadian Rhythm");
-//$menu[] = array("link"=>"reportLists.php?id=13&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Health DDD");
-//$menu[] = array("link"=>"reportLists.php?id=168&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Chores EEE");
-//$menu[] = array("link"=>"reportLists.php?id=170&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Process FFF");
+//$menu[] = array("link"=>"reportLists.php?listId=120&type=C", 'title'=>"Circadian Rhythm", 'label' => "Circadian Rhythm");
+//$menu[] = array("link"=>"reportLists.php?listId=13&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Health DDD");
+//$menu[] = array("link"=>"reportLists.php?listId=168&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Chores EEE");
+//$menu[] = array("link"=>"reportLists.php?listId=170&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Process FFF");
 $menu[] = array("link"=>"pertinent.html", 'title'=>"HHome Tabs", 'label' => "HHome Tabs");
 /*
 $menu[] = array("link"=>"reportContext!Personal.php", 'title'=>"Process actions sorted by space context", 'label' => "Context report for non-personal categories");
@@ -51,7 +51,7 @@ $menu2[] = array("link"=>"reportContext.php?notContext=25", 'title'=>"Process ac
 $menu2[] = array("link"=>"listLists.php?type=l", 'title'=>"Show Lists", 'label' => "Show Lists");
 //warning: poorly formed GET variables for matrix can generate errors in matrixformula.php and matrix.php
 $menu2[] = array("link"=>"matrix.php?&live=true&qLimit=b", 'title'=>"Matrix", 'label' => "Matrix");
-$menu2[] = array("link"=>"reportLists.php?id=1&type=C", 'title'=>"Weekly Review", 'label' => "WW Weekly Review");
+$menu2[] = array("link"=>"reportLists.php?listId=1&type=C", 'title'=>"Weekly Review", 'label' => "WW Weekly Review");
 $menu2[] = array("link"=>"listItems.php?quickfind", 'title'=>'Find an item based on text in its title, description or outcome', 'label'=>'Keyword Search');
 
 if (!$expand) {
@@ -234,18 +234,18 @@ foreach ((array) $vres as $visn) {
             foreach ((array) $sdays as $s) {
                 if (
                     $s['visId'] == $visn['itemId'] &&
-                    $s['itemId'] == $list['id'] &&
+                    $s['itemId'] == $list['listId'] &&
                     $s['itemType'] == $list['type']
                     ) continue 2;
             }
             // otherwise, add to menu
             // get list details
-            $values['id'] = $list['id'];
+            $values['listId'] = $list['listId'];
             $values['type'] = $list['type'];
             if ($list['type'] == 'c') { $qry = "selectchecklist"; } else { $qry = "selectlist"; }
             $listN = query($qry,$config,$values,$sort);
             $listNarr = array(
-                'id' => $list['id'],
+                'listId' => $list['listId'],
                 'type' => $list['type'],
                 'title' => makeclean($listN[0]['title'] . ($list['type'] == 'c' ? ' .CL' : ' .LIST')),
                 'sortBy' => substr($listN[0]['sortBy'], 0, 2)
@@ -264,7 +264,7 @@ usort($listMena, 'sortBys');
 
 foreach ((array) $listMena as $l) {
     $listMen .= "<tr>\n
-        <td><a href='reportLists.php?id={$l['id']}&type={$l['type']}'>"
+        <td><a href='reportLists.php?listId={$l['listId']}&type={$l['type']}'>"
         . $l['title'] . "</a></td>\n</tr>\n";
 }
 $listMen .= "<tr>\n<td></td>\n</tr>\n";

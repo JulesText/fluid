@@ -375,13 +375,13 @@ foreach ((array) $vis as $visn) {
 		if (!empty($lists) && is_array($lists) && count($lists) > 0) {
         foreach ((array) $lists as $list) {
         $pId = 0;
-            $values['id'] = $list['id'];
+            $values['listId'] = $list['listId'];
             $values['type'] = $list['type'];
             if ($list['type'] == 'c') { $qry = "selectchecklist"; } else { $qry = "selectlist"; }
             $listN = query($qry,$config,$values,$sort);
             foreach ((array) $mainsearch as $key=>$s) {
                 foreach ((array) $s as $l) {
-                    if ($l['id'] == $list['id'] && $l['type'] == $list['type']) {
+                    if ($l['listId'] == $list['listId'] && $l['type'] == $list['type']) {
                         $pId = $key;
                         break 2;
                     }
@@ -390,13 +390,13 @@ foreach ((array) $vis as $visn) {
             $maintable[] = array(
                 'visId' => $visn['itemId'],
                 'pId' => $pId,
-                'itemId' => $list['id'],
+                'itemId' => $list['listId'],
                 'mx' => true,
                 'type' => $list['type'],
                 'item' => $listN[0]['title'] . ($list['type'] == 'c' ? ' .CL' : ' .LIST'),
-                'row.class' => ($list['type'] == 'c' ? 'check' : '') . 'list v ' . $visn['itemId'] . ' id ' . $list['id'],
+                'row.class' => ($list['type'] == 'c' ? 'check' : '') . 'list v ' . $visn['itemId'] . ' listId ' . $list['listId'],
                 'toggle' => '<a class="mx ho" onClick="toggleOther(this)">*</a>',
-                'items' => '<a href="reportLists.php?id=' . $list['id'] . '&type=' . $list['type'] . '" target="_blank" class="mx">E</a>',
+                'items' => '<a href="reportLists.php?listId=' . $list['listId'] . '&type=' . $list['type'] . '" target="_blank" class="mx">E</a>',
                 'sortBy' => $listN[0]['sortBy']
             );
         }

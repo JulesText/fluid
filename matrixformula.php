@@ -268,11 +268,11 @@ foreach ((array) $attributes as $attr) {
             $itemVars = query("getchildlists",$config,$values,$sort);
             if (!empty($itemVars) && is_array($itemVars) && count($itemVars) > 0) {
                 foreach ((array) $itemVars as $item) {
-                    $values['id'] = $item['id'];
+                    $values['listId'] = $item['listId'];
                     $res = query("selectchecklist",$config,$values,$sort);
                     if (count($res) > 0 && is_array($res)) {
                         if (!is_array($items)) $items = array(); // error handling where no child match in main table, but match from other table, ie checklist hours
-                        $items[] = array('visId' => $visn['itemId'], 'itemId' => $item['id'], 'qId' => $hoursId, 'itemType' => 'c', 'value' => $res[0]['effort']);
+                        $items[] = array('visId' => $visn['itemId'], 'itemId' => $item['listId'], 'qId' => $hoursId, 'itemType' => 'c', 'value' => $res[0]['effort']);
                     }
                 }
             }

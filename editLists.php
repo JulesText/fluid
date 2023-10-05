@@ -2,7 +2,7 @@
 include_once('header.php');
 include_once('lists.inc.php');
 
-if ($values['id']) {
+if ($values['listId']) {
     $row = query("select{$check}list",$config,$values,$sort);
     if (!$row) {
         echo "<p class='error'>That {$check}list does not exist</p>\n";
@@ -13,7 +13,7 @@ if ($values['id']) {
         $values[$field]=$row[0][$field];
     $values['score_total'] = scoreCL($config, $values, $sort);
     $action='listedit';
-    $urlVars = "?id=" . $values['id'] . "&type=". $type;
+    $urlVars = "?listId=" . $values['listId'] . "&type=". $type;
     $urlInst = "&instanceId=". $values['instanceId'];
 } else {
     $values['title']='';
@@ -39,7 +39,7 @@ if ($values['id']) {
 $cashtml = categoryselectbox($config,$values,$sort);
 require_once("headerHtml.inc.php");
 ?>
-<h2><?php echo ($values['id'])?'Edit':'Create'," $check"; ?>list <?php
+<h2><?php echo ($values['listId'])?'Edit':'Create'," $check"; ?>list <?php
 echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst . "\">Show List</a>&nbsp;]&nbsp;&nbsp;&nbsp;"; ?>&nbsp;[ <a href="listCatCodes.php">cat codes</a> ]</h2>
 <form action='processLists.php' method='post' onsubmit="return validate(this);">
 	<div class='form'>
@@ -100,10 +100,10 @@ echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst .
 		</div>
 	</div>
 	<div class='formbuttons'>
-		<input type="submit" value="<?php echo ($values['id'])?'Update':'Create'; ?>" name="submit" />
+		<input type="submit" value="<?php echo ($values['listId'])?'Update':'Create'; ?>" name="submit" />
     	<input type="checkbox" name="menu" id='menu' class='notfirst' title="" value="y" <?php if ($values['menu']==='y') echo " checked='checked'";?>/>
     	<label for='menu'>Menu</label>
-		<?php if ($values['id']) { ?>
+		<?php if ($values['listId']) { ?>
 		  <input type="checkbox" name="delete" id='delete' class='notfirst' title="ALL items will be deleted!" value="y" />
 		  <label for='delete'>Delete&nbsp;List</label>
 		<?php }
@@ -128,7 +128,7 @@ echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst .
 
         <input type='hidden' name='instanceId'      value='<?php echo $values['instanceId'];         ?>' />
         <input type='hidden' name='type'      value='<?php echo $type;         ?>' />
-        <input type='hidden' name='id'        value='<?php echo $values['id']; ?>' />
+        <input type='hidden' name='listId'        value='<?php echo $values['listId']; ?>' />
         <input type='hidden' name='action'    value='<?php echo $action;       ?>' />
 	</div>
 </form>

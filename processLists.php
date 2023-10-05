@@ -3,7 +3,7 @@ require_once('headerDB.inc.php');
 if ($config['debug'] & _GTD_DEBUG)  include_once('header.php');
 include_once('lists.inc.php');
 
-$nextURL="reportLists.php?id={$values['id']}&$urlSuffix"; // default next action is to show the report for the current list
+$nextURL="reportLists.php?listId={$values['listId']}&$urlSuffix"; // default next action is to show the report for the current list
 
 $allclear=FALSE;
 
@@ -42,10 +42,11 @@ switch ($action) {
         $result = query("new{$check}listitem",$config,$values);
         if ($result) {
             $msg="Created";
-            if (!empty($_REQUEST['again'])) $nextURL="editListItems.php?id={$values['id']}&$urlSuffix";
+            if (!empty($_REQUEST['again']))
+              $nextURL="editListItems.php?id={$values['listId']}&$urlSuffix";
         } else {
             $msg="Failed to create";
-            $nextURL="listLists.php?id={$values['id']}&$urlSuffix";
+            $nextURL="listLists.php?id={$values['listId']}&$urlSuffix";
         }
         if ($check) {
             $values['lastId'] = $GLOBALS['lastinsertid'];
@@ -148,7 +149,7 @@ switch ($action) {
         $values['parentId'] = $_POST['visId'];
         $result = query("getchildlists",$config,$values,$sort);
         $listsV = array();
-        foreach ($result as $r) $listsV[] = $r['id'];
+        foreach ($result as $r) $listsV[] = $r['listId'];
 
         // if is vision
         if ($_POST['itemId'] == $_POST['visId']) {
@@ -156,7 +157,7 @@ switch ($action) {
           query("clearitemlists",$config,$values);
           // add current
           foreach ($_POST['addedList'] as $id) {
-              $values['id'] = $id;
+              $values['listId'] = $id;
               query("newlistparent",$config,$values);
           }
           // check all child/grandchild items have current lists, if not then remove
@@ -173,8 +174,8 @@ switch ($action) {
             $result = query("getchildlists",$config,$valuesC,$sort);
             if ($result !== 0)
               foreach ($result as $list)
-                if (!in_array($list['id'], $_POST['addedList'])) {
-                  $valuesC['listId'] = $list['id'];
+                if (!in_array($list['listId'], $_POST['addedList'])) {
+                  $valuesC['listId'] = $list['listId'];
                   $result = query("delitemlist",$config,$valuesC,$sort);
                 }
           }
@@ -187,7 +188,7 @@ switch ($action) {
           // add current
           foreach ($_POST['addedList'] as $id) {
               $values['itemId'] = $_POST['itemId'];
-              $values['id'] = $id;
+              $values['listId'] = $id;
               query("newlistparent",$config,$values);
               // check list is child to visid, if not then add for visid
               if (!in_array($id, $listsV)) {
@@ -273,9 +274,9 @@ switch ($action) {
         //TOFIX datecompleted, completed
         $result= query("new{$check}list",$config,$values,$sort);
         if ($result) {
-            $values['id']=$GLOBALS['lastinsertid'];
+            $values['listId']=$GLOBALS['lastinsertid'];
             $msg='You can now create items for your newly created';
-            $nextURL="editListItems.php?id={$values['id']}&$urlSuffix";
+            $nextURL="editListItems.php?id={$values['listId']}&$urlSuffix";
         } else {
             $msg='Failed to create';
             $nextURL="listLists.php?$urlSuffix";
@@ -285,11 +286,11 @@ switch ($action) {
     //-----------------------------------------------------------------------------------
     case 'listdelete':
         $values['type'] = $_REQUEST['type'];
-        $values['id'] = $_REQUEST['id'];
+        $values['listId'] = $_REQUEST['listId'];
         if ($values['type'] !== 'c' && $values['type'] !== 'l') die;
         query("deletelistlookup",$config,$values);
         $values['itemType'] = $values['type'];
-        $values['itemId'] = $values['id'];
+        $values['itemId'] = $values['listId'];
         query("deletequalities",$config,$values);
         query("delete{$check}list",$config,$values);
         $numDeleted=query("remove{$check}listitems",$config,$values);

@@ -8,14 +8,8 @@ if ($isChecklist) {
     $check='';
 }
 
-#debug
-// if(isset($_REQUEST['id'])) unset($_REQUEST['id']);
-// echo "<pre>";
-// var_dump($_GET);
-// var_dump($_REQUEST); #die;
-
 $values=array(
-     'id'        => (isset($_REQUEST['id']))         ? (int) $_REQUEST['id'] : 0
+     'listId'        => (isset($_REQUEST['listId']))         ? (int) $_REQUEST['listId'] : 0
     ,'itemId'    => (empty($_REQUEST['itemId']))     ? '' : $_REQUEST['itemId']
     ,'instanceId'=> (isset($_REQUEST['instanceId']) && is_numeric($_REQUEST['instanceId'])) ? $_REQUEST['instanceId']:''
     ,'categoryId'=> (isset($_REQUEST['categoryId'])) ? (int)$_REQUEST['categoryId']:0
@@ -24,8 +18,18 @@ $values=array(
     ,'prioritise'=> (isset($_REQUEST['prioritise'])) ? $_REQUEST['prioritise']:'n'
     );
 
+#debug
+// #if(isset($_REQUEST['listId'])) unset($_REQUEST['listId']);
+// echo "<pre>_GET ";
+// var_dump($_GET);
+// echo "_REQUEST ";
+// var_dump($_REQUEST);
+// echo "values ";
+// var_dump($values);
+// die;
+
 # workaround for office network
-if(isset($_GET['id'])) $values['id'] = $_GET['id'];
+#if(isset($_GET['listId'])) $values['listId'] = $_GET['listId'];
 
 $urlSuffix="type=$type";
 if (isset($_REQUEST['instanceId'])) $urlSuffix .= '&instanceId=' . $_REQUEST['instanceId'];
@@ -38,6 +42,6 @@ if(isset($_REQUEST['display']) && $_REQUEST['display']==='true') {
 } else {
     $display = false;
 }
-#echo $_REQUEST['id']; var_dump($values);die;
+#echo $_REQUEST['listId']; var_dump($values);die;
 
 // php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

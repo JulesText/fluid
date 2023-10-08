@@ -221,7 +221,7 @@ echo "</p>\n</div>\n";
 
 //JJK second row
 /* //JJK lunar schedule
-			echo "<tr><td><a href='reportLists.php?id=15&type=C'>LUNAR<br>SCHEDULE</a></td>\n";
+			echo "<tr><td><a href='reportLists.php?listId=15&type=C'>LUNAR<br>SCHEDULE</a></td>\n";
 */ //JJk end
 
 			echo "<td colspan='1' style='vertical-align: text-top;' class='JKSmallPadding'>\n";
@@ -244,7 +244,7 @@ echo "</p>\n</div>\n";
 
 
 /* //JJK weekly schedule
-			echo "</td><td><a href='reportLists.php?id=13&type=C'>WEEKLY<br>SCHEDULE</a>\n";
+			echo "</td><td><a href='reportLists.php?listId=13&type=C'>WEEKLY<br>SCHEDULE</a>\n";
 */ //JJK weekly schedule end
 
 			echo "</td></tr>\n";

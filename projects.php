@@ -82,7 +82,7 @@ foreach ($pres as $p) {
     $comma = ',';
 }
 ?>
-    ,'reportLists.php?id=1&type=c' // first/current window
+    ,'reportLists.php?listId=1&type=c' // first/current window
     ];
 
     var arrayLength = windows.length;

@@ -29,10 +29,10 @@ if ( $current > 0.40 && $current < 0.50 ) { // full
   header('Location:reportLists.php?listId=92&type=C');
 }
 if ( $current > 0.50 && $current < 0.70 ) { // wane gibbous
-  header('Location:reportLists.php?id=listId&type=C');
+  header('Location:reportLists.php?listId=listId&type=C');
 }
 if ( $current > 0.70 && $current < 0.83 ) { // wane crescent
-  header('Location:reportLists.php?id=listId&type=C');
+  header('Location:reportLists.php?listId=listId&type=C');
 }
 
 ?>

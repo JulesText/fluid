@@ -874,11 +874,24 @@ function getsql($config,$values,$sort,$querylabel) {
 						{$values['dateCompleted']})";
 			break;
 
-		case "newlist":
-			$sql="INSERT INTO `". $config['prefix'] . "list`
-				VALUES (NULL, '{$values['title']}',
-						'{$values['categoryId']}', '{$values['premiseA']}', '{$values['premiseB']}', '{$values['conclusion']}', '{$values['behaviour']}', '{$values['standard']}', '{$values['conditions']}', '{$values['metaphor']}', '{$values['hyperlink']}', '{$values['sortBy']}')";
-			break;
+    case "newlist":
+      $sql="INSERT INTO `". $config['prefix'] . "list`
+        VALUES (    NULL,
+                    '{$values['title']}',
+                '{$values['categoryId']}',
+                '{$values['premiseA']}',
+                '{$values['premiseB']}',
+                '{$values['conclusion']}',
+                '{$values['behaviour']}',
+                '{$values['standard']}',
+                '{$values['conditions']}',
+                '{$values['metaphor']}',
+                '{$values['hyperlink']}',
+                '{$values['sortBy']}',
+                '{$values['menu']}',
+                '{$values['prioritise']}'
+                )";
+      break;
 
 		case "newlistitem":
 			$sql="INSERT INTO `". $config['prefix'] . "listitems`
@@ -1141,25 +1154,6 @@ function getsql($config,$values,$sort,$querylabel) {
 				WHERE `instanceId` ='{$values['id']}'";
 			break;
 
-		case "newlist":
-			$sql="INSERT INTO `". $config['prefix'] . "list`
-				VALUES (    NULL,
-				            '{$values['title']}',
-						    '{$values['categoryId']}',
-						    '{$values['premiseA']}',
-						    '{$values['premiseB']}',
-						    '{$values['conclusion']}',
-						    '{$values['behaviour']}',
-						    '{$values['standard']}',
-						    '{$values['conditions']}',
-						    '{$values['metaphor']}',
-						    '{$values['hyperlink']}',
-						    '{$values['sortBy']}',
-						    '{$values['menu']}',
-						    '{$values['prioritise']}'
-						    )";
-			break;
-
 		case "newchecklist":
 			$sql="INSERT INTO `". $config['prefix'] ."checklist`
 				VALUES (    '',
@@ -1177,10 +1171,10 @@ function getsql($config,$values,$sort,$querylabel) {
 						    '{$values['frequency']}',
 						    '',
 						    '{$values['scored']}',
-						    '{$values['menu']}',
-                '{$values['thrs_score']}'
+                '{$values['menu']}',
+                '{$values['prioritise']}',
+                '{$values['thrs_score']}',
                 '{$values['thrs_obs']}'
-                ''
 						    )";
 			break;
 

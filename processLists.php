@@ -43,7 +43,7 @@ switch ($action) {
         if ($result) {
             $msg="Created";
             if (!empty($_REQUEST['again']))
-              $nextURL="editListItems.php?id={$values['listId']}&$urlSuffix";
+              $nextURL="editListItems.php?listId={$values['listId']}&$urlSuffix";
         } else {
             $msg="Failed to create";
             $nextURL="listLists.php?id={$values['listId']}&$urlSuffix";
@@ -276,7 +276,7 @@ switch ($action) {
         if ($result) {
             $values['listId']=$GLOBALS['lastinsertid'];
             $msg='You can now create items for your newly created';
-            $nextURL="editListItems.php?id={$values['listId']}&$urlSuffix";
+            $nextURL="editListItems.php?listId={$values['listId']}&$urlSuffix";
         } else {
             $msg='Failed to create';
             $nextURL="listLists.php?$urlSuffix";

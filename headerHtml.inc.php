@@ -87,7 +87,7 @@ $(document).ready(function() {
 });
 </script>
 
-<!-- allow easy close for windows opened from pertinent.html -->
+<!-- allow easy close for windows opened from pertinence.html -->
 <script>
 
   function closeMe() {

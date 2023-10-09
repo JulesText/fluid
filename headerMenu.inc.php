@@ -16,7 +16,7 @@ $menu2=array();
 //$menu[] = array("link"=>"reportLists.php?listId=13&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Health DDD");
 //$menu[] = array("link"=>"reportLists.php?listId=168&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Chores EEE");
 //$menu[] = array("link"=>"reportLists.php?listId=170&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Process FFF");
-$menu[] = array("link"=>"pertinent.html", 'title'=>"HHome Tabs", 'label' => "HHome Tabs");
+$menu[] = array("link"=>"pertinence.html", 'title'=>"HHome Tabs", 'label' => "HHome Tabs");
 /*
 $menu[] = array("link"=>"reportContext!Personal.php", 'title'=>"Process actions sorted by space context", 'label' => "Context report for non-personal categories");
 $menu[] = array("link"=>"reportContextPersonal.php", 'title'=>"Process actions sorted by space context", 'label' => "Context report for personal category");

@@ -2,6 +2,8 @@
 include_once('header.php');
 include_once('lists.inc.php');
 
+if ($display) $sort["getchecklists"] = "`sortBy` ASC, `title` ASC";
+
 $cashtml=categoryselectbox($config,$values,$sort);
 $values['filterquery']="";
 if ($values['categoryId']) $values['filterquery']= " WHERE ".sqlparts("listcategoryfilter",$config,$values);
@@ -58,6 +60,7 @@ require_once("headerHtml.inc.php");
             <td <?php if (!$display) { echo 'class="togglehidden"'; } ?>>Desired Outcome</td>
             <td <?php if (!$display) { echo 'class="togglehidden"'; } ?>>Score</td>
             <td <?php if (!$display) { echo 'class="togglehidden"'; } ?>>Parents</td>
+            <td <?php if (!$display) { echo 'class="togglehidden"'; } ?>>Status</td>
         </tr></thead>
         <tbody><?php foreach ($result as $row) { ?>
             <tr>
@@ -120,24 +123,58 @@ require_once("headerHtml.inc.php");
 
                 <td class="<?php if ($display) { echo "JKSmallPadding whitespace"; } else { echo "togglehidden"; } ?>">
                     <?php
+                        $listLive = FALSE;
+
                         unset($values['itemId']);
                         $values['listId'] = $row['listId'];
                         $values['type'] = $type;
+                        unset($values['parentId']);
                         $resultParents = query("getchildlists",$config,$values,$sort);
                         if (!empty($resultParents)) {
                             foreach ($resultParents as $parent) {
                                 $values['itemId'] = $parent['itemId'];
                                 $title = query("getitembrief",$config,$values,$sort);
-																if(empty($title)) {
-																	echo "<pre>error missing parent<br>";#var_dump($resultParents); #die;
-																}
-                                foreach ($title as $text) {
-                                    echo makeclean($text['title']) . '<br>';
+                                foreach ($title as $text) { # will only be 1 result at most
+                                    echo strtoupper($text['type']) . ': ' . makeclean($text['title']);
+                                    if ($text['isSomeday'] == "n") echo ' (live)';
+                                    else echo ' (sday)';
+                                    echo '<br>';
+
+                                    if (strtoupper($text['type']) == 'V' && $text['isSomeday'] == "n") {
+                                      $listLive = TRUE;
+                                      $listLiveV = $values['itemId'];
+                                    }
                                 }
                             }
+                        } else {
+                          echo "<pre>!error missing parent<br>";#var_dump($resultParents); #die;
                         }
                 ?>
                 </td>
+
+                <td class="<?php if ($display) { echo "JKSmallPadding whitespace"; } else { echo "togglehidden"; } ?>">
+                    <?php
+                    if ($listLive) {
+                      $values['visId'] = $listLiveV;
+                      $values['itemId'] = $row['listId'];
+                      $values['qId'] = 1000; # is someday/live
+                      $values['itemType'] = $type;
+                      unset($values['qaId']);
+
+                      $result = query("lookupqualities",$config,$values,$sort);
+                      foreach ($result as $res)
+                        if ($res['value'] == 'y') $listLive = FALSE;
+
+                    }
+                    if ($listLive) echo 'live';
+                    else echo 'sday';
+                    echo '<br><br>effort: ' . $row['effort'] . ' hr';
+                    echo '<br><br>scored: ' . $row['scored'];
+
+
+                ?>
+                </td>
+
             </tr><?php } ?>
         </tbody>
     </table>

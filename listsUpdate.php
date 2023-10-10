@@ -22,13 +22,14 @@ $createURL="editLists.php?$urlSuffix"
             .(($values['categoryId']) ? "&amp;categoryId={$values['categoryId']}" : '');
 
 $values['parentId'] = $_GET['itemId'];
+unset($values['listId']);
 $resultListX = query("getchildlists",$config,$values,$sort);
 
-/*echo '<pre>';
-var_dump($result);
-var_dump($values);
-var_dump($resultListX);
-die;*/
+// echo '<pre>';
+// var_dump($values);
+// var_dump($resultListX);
+// var_dump($result);
+// die;
 
 require_once("headerHtml.inc.php");
 ?>
@@ -51,6 +52,7 @@ require_once("headerHtml.inc.php");
 
 // check children / vision parents
 $highlights = array();
+# not a vision
 if ($_GET['visId'] > 0 && $_GET['visId'] != $_GET['itemId']) {
     // highlight vision's lists
     $values = array();
@@ -61,6 +63,7 @@ if ($_GET['visId'] > 0 && $_GET['visId'] != $_GET['itemId']) {
     if (count($resultV) > 0 && is_array($resultV)) {
         foreach ((array) $resultV as $l) array_push($highlights, $l['listId']);
     }
+# is a vision
 } elseif ($_GET['visId'] == $_GET['itemId']) {
     // highlight children's lists
 
@@ -83,6 +86,7 @@ if ($_GET['visId'] > 0 && $_GET['visId'] != $_GET['itemId']) {
     $resultV = array();
     $resultV = query("getchildren",$config,$values,$sort);
 
+    # add children lists
     foreach ((array) $resultV as $child) {
         $values = array();
         $values['type'] = $type;
@@ -93,7 +97,23 @@ if ($_GET['visId'] > 0 && $_GET['visId'] != $_GET['itemId']) {
             foreach ((array) $resultV as $l) array_push($highlights, $l['listId']);
         }
     }
+
+    # add vision lists
+    $values['type'] = $type;
+    $values['parentId'] = $_GET['visId'];
+    $resultV = query("getchildlists",$config,$values,$sort);
+    //var_dump($values);
+    if (count($resultV) > 0 && is_array($resultV)) {
+        foreach ((array) $resultV as $l) {
+          $skip = FALSE;
+          foreach ((array) $highlights as $h)
+            if ($l['listId'] == $h) $skip = TRUE;
+          if ($skip == FALSE) array_push($highlights, $l['listId']);
+        }
+    }
+
 }
+// var_dump($highlights);die;
 
 ?>
 
@@ -119,6 +139,7 @@ if ($_GET['visId'] > 0 && $_GET['visId'] != $_GET['itemId']) {
                     echo makeclean($row['title']);
                 ?></td>
                 <td class="mx"><input class="mx" name="addedList[]" value="<?php echo $row['listId']; ?>" type="checkbox" <?php
+
                         foreach ($resultListX as $resultListN) {
                             if ($resultListN['listId'] == $row['listId']) echo 'checked="checked"';
                         }

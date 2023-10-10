@@ -130,21 +130,29 @@ function doAction($localAction) { // do the current action on the current item; 
             $values['filterquery'] = " WHERE ia.type = '" . $_POST['type'] . "' ";
             if (isset($_POST['categoryId'])) $values['filterquery'] .= " AND ia.categoryId = '" . $_POST['categoryId'] . "'";
             $result = query("getitems",$config,$values,$sort);
-            //echo '<pre>';var_dump($values['filterquery']);die;
+            // echo '<pre>';var_dump($result);die;
+            // echo '<pre>';var_dump($values['filterquery']);die;
+            // echo '<pre>';var_dump($_POST);die;
             $values['parentId'] = $values['pId'];
+            # iterate all items of type defined (includes those not linked to vision if defined)
             foreach ($result as $res) {
                 $values['itemId'] = $res['itemId'];
+                # check if we have a vision defined
                 if ($_POST['visId'] > 0) {
                     $valuesV = array();
                     $valuesV['parentId'] = $_POST['visId'];
                     $valuesV['itemId'] = $values['itemId'];
                     $resultV = query("checklookup",$config,$valuesV,$sort);
+                    # if the item is linked to vision then unlink
                     if (count($resultV) > 0 && is_array($resultV)) {
                         deleteparlookup();
                     }
                 }
             }
             $cnt=0;
+            # addedItem call only used by childrenUpdate.php script, called from matrix
+            # assumes $_POST['visId'] is set
+            # add all items to vision
             if (isset($_POST['addedItem'])) {
                 foreach ($_POST['addedItem'] as $id) {
                     $values['newitemId'] = $id;

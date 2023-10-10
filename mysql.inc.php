@@ -241,6 +241,7 @@ function getsql($config,$values,$sort,$querylabel) {
 				WHERE `parentId` = '{$values['itemId']}'
 				AND `listType` = '{$values['type']}'
 				";
+        // echo $sql;die;
 			break;
 
 		case "delitemlist":
@@ -588,7 +589,7 @@ function getsql($config,$values,$sort,$querylabel) {
 
 		case "getchecklists":
 			$sql="SELECT l.`checklistId` as listId, l.`title`,
-						l.`premiseA`,l.`premiseB`,l.`conclusion`,l.`behaviour`, l.`standard`, l.`conditions`, l.`metaphor`, l.`categoryId`, l.`hyperlink`, l.`sortBy`, l.`scored`, c.`category`,
+						l.`premiseA`,l.`premiseB`,l.`conclusion`,l.`behaviour`, l.`standard`, l.`conditions`, l.`metaphor`, l.`categoryId`, l.`hyperlink`, l.`sortBy`, l.`scored`, l.`effort`, c.`category`,
 						cc.`parentId` as ccparentId, cc.`title` as cctitle, ccc.`title` as ccctitle
 				FROM `". $config['prefix'] ."checklist` as l
 				LEFT OUTER JOIN `{$config['prefix']}categories` as c USING (`categoryId`)
@@ -739,9 +740,11 @@ function getsql($config,$values,$sort,$querylabel) {
 			break;
 
 		case "getitembrief":
-			$sql="SELECT `title`, `description`, `premiseA`, `premiseB`, `conclusion`, `behaviour`, `standard`, `conditions`, `metaphor`
-				FROM  `". $config['prefix'] . "items`
-				WHERE `itemId` = {$values['itemId']}";
+			$sql="SELECT i.`title`, i.`description`, i.`premiseA`, i.`premiseB`, i.`conclusion`, i.`behaviour`, i.`standard`, i.`conditions`, i.`metaphor`, ia.`type`, ia.`isSomeday`
+				FROM  `". $config['prefix'] . "items` AS i
+        LEFT JOIN `". $config['prefix'] . "itemattributes` AS ia
+        ON i.itemId = ia.itemId
+				WHERE ia.`itemId` = {$values['itemId']}";
 			break;
 
 		case "getlistitems":

@@ -14,7 +14,7 @@ $result = query("getitems",$config,$values,$sort);
 $createURL="item.php?parentId=" . $_GET['itemId'] . "&action=create&type=" . $_GET['type'];
 
 $values['filterquery'] = " AND ia.type = '" . $_GET['type'] . "' ";
-$values['parentId'] = $_GET['itemId'];            
+$values['parentId'] = $_GET['itemId'];
 $resultCh = query("getchildren",$config,$values,$sort);
 
 
@@ -47,7 +47,7 @@ require_once("headerHtml.inc.php");
 */ ?>
 
    <form action='processItems.php' method='post'>
-    <?php $tstr = '       
+    <?php $tstr = '
     <table class="" id="categorytable" summary="table of categories" style="float: left;">
         <thead><tr>
             <td class="mx">Title</td>
@@ -59,14 +59,16 @@ require_once("headerHtml.inc.php");
     </table>';
 
             echo $tstr;
-            $i = 0; 
-            foreach ($result as $row) { ?>
+            $i = 0;
+            foreach ($result as $row) {
+              if ($row['itemId'] == $_GET['itemId']) continue; # not reference self
+              ?>
             <tr>
                 <td class="mx"><?php
                     echo makeclean($row['title']);
                 ?></td>
 
-                <td class="mx"><input class="mx" name="addedItem[]" value="<?php echo $row['itemId']; ?>" type="checkbox" <?php 
+                <td class="mx"><input class="mx" name="addedItem[]" value="<?php echo $row['itemId']; ?>" type="checkbox" <?php
                         foreach ($resultCh as $resCh) {
                             if ($resCh['itemId'] == $row['itemId']) {
                                 if ($_REQUEST['visId'] > 0) {
@@ -86,21 +88,21 @@ require_once("headerHtml.inc.php");
                         }
                     ?>/></td>
                 <?php
-                    
+
                     echo '<td class="mx">';
                     echo '<span style="opacity: 0.3">';
                     echo substr(makeclean($row['category']),0,3);
                     echo '</span></td>';
-                    
+
                 ?>
-                
-            </tr><?php 
+
+            </tr><?php
                 $i++;
                 if ($i == 33) {
                     echo $tstre . $tstr;
                     $i = 0;
                 }
-            } 
+            }
             echo $tstre;
             ?>
     <div class='formbuttons'>
@@ -109,15 +111,15 @@ require_once("headerHtml.inc.php");
             <input type='submit' name='clearitemlists' value='Clear all' />
             -->
         <input type='hidden' name='pId' value='<?php echo $_GET['itemId']; ?>' />
-        <?php if ($_REQUEST['categoryId']) echo "<input type='hidden' name='categoryId' value='" . $_REQUEST['categoryId'] . "' />"; ?>        
-        <?php if ($_REQUEST['matrix']) echo "<input type='hidden' name='matrix' value='true' />"; ?>        
-        <?php if ($_REQUEST['visId'] > 0) echo "<input type='hidden' name='visId' value='" . $_REQUEST['visId'] . "' />"; ?>        
+        <?php if ($_REQUEST['categoryId']) echo "<input type='hidden' name='categoryId' value='" . $_REQUEST['categoryId'] . "' />"; ?>
+        <?php if ($_REQUEST['matrix']) echo "<input type='hidden' name='matrix' value='true' />"; ?>
+        <?php if ($_REQUEST['visId'] > 0) echo "<input type='hidden' name='visId' value='" . $_REQUEST['visId'] . "' />"; ?>
         <input type='hidden' name='action' value='parentupdate' />
         <input type='hidden' name='source' value='true' />
         <input type='hidden' name='type' value='<?php echo $_GET['type']; ?>' />
     </div>
-</form>    
-<?php 
+</form>
+<?php
 
 include_once('footer.php');
 ?>

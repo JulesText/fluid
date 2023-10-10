@@ -597,7 +597,7 @@ function editableCol ($tmp1, $tmp2) {
 }
 
 function childUpd ($type,$itemId,$visId,$catId = '') {
-    if ($catId > 0) { $catId = '&categoryId=' . $catId; }
+    if ($catId > 0) { $catId = '&categoryId=' . $catId; } else { $catId = ''; }
     $catMultiId = '&catMultiId=6';
     switch ($type) {
         case 'l' : $title = 'list'; break;

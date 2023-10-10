@@ -147,6 +147,7 @@ switch ($action) {
         echo '<pre>';
         $values['type'] = $_POST['type'];
         $values['parentId'] = $_POST['visId'];
+        unset($values['listId']);
         $result = query("getchildlists",$config,$values,$sort);
         $listsV = array();
         foreach ($result as $r) $listsV[] = $r['listId'];
@@ -171,6 +172,7 @@ switch ($action) {
             $valuesC['parentId'] = $valuesC['itemId'];
             $valuesC['type'] = $values['type'];
             $valuesC['listType'] = $values['type'];
+            unset($valuesC['listId']);
             $result = query("getchildlists",$config,$valuesC,$sort);
             if ($result !== 0)
               foreach ($result as $list)

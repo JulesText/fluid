@@ -138,6 +138,8 @@ function sT(editableObj,table,updCol,pcol1,pid1,col2,id2,col3,id3,col4,id4,col5,
 		if (col4 == 'qId') col4 = 'qId';
 		if (col5 == 'iT') col5 = 'itemType';
 
+		var ajaxFailed = false; // flag variable to track if ajax request failed
+
 		$.ajax({
 		url: "matrixsave.php",
 		type: "POST",
@@ -178,11 +180,19 @@ function sT(editableObj,table,updCol,pcol1,pid1,col2,id2,col3,id3,col4,id4,col5,
 								if (col2 == 'visId') calcFormulae(id2);
 						// otherwise throw warning
 						} else {
-								alert('Posting failed\r\n\t' + resVal + '\r\n\t' +updVal);
+							// throw warning only if ajax request has not failed previously
+        			if (!ajaxFailed) {
+								// alert('Posting failed\r\n\t' + resVal + '\r\n\t' +updVal);
+								alert('Posting failed\r\n\nManually submit item then refresh page');
+								ajaxFailed = true;
+							}
 						}
 				// if no query returned at all throw warning
 				}).fail(function() {
+					if (!ajaxFailed) {
 						alert("Query failed");
+						ajaxFailed = true;
+					}
 				});
 		}
 	 });

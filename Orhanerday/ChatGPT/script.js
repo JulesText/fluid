@@ -40,12 +40,12 @@ const PERSON_NAME = "You";
 // observer.observe(msgerChat, { childList: true });
 
 // Function to delete chat history records for a user ID using the API
-function deleteChatHistory() {
-    if (!confirm("Are you sure? Your chat will delete for good.")) {
-        return false
-    }
+function deleteChatHistory(delete_id) {
+    // if (!confirm("Are you sure? Your chat will delete for good.")) {
+    //     return false
+    // }
 
-    fetch(api_path + 'api.php?chat_id=' + CHAT_ID, {
+    fetch(api_path + 'api.php?chat_id=' + delete_id, {
         method: 'DELETE',
         headers: {'Content-Type': 'application/json'}
     })
@@ -56,6 +56,26 @@ function deleteChatHistory() {
             // deleteAllCookies()
             // location.reload(); // Reload the page to update the chat history table
             window.location.href = 'ai.php?chat_id=' + uuidv4();
+        })
+        .catch(error => console.error(error));
+}
+
+function historyDeleteChatHistory(delete_id) {
+    // if (!confirm("Are you sure? Your chat will delete for good.")) {
+    //     return false
+    // }
+
+    fetch(api_path + 'api.php?chat_id=' + delete_id, {
+        method: 'DELETE',
+        headers: {'Content-Type': 'application/json'}
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error deleting chat history: ' + response.statusText);
+            }
+            var element = document.getElementById(delete_id);
+            element.innerHTML = "";
+
         })
         .catch(error => console.error(error));
 }
@@ -176,6 +196,21 @@ function summariseChat(chat_id) {
       return null;
     });
 
+}
+
+function summariseHistoryChat(chat_id) {
+  var formData = new FormData();
+  formData.append('chat_id', chat_id);
+  fetch(api_path + 'summarise.php', {method: 'POST', body: formData})
+  .then(response => response.text())
+  .then(text => {
+    var element = document.getElementById(chat_id);
+    element.innerHTML = text;
+  })
+  .catch(error => {
+    console.error(error);
+    return null;
+  });
 }
 
 function getComment(chat_id) {

@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute();
 
     // Set the HTTP response header to indicate that the response is JSON
-    header('Content-Type: application/json');
+    header('Content-Type: application/json'); 
 
     // data
     $data = [

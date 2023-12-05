@@ -70,7 +70,22 @@ $api_path = 'Orhanerday/ChatGPT/';
       foreach ($result as $row) {
         $descrip = $row["chat_summary"];
         if ($descrip == NULL) $descrip = $row["chat_id"];
-        echo '<br><a class="history-link" href="ai.php?chat_id=' . $row["chat_id"] . '">' . $descrip . '</a>';
+        echo '<br>
+        <a class="history-link" onClick="summariseHistoryChat(
+          \'' . $row["chat_id"] . '\'
+          )">Summarise</a>&nbsp;
+        <a class="history-link" onClick="historyDeleteChatHistory(\'' . $row["chat_id"] . '\')">Delete</a>&nbsp;
+        <a class="history-link" href="ai.php?chat_id=' . $row["chat_id"] . '"
+          id="' . $row["chat_id"] . '">
+          ' . $descrip . '
+        </a>&nbsp;&nbsp;
+        ';
+        // <div class="msger-header-title">
+        //     <i class="fas fa-comment-alt"></i>
+        //     <input type="text" id="' . $row["chat_id"] . '" hidden>
+        //     <span class="id_session"></span>
+        // </div>
+        //
       }
 
       ?>

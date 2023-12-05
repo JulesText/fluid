@@ -37,6 +37,7 @@ if (isset($_GET['nometa']) && $_GET['nometa'] == true) { $meta = false; } else {
 if (isset($_GET['scen']) && $_GET['scen'] == true) { $scen = true; } else { $scen = false; }
 if (isset($_GET['calc']) && $_GET['calc'] == true) { $calc = 'true'; } else { $calc = 'false'; }
 if (isset($_GET['data']) && $_GET['data'] == true) { $data = true; } else { $data = false; }
+if (isset($_GET['career']) && $_GET['career'] == true) { $career = true; } else { $career = false; }
 
 // call qualities angles
 $values = array();
@@ -907,6 +908,7 @@ $(document).ready(function() {
         }
 
         if ($live) echo "toggleCheckB('someday');toggleCheckB('complete');\n\t";
+        if ($career) echo "toggleCheckB('attr.771');\n\t";
         if (!$meta) echo "toggleCol(['3','4','5']);\n\t";
 
     ?>
@@ -955,6 +957,7 @@ var somedayDisp = true;
 var completeDisp = true;
 var liveDisp = true;
 var brainlessDisp = true;
+var careerDisp = true;
 
 function toggleCheckB(ctype) {
 
@@ -1018,6 +1021,11 @@ function toggleCheckB(ctype) {
         brainlessDisp ^= true;
         checkd = false;
     }
+    if (ctype == 'attr.771') {
+        hideR = careerDisp;
+        careerDisp ^= true;
+        checkd = false;
+    }
     if (hideR) {
         $('table.mx td.'+ctype).find("input[type='checkbox']").each(function(){
             if(!$(this).parent().parent().hasClass('vision')){
@@ -1059,20 +1067,24 @@ function calcFormulae (vLimit) {
                 // check item type and write attribute to table
                 switch (result[i]['type']) {
                     case 'x':
-                        // write
-                        $('table.mx').find('tr.summary').find('th.attr.'+result[i]['attrId']+'.'+result[i]['form']).text(result[i]['value']);
-                        // check effort warning
+                        // check effort warning for timeline cells
                         if ($.inArray(result[i]['attrId'], tLine) != -1) {
 
                             if (
                                 (result[i]['form'] == 'a' && result[i]['value'] > <?php echo $unqhoursyear; ?>) ||
                                 (result[i]['form'] == 'b' && result[i]['value'] > <?php echo $unqhoursyearbrainless; ?>)
                             ) $('table.mx').find('tr.summary').find('th.attr.'+result[i]['attrId']+'.'+result[i]['form']).css("background","#f5e6bc");
+                            else $('table.mx').find('tr.summary').find('th.attr.'+result[i]['attrId']+'.'+result[i]['form']).css("background","#ecf6e6");
 
                             if (result[i]['form'] == 'c' && result[i]['value'] > <?php echo $unqhoursyear + $unqhoursyearbrainless; ?>
                             ) $('table.mx').find('tr.summary').find('th.attr.'+result[i]['attrId']).css("background","#edd");
 
+                            if (result[i]['form'] == 'a') result[i]['value'] = Math.round(result[i]['value'] * 100 / <?php echo $unqhoursyear; ?>) / 100;
+                            if (result[i]['form'] == 'b') result[i]['value'] = Math.round(result[i]['value'] * 100 / <?php echo $unqhoursyearbrainless; ?>) / 100;
+
                         }
+                        // write value
+                        $('table.mx').find('tr.summary').find('th.attr.'+result[i]['attrId']+'.'+result[i]['form']).text(result[i]['value']);
                         break;
                     case 'v':
                         $('table.mx').find('tr.vision.'+result[i]['visId']).find('td.attr.'+result[i]['attrId']).text(result[i]['value']);
@@ -1166,6 +1178,7 @@ if (!$data) {
         <td class='cont' onClick="toggleCheckB('complete')">Comp</td>
         <td class='cont' onClick="toggleCheckB('live')">Live</td>
         <td class='cont' onClick="toggleCheckB('attr.531')">Blss</td>
+        <td class='cont' onClick="toggleCheckB('attr.771')">Creer</td>
         <td class='cont' onClick="toggleRow(['i0'])">in0</td>
         <td class='cont' onClick="toggleRow(['i1'])">in1</td>
         <td class='cont' onClick="toggleRow(['i2'])">in2</td>
@@ -1225,7 +1238,7 @@ if (!$data) {
         <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=h&live=true&nometa=true&calc=true&scen=true'; ?>';">Scen</td>
         <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=j&scen=true&calc=true'; ?>';">Val</td>
         <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=i&calc=true&data=true'; ?>';">Data</td>
-        <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=e'; ?>';">Creer</td>
+        <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=e&career=true'; ?>';">Creer</td>
         <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=f'; ?>';">All</td>
         <td class='cont' onClick="window.location = '<?php echo $url . '&live=true'; ?>';">Live</td>
         <td class='cont' onClick="window.location = '<?php echo $url . '&calc=' . ($calc == 'true' ? 'false' : 'true'); ?>';">Calc</td>

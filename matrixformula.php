@@ -188,6 +188,9 @@ foreach ((array) $attributes as $attr) {
     // skip all probability items as they are currently called from the attribute itself
     if ($attr['format'] == 'probability') $skipqIds[] = $attr['qId'];
 
+    // attr: Career (boolean)
+    if ($attr['format'] == 'unqcareer') $careerId = $attr['qId'];
+
 }
 
 // score optimisation

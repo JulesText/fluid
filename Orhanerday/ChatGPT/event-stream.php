@@ -89,20 +89,35 @@ $complete = $open_ai->chat($opts,
       #file_put_contents('test.txt', PHP_EOL . $data, FILE_APPEND);die;
 
       # can have multiple results in one chat.completion.chunk
-      # in first row
-      # should separate to clean for db entry
-      if ($txt == "") {
-        $d = str_replace(array("\r\n","\r","\n","\\r","\\n","\\r\\n"),"ran_str123",$data);
-        $lines = explode("ran_str123", $d);
-      } else {
-        $lines = array(0 => $data);
+      # the line breaks will prevent converting json to array
+      # need to separate to clean for db entry
+      # we can't do a blanket replace as sometimes the content includes line breaks as \n
+      # so split either side of the content, then clean, then rejoin
+      $returns = array("\r\n","\r","\n","\\r","\\n","\\r\\n");
+      $str_left = '{"content":"'; # content start
+      $str_right = '"},"finish_reason"'; # content end
+      $d = str_replace(array($str_left, $str_right), "ran_str123", $data);
+      $d = explode("ran_str123", $d);
+      for ($i = 0; $i < count($d); $i++) {
+        if ($i%2 == 1) continue; # skip odd strings as these will be actual content
+        $d[$i] = str_replace($returns, "", $d[$i]);
+        if ($i == 0) $d[$i] = $d[$i] . $str_left; # first iter
+        else if ($i == count($d) - 1) $d[$i] = $str_right . $d[$i]; # last iter
+        else $d[$i] = $str_right . $d[$i] . $str_left; # middle iter
       }
+      # rejoin content
+      $d = implode($d);
+      # split correctly
+      $lines = explode("data: ", $d); # this represents start of unique row
 
       foreach ($lines as $index => $row) {
 
-        $clean = str_replace("data: ", "", $row);
-        $arr = json_decode($clean, TRUE);
+        # file_put_contents('test.txt', $index . ': ' . $row . PHP_EOL, FILE_APPEND);
+
+        $arr = json_decode($row, TRUE);
         $choice_content = $arr["choices"][0]["delta"]["content"];
+
+        # file_put_contents('test.txt', $index . ': ' . count($arr) . ' rows in $row' . PHP_EOL, FILE_APPEND);
 
         file_put_contents('test.txt', $index . ':' . $choice_content . PHP_EOL, FILE_APPEND);
         file_put_contents('test.txt', $clean . PHP_EOL, FILE_APPEND);

@@ -1,13 +1,13 @@
 :root {
-  --body-bg: #202123;
-  --msger-bg: #444654;
-  --border: 2px solid #1e1e1e;
-  --left-msg-bg: #8b8da9;
-  --right-msg-bg: #36373c;
+  --body-bg: #dcdee0;
+  --msger-bg: #b6b8c6;
+  --border: 2px solid #d9d9dc;
+  --left-msg-bg: #6d6f8b;
+  --right-msg-bg: #c7c8cd;
 }
 
 pre, code, code.dark-bg {
-	background-color: #202123;
+	background-color: #dcdee0;
 	border-radius: 3px;
 	font-family: monospace;
 	white-space: pre-wrap;
@@ -45,7 +45,7 @@ body {
   background-color: var(--body-bg);
   font-family: Verdana, Helvetica, sans-serif;
   line-height: 1.5;
-  color: #fff;
+  color: #000;
 }
 
 .contabro {
@@ -75,8 +75,8 @@ body {
   justify-content: space-between;
   padding: 10px;
   border-bottom: var(--border);
-  background: #2b2c34;
-  color: #d9d9d9;
+  background: #d0d2d9;
+  color: #262626;
 }
 
 .msger-chat {
@@ -94,7 +94,7 @@ body {
 }
 
 .msger-chat::-webkit-scrollbar-thumb {
-  background: #444654;
+  background: #b6b8c6;
 }
 
 .msg {
@@ -154,7 +154,7 @@ body {
 
 .right-msg .msg-bubble {
   background: var(--right-msg-bg);
-  color: #fff;
+  color: #000;
   border-bottom-right-radius: 0;
 }
 
@@ -166,7 +166,7 @@ body {
   display: flex;
   padding: 10px;
   border-top: var(--border);
-  background: #2b2c34;
+  background: #d0d2d9;
 }
 
 .msger-inputarea * {
@@ -178,14 +178,14 @@ body {
 
 .msger-input {
   flex: 1;
-  background: #444654;
-  color: #d9d9d9;
+  background: #b6b8c6;
+  color: #565656;
 }
 
 .msger-send-btn {
   margin-left: 10px;
   background: #69707a;
-  color: #fff;
+  color: #000;
   font-weight: bold;
   cursor: pointer;
 }
@@ -197,7 +197,7 @@ body {
   top: 0;
   height: 100%;
   width: 150px;
-  background-color: #202123;
+  background-color: #dcdee0;
   padding-top: 20px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -205,21 +205,21 @@ body {
 
 .tablink {
   display: block;
-  color: #fff;
+  color: #000;
   text-align: left;
   padding: 8px 16px;
   text-decoration: none;
   font-size: 16px;
   border: none;
-  background-color: #202123;
+  background-color: #dcdee0;
   width: 100%;
   cursor: pointer;
   transition: 0.3s;
 }
 
 .tablink.active {
-  background-color: #444654;
-  color: #fff;
+  background-color: #b6b8c6;
+  color: #000;
 }
 
 
@@ -246,7 +246,7 @@ body {
   background: none!important;
   border: none;
   padding: 0!important;
-  color: rgb(255, 255, 255);
+  color: #262626;
   text-decoration: underline;
   cursor: pointer;
 }

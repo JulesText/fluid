@@ -315,8 +315,19 @@ function sendMsg(msg) {
 
             eventSource.onmessage = function (e) {
                 if (e.data == "[DONE]") {
+
+                    var res = div.innerHTML;
+                    // has code
+                    if (res.split("`").length - 1 === 3) {
+                      // hljs.highlightElement(div);
+                      var regex = /```([^`]+)```/g;
+                      res = res.replace(regex, '<pre><code class="html language-html hljs">$1</code></pre>');
+                      div.innerHTML = res;
+                    }
+
                     msgerSendBtn.disabled = false
                     eventSource.close();
+                    
                 } else {
                     let txt = JSON.parse(e.data).choices[0].delta.content
                     if (txt !== undefined) {

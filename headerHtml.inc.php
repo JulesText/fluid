@@ -145,8 +145,68 @@ i.e. styles/github.min.css
 they will all have .min. there
 https://github.com/highlightjs/highlight.js/tree/main/src/styles
 -->
-<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
 <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+<style>
+
+/* <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css"> */
+
+/* code {
+	display:block;
+	overflow-x:auto;
+	padding:1em;
+	padding:3px 5px;
+	color:#abb2bf;
+	background:#282c34;
+} */
+
+code { /* added this definition */
+	color:#abb2bf;
+	background:#282c34;
+	border-radius: 3px;
+	font-family: monospace;
+	white-space: pre-wrap;
+	padding: 2px 4px 2px 4px;
+  line-height: 1.5;
+  box-shadow: 0px 0px 1px rgba(0,0,0, .2);
+}
+/* following in highlight.js stylesheet */
+pre code.hljs{
+	display:block;
+	overflow-x:auto;
+	padding:1em
+	}
+
+code.hljs{
+	padding:3px 5px
+}.hljs{
+	color:#abb2bf;
+	background:#282c34
+}.hljs-comment,.hljs-quote{
+	color:#5c6370;
+	font-style:italic
+}.hljs-doctag,.hljs-formula,.hljs-keyword{
+	color:#c678dd
+}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{
+	color:#e06c75
+}.hljs-literal{
+	color:#56b6c2
+}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{
+	color:#98c379
+}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{
+	color:#d19a66
+}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{
+	color:#61aeee
+}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{
+	color:#e6c07b
+}.hljs-emphasis{
+	font-style:italic
+}.hljs-strong{
+	font-weight:700
+}.hljs-link{
+	text-decoration:underline
+}
+</style>
+
 <!-- copy to clipboard -->
 <script src="js/clipboard.min.js"></script>
 

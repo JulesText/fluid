@@ -6,10 +6,10 @@
 require_once('../../headerDB.inc.php');
 $db = new PDO('mysql:host=' . $config["host"] . ';dbname=' . $config["db"], $config["user"], $config["pass"]);
 
-require_once('../../Orhanerday/OpenAi/OpenAi.php');
-require_once('../../Orhanerday/OpenAi/Url.php');
+require_once('OpenAi.php');
+require_once('Url.php');
 
-use Orhanerday\OpenAi\OpenAi;
+use ChatGPT\OpenAi;
 
 const ROLE = "role";
 const CONTENT = "content";

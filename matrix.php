@@ -956,6 +956,7 @@ function notCheckbox() {
 var somedayDisp = true;
 var completeDisp = true;
 var liveDisp = true;
+var compareDisp = true;
 var brainlessDisp = true;
 var careerDisp = true;
 
@@ -1015,6 +1016,11 @@ function toggleCheckB(ctype) {
     if (ctype == 'complete') {
         hideR = completeDisp;
         completeDisp ^= true;
+    }
+    if (ctype == 'attr.24') {
+        hideR = compareDisp;
+        compareDisp ^= true;
+        checkd = false;
     }
     if (ctype == 'attr.531') {
         hideR = brainlessDisp;
@@ -1175,8 +1181,9 @@ if (!$data) {
         <td class='cont' onClick="toggleRow(['vision','blank'])">v</td>
         <td class='cont' onClick="toggleRow(['role','goal'])">og</td>
         <td class='cont' onClick="toggleCheckB('someday')">Sday</td>
-        <td class='cont' onClick="toggleCheckB('complete')">Comp</td>
+        <td class='cont' onClick="toggleCheckB('complete')">Compl</td>
         <td class='cont' onClick="toggleCheckB('live')">Live</td>
+        <td class='cont' onClick="toggleCheckB('attr.24')">Compa</td>
         <td class='cont' onClick="toggleCheckB('attr.531')">Blss</td>
         <td class='cont' onClick="toggleCheckB('attr.771')">Creer</td>
         <td class='cont' onClick="toggleRow(['i0'])">in0</td>

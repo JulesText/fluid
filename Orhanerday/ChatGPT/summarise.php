@@ -74,7 +74,7 @@ $summary = $open_ai->summarize($opts);
 $apiEndpoint = "https://api.openai.com/v1/completions";
 // Set up the request data
 $opts = array(
-    "model" => "text-davinci-003",
+    "model" => "gpt-3.5-turbo-instruct",
     "prompt" => "Please summarize the following text in 5 words:\n\n" . $chat . "\n\n5-word summary:", # 5-word summarise is a particular style
     "max_tokens" => 15, # limits actual size of token response
     "temperature" => 0.8 # creativity = 1, none =  0 (deterministic)

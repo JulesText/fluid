@@ -1,22 +1,15 @@
-priority-- phpMyAdmin SQL Dump
--- version 4.9.5
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Mar 21, 2021 at 02:20 PM
--- Server version: 10.1.48-MariaDB-cll-lve
--- PHP Version: 7.3.6
+-- Generation Time: Feb 24, 2024 at 07:37 PM
+-- Server version: 10.6.16-MariaDB-cll-lve
+-- PHP Version: 8.1.27
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Database: `julesnet_x`
@@ -29,9 +22,9 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `catcodes` (
-  `sortBy` varchar(2) COLLATE latin1_general_ci NOT NULL,
-  `parentId` varchar(2) COLLATE latin1_general_ci DEFAULT NULL,
-  `title` varchar(32) COLLATE latin1_general_ci DEFAULT NULL
+  `sortBy` varchar(2) NOT NULL,
+  `parentId` varchar(2) DEFAULT NULL,
+  `title` varchar(32) DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- --------------------------------------------------------
@@ -42,9 +35,24 @@ CREATE TABLE `catcodes` (
 
 CREATE TABLE `categories` (
   `categoryId` int(10) UNSIGNED NOT NULL,
-  `category` text COLLATE latin1_general_ci NOT NULL,
-  `description` text COLLATE latin1_general_ci
+  `category` text NOT NULL,
+  `description` text DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `chat_history`
+--
+
+CREATE TABLE `chat_history` (
+  `comment_id` int(11) NOT NULL,
+  `chat_id` text NOT NULL,
+  `chat_summary` text DEFAULT NULL,
+  `comment_human` text DEFAULT NULL,
+  `comment_ai` text DEFAULT 'no response',
+  `comment_date` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -54,22 +62,24 @@ CREATE TABLE `categories` (
 
 CREATE TABLE `checklist` (
   `checklistId` int(10) UNSIGNED NOT NULL,
-  `title` text COLLATE latin1_general_ci NOT NULL,
-  `categoryId` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `premiseA` varchar(1024) COLLATE latin1_general_ci DEFAULT NULL,
-  `premiseB` varchar(1024) COLLATE latin1_general_ci DEFAULT NULL,
-  `conclusion` varchar(1024) COLLATE latin1_general_ci DEFAULT NULL,
-  `behaviour` text COLLATE latin1_general_ci,
-  `standard` text COLLATE latin1_general_ci,
-  `conditions` text COLLATE latin1_general_ci,
-  `metaphor` text COLLATE latin1_general_ci,
-  `hyperlink` varchar(256) COLLATE latin1_general_ci DEFAULT NULL,
-  `sortBy` char(4) COLLATE latin1_general_ci NOT NULL DEFAULT '00',
-  `frequency` int(4) DEFAULT NULL,
-  `effort` int(4) DEFAULT NULL,
-  `scored` enum('y','n') COLLATE latin1_general_ci NOT NULL DEFAULT 'n',
-  `menu` enum('y','n') CHARACTER SET latin1 COLLATE latin1_bin NOT NULL DEFAULT 'y',
-  `prioritise` int(3) NOT NULL DEFAULT '-1'
+  `title` text NOT NULL,
+  `categoryId` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `premiseA` varchar(1024) DEFAULT NULL,
+  `premiseB` varchar(1024) DEFAULT NULL,
+  `conclusion` varchar(1024) DEFAULT NULL,
+  `behaviour` text DEFAULT NULL,
+  `standard` text DEFAULT NULL,
+  `conditions` text DEFAULT NULL,
+  `metaphor` text DEFAULT NULL,
+  `hyperlink` varchar(256) DEFAULT NULL,
+  `sortBy` char(4) NOT NULL DEFAULT '00',
+  `frequency` int(11) DEFAULT NULL,
+  `effort` int(11) DEFAULT NULL,
+  `scored` enum('y','n') NOT NULL DEFAULT 'n',
+  `menu` enum('y','n') NOT NULL DEFAULT 'y',
+  `prioritise` int(11) NOT NULL DEFAULT -1,
+  `thrs_score` int(3) NOT NULL DEFAULT 80,
+  `thrs_obs` int(3) NOT NULL DEFAULT 5
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- --------------------------------------------------------
@@ -80,16 +90,16 @@ CREATE TABLE `checklist` (
 
 CREATE TABLE `checklistitems` (
   `checklistItemId` int(10) UNSIGNED NOT NULL,
-  `item` text COLLATE latin1_general_ci NOT NULL,
-  `notes` text COLLATE latin1_general_ci,
-  `hyperlink` text COLLATE latin1_general_ci,
-  `checklistId` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `checked` enum('y','n') COLLATE latin1_general_ci NOT NULL DEFAULT 'n',
-  `ignored` enum('y','n') COLLATE latin1_general_ci NOT NULL DEFAULT 'n',
-  `score` int(8) NOT NULL DEFAULT '0',
-  `assessed` int(8) NOT NULL DEFAULT '0',
-  `effort` int(4) DEFAULT NULL,
-  `priority` int(1) NOT NULL DEFAULT '0'
+  `item` text NOT NULL,
+  `notes` text DEFAULT NULL,
+  `hyperlink` text DEFAULT NULL,
+  `checklistId` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `checked` enum('y','n') NOT NULL DEFAULT 'n',
+  `ignored` enum('y','n') NOT NULL DEFAULT 'n',
+  `score` int(11) NOT NULL DEFAULT 0,
+  `assessed` int(11) NOT NULL DEFAULT 0,
+  `effort` int(11) DEFAULT NULL,
+  `priority` int(11) NOT NULL DEFAULT 0
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- --------------------------------------------------------
@@ -100,12 +110,12 @@ CREATE TABLE `checklistitems` (
 
 CREATE TABLE `checklistitemsinst` (
   `checklistItemId` int(10) UNSIGNED NOT NULL,
-  `checklistId` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `instanceId` int(4) NOT NULL DEFAULT '1',
-  `checked` enum('y','n') COLLATE latin1_general_ci NOT NULL DEFAULT 'n',
-  `ignored` enum('y','n') COLLATE latin1_general_ci NOT NULL DEFAULT 'n',
-  `score` int(8) NOT NULL DEFAULT '0',
-  `assessed` int(8) NOT NULL DEFAULT '0'
+  `checklistId` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `instanceId` int(11) NOT NULL DEFAULT 1,
+  `checked` enum('y','n') NOT NULL DEFAULT 'n',
+  `ignored` enum('y','n') NOT NULL DEFAULT 'n',
+  `score` int(11) NOT NULL DEFAULT 0,
+  `assessed` int(11) NOT NULL DEFAULT 0
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- --------------------------------------------------------
@@ -116,8 +126,8 @@ CREATE TABLE `checklistitemsinst` (
 
 CREATE TABLE `context` (
   `contextId` int(10) UNSIGNED NOT NULL,
-  `name` text COLLATE latin1_general_ci NOT NULL,
-  `description` text COLLATE latin1_general_ci
+  `name` text NOT NULL,
+  `description` text DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- --------------------------------------------------------
@@ -127,10 +137,10 @@ CREATE TABLE `context` (
 --
 
 CREATE TABLE `instance` (
-  `instanceId` int(3) NOT NULL,
+  `instanceId` int(11) NOT NULL,
   `name` varchar(32) NOT NULL,
   `description` varchar(32) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -140,14 +150,15 @@ CREATE TABLE `instance` (
 
 CREATE TABLE `itemattributes` (
   `itemId` int(10) UNSIGNED NOT NULL,
-  `type` enum('m','v','o','g','p','a','r','w','i') COLLATE latin1_general_ci NOT NULL DEFAULT 'i',
-  `isSomeday` enum('y','n') COLLATE latin1_general_ci NOT NULL DEFAULT 'n',
-  `categoryId` int(11) UNSIGNED NOT NULL DEFAULT '0',
-  `contextId` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `timeframeId` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `type` enum('m','v','o','g','p','a','r','w','i') NOT NULL DEFAULT 'i',
+  `isSomeday` enum('y','n') NOT NULL DEFAULT 'n',
+  `categoryId` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `contextId` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `timeframeId` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `deadline` date DEFAULT NULL,
-  `repeat` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `suppress` enum('y','n') COLLATE latin1_general_ci NOT NULL DEFAULT 'n',
+  `repeat` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `suppress` enum('y','n') NOT NULL DEFAULT 'n',
+  `suppressIsDeadline` enum('y','n') NOT NULL DEFAULT 'n',
   `suppressUntil` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -159,17 +170,17 @@ CREATE TABLE `itemattributes` (
 
 CREATE TABLE `items` (
   `itemId` int(10) UNSIGNED NOT NULL,
-  `title` text COLLATE latin1_general_ci NOT NULL,
-  `description` longtext COLLATE latin1_general_ci,
-  `premiseA` varchar(1024) COLLATE latin1_general_ci DEFAULT NULL,
-  `premiseB` varchar(1024) COLLATE latin1_general_ci DEFAULT NULL,
-  `conclusion` varchar(1024) COLLATE latin1_general_ci DEFAULT NULL,
-  `behaviour` text COLLATE latin1_general_ci,
-  `standard` text COLLATE latin1_general_ci,
-  `conditions` text COLLATE latin1_general_ci,
-  `metaphor` text COLLATE latin1_general_ci,
-  `hyperlink` text COLLATE latin1_general_ci,
-  `sortBy` char(4) CHARACTER SET latin2 NOT NULL DEFAULT '00'
+  `title` text NOT NULL,
+  `description` longtext DEFAULT NULL,
+  `premiseA` varchar(1024) DEFAULT NULL,
+  `premiseB` varchar(1024) DEFAULT NULL,
+  `conclusion` varchar(1024) DEFAULT NULL,
+  `behaviour` text DEFAULT NULL,
+  `standard` text DEFAULT NULL,
+  `conditions` text DEFAULT NULL,
+  `metaphor` text DEFAULT NULL,
+  `hyperlink` text DEFAULT NULL,
+  `sortBy` char(4) CHARACTER SET latin2 COLLATE latin2_general_ci NOT NULL DEFAULT '00'
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- --------------------------------------------------------
@@ -181,7 +192,7 @@ CREATE TABLE `items` (
 CREATE TABLE `itemstatus` (
   `itemId` int(10) UNSIGNED NOT NULL,
   `dateCreated` date DEFAULT NULL,
-  `lastModified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `lastModified` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `dateCompleted` date DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
@@ -193,19 +204,19 @@ CREATE TABLE `itemstatus` (
 
 CREATE TABLE `list` (
   `listId` int(10) UNSIGNED NOT NULL,
-  `title` text COLLATE latin1_general_ci NOT NULL,
-  `categoryId` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `premiseA` varchar(1024) COLLATE latin1_general_ci DEFAULT NULL,
-  `premiseB` varchar(1024) COLLATE latin1_general_ci DEFAULT NULL,
-  `conclusion` varchar(1024) COLLATE latin1_general_ci DEFAULT NULL,
-  `behaviour` text COLLATE latin1_general_ci,
-  `standard` text COLLATE latin1_general_ci,
-  `conditions` text COLLATE latin1_general_ci,
-  `metaphor` text COLLATE latin1_general_ci,
-  `hyperlink` varchar(256) COLLATE latin1_general_ci DEFAULT NULL,
-  `sortBy` char(2) COLLATE latin1_general_ci NOT NULL DEFAULT '00',
-  `menu` enum('y','n') CHARACTER SET latin1 COLLATE latin1_bin NOT NULL DEFAULT 'y',
-  `prioritise` int(3) NOT NULL DEFAULT '-1'
+  `title` text NOT NULL,
+  `categoryId` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `premiseA` varchar(1024) DEFAULT NULL,
+  `premiseB` varchar(1024) DEFAULT NULL,
+  `conclusion` varchar(1024) DEFAULT NULL,
+  `behaviour` text DEFAULT NULL,
+  `standard` text DEFAULT NULL,
+  `conditions` text DEFAULT NULL,
+  `metaphor` text DEFAULT NULL,
+  `hyperlink` varchar(256) DEFAULT NULL,
+  `sortBy` char(2) NOT NULL DEFAULT '00',
+  `menu` enum('y','n') NOT NULL DEFAULT 'y',
+  `prioritise` int(11) NOT NULL DEFAULT -1
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- --------------------------------------------------------
@@ -216,12 +227,12 @@ CREATE TABLE `list` (
 
 CREATE TABLE `listitems` (
   `listItemId` int(10) UNSIGNED NOT NULL,
-  `item` text COLLATE latin1_general_ci NOT NULL,
-  `notes` text COLLATE latin1_general_ci,
-  `hyperlink` varchar(256) COLLATE latin1_general_ci DEFAULT NULL,
-  `listId` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `item` text NOT NULL,
+  `notes` text DEFAULT NULL,
+  `hyperlink` varchar(256) DEFAULT NULL,
+  `listId` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `dateCompleted` date DEFAULT NULL,
-  `expect` int(1) NOT NULL DEFAULT '0'
+  `priority` int(11) NOT NULL DEFAULT 0
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- --------------------------------------------------------
@@ -231,8 +242,8 @@ CREATE TABLE `listitems` (
 --
 
 CREATE TABLE `lookup` (
-  `parentId` int(11) NOT NULL DEFAULT '0',
-  `itemId` int(10) UNSIGNED NOT NULL DEFAULT '0'
+  `parentId` int(11) NOT NULL DEFAULT 0,
+  `itemId` int(10) UNSIGNED NOT NULL DEFAULT 0
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- --------------------------------------------------------
@@ -246,7 +257,7 @@ CREATE TABLE `lookuplist` (
   `parentId` int(11) NOT NULL,
   `listId` int(11) NOT NULL,
   `listType` varchar(1) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -255,13 +266,13 @@ CREATE TABLE `lookuplist` (
 --
 
 CREATE TABLE `lookupqualities` (
-  `qaId` int(8) NOT NULL,
+  `qaId` int(11) NOT NULL,
   `visId` int(11) NOT NULL,
   `itemId` int(11) NOT NULL,
   `qId` int(11) NOT NULL,
   `itemType` varchar(8) NOT NULL,
   `value` text NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -270,8 +281,8 @@ CREATE TABLE `lookupqualities` (
 --
 
 CREATE TABLE `nextactions` (
-  `parentId` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `nextaction` int(10) UNSIGNED NOT NULL DEFAULT '0'
+  `parentId` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `nextaction` int(10) UNSIGNED NOT NULL DEFAULT 0
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- --------------------------------------------------------
@@ -282,24 +293,24 @@ CREATE TABLE `nextactions` (
 
 CREATE TABLE `qualities` (
   `qId` int(10) UNSIGNED NOT NULL,
-  `parId` int(8) DEFAULT NULL,
-  `probId` int(8) DEFAULT NULL,
-  `qType` enum('angle','quality','attribute','variable','itemMeta') COLLATE latin1_general_ci NOT NULL,
-  `format` enum('score','probability','integer','text','meta','link','unqvalues','unqvaluessum','unqhoursresearch','unqhours','unqyears','unqyearsprob','unqyearstart','unqbrainless','unqhoursyear','unqhoursyearbrainless','unqtimeline','unqhourstravel','unqvaluessumhrs','someday','unqprobability','unqyearend','unqcata','unqcatb','unqcontext','unqcontextssum','unqcontextssumhrs','unqoptimise','unqoptimisepref','unqoptimisebala','unqcorrelpref','unqcorrelbala') COLLATE latin1_general_ci NOT NULL,
-  `style` varchar(16) COLLATE latin1_general_ci DEFAULT NULL,
-  `filter` enum('range','text','check','empty') COLLATE latin1_general_ci DEFAULT NULL,
-  `typeReq` char(8) COLLATE latin1_general_ci DEFAULT NULL,
-  `typeNoEd` char(8) COLLATE latin1_general_ci DEFAULT NULL,
-  `existTable` varchar(1024) COLLATE latin1_general_ci DEFAULT NULL,
-  `title` varchar(32) COLLATE latin1_general_ci DEFAULT NULL,
-  `description` varchar(1024) COLLATE latin1_general_ci DEFAULT NULL,
-  `disp` varchar(128) COLLATE latin1_general_ci DEFAULT NULL,
-  `weight` int(1) DEFAULT NULL,
-  `sort` int(2) DEFAULT NULL,
-  `formulaSum1` text COLLATE latin1_general_ci,
-  `formulaSum2` text COLLATE latin1_general_ci,
-  `formulaVis1` text COLLATE latin1_general_ci,
-  `formulaVis2` text COLLATE latin1_general_ci
+  `parId` int(11) DEFAULT NULL,
+  `probId` int(11) DEFAULT NULL,
+  `qType` enum('angle','quality','attribute','variable','itemMeta') NOT NULL,
+  `format` enum('score','probability','integer','text','meta','link','unqvalues','unqvaluessum','unqhoursresearch','unqhours','unqyears','unqyearsprob','unqyearstart','unqbrainless','unqhoursyear','unqhoursyearbrainless','unqtimeline','unqhourstravel','unqvaluessumhrs','someday','unqprobability','unqyearend','unqcata','unqcatb','unqcontext','unqcontextssum','unqcontextssumhrs','unqoptimise','unqoptimisepref','unqoptimisebala','unqcorrelpref','unqcorrelbala','unqtitle','unqtlineyrs','unqitemwidth','unqbaseyear','unqcareer','unqcareersum','unqcareersumhrs','unqcompare') NOT NULL,
+  `style` varchar(16) DEFAULT NULL,
+  `filter` enum('range','text','check','empty') DEFAULT NULL,
+  `typeReq` char(8) DEFAULT NULL,
+  `typeNoEd` char(8) DEFAULT NULL,
+  `existTable` varchar(1024) DEFAULT NULL,
+  `title` varchar(32) DEFAULT NULL,
+  `description` varchar(1024) DEFAULT NULL,
+  `disp` varchar(128) DEFAULT NULL,
+  `weight` int(11) DEFAULT NULL,
+  `sort` int(11) DEFAULT NULL,
+  `formulaSum1` text DEFAULT NULL,
+  `formulaSum2` text DEFAULT NULL,
+  `formulaVis1` text DEFAULT NULL,
+  `formulaVis2` text DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- --------------------------------------------------------
@@ -310,9 +321,9 @@ CREATE TABLE `qualities` (
 
 CREATE TABLE `timeitems` (
   `timeframeId` int(10) UNSIGNED NOT NULL,
-  `timeframe` text COLLATE latin1_general_ci NOT NULL,
-  `description` text COLLATE latin1_general_ci,
-  `type` enum('v','o','g','p','a') COLLATE latin1_general_ci NOT NULL DEFAULT 'a'
+  `timeframe` text NOT NULL,
+  `description` text DEFAULT NULL,
+  `type` enum('v','o','g','p','a') NOT NULL DEFAULT 'a'
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 --
@@ -332,6 +343,12 @@ ALTER TABLE `categories`
   ADD PRIMARY KEY (`categoryId`),
   ADD KEY `category` (`category`(10)),
   ADD KEY `description` (`description`(10));
+
+--
+-- Indexes for table `chat_history`
+--
+ALTER TABLE `chat_history`
+  ADD PRIMARY KEY (`comment_id`);
 
 --
 -- Indexes for table `checklist`
@@ -466,6 +483,12 @@ ALTER TABLE `categories`
   MODIFY `categoryId` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `chat_history`
+--
+ALTER TABLE `chat_history`
+  MODIFY `comment_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `checklist`
 --
 ALTER TABLE `checklist`
@@ -493,7 +516,7 @@ ALTER TABLE `context`
 -- AUTO_INCREMENT for table `instance`
 --
 ALTER TABLE `instance`
-  MODIFY `instanceId` int(3) NOT NULL AUTO_INCREMENT;
+  MODIFY `instanceId` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `itemattributes`
@@ -535,7 +558,7 @@ ALTER TABLE `lookuplist`
 -- AUTO_INCREMENT for table `lookupqualities`
 --
 ALTER TABLE `lookupqualities`
-  MODIFY `qaId` int(8) NOT NULL AUTO_INCREMENT;
+  MODIFY `qaId` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `qualities`
@@ -549,7 +572,3 @@ ALTER TABLE `qualities`
 ALTER TABLE `timeitems`
   MODIFY `timeframeId` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

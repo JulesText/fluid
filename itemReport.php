@@ -97,13 +97,19 @@ if ($item['metaphor']) {
         }
     }
 
-echo $rtitle."&nbsp;Report:&nbsp;".makeclean($item['title']).(($item['isSomeday']=="y")?" (Someday) ":""). "&nbsp;&nbsp;&nbsp; [&nbsp;<a href='item.php?itemId={$values['itemId']}' title='Edit "
+echo $rtitle."&nbsp;Report:&nbsp;".makeclean($item['title']).(($item['isSomeday']=="y")?" (Someday) ":"");
+if (!isset($_GET['content'])) {
+  echo "&nbsp;&nbsp;&nbsp; [&nbsp;<a href='item.php?itemId={$values['itemId']}' title='Edit "
     ,makeclean($item['title']),"'>Edit</a>&nbsp;]";
-echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"listsUpdate.php?itemId={$values['itemId']}&type=l\">Lists</a>&nbsp;]";
-echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"listsUpdate.php?itemId={$values['itemId']}&type=c\">Checklists</a>&nbsp;]";
-if (!isset($_GET['content'])) echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"itemReport.php?itemId={$values['itemId']}&content=limit\">Limit</a>&nbsp;]";
+  echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"listsUpdate.php?itemId={$values['itemId']}&type=l\">Lists</a>&nbsp;]";
+  echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"listsUpdate.php?itemId={$values['itemId']}&type=c\">Checklists</a>&nbsp;]";
+}
+if (isset($_GET['content']) && $_GET['content'] == "limit") $urltoken = "&content=limit";
+else $urltoken = "";
+if (isset($_GET['showCompleted']) && $_GET['showCompleted'] == "true") $urltoken .= "&showCompleted=true";
+if (!isset($_GET['content'])) echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"itemReport.php?itemId={$values['itemId']}&content=limit{$urltoken}\">Limit</a>&nbsp;]";
 if (!isset($_GET['showCompleted'])) {
-  echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"itemReport.php?itemId={$values['itemId']}&showCompleted=true\">Completed</a>&nbsp;]";
+  echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"itemReport.php?itemId={$values['itemId']}&showCompleted=true{$urltoken}\">Complete</a>&nbsp;]";
   $showCompleted = FALSE;
 } else {
   $showCompleted = (bool) $_GET['showCompleted'];
@@ -165,10 +171,12 @@ if (!empty($item['deadline'])) {
 if ($item['type']==='a' || $item['type']==='w') echo '<tr><th>Next Action?</th><td>',($item['NA'])?'Yes':'No',"</td></tr>\n";
 if ($item['repeat']) echo '<tr><th>Repeat every</th><td>'.$item['repeat'].' days'."</td></tr>\n";
 
-/*echo '<tr><th>Created:</th><td>'.$item['dateCreated']."</td></tr>\n";
-if ($item['lastModified']) echo '<tr><th>Last modified:</th><td>'.substr($item['lastModified'],0,10)."</td></tr>\n";
-if ($item['dateCompleted']) echo '<tr><th>Completed On:</th><td>'.$item['dateCompleted']."</td></tr>\n";
-*/
+if ($showCompleted) {
+  echo '<tr><th>Created:</th><td>'.$item['dateCreated']."</td></tr>\n";
+  if ($item['lastModified']) echo '<tr><th>Last modified:</th><td>'.substr($item['lastModified'],0,10)."</td></tr>\n";
+  if ($item['dateCompleted']) echo '<tr><th>Completed On:</th><td>'.$item['dateCompleted']."</td></tr>\n";
+}
+
 echo "</tbody></table>\n";
 
 

@@ -64,7 +64,7 @@ gtdsample.inc.sql
 
 addons\
 
-lang\calendar-en.js
+js\calendar-en.js
 
 themes\default\style.css
 themes\default\style_screen.css

@@ -64,7 +64,7 @@ if (!isset($_SESSION['useLiveEnhancements']))
 <script type="text/javascript" src="calendar.js"></script>
 
 <!-- language for the calendar -->
-<script type="text/javascript" src="lang/calendar-en.js"></script>
+<script type="text/javascript" src="js/calendar-en.js"></script>
 
 <!-- the following script defines the Calendar.setup helper function, which makes
 	  adding a calendar a matter of 1 or 2 lines of code. -->

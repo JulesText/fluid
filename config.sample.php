@@ -28,7 +28,54 @@ $config = array(
         "dbtype"                    => 'mysql',  //database type: currently only mysql is valid.  DO NOT CHANGE!
 );
 
+/*********  openAI API ************/
 
+$config['openAI'] = 'xxx';
+
+# ai_summary.php params
+$config['ais_endpoint'] = "https://api.openai.com/v1/completions";
+$config['ais_input_length'] = 3000; # limit to 3000 tokens
+$config['ais_model'] = "gpt-3.5-turbo-instruct";
+$config['ais_temp'] = 0.8; # temperature: creativity = 1, none =  0 (deterministic)
+$config['ais_words'] = 5;
+
+# ai_response.php params
+$config['air_endpoint'] = "https://api.openai.com/v1/chat/completions";
+$config['air_freq_pen'] = 0; # frequency penalty
+$config['air_pres_pen'] = 0; # presence penalty
+#'gpt-3.5-turbo-16k' # unclear what 16k does (still 4k tokens)
+#'gpt-3.5-turbo' # 4k tokens
+#'gpt-4'
+$config['air_model_3'] = 'gpt-3.5-turbo';
+$config['air_model_4'] = 'gpt-4';
+$config['air_max_tkn'] = 1.0; # temperature: creativity = 1, none =  0 (deterministic)
+$config['air_max_tkn'] = 1000; # default if word limit not set
+$config['stream'] = FALSE; # not operational
+
+/*********  IP filter (revert to password) ************/
+
+$ip = include 'config.ip.txt';
+$iprange = array(
+/*    '23.129.106', // mobile
+    '23.144.107' */
+		'127.0.0.1'
+    );
+$LOGIN_INFORMATION = array(
+  'mickey' => 'mouse'
+);
+
+$config['pass_off_minutes'] = 2;
+
+$config['time_now'] = getdate();
+$config['time_now'] = $config['time_now'][0];
+$file = fopen("config_pass_off_to.txt", "r");
+$config['pass_off_to'] = intval(fgets($file));
+fclose($file);
+
+if ($config['pass_off_to'] > 0 && $config['time_now'] < $config['pass_off_to']) $config['password_on'] = FALSE;
+else $config['password_on'] = TRUE;
+
+$config['pass_back_on'] = date('Y-m-d H:i', $config['pass_off_to']);
 
 /******************************************/
 /**********   OPTIONAL SETTINGS    ********/
@@ -37,7 +84,7 @@ $config = array(
 
 /*********  Interface Settings ************/
 
-// The following settings change settings for the user interface.  
+// The following settings change settings for the user interface.
 // These can be left at their default values, or changed if you have a different preference.
 
 $config["title"]= 'GTD-PHP'; // site name (appears at the top of each page)
@@ -100,7 +147,7 @@ $acckey = array(
 
 /*********  Behavior Settings ************/
 
-// The following settings change how the interface behaves.  
+// The following settings change how the interface behaves.
 // These can be left at their default values, or changed if you have a different preference.
 
 $config["contextsummary"] = 'all';  //all | nextaction (Show all actions on context report, or nextactions only?)
@@ -118,13 +165,13 @@ $config["afterCreate"]	= array (  // parent | item | list | another - default vi
 	    );
 
 // uses initials as above; so o=role, m=value, etc., each in single quotes, separated by commas
-$config['suppressAsOrphans']="'i','m','v','o','g','p'"; 
+$config['suppressAsOrphans']="'i','m','v','o','g','p'";
 
 /*********  Customize Weekly Review  ************/
 $config['reviewProjectsWithoutOutcomes']=true; // false | true - list projects which have no outcome
 $config['show7']=false; // false | true - show the Seven Habits of Highly Effective People and Sharpening the Saw in Weekly Review
 
-// Entirely optional: add custom items to the weekly review.  
+// Entirely optional: add custom items to the weekly review.
 // Uncomment to use, add more fields to the array for more lines.
 
 /*
@@ -173,7 +220,7 @@ $config['withholdVersionInfo']=false; // true | false - if false, will send the 
 $config['addons']=array();
 /*
     addons go below this line.  For example:
-    
+
 $config['addons']['achievements']=array(
         "link"=>"addons/achievements/achievements.php",
         'title'=>"Notable Achievements", 'label' => "Achievements",

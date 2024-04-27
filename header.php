@@ -43,7 +43,7 @@
     }
 */
     if (!headers_sent()) {
-        $header="Content-Type: text/html; charset=".$config['charset'];
+        $header="Content-Type: text/html; charset=" . $config['charset'];
         header($header);
     }
 

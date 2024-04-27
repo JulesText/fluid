@@ -357,7 +357,7 @@ echo "</div>\n";
 //JJK DRAW calendar details
 		echo "<table class='datatable' style='position:absolute; left:0px; top:140px;'>\n";
 
-				echo "	<tr style='text-align:top;'>\n<td align='center'>\n";
+				echo "	<tr>\n<td align='center'>\n";
 
 // calc the Lunar day (approximate)
 

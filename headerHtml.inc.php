@@ -2,7 +2,8 @@
 		  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html;charset=<?php echo $config['charset'];?>" />
+<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $config['charset'];?>;" />
+<meta name="referrer" content="same-origin" />
 <?php
 $thisurl=parse_url($_SERVER['PHP_SELF']);
 
@@ -145,7 +146,7 @@ i.e. styles/github.min.css
 they will all have .min. there
 https://github.com/highlightjs/highlight.js/tree/main/src/styles
 -->
-<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <style>
 
 /* <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css"> */

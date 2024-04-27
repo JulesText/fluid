@@ -118,22 +118,6 @@ body {
   background: var(--left-msg-bg);
 }
 
-.msg-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.msg-info-name {
-  margin-right: 10px;
-  font-weight: bold;
-}
-
-/* .msg-info-time {
-  font-size: 0.85em;
-} */
-
 .left-msg .msg-bubble {
   border-bottom-left-radius: 0;
 }
@@ -232,13 +216,18 @@ body {
      cursor: auto;
 }
 
-#delete-button, #quit-button, #chat-button, #summary-button, #history-button, #model-button {
+#delete-button, #quit-button, #newchat-button, #summary-button, #history-button, #model-button, #word-button {
   background: none!important;
   border: none;
   padding: 0!important;
   color: #262626;
   text-decoration: underline;
   cursor: pointer;
+}
+
+.model_id, .word_count {
+  padding-right: 5px;
+  text-align: left;
 }
 
 #popup-menu {

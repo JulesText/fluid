@@ -45,8 +45,8 @@ th.col-desiredOutcome {
 
 th.contList {
 	border: 1px dotted #999;
-    cursor: pointer;
-    *cursor: hand;
+  cursor: pointer;
+    /* *cursor: hand; */
 }
 
 td.col-title {
@@ -82,9 +82,9 @@ input.closeButton {
 }
 
 /* This JK indent */
-div {
-/* padding-left: 40px; */
-}
+/* div {
+padding-left: 40px;
+} */
 
 blockquote{
 	padding: 0;
@@ -187,7 +187,6 @@ input[type="submit"], input[type="reset"] {
 .submitbuttons a[href] {
     display:inline-block;
     margin:0 5px 0 0;
-     arecolor:#f5f5f5;
     border:1px solid #ccb;
     text-decoration:none;
     color:#665;
@@ -294,11 +293,11 @@ table input[type="checkbox"].score{
 }
 .formrow textarea, .formrow #name {
 	width: 40em;
-	font: verdana;
+	font-family: verdana;
 	font-size: 18px;
 }
 .formrow #title, #conclusion, #outcome, #hyperlink, #metaphor {
-	font: verdana;
+	font-family: verdana;
 	font-size: 18px;
 	width: 40em;
 }
@@ -650,7 +649,7 @@ div#freezer {
 	z-Index:900;
 	background-color:#000;
 	opacity:0.20;
-	filter:alpha(opacity=20);
+	filter:opacity(20%);
 	-Moz-Opacity:0.20;
 }
 .trans {

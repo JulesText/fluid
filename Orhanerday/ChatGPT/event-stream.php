@@ -6,8 +6,8 @@
 require_once('../../headerDB.inc.php');
 $db = new PDO('mysql:host=' . $config["host"] . ';dbname=' . $config["db"], $config["user"], $config["pass"]);
 
-require_once('OpenAi.php');
-require_once('Url.php');
+require_once('../../Orhanerday/OpenAi/OpenAi.php');
+require_once('../../Orhanerday/OpenAi/Url.php');
 
 use ChatGPT\OpenAi;
 
@@ -18,6 +18,7 @@ const SYS = "system";
 const ASSISTANT = "assistant";
 
 $open_ai_key = getenv('OPENAI_API_KEY');
+file_put_contents('test.txt', PHP_EOL . '4', FILE_APPEND);die;
 $open_ai = new OpenAi($open_ai_key);
 
 $chat_id = $_GET['chat_id'];

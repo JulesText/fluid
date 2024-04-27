@@ -109,7 +109,7 @@ require_once("headerHtml.inc.php");
 //JJK DRAW calendar details
 		echo "<table class='datatable' >\n";
 
-				echo "	<tr style='text-align:top;'>\n<td align='center'>\n";
+				echo "	<tr>\n<td align='center'>\n";
 
 //calendar PHP code follows
 			// echo "<div style='width:110px'><div style='padding:2px;background-color:#ffffff;border: 0px solid #000000'><div style='padding:0px;padding-bottom:0px;padding-top:0px;border: 0px solid #AFB2D8' align='center'><script language='JavaScript' type='text/javascript'>var ccm_cfg = { pth:'http://www.moonmodule.com/cs/', fn:'ccm_v1.swf', lg:'en', hs:2, tc:'ffffff', bg:'ffffff', mc:'', fw:79, fh:116.4, js:0, msp:0 }</script><script language='JavaScript' type='text/javascript' src='http://www.moonmodule.com/cs/ccm_fl.js'></script><div style='padding-top:0px' align='center'><a href='http://www.calculatorcat.com/moon_phases/moon_phases.phtml' target='cc_moon_ph' style='font-size:0px;font-family:arial,verdana,sans-serif;color:#888888;text-decoration:underline;border:none;'><span style='color:#888888'></span></a></div></div></div></div>";

@@ -7,7 +7,7 @@ require_once("headerHtml.inc.php");
 $api_file = 'ai.php';
 
 include('ai_require.php');
-$other_chats = get_other_chats($chat_id, $db);
+$other_chats = get_other_chats($_GET['chat_id'], $db);
 $db = NULL; // Close the database connection
 
 ?>
@@ -37,16 +37,17 @@ $db = NULL; // Close the database connection
           <span class="model_id"></span>
           <button id="word-button">Words</button>
           <span class="word_count" style="opacity:0"></span>
+          <button id="copy-button">Copy</button>
         </div>
     </header>
 
     <div id="popup-menu">
-      <a href="">X</a>
+      <form action='listItems.php?type=*&everything=true&liveparents=*' method='post' style='text-align:right'><a href="">X</a>&nbsp;&nbsp;&nbsp;Search<input type='text' name='needle' id='needle' style='width: 150px'></form>
       <?php
       foreach ($other_chats as $row) {
         $descrip = $row["chat_summary"];
         if ($descrip == NULL) $descrip = $row["chat_id"];
-        echo '<br>
+        echo '
         <a class="history-link" onClick="summariseChat(
           \'' . $row["chat_id"] . '\',\'hist\'
           )">Summarise</a>&nbsp;
@@ -54,7 +55,7 @@ $db = NULL; // Close the database connection
         <a class="history-link" href="' . $api_file . '?chat_id=' . $row["chat_id"] . '"
           id="' . $row["chat_id"] . '">
           ' . $descrip . '
-        </a>&nbsp;&nbsp;
+        </a>&nbsp;&nbsp;<br>
         ';
       }
       ?>

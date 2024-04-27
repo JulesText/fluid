@@ -512,6 +512,8 @@ function getsql($config,$values,$sort,$querylabel) {
         , `standard`
         , `conditions`
         , `hyperlink`
+        , `sortBy`
+        , '0' AS `priority`
   			FROM `{$config['prefix']}checklist`
         WHERE `title` LIKE '%{$values['listsearch']}%'
         OR `premiseA` LIKE '%{$values['listsearch']}%'
@@ -536,6 +538,8 @@ function getsql($config,$values,$sort,$querylabel) {
         , '' AS `standard`
         , '' AS `conditions`
         , `hyperlink`
+        , '99' AS `sortBy`
+        , `priority`
         FROM `{$config['prefix']}checklistitems`
         WHERE `item` LIKE '%{$values['listsearch']}%'
         OR `notes` LIKE '%{$values['listsearch']}%'
@@ -554,6 +558,8 @@ function getsql($config,$values,$sort,$querylabel) {
         , `standard`
         , `conditions`
         , `hyperlink`
+        , `sortBy`
+        , '0' AS `priority`
   			FROM `{$config['prefix']}list`
         WHERE `title` LIKE '%{$values['listsearch']}%'
         OR `premiseA` LIKE '%{$values['listsearch']}%'
@@ -578,12 +584,14 @@ function getsql($config,$values,$sort,$querylabel) {
         , '' AS `standard`
         , '' AS `conditions`
         , `hyperlink`
+        , '99' AS `sortBy`
+        , `priority`
         FROM `{$config['prefix']}listitems`
         WHERE `item` LIKE '%{$values['listsearch']}%'
         OR `notes` LIKE '%{$values['listsearch']}%'
         OR `hyperlink` LIKE '%{$values['listsearch']}%'
 
-        ORDER BY {$sort['getchecklists']}";
+        ORDER BY {$sort['searchlists']}";
              // echo '<pre>'. $sql;die;
 		break;
 

@@ -1,5 +1,6 @@
 <?php
 //INCLUDES
+set_time_limit(30);
 require_once('listItems.inc.php');
 include_once('headerHtml.inc.php');
 include_once('header.php');
@@ -91,7 +92,9 @@ Normal actions can be put into a tickler file, to be suppressed until a specifie
     </table>
 <?php } ?>
 <h2><?php echo $sectiontitle; ?></h2>
-<?php if (count($maintable)) { ?>
+<?php if (count($maintable)) {
+  // echo '<pre>'; var_dump($maintable);die;
+  ?>
     <form action="processItems.php" method="post">
     <table class="datatable sortable" summary="Table of actions" id="actiontable">
         <?php require('displayItems.inc.php'); ?>

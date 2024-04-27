@@ -189,6 +189,21 @@ wordButton.addEventListener('click', event => {
     nWords.style.opacity = 100;
 });
 
+// ---- copy FA link ---- //
+
+// Event listener for the copy button
+const copyButton = document.querySelector('#copy-button');
+copyButton.addEventListener('click', function() {
+    const linkURL = api_file + "?chat_id=" + CHAT_ID;
+        const textArea = document.createElement('textarea');
+        textArea.value = linkURL;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        copyButton.style.color = '#66dd66';
+});
+
 // ---- send message to AI api ---- //
 
 // this one checks all textareas on page

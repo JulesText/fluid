@@ -9,9 +9,57 @@ $db = new PDO('mysql:host=' . $config["host"] . ';dbname=' . $config["db"], $con
 
 // ---- these are db functions ---- //
 
+function search_chats($needle, $db) {
+
+  $stmt = $db->prepare('SELECT chat_id, chat_summary, comment_date, comment_human, comment_ai FROM chat_history WHERE comment_human LIKE "%' . $needle . '%" OR comment_ai LIKE "%' . $needle . '%" ORDER BY comment_id DESC');
+  $stmt->execute();
+  $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  foreach ($result as &$row) {
+    $row["itemId"] = $row["chat_id"];
+    $row["class"] = "";
+    $row["NA"] = "0";
+    $row["dateCreated"] = date('Y-m-d', strtotime($row["comment_date"]));
+    $row["lastModified"] = date('Y-m-d', strtotime($row["comment_date"]));
+    $row["dateCompleted"] = date('Y-m-d', strtotime($row["comment_date"]));
+    $row["isSomeday"] = "n";
+    $row["type"] = "ai";
+    $row["ptitle"] = "ai chat";
+    $row["parentId"] = "";
+    $row["ptype"] = "";
+    $row["flags"] = "";
+    $row["doreport"] = "";
+    $row["title.class"] = "maincolumn";
+    $row["title"] = strtoupper(str_replace(array("\r\n", "\r", "\n", "."), '', $row["chat_summary"]));
+    $row["checkbox.title"] = "";
+    $row["checkboxname"] = "";
+    $row["checkboxvalue"] = "";
+    $row["description"] = "human:\n\n" . $row['comment_human'] . "\n\nai:\n\n". $row['comment_ai'];
+    $row["behaviour"] = "";
+    $row["category"] = "Multi";
+    $row["categoryId"] = "6";
+    $row["context"] = "COMPUTER";
+    $row["contextId"] = "6";
+    $row["timeframe"] = "Medium";
+    $row["timeframeId"] = "2";
+    $row["deadline"] = "";
+    $row["repeat"] = " ";
+    $row["suppressUntil"] = " ";
+    unset($row['chat_id']);
+    unset($row['chat_summary']);
+    unset($row['comment_date']);
+    unset($row['comment_human']);
+    unset($row['comment_ai']);
+  }
+  unset($row);
+// echo '<pre>';var_dump($result);die;
+  return $result;
+
+}
+
 function get_other_chats($chat_id, $db) {
 
-  $stmt = $db->prepare('SELECT DISTINCT chat_id, chat_summary FROM chat_history WHERE chat_id != "' . $_GET['chat_id'] . '" ORDER BY comment_id DESC');
+  $stmt = $db->prepare('SELECT DISTINCT chat_id, chat_summary FROM chat_history WHERE chat_id != "' . $chat_id . '" ORDER BY comment_id DESC');
   $stmt->execute();
   return $stmt->fetchAll(PDO::FETCH_ASSOC);
 

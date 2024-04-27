@@ -17,6 +17,8 @@ $menu2=array();
 //$menu[] = array("link"=>"reportLists.php?listId=168&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Chores EEE");
 //$menu[] = array("link"=>"reportLists.php?listId=170&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Process FFF");
 $menu[] = array("link"=>"pertinence.html", 'title'=>"HHome Tabs", 'label' => "HHome Tabs");
+$menu[] = array("link"=>"listItems.php?type=*&everything=true&liveparents=*", 'form' => TRUE, 'label' => "Search ");
+
 /*
 $menu[] = array("link"=>"reportContext!Personal.php", 'title'=>"Process actions sorted by space context", 'label' => "Context report for non-personal categories");
 $menu[] = array("link"=>"reportContextPersonal.php", 'title'=>"Process actions sorted by space context", 'label' => "Context report for personal category");
@@ -189,9 +191,14 @@ if (!empty($config['addons'])) foreach ($config['addons'] as $addonid=>$thisaddo
 <?php
 $menProc = '';
 foreach ((array) $menu as $l) {
+
+  if (isset($l['form'])) {
+    $menProc .= "<tr>\n<td><form action='{$l['link']}' method='post'>{$l['label']}<input type='text' name='needle' id='needle' style='width: 150px'></form></td>\n</tr>\n";
+  } else {
     $menProc .= "<tr>\n
         <td><a href='{$l['link']}'>"
         . $l['label'] . "</a></td>\n</tr>\n";
+  }
 }
 
 // get active visions

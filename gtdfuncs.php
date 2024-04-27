@@ -480,7 +480,8 @@ $types=array("m" => "Value",
             "cl" => "Checklist",
             "cli" => "Checklist Item",
             "l" => "List",
-            "li" => "List Item"
+            "li" => "List Item",
+            "ai" => "Ai Chat"
         );
 if ($type===false)
     $out=$types;

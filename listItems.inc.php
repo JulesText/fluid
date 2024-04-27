@@ -310,12 +310,22 @@ if ($quickfind)
 else
     $result = query("getitemsandparent",$config,$values,$sort);
 
-# lists
+# order 2 search ai chats
+if ($filter['needle'] !== '' && $filter['everything']=="true") {
+  include('ai_require.php');
+  $results_ai = search_chats($filter['needle'], $db);
+  if ($results_ai !== 0) {
+    if ($result !== 0) $result = array_merge($results_ai, $result);
+    else $result = $results_ai;
+  }
+}
+
+# order 1 search lists
 if ($filter['needle'] !== '' && $filter['everything']=="true") {
   $values['listsearch'] = $filter['needle'];
   $resultlists = query('searchlists', $config, $values, $sort);
   if ($resultlists !== 0) {
-    if ($result !== 0) $result = array_merge($result, $resultlists);
+    if ($result !== 0) $result = array_merge($resultlists, $result);
     else $result = $resultlists;
   }
   #echo '<pre>';var_dump($resultlists[0]);die;
@@ -374,7 +384,7 @@ if ($result) {
           $maintable[$thisrow]['doreport'] = 'parent';
         else if (in_array($row['type'], ['a', 'i', 's', 'r', 'w']))
           $maintable[$thisrow]['doreport'] = 'item';
-        else $maintable[$thisrow]['doreport'] = $row['type']; # ['cl', 'cli', 'l', 'li']
+        else $maintable[$thisrow]['doreport'] = $row['type']; # ['cl', 'cli', 'l', 'li', 'ai']
 
         $cleantitle=makeclean($row['title']);
         $cleantitle=$row['title'];
@@ -395,7 +405,7 @@ echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
                 }
         }
 
-        if (!in_array($row['type'], ['cl', 'cli', 'l', 'li'])) {
+        if (!in_array($row['type'], ['cl', 'cli', 'l', 'li', 'ai'])) {
           if($row['isSomeday'] == 'y') {
               $maintable[$thisrow]['title'] .= "</a><br><br><br><div style='float: right; text-align: right; width: 50%; opacity: 0.5;'> <a href='processItems.php?action=changeType&amp;itemId=" . $row['itemId'] . "&amp;safe=1&amp;type=" . $row['type'] . "&amp;isSomeday=n&amp;referrer=itemReport.php?itemId=" . $row['itemId'] . "' target='_blank'>Enact</a></div><a>";
           } else {

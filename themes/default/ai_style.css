@@ -216,7 +216,7 @@ body {
      cursor: auto;
 }
 
-#delete-button, #quit-button, #newchat-button, #summary-button, #history-button, #model-button, #word-button {
+#delete-button, #quit-button, #newchat-button, #summary-button, #history-button, #model-button, #word-button, #copy-button {
   background: none!important;
   border: none;
   padding: 0!important;

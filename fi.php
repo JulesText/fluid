@@ -1,18 +1,18 @@
 <?php
 
 include_once('header.php');
-$item['title'] = 'ai chat';
+$item['title'] = 'fi chat';
 require_once("headerHtml.inc.php");
 
-$api_file = 'ai.php';
+$api_file = 'fi.php';
 
-include('ai_require.php');
+include('fi_require.php');
 $other_chats = get_other_chats($_GET['chat_id'], $db);
 $db = NULL; // Close the database connection
 
 ?>
 
-<link rel="stylesheet" href="themes/default/ai_style.css">
+<link rel="stylesheet" href="themes/default/fi_style.css">
 
 <div class="conta <?php
   if (isMobile()) echo "contamob";
@@ -65,12 +65,13 @@ $db = NULL; // Close the database connection
     </main>
 
     <form class="msger-inputarea">
-        <textarea rows="2" class="msger-input" placeholder="Enter your message..." require></textarea>
+        <textarea rows="2" class="msger-input" id="msger-input" placeholder="Enter your message..." require></textarea>
         <button type="submit" class="msger-send-btn">Send</button>
     </form>
 </section>
 <script>
+focusOnForm('msger-input');
 const api_file = '<?php echo $api_file; ?>';
 </script>
-<script src="ai_script.js"></script>
+<script src="fi_script.js"></script>
 </div>

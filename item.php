@@ -485,7 +485,8 @@ if ($_SESSION['useLiveEnhancements'] && !empty($values['ptype'])) {
         /* ]]> */
     <?php //JK cursor focus
         if ($values['itemId'] > 0) {
-            echo "focusOnForm('description');";
+            // echo "focusOnForm('description');";
+            echo "focusOnForm('nextAction');";
         } else {
             echo "focusOnForm('title');";
         }

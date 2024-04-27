@@ -32,24 +32,24 @@ $config = array(
 
 $config['openAI'] = 'xxx';
 
-# ai_summary.php params
-$config['ais_endpoint'] = "https://api.openai.com/v1/completions";
-$config['ais_input_length'] = 3000; # limit to 3000 tokens
-$config['ais_model'] = "gpt-3.5-turbo-instruct";
-$config['ais_temp'] = 0.8; # temperature: creativity = 1, none =  0 (deterministic)
-$config['ais_words'] = 5;
+# fi_summary.php params
+$config['fis_endpoint'] = "https://api.openai.com/v1/completions";
+$config['fis_input_length'] = 3000; # limit to 3000 tokens
+$config['fis_model'] = "gpt-3.5-turbo-instruct";
+$config['fis_temp'] = 0.8; # temperature: creativity = 1, none =  0 (deterministic)
+$config['fis_words'] = 5;
 
-# ai_response.php params
-$config['air_endpoint'] = "https://api.openai.com/v1/chat/completions";
-$config['air_freq_pen'] = 0; # frequency penalty
-$config['air_pres_pen'] = 0; # presence penalty
+# fi_response.php params
+$config['fir_endpoint'] = "https://api.openai.com/v1/chat/completions";
+$config['fir_freq_pen'] = 0; # frequency penalty
+$config['fir_pres_pen'] = 0; # presence penalty
 #'gpt-3.5-turbo-16k' # unclear what 16k does (still 4k tokens)
 #'gpt-3.5-turbo' # 4k tokens
 #'gpt-4'
-$config['air_model_3'] = 'gpt-3.5-turbo';
-$config['air_model_4'] = 'gpt-4';
-$config['air_max_tkn'] = 1.0; # temperature: creativity = 1, none =  0 (deterministic)
-$config['air_max_tkn'] = 1000; # default if word limit not set
+$config['fir_model_3'] = 'gpt-3.5-turbo';
+$config['fir_model_4'] = 'gpt-4';
+$config['fir_max_tkn'] = 1.0; # temperature: creativity = 1, none =  0 (deterministic)
+$config['fir_max_tkn'] = 1000; # default if word limit not set
 $config['stream'] = FALSE; # not operational
 
 /*********  IP filter (revert to password) ************/

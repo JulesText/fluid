@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JXA Script Execution</title>
+</head>
+<body>
+    <h1>Execute JXA Script</h1>
+    <button id="executeButton">Execute JXA Script</button>
+    <script>
+        document.getElementById("executeButton").addEventListener("click", function() {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/fluid/dt/test.js');
+            xhr.send();
+            xhr.onload = function() {
+                console.log("JXA Script Execution Result:", xhr.responseText);
+            }
+        });
+    </script>
+</body>
+</html>

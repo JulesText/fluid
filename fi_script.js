@@ -38,7 +38,7 @@ function getChat() {
     var formData = new FormData();
     formData.append('chat_id', CHAT_ID);
     formData.append('query', 'get_chat');
-    fetch('ai_require.php', {method: 'POST', body: formData})
+    fetch('fi_require.php', {method: 'POST', body: formData})
         .then(response => response.json())
         .then(chatHistory => {
             for (const row of chatHistory) {
@@ -91,7 +91,7 @@ summaryButton.addEventListener('click', event => {
 function summariseChat(chat_id, call_from) {
   var formData = new FormData();
   formData.append('chat_id', chat_id);
-  return fetch('ai_summary.php', {method: 'POST', body: formData})
+  return fetch('fi_summary.php', {method: 'POST', body: formData})
     .then(response => response.text())
     .then(text => {
       if (call_from == "page") return text;
@@ -150,7 +150,7 @@ function deleteChatHistory(chat_id, call_from) {
     var formData = new FormData();
     formData.append('chat_id', chat_id);
     formData.append('query', 'delete_chat');
-    fetch('ai_require.php', {method: 'POST', body: formData})
+    fetch('fi_require.php', {method: 'POST', body: formData})
         .then(response => {
             if (!response.ok) {
                 throw new Error('Error deleting chat history: ' + response.statusText);
@@ -245,7 +245,7 @@ function sendMsg(msg) {
     formData.append('word_count', word_count);
     formData.append('msg', msg);
     // fetch response
-    fetch('ai_response.php', {method: 'POST', body: formData})
+    fetch('fi_response.php', {method: 'POST', body: formData})
         .then(response => response.text())
         .then(text => {
           div.innerHTML = text.replace(/(?:\r\n|\r|\n)/g, '<br>');

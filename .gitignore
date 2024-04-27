@@ -13,6 +13,8 @@ backup_db.php
 backup_scenario.php
 password_protect.php
 test.txt
+dt/node_modules
+dt/*.json
 
 # installation-specific information
 media/

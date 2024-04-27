@@ -1,6 +1,6 @@
 <?php
 
-include('ai_require.php');
+include('fi_require.php');
 
 $chat_id = $_POST['chat_id'];
 
@@ -13,14 +13,14 @@ foreach ($result as $row) {
 }
 
 // Set up the API endpoint URL and parameters
-$curly_tops['apiEndpoint'] = $config['ais_endpoint'];
-$curly_tops['chat'] = limitTokens($chat, $config['ais_input_length']);
+$curly_tops['apiEndpoint'] = $config['fis_endpoint'];
+$curly_tops['chat'] = limitTokens($chat, $config['fis_input_length']);
 
 $opts = array(
-    "model" => $config['ais_model'],
-    "temperature" => $config['ais_temp']
+    "model" => $config['fis_model'],
+    "temperature" => $config['fis_temp']
 );
-$words = $config['ais_words'];
+$words = $config['fis_words'];
 $opts["prompt"] = "Please summarize the following text in " . $words . " words:\n\n" . $curly_tops['chat'] . "\n\n" . $words . "-word summary:";
 $opts['max_tokens'] = $words * 2; # limits actual size of token response
 $curly_tops['method'] = 'POST';

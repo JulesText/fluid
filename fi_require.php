@@ -13,9 +13,9 @@ function search_chats($needle, $db) {
 
   $stmt = $db->prepare('SELECT chat_id, chat_summary, comment_date, comment_human, comment_ai FROM chat_history WHERE comment_human LIKE "%' . $needle . '%" OR comment_ai LIKE "%' . $needle . '%" ORDER BY comment_id DESC');
   $stmt->execute();
-  $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  $haystack = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-  foreach ($result as &$row) {
+  foreach ($haystack as &$row) {
     $row["itemId"] = $row["chat_id"];
     $row["class"] = "";
     $row["NA"] = "0";
@@ -23,18 +23,20 @@ function search_chats($needle, $db) {
     $row["lastModified"] = date('Y-m-d', strtotime($row["comment_date"]));
     $row["dateCompleted"] = date('Y-m-d', strtotime($row["comment_date"]));
     $row["isSomeday"] = "n";
-    $row["type"] = "ai";
-    $row["ptitle"] = "ai chat";
+    $row["type"] = "fi";
+    $row["ptitle"] = "fi chat";
     $row["parentId"] = "";
     $row["ptype"] = "";
     $row["flags"] = "";
     $row["doreport"] = "";
     $row["title.class"] = "maincolumn";
+    if ($row["chat_summary"] == '') $row["chat_summary"] = 'no summary';
     $row["title"] = strtoupper(str_replace(array("\r\n", "\r", "\n", "."), '', $row["chat_summary"]));
+    if (strlen($row["title"]) > 15) $row["title"] = substr($row["title"], 0, 15) . " ...";
     $row["checkbox.title"] = "";
     $row["checkboxname"] = "";
     $row["checkboxvalue"] = "";
-    $row["description"] = "human:\n\n" . $row['comment_human'] . "\n\nai:\n\n". $row['comment_ai'];
+    $row["description"] = substr("human:\n" . $row['comment_human'] . "\n\nai:\n". $row['comment_ai'], 0, 250) . " ...";
     $row["behaviour"] = "";
     $row["category"] = "Multi";
     $row["categoryId"] = "6";
@@ -52,7 +54,18 @@ function search_chats($needle, $db) {
     unset($row['comment_ai']);
   }
   unset($row);
-// echo '<pre>';var_dump($result);die;
+
+  // only return a chat_id once
+  $uniqueChatIds = [];
+  $result = [];
+  foreach ($haystack as $row) {
+    if (!in_array($row['itemId'], $uniqueChatIds)) {
+      $uniqueChatIds[] = $row['itemId'];
+      $result[] = $row;
+    }
+  }
+
+// var_dump($result);die;
   return $result;
 
 }
@@ -99,7 +112,7 @@ function insert_comment($chat_id, $msg, $db) {
 
 }
 
-function update_comment_ai($comment_id, $msg, $db) {
+function update_comment_fi($comment_id, $msg, $db) {
 
   // Prepare the UPDATE statement
   $stmt = $db->prepare('UPDATE chat_history SET comment_ai = :comment_ai WHERE comment_id = :comment_id');

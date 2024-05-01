@@ -1,10 +1,5 @@
 let CHAT_ID;
 
-var areaScroll = document.getElementById("area-scroll");
-function scrollDown(element) {
-  element.scroll({ top: element.scrollHeight, behavior: 'smooth' });
-}
-
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('chat_id') === null) {
   window.location.href = api_file + '?chat_id=' + uuidv4();
@@ -18,6 +13,8 @@ const chatSummary = get(".chat_summary");
 chatSummary.textContent = CHAT_ID;
 
 getChat()
+
+var areaScroll = document.getElementById("area-scroll");
 
 model_id = "3";
 const idModel = get(".model_id");
@@ -310,4 +307,8 @@ function uuidv4() {
     return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
         (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
     );
+}
+
+function scrollDown(element) {
+  element.scroll({ top: element.scrollHeight, behavior: 'smooth' });
 }

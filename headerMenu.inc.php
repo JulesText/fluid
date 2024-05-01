@@ -29,7 +29,7 @@ $menu[] = array("link"=>"listLists.php?type=C", 'title'=>"Show reusable checklis
 $menu[] = array("link"=>'','label'=>'');
 #$menu[] = array("link"=>"itemReport.php?itemId=18792", 'title'=>"~ BETTY", 'label' => "~ BETTY");
 $menu[] = array("link"=>"ToD.php", 'title'=>"Process the time of day", 'label' => "ToDB");
-$menu[] = array("link"=>"ai.php", 'title'=>"AI chat", 'label' => "AI chat");
+$menu[] = array("link"=>"fi.php", 'title'=>"FI Chat", 'label' => "FI Chat");
 $menu[] = array("link"=>"Lunar.php", 'title'=>"Phase", 'label' => "Phase");
 /*
 $menu[] = array("link"=>"item.php?type=a&amp;nextonly=true", 'title'=>"Create a new next action", 'label' => "Next Action");

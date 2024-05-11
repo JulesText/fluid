@@ -12,6 +12,7 @@ config_pass_off_to.txt
 backup_db.php
 backup_scenario.php
 password_protect.php
+password_ip_clear.php
 test.txt
 dt/node_modules
 dt/*.json

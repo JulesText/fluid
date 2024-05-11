@@ -64,6 +64,7 @@ if (!$expand) {
   } else {
     $menu2[] = array("link"=>'', 'label' => "Password back on: " . $config['pass_back_on']);
   }
+  $menu2[] = array("link"=>'password_ip_clear.php', 'title'=>"", 'label' => "Clear authorised IPs"); 
 }
 
 if ($expand) {

@@ -1,7 +1,7 @@
 <html>
-<body onload="particles()">
+<body onload="particle()">
 <script>
-function particles() {
+function particle() {
 
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
@@ -21,9 +21,10 @@ function particles() {
         'reportLists.php?listId=172&type=c',
         'reportLists.php?listId=119&type=c&instanceId=11',
         'reportLists.php?listId=119&type=C',
-        'reportLists.php?listId=176&type=c', // third window etc.
-        'reportLists.php?listId=137&type=c', // second window
-        'matrix.php?&vLimit=6030&calc=true&live=true' // first/current window
+        'reportLists.php?listId=176&type=c',
+        'reportLists.php?listId=137&type=c',
+        'matrix.php?vLimit=21236&calc=true', // second window etc.
+        'matrix.php?vLimit=6030&calc=true' // first/current window
     ];
 
     var arrayLength = windows.length;

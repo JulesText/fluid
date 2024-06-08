@@ -128,10 +128,24 @@ if (isset($_GET['notContext'])) {
 } else {
     $notContext = 0;
 }
+
+if (isset($_GET['isContext'])) {
+    $isContext = $_GET['isContext'];
+} else {
+  $isContext = FALSE;
+}
+$inContext = "(";
+foreach ($contextResults as $c) {
+    if ($c["contextId"] !== $notContext
+      && (!$isContext || $c["contextId"] == $isContext)) 
+        $inContext .= $c["contextId"] . ",";
+}
+$inContext .= "0)";
 $values['type'] = "a";
 $values['isSomeday'] = "n";
+// var_dump($activeVis);die;
 $values['childfilterquery']  = " WHERE ".sqlparts("typefilter",$config,$values)
-                            ." AND ia.contextId <> ". $notContext
+                            ." AND ia.contextId in ". $inContext
                             ." AND lu.`parentId` in ". $activeVis
                             ." AND ".sqlparts("activeitems",$config,$values)
                             ." AND ".sqlparts("issomeday",$config,$values)

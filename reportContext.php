@@ -68,10 +68,12 @@ To edit a context select the context name.</p>
 <?php
 foreach ($contextNames as $cid => $cname) {
     if (!$runningtotals["c$cid"]) continue;
+    $ran = rand(1, $runningtotals["c$cid"]);
     echo "<a id='c$cid'></a>\n";
     echo "<h1>" /*<a href='editCat.php?field=context&amp;id=$cid' "
         ,"title='Edit the $cname context'>" */
-        ,"<u>Context:&nbsp;$cname</u></h1>\n";
+        ,"<u>Context:&nbsp;$cname</u> (r = " . $ran . ")</h1>\n";
+
    foreach ($timeframeNames as $tid => $tname) {
         if (isset($matrixout[$cid][$tid])) {
             echo "<a id='c{$cid}t{$tid}'></a>\n"
@@ -81,7 +83,9 @@ foreach ($contextNames as $cid => $cname) {
             <form action="processItems.php" method="post">
                 <table class="datatable sortable" summary="table of actions"
                     id='actiontable<?php echo "C{$cid}T{$tid}"; ?>'>
-                    <?php echo $matrixout[$cid][$tid]; ?>
+                    <?php
+                    echo $matrixout[$cid][$tid]; 
+                    ?>
                 </table>
                 <div>
                 	<input type="hidden" name="referrer" value="<?php echo basename($thisurl['path']),"#c{$cid}t{$tid}"; ?>" />

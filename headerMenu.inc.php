@@ -64,18 +64,18 @@ if (!$expand) {
   } else {
     $menu2[] = array("link"=>'', 'label' => "Password back on: " . $config['pass_back_on']);
   }
-  $menu2[] = array("link"=>'password_ip_clear.php', 'title'=>"", 'label' => "Clear authorised IPs"); 
+  $menu2[] = array("link"=>'password_ip_clear.php', 'title'=>"", 'label' => "Clear authorised IPs");
 }
 
 if ($expand) {
 
 $menu2[] = array("link"=>"listItems.php?type=i", 'title'=>"Inbox", 'label' => "Inbox");
-$menu2[] = array("link"=>"listItems.php?type=a&contextId=10&nextonly=true&liveparents=true&", 'title'=>"Process actions sorted by space context", 'label' => "Agenda Context");
-$menu2[] = array("link"=>"listItems.php?type=a&contextId=6&nextonly=true&liveparents=true&", 'title'=>"Process actions sorted by space context", 'label' => "Computer Context");
-$menu2[] = array("link"=>"listItems.php?type=a&contextId=13&nextonly=true&liveparents=true&", 'title'=>"Process actions sorted by space context", 'label' => "Errand Context");
-$menu2[] = array("link"=>"listItems.php?type=a&contextId=11&nextonly=true&liveparents=true&", 'title'=>"Process actions sorted by space context", 'label' => "Home Context");
-$menu2[] = array("link"=>"listItems.php?type=a&contextId=8&nextonly=true&liveparents=true&", 'title'=>"Process actions sorted by space context", 'label' => "Call/Msg Context");
-$menu2[] = array("link"=>"listItems.php?type=a&contextId=34&nextonly=true&liveparents=true&", 'title'=>"Process actions sorted by space context", 'label' => "Mobile Context");
+
+$contextResults = query("getspacecontexts",$config,$values,$sort);
+foreach ($contextResults as $c) {
+    $menu2[] = array("link"=>"reportContext.php?isContext=" . $c["contextId"], 'title'=>"", 'label' => ucwords(strtolower($c["name"])) . " Context");
+}
+
 $menu2[] = array("link"=>"listItems.php?type=*&tickler=true&liveparents=true&", 'title'=>"Tickler File", 'label' => "Tickler");
 $menu2[] = array("link"=>'','label'=>'separator');
 $menu2[] = array("link"=>'','label'=>'separator');
@@ -109,6 +109,7 @@ $menu2[] = array("link"=>"itemReport.php?itemId=2118", 'title'=>"Export/Import D
 $menu2[] = array("link"=>'','label'=>'separator');
 $menu2[] = array("link"=>"editCat.php?field=instance", 'title'=>"Edit Meta-categories", 'label' => "Instances");
 $menu2[] = array("link"=>"editCat.php?field=category", 'title'=>"Edit Meta-categories", 'label' => "Categories");
+$menu2[] = array("link"=>"listCatCodes.php", 'title'=>"Category codes", 'label' => "Category codes");
 $menu2[] = array("link"=>"editCat.php?field=context", 'title'=>"Edit spatial contexts", 'label' => "Space Contexts");
 $menu2[] = array("link"=>"editCat.php?field=time-context", 'title'=>"Edit time contexts", 'label' => "Time Contexts");
 $menu2[] = array("link"=>'','label'=>'separator');

@@ -517,7 +517,7 @@ elseif($filter['everything']=="true") {
             break;
     }
 } else
-    $sectiontitle = $numrows.' '.$sectiontitle. ($numrows > 1 ? ' (r='.rand(1,$numrows).')' : '');
+    $sectiontitle = $numrows.' '.$sectiontitle. ($numrows > 1 ? ' (r = '.rand(1,$numrows).')' : '');
 
 if($numrows || $quickfind)
     $endmsg='';

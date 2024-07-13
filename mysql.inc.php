@@ -185,6 +185,30 @@ function getsql($config,$values,$sort,$querylabel) {
 				. $instQuery;
 			break;
 
+    case "checklistprioritiesup":
+      $sql="UPDATE `". $config['prefix'] ."checklistitems`
+        SET `priority` = `priority` + 1
+        WHERE `checklistId` = '{$values['listId']}'";
+      break;
+
+    case "checklistprioritiesdown":
+      $sql="UPDATE `". $config['prefix'] ."checklistitems`
+        SET `priority` = `priority` - 1
+        WHERE `checklistId` = '{$values['listId']}'";
+      break;
+
+    case "listprioritiesup":
+      $sql="UPDATE `". $config['prefix'] ."listitems`
+        SET `priority` = `priority` + 1
+        WHERE `listId` = '{$values['listId']}'";
+      break;
+
+    case "listprioritiesdown":
+      $sql="UPDATE `". $config['prefix'] ."listitems`
+        SET `priority` = `priority` - 1
+        WHERE `listId` = '{$values['listId']}'";
+      break;
+
 		case "assesschecklist":
 		    $instTable = '';
 		    $instQuery = '';
@@ -597,7 +621,7 @@ function getsql($config,$values,$sort,$querylabel) {
 
 		case "getchecklists":
 			$sql="SELECT l.`checklistId` as listId, l.`title`,
-						l.`premiseA`,l.`premiseB`,l.`conclusion`,l.`behaviour`, l.`standard`, l.`conditions`, l.`metaphor`, l.`categoryId`, l.`hyperlink`, l.`sortBy`, l.`scored`, l.`effort`, c.`category`,
+						l.`premiseA`,l.`premiseB`,l.`conclusion`,l.`behaviour`, l.`standard`, l.`conditions`, l.`metaphor`, l.`categoryId`, l.`hyperlink`, l.`sortBy`, l.`scored`, l.`effort`, l.`menu`, c.`category`,
 						cc.`parentId` as ccparentId, cc.`title` as cctitle, ccc.`title` as ccctitle
 				FROM `". $config['prefix'] ."checklist` as l
 				LEFT OUTER JOIN `{$config['prefix']}categories` as c USING (`categoryId`)

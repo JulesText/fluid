@@ -16,7 +16,8 @@ $createURL="editLists.php?$urlSuffix"
             .(($values['categoryId']) ? "&amp;categoryId={$values['categoryId']}" : '');
 require_once("headerHtml.inc.php");
 ?>
-<h2><a href="<?php echo $createURL; ?>" title="Add new list" ><?php echo $check; ?>lists</a>
+
+<h2><a href="<?php echo $createURL; ?>" title="Add new list"><?php echo $check; ?>lists</a>
 <?php
     if ($display) {
         ?>
@@ -168,9 +169,9 @@ require_once("headerHtml.inc.php");
                     }
                     if ($listLive) echo 'live';
                     else echo 'sday';
+                    echo '<br><br>menu: ' . ($row['menu'] == 'y' ? 'y' : 'n');
                     echo '<br><br>effort: ' . $row['effort'] . ' hr';
                     echo '<br><br>scored: ' . $row['scored'];
-
 
                 ?>
                 </td>
@@ -185,5 +186,5 @@ else {
     nothingFound($message,$prompt,$createURL);
 }
 
-include_once('footer.php');
+// include_once('footer.php');
 ?>

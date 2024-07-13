@@ -20,6 +20,10 @@ else if (isset($_REQUEST['allclear'])) {
     }
 else if (isset($_REQUEST['reset']))
     $action='reset';
+else if (isset($_REQUEST['up_priorities']))
+    $action='up_priorities';
+else if (isset($_REQUEST['down_priorities']))
+    $action='down_priorities';
 else if (isset($_REQUEST['clearitemlists']))
     $action='clearitemlists';
 
@@ -115,6 +119,16 @@ switch ($action) {
     case 'reset':
         query("clearchecklistscore",$config,$values);
             $_SESSION['message'][]='All scores reset';
+        break;
+    //-----------------------------------------------------------------------------------
+    case 'up_priorities':
+        query("{$check}listprioritiesup",$config,$values);
+            $_SESSION['message'][]='All priorities up 1';
+        break;
+    //-----------------------------------------------------------------------------------
+    case 'down_priorities':
+        query("{$check}listprioritiesdown",$config,$values);
+            $_SESSION['message'][]='All priorities down 1';
         break;
     //-----------------------------------------------------------------------------------
     case 'ignoreclear':

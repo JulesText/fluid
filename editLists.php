@@ -106,6 +106,8 @@ echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst .
 		<?php if ($values['listId']) { ?>
 		  <input type="checkbox" name="delete" id='delete' class='notfirst' title="ALL items will be deleted!" value="y" />
 		  <label for='delete'>Delete&nbsp;List</label>
+      <input type="submit" value="Up Priorities" name="up_priorities" />
+      <input type="submit" value="Down Priorities" name="down_priorities" />
 		<?php }
     if ($check) { ?>
 		<br>

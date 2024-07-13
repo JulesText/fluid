@@ -340,6 +340,15 @@ if (!empty($childtype)) {
             # exception if contains hyperlink avoid ajax update
             if (strstr($row['description'], '<a href='))
               $maintable[$i][$descriptionField] = $row['description'] . '<div>';
+            # exception if goal/role/project
+            else if (in_array($row['type'], ['v','o','g','p'])) {
+              $maintable[$i][$descriptionField] = $row['description'];
+              if ($row['premiseA']) $maintable[$i][$descriptionField] .= $row['premiseA'] . '<br><br>';
+              if ($row['premiseB']) $maintable[$i][$descriptionField] .= $row['premiseB'] . '<br><br>';
+              if ($row['conclusion']) $maintable[$i][$descriptionField] .= $row['conclusion'] . '<br><br>';
+              $maintable[$i][$descriptionField] .= '<div>';
+              // var_dump($row);die;
+            }
             # otherwise do it
             else
               $maintable[$i][$descriptionField] = "<div contenteditable='true'" . ajaxUpd('itemDescription', $row['itemId']) . ">" . $row['description'];

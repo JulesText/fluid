@@ -124,7 +124,7 @@ $(document).ready(function() {
 </script>
 
 <?php # if is checklist and in ToDB ids
-if (isset($check) && $check == 'check' && in_array($row['listId'], array(53,36,37,38,39,40,41,42,43))) { ?>
+if (isset($check) && $check == 'check' && in_array($values['listId'], array(53,36,37,38,39,40,41,42,43))) { ?>
 		<script>
 		window.setTimeout(function() { window.location.href = "ToD.php"; }, 1800000); // refresh each 30 minutes
 		</script>
@@ -220,11 +220,13 @@ if ($config['debug'] || defined('_DEBUG'))
 error_reporting( error_reporting() & ~E_NOTICE );
 
 // try to prevent caching page
-header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-header("Cache-Control: no-store, no-cache, must-revalidate"); // HTTP/1.1
-header("Cache-Control: post-check=0, pre-check=0", false);
-header("Pragma: no-cache"); // HTTP/1.0
-header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
+if ($serv != '127.0.0.1') {
+	header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+	header("Cache-Control: no-store, no-cache, must-revalidate"); // HTTP/1.1
+	header("Cache-Control: post-check=0, pre-check=0", false);
+	header("Pragma: no-cache"); // HTTP/1.0
+	header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
+}
 echo "<meta http-equiv='pragma' content='no-cache' /><meta http-equiv='Expires' content='Mon, 26 Jul 1997 05:00:00 GMT' /><meta http-equiv='Cache-Control' content='no-store, no-cache, must-revalidate' /><meta http-equiv='Cache-Control' content='post-check=0, pre-check=0' />";
 
 echo "

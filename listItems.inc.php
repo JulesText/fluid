@@ -441,9 +441,9 @@ echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
         $maintable[$thisrow]['timeframeId'] = $row['timeframeId'];
 
 
-        $childType=array();
-        $childType=getChildType($row['type']);
-        if (count($childType)) $maintable[$thisrow]['childtype'] =$childType[0];
+        $childType = array();
+        $childType = getChildType($row['type']);
+        if (isset($childType) && count($childType)) $maintable[$thisrow]['childtype'] = $childType[0];
 
         if($row['deadline']) {
             $deadline=prettyDueDate($row['deadline'],$config['datemask'],$row['suppress'],$row['suppressIsDeadline']);

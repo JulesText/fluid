@@ -1,9 +1,9 @@
 <?php
 //INCLUDES
 set_time_limit(30);
+include_once('header.php');
 require_once('listItems.inc.php');
 include_once('headerHtml.inc.php');
-include_once('header.php');
 ?>
 <div id="filter">
     <form action="listItems.php" method="post">

@@ -5,13 +5,13 @@
 </thead>
 <?php if (!empty($tfoot)) echo $tfoot; ?>
 <tbody>
-<?
-// echo '<pre>';var_dump($maintable);die;
+<?php
+
 foreach ($maintable as $row) {
     if (!isset($row['ptype'])) $row['ptype'] = '';
-    echo '<tr'
-        ,(!empty($row['row.class']))?" class='{$row['row.class']}' ":''
-        ,">\n";
+    echo "<tr";
+    if (!empty($row['row.class']) && $row['row.class'] != '') echo " class='{$row['row.class']}' ";
+    echo ">\n";
     foreach ($dispArray as $key=>$val) if ($show[$key]) {
         echo "<td class='col-$key"
             ,(isset($row["$key.class"]))?" ".$row["$key.class"]:''

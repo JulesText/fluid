@@ -352,6 +352,7 @@ function prettyDueDate($dateToShow,$thismask,$tickle='n',$tickleIsDeadline='n') 
 function faLink($link, $mx = false) {
     $retval='';
     if ($mx) { $mxa = " class=\"mx\""; $mxb = " target=\"_blank\" class=\"mx\""; }
+    else { $mxb = ""; $mxa = ""; }
     if($link != '') {
         if (preg_match('/devonthink/', $link)) {
             if (preg_match('/search/', $link)) {

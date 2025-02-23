@@ -25,6 +25,7 @@ foreach ((array) $pres as $p) {
     $values['itemId'] = $p['itemId'];
     $lu = query("lookupparentshort",$config,$values,$sort);
     foreach ((array) $lu as $mat) {
+      if ($mat == 0) continue;
         foreach ($vres as $v) { // has active vision as parent?
             if ($mat['parentId'] == $v['itemId']) {
                 $active = true;
@@ -34,6 +35,7 @@ foreach ((array) $pres as $p) {
         $values['itemId'] = $mat['parentId'];
         $lup = query("lookupparentshort",$config,$values,$sort);
         foreach ((array) $lup as $matp) { // has project as parent that has active vision parent?
+          if ($matp == 0) continue;
             foreach ($vres as $v) {
                 if ($matp['parentId'] == $v['itemId']) {
                     $active = true;
@@ -137,7 +139,7 @@ if (isset($_GET['isContext'])) {
 $inContext = "(";
 foreach ($contextResults as $c) {
     if ($c["contextId"] !== $notContext
-      && (!$isContext || $c["contextId"] == $isContext)) 
+      && (!$isContext || $c["contextId"] == $isContext))
         $inContext .= $c["contextId"] . ",";
 }
 $inContext .= "0)";

@@ -63,6 +63,9 @@ $iprange = array(
 $LOGIN_INFORMATION = array(
   'mickey' => 'mouse'
 );
+$LOGIN_INFORMATION_L2 = array(
+  'duck'
+);
 
 $config['pass_off_minutes'] = 2;
 

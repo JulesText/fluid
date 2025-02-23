@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Feb 24, 2024 at 07:37 PM
--- Server version: 10.6.16-MariaDB-cll-lve
--- PHP Version: 8.1.27
+-- Generation Time: Aug 04, 2024 at 05:52 PM
+-- Server version: 10.6.18-MariaDB-cll-lve
+-- PHP Version: 8.1.29
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -50,7 +50,7 @@ CREATE TABLE `chat_history` (
   `chat_id` text NOT NULL,
   `chat_summary` text DEFAULT NULL,
   `comment_human` text DEFAULT NULL,
-  `comment_ai` text DEFAULT 'no response',
+  `comment_ai` text DEFAULT 'error',
   `comment_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 

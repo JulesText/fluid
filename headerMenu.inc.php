@@ -29,6 +29,9 @@ $menu[] = array("link"=>"listLists.php?type=C", 'title'=>"Show reusable checklis
 $menu[] = array("link"=>'','label'=>'');
 #$menu[] = array("link"=>"itemReport.php?itemId=18792", 'title'=>"~ BETTY", 'label' => "~ BETTY");
 $menu[] = array("link"=>"ToD.php", 'title'=>"Process the time of day", 'label' => "ToDB");
+$menu[] = array("link"=>"matrix.php?&live=true&qLimit=b", 'title'=>"Matrix", 'label' => "Matrix");
+//warning: poorly formed GET variables for matrix can generate errors in matrixformula.php and matrix.php
+$menu[] = array("link"=>"media/flow.gif", 'title'=>"Process item", 'label' => "Flow.gif");
 $menu[] = array("link"=>"fi.php", 'title'=>"FI Chat", 'label' => "FI Chat");
 $menu[] = array("link"=>"Lunar.php", 'title'=>"Phase", 'label' => "Phase");
 /*
@@ -51,8 +54,6 @@ $menu2[] = array("link"=>"listItems.php?tickler=false&type=a&contextId=25&notspa
 $menu2[] = array("link"=>"index.php", 'title'=>"Summary View", 'label' => "Summary View");
 $menu2[] = array("link"=>"reportContext.php?notContext=25", 'title'=>"Process actions sorted by space context", 'label' => "All Contexts");
 $menu2[] = array("link"=>"listLists.php?type=l", 'title'=>"Show Lists", 'label' => "Show Lists");
-//warning: poorly formed GET variables for matrix can generate errors in matrixformula.php and matrix.php
-$menu2[] = array("link"=>"matrix.php?&live=true&qLimit=b", 'title'=>"Matrix", 'label' => "Matrix");
 $menu2[] = array("link"=>"reportLists.php?listId=1&type=C", 'title'=>"Weekly Review", 'label' => "WW Weekly Review");
 $menu2[] = array("link"=>"listItems.php?quickfind", 'title'=>'Find an item based on text in its title, description or outcome', 'label'=>'Keyword Search');
 
@@ -64,7 +65,8 @@ if (!$expand) {
   } else {
     $menu2[] = array("link"=>'', 'label' => "Password back on: " . $config['pass_back_on']);
   }
-  $menu2[] = array("link"=>'password_ip_clear.php', 'title'=>"", 'label' => "Clear authorised IPs");
+  $menu2[] = array("link"=>'index.php?clear_logins=TRUE', 'title'=>"", 'label' => "Clear IPs & logout");
+
 }
 
 if ($expand) {

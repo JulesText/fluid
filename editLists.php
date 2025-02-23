@@ -57,7 +57,7 @@ echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst .
 			</select>
 			<span class='label'>
 			Prioritise: <input class="JKPadding" type='text' id='prioritise' name='prioritise' size='3' value='<?php echo makeclean($values['prioritise']); ?>' />
-			Sort: <input class="JKPadding" type='text' id='sortBy' name='sortBy' size='4' value='<?php echo makeclean($values['sortBy']); ?>' />
+			CatCode: <input class="JKPadding" type='text' id='sortBy' name='sortBy' size='4' value='<?php echo makeclean($values['sortBy']); ?>' />
 			<?php
 			    if (isset($check) && $check == 'check') { ?>
         			Frequency / Year:<input class="JKPadding" type='text' id='frequency' name='frequency' size='4' value='<?php echo makeclean($values['frequency']); ?>' />

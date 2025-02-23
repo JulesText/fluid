@@ -52,7 +52,12 @@ $( document ).ready(function() {
 });
 </script>
 
-<h1><?php echo $row['title']; ?>&nbsp;&nbsp;&nbsp;
+<h1><?php
+
+  if (!empty($row['metaphor'])) echo "<a href=\"media/" . $row['metaphor'] . "\" target=\"_new\"><img src=\"media/",$row['metaphor'],"\" height=\"50px\"></a>";
+  echo $row['title'];
+
+  ?>&nbsp;&nbsp;&nbsp;
 
 <?php
   if (isset($_GET['content']) && $_GET['content'] == 'bulk') {
@@ -88,7 +93,7 @@ $( document ).ready(function() {
     echo 'Prioritised: ' . priorityselectbox($config,$values,$sort) . ', ';
 
     if (!empty($row['category'])) echo 'Category: ',$row['category'],", ";
-	?>Sort: <?php echo makeclean($row['sortBy']);
+	?>CatCode: <?php echo makeclean($row['sortBy']);
 	if ($check) {
 	    $effort = $row['effort']
 	?>, Frequency: <?php echo makeclean($row['frequency']); ?> / Year, Effort: <?php echo $effort; ?> Hours

@@ -1246,6 +1246,7 @@ if (!$data) {
         <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=j&scen=true&calc=true'; ?>';">Val</td>
         <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=i&calc=true&data=true'; ?>';">Data</td>
         <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=e&career=true'; ?>';">Creer</td>
+        <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=k'; ?>';">Trav</td>
         <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=f'; ?>';">All</td>
         <td class='cont' onClick="window.location = '<?php echo $url . '&live=true'; ?>';">Live</td>
         <td class='cont' onClick="window.location = '<?php echo $url . '&calc=' . ($calc == 'true' ? 'false' : 'true'); ?>';">Calc</td>

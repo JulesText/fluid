@@ -310,13 +310,13 @@ if ($quickfind)
 else
     $result = query("getitemsandparent",$config,$values,$sort);
 
-# order 2 search ai chats
+# order 2 search fi chats
 if ($filter['needle'] !== '' && $filter['everything']=="true") {
-  include('ai_require.php');
-  $results_ai = search_chats($filter['needle'], $db);
-  if ($results_ai !== 0) {
-    if ($result !== 0) $result = array_merge($results_ai, $result);
-    else $result = $results_ai;
+  include('fi_require.php');
+  $results_fi = search_chats($filter['needle'], $db);
+  if ($results_fi !== 0) {
+    if ($result !== 0) $result = array_merge($results_fi, $result);
+    else $result = $results_fi;
   }
 }
 
@@ -351,18 +351,18 @@ if ($result) {
             if ($row['NA']) array_push($wasNAonEntry,$row['itemId']);
         } else $row['NA']=false;
 
-        $maintable[$thisrow]=array();
-        $maintable[$thisrow]['itemId']=$row['itemId'];
+        $maintable[$thisrow] = array();
+        $maintable[$thisrow]['itemId'] = $row['itemId'];
         $maintable[$thisrow]['class'] = ($nonext || $nochildren)?'noNextAction':'';
-        $maintable[$thisrow]['NA'] =$row['NA'];
+        $maintable[$thisrow]['NA'] = $row['NA'];
 
-        $maintable[$thisrow]['dateCreated'] = $row['dateCreated'];
-        $maintable[$thisrow]['lastModified']= $row['lastModified'];
-        $maintable[$thisrow]['dateCompleted']= $row['dateCompleted'];
-        $maintable[$thisrow]['isSomeday'] =$row['isSomeday'];
-        $maintable[$thisrow]['type'] =$row['type'];
+        $maintable[$thisrow]['dateCreated'] = (isset($row['dateCreated'])) ? $row['dateCreated'] : '';
+        $maintable[$thisrow]['lastModified'] = (isset($row['lastModified'])) ? $row['lastModified'] : '';
+        $maintable[$thisrow]['dateCompleted'] = (isset($row['dateCompleted'])) ? $row['dateCompleted'] : '';
+        $maintable[$thisrow]['isSomeday'] = (isset($row['isSomeday'])) ? $row['isSomeday'] : '';
+        $maintable[$thisrow]['type'] = $row['type'];
 
-        if ($row['parentId']=='') {
+        if (!isset($row['parentId']) || $row['parentId'] == '') {
             $maintable[$thisrow]['parent.class']='noparent';
             $maintable[$thisrow]['ptitle']='';
             $maintable[$thisrow]['ptype']='';
@@ -397,7 +397,7 @@ echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
             if (!empty($referrer)) echo "&amp;referrer=$referrer";
             echo "'>Convert to ",getTypes($totype),"</a>\n";
 */
-        if($row['metaphor']) {
+        if(isset($row['metaphor'])) {
             if (strpos($row['metaphor'], '.swf')) {
                 $maintable[$thisrow]['title'] .= "</a><br><embed src=\"media/" . $row['metaphor'] . "\" quality=high height=101></embed>";
                 } else {
@@ -405,7 +405,7 @@ echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
                 }
         }
 
-        if (!in_array($row['type'], ['cl', 'cli', 'l', 'li', 'ai'])) {
+        if (!in_array($row['type'], ['cl', 'cli', 'l', 'li', 'fi'])) {
           if($row['isSomeday'] == 'y') {
               $maintable[$thisrow]['title'] .= "</a><br><br><br><div style='float: right; text-align: right; width: 50%; opacity: 0.5;'> <a href='processItems.php?action=changeType&amp;itemId=" . $row['itemId'] . "&amp;safe=1&amp;type=" . $row['type'] . "&amp;isSomeday=n&amp;referrer=itemReport.php?itemId=" . $row['itemId'] . "' target='_blank'>Enact</a></div><a>";
           } else {
@@ -417,35 +417,35 @@ echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
         $maintable[$thisrow]['checkboxname']= 'isMarked[]';
         $maintable[$thisrow]['checkboxvalue']=$row['itemId'];
         $descriptionString = "<div contenteditable='true'" . ajaxUpd('itemDescription', $row['itemId']) . ">" . $row['description'] . "</div>";
-        if ($row['premiseA']) $descriptionString .= "<br><br>" . $row['premiseA'];
-        if ($row['premiseB']) $descriptionString .= "<br><br>" . $row['premiseB'];
-        if ($row['conclusion']) $descriptionString .= "<br><br>" . $row['conclusion'];
-        if ($row['hyperlink']) {
+        if (isset($row['premiseA'])) $descriptionString .= "<br><br>" . $row['premiseA'];
+        if (isset($row['premiseB'])) $descriptionString .= "<br><br>" . $row['premiseB'];
+        if (isset($row['conclusion'])) $descriptionString .= "<br><br>" . $row['conclusion'];
+        if (isset($row['hyperlink'])) {
             if (strlen($descriptionString) > 0) $descriptionString .= "<br>";
             $descriptionString .= faLink($row['hyperlink']);
         }
         $maintable[$thisrow]['description'] = $descriptionString;
 
         $desiredOutcomeStr = $row['behaviour'];
-        if ($row['standard']) $desiredOutcomeStr .= ", <br>" . $row['standard'];
-        if ($row['conditions']) $desiredOutcomeStr .=  ", <br>" . $row['conditions'];
+        if (isset($row['standard'])) $desiredOutcomeStr .= ", <br>" . $row['standard'];
+        if (isset($row['conditions'])) $desiredOutcomeStr .=  ", <br>" . $row['conditions'];
         $maintable[$thisrow]['behaviour'] = $desiredOutcomeStr;
 
-        $maintable[$thisrow]['category'] =makeclean($row['category']);
-        $maintable[$thisrow]['categoryId'] =$row['categoryId'];
+        $maintable[$thisrow]['category'] = (isset($row['category'])) ? makeclean($row['category']) : '';
+        $maintable[$thisrow]['categoryId'] = (isset($row['categoryId'])) ? $row['categoryId'] : '';
 
-        $maintable[$thisrow]['context'] = makeclean($row['cname']);
-        $maintable[$thisrow]['contextId'] = $row['contextId'];
+        $maintable[$thisrow]['context'] = (isset($row['cname'])) ? makeclean($row['cname']) : '';
+        $maintable[$thisrow]['contextId'] = (isset($row['contextId'])) ? $row['contextId'] : '';
 
-        $maintable[$thisrow]['timeframe'] = makeclean($row['timeframe']);
-        $maintable[$thisrow]['timeframeId'] = $row['timeframeId'];
+        $maintable[$thisrow]['timeframe'] = (isset($row['timeframe'])) ? makeclean($row['timeframe']) : '';
+        $maintable[$thisrow]['timeframeId'] = (isset($row['timeframeId'])) ? $row['timeframeId'] : '';
 
 
         $childType = array();
         $childType = getChildType($row['type']);
         if (isset($childType) && count($childType)) $maintable[$thisrow]['childtype'] = $childType[0];
 
-        if($row['deadline']) {
+        if(isset($row['deadline']) && $row['deadline']) {
             $deadline=prettyDueDate($row['deadline'],$config['datemask'],$row['suppress'],$row['suppressIsDeadline']);
             $maintable[$thisrow]['deadline'] =$deadline['date'];
             if (empty($row['dateCompleted'])) {
@@ -454,10 +454,10 @@ echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
             }
         } else $maintable[$thisrow]['deadline']='';
 
-        $maintable[$thisrow]['repeat'] =((($row['repeat'])=="0")?'&nbsp;':($row['repeat']));
+        $maintable[$thisrow]['repeat'] = (!isset($row['repeat']) || ($row['repeat']) == "0") ? '&nbsp;' : ($row['repeat']);
 
         //tickler date - calculate reminder date as # suppress days prior to deadline
-        if ($row['suppress']=="y") {
+        if (isset($row['suppress']) && $row['suppress']=="y") {
             $reminddate=getTickleDate($row['deadline'],$row['suppressUntil']);
             $maintable[$thisrow]['suppressUntil']=date($config['datemask'],$reminddate);
         } else

@@ -134,7 +134,7 @@ if (isset($check) && $check == 'check' && in_array($values['listId'], array(53,3
 <!-- renders -->
 <script src="js/showdown.min.js"></script>
 <script>
-// ai chat
+// fi chat
 function scrollToBottom() {
 const chatWindow = document.querySelector('.chat-window');
 chatWindow.scrollTop = chatWindow.scrollHeight;

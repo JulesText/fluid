@@ -249,7 +249,7 @@ function limitTokens($str, $limit) {
 // ---- these are posts called from js ---- //
 
 
-if ($_POST['query'] === 'get_chat') {
+if (isset($_POST['query']) && $_POST['query'] === 'get_chat') {
 
     // Get the chat ID from the request data
     $chat_id = $_POST['chat_id'];
@@ -281,7 +281,7 @@ if ($_POST['query'] === 'get_chat') {
     }
 }
 
-if ($_POST['query'] === 'delete_chat') {
+if (isset($_POST['query']) && $_POST['query'] === 'delete_chat') {
 
     if (!isset($_POST['chat_id'])) $chat_id = $_GET['chat_id'];
     else $chat_id = $_POST['chat_id'];

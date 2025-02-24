@@ -482,7 +482,8 @@ $types=array("m" => "Value",
             "cli" => "CL Item",
             "l" => "List",
             "li" => "List Item",
-            "ai" => "Ai Chat"
+            // "ai" => "Ai Chat",
+            "fi" => "FI Chat"
         );
 if ($type===false)
     $out=$types;

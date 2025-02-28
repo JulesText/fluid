@@ -41,6 +41,7 @@ $config['fis_words'] = 5;
 
 # fi_response.php params
 $config['fir_endpoint'] = "https://api.openai.com/v1/chat/completions";
+$config['fir_temp'] = 0; # 0 for api determined, 0.1 is deterministic, 0.9 is random
 $config['fir_freq_pen'] = 0; # frequency penalty
 $config['fir_pres_pen'] = 0; # presence penalty
 #'gpt-3.5-turbo-16k' # unclear what 16k does (still 4k tokens)

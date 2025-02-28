@@ -158,8 +158,7 @@ function curlReq($curly_tops) {
 
   if ($curly_tops['opts'] == []) unset($curl_info[CURLOPT_POSTFIELDS]);
 
-
-  if (array_key_exists('stream', $curly_tops['opts']) && $opts['stream']) {
+  if (array_key_exists('stream', $curly_tops['opts']) && $curly_tops['opts']['stream']) {
       $curl_info[CURLOPT_WRITEFUNCTION] = TRUE;
       // not sure this works
       $curly_tops['headers'][] = "Content-Type: text/event-stream";

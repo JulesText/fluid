@@ -397,7 +397,7 @@ echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
             if (!empty($referrer)) echo "&amp;referrer=$referrer";
             echo "'>Convert to ",getTypes($totype),"</a>\n";
 */
-        if(isset($row['metaphor'])) {
+        if(isset($row['metaphor']) && $row['metaphor'] != '') {
             if (strpos($row['metaphor'], '.swf')) {
                 $maintable[$thisrow]['title'] .= "</a><br><embed src=\"media/" . $row['metaphor'] . "\" quality=high height=101></embed>";
                 } else {
@@ -427,8 +427,8 @@ echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
         $maintable[$thisrow]['description'] = $descriptionString;
 
         $desiredOutcomeStr = $row['behaviour'];
-        if (isset($row['standard'])) $desiredOutcomeStr .= ", <br>" . $row['standard'];
-        if (isset($row['conditions'])) $desiredOutcomeStr .=  ", <br>" . $row['conditions'];
+        if (isset($row['standard']) && $row['standard'] != '') $desiredOutcomeStr .= ", <br>" . $row['standard'];
+        if (isset($row['conditions']) && $row['conditions'] != '') $desiredOutcomeStr .=  ", <br>" . $row['conditions'];
         $maintable[$thisrow]['behaviour'] = $desiredOutcomeStr;
 
         $maintable[$thisrow]['category'] = (isset($row['category'])) ? makeclean($row['category']) : '';

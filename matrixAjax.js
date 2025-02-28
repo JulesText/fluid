@@ -182,8 +182,8 @@ function sT(editableObj,table,updCol,pcol1,pid1,col2,id2,col3,id3,col4,id4,col5,
 						} else {
 							// throw warning only if ajax request has not failed previously
         			if (!ajaxFailed) {
-								// alert('Posting failed\r\n\t' + resVal + '\r\n\t' +updVal);
-								alert('Posting failed\r\n\nManually submit item then refresh page');
+								alert('Posting failed\r\n\t' + resVal + '\r\n\t' +updVal);
+								// alert('Posting failed\r\n\nManually submit item then refresh page');
 								ajaxFailed = true;
 							}
 						}

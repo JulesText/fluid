@@ -34,7 +34,7 @@ if ($ToD == 'K') header('Location:reportLists.php?listId=41&type=C');
 if ($ToD == 'X') header('Location:reportLists.php?listId=42&type=C');
 if ($ToD == 'T') header('Location:reportLists.php?listId=43&type=C');
 // if ($ToD == 'GB')
-// if ($ToD == 'Liv') 
+// if ($ToD == 'Liv')
 // if ($ToD == 'L')
 if ($ToD == 'LI') header('Location:reportLists.php?listId=53&type=C');
 

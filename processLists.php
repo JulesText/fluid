@@ -147,7 +147,7 @@ switch ($action) {
         $values['parentId'] = $_REQUEST['itemId'];
         $values['listId'] = $_REQUEST['listId'];
         query("delitemlist",$config,$values);
-        //file_put_contents ('a.txt',var_dump($values));
+        //file_put_contents ('_response.txt',var_dump($values));
         $_SESSION['message'][]="Severed";
         break;
     //-----------------------------------------------------------------------------------

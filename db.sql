@@ -296,7 +296,7 @@ CREATE TABLE `qualities` (
   `parId` int(11) DEFAULT NULL,
   `probId` int(11) DEFAULT NULL,
   `qType` enum('angle','quality','attribute','variable','itemMeta') NOT NULL,
-  `format` enum('score','probability','integer','text','meta','link','unqvalues','unqvaluessum','unqhoursresearch','unqhours','unqyears','unqyearsprob','unqyearstart','unqbrainless','unqhoursyear','unqhoursyearbrainless','unqtimeline','unqhourstravel','unqvaluessumhrs','someday','unqprobability','unqyearend','unqcata','unqcatb','unqcontext','unqcontextssum','unqcontextssumhrs','unqoptimise','unqoptimisepref','unqoptimisebala','unqcorrelpref','unqcorrelbala','unqtitle','unqtlineyrs','unqitemwidth','unqbaseyear','unqcareer','unqcareersum','unqcareersumhrs','unqcompare') NOT NULL,
+  `format` enum('score','probability','integer','text','meta','link','unqvalues','unqvaluessum','unqhoursresearch','unqhours','unqeffortday','unqtravelday','unqnumdays','unqsumseason','unqyears','unqyearsprob','unqyearstart','unqbrainless','unqhoursyear','unqhoursyearbrainless','unqtimeline','unqhourstravel','unqvaluessumhrs','someday','unqprobability','unqyearend','unqcata','unqcatb','unqcontext','unqcontextssum','unqcontextssumhrs','unqoptimise','unqoptimisepref','unqoptimisebala','unqcorrelpref','unqcorrelbala','unqtitle','unqtlineyrs','unqitemwidth','unqbaseyear','unqcareer','unqcareersum','unqcareersumhrs','unqcompare','unqcostbasday','unqcostaccday') NOT NULL,
   `style` varchar(16) DEFAULT NULL,
   `filter` enum('range','text','check','empty') DEFAULT NULL,
   `typeReq` char(8) DEFAULT NULL,

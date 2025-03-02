@@ -11,14 +11,14 @@ if (substr($updVal, -4) == '<br>') $updVal = substr_replace($updVal,'',-4);
 $updVal = str_replace(array('<br>', '<br />'), PHP_EOL, $updVal);
 
 // quick workaround for error when extra carriage return being included when only one blank line expected
-#file_put_contents ('a.txt', '---' . PHP_EOL . $updVal . PHP_EOL . '---' . PHP_EOL, FILE_APPEND);
+#file_put_contents ('_response.txt', '---' . PHP_EOL . $updVal . PHP_EOL . '---' . PHP_EOL, FILE_APPEND);
 $updVal = str_replace('
 
 
 ', '
 
 ', $updVal);
-#file_put_contents ('a.txt', '---' . PHP_EOL . $updVal . PHP_EOL . '---' . PHP_EOL, FILE_APPEND);
+#file_put_contents ('_response.txt', '---' . PHP_EOL . $updVal . PHP_EOL . '---' . PHP_EOL, FILE_APPEND);
 
 if ($_POST["table"] !== 'lookupqualities') {
     // if using visId for other purpose, do not save
@@ -28,7 +28,11 @@ if ($_POST["table"] !== 'lookupqualities') {
     if ($_POST["col5"] == 'visId') $_POST["id5"] = '';
 }
 
-if ($_POST["updVal"] == '' && in_array($_POST["table"],['itemstatus','itemattributes']) && in_array($_POST["updCol"],['dateCompleted','dateModified','dateCreated','deadline'])) $_POST["updVal"] = 'NULL';
+if (
+    $_POST["updVal"] == ''
+    && in_array($_POST["table"],['itemstatus','itemattributes'])
+    && in_array($_POST["updCol"],['dateCompleted','dateModified','dateCreated','deadline'])
+  ) $_POST["updVal"] = 'NULL';
 
 if ($_POST["table"] == 'nextactions') {
 
@@ -36,7 +40,7 @@ if ($_POST["table"] == 'nextactions') {
   if ($updVal == 'n') {
    $query = "DELETE FROM nextactions WHERE `nextaction` = '" . $_POST["pid1"] . "'";
    $db->query($query);
-   #file_put_contents ('a.txt', PHP_EOL . $query . PHP_EOL . '--', FILE_APPEND);
+   #file_put_contents ('_response.txt', PHP_EOL . $query . PHP_EOL . '--', FILE_APPEND);
   }
 
   // otherwise iterate
@@ -48,13 +52,13 @@ if ($_POST["table"] == 'nextactions') {
     $array = $result->fetchAll();
     // foreach ($array as $row)
     //   foreach ($row as $key => $val)
-    //     file_put_contents ('a.txt', PHP_EOL . $key . ' x ' . $val . PHP_EOL . '--', FILE_APPEND);
+    //     file_put_contents ('_response.txt', PHP_EOL . $key . ' x ' . $val . PHP_EOL . '--', FILE_APPEND);
 
     // update nextactions table
     foreach ($array as $row) {
       $query = "INSERT INTO nextactions (`parentId`,`nextaction`) VALUES ('" . $row['parentId'] . "','" . $_POST["pid1"] . "')";
       $result = $db->query($query);
-      // file_put_contents ('a.txt', PHP_EOL . $query . PHP_EOL . '--', FILE_APPEND);
+      // file_put_contents ('_response.txt', PHP_EOL . $query . PHP_EOL . '--', FILE_APPEND);
     }
   }
 
@@ -70,7 +74,7 @@ if ($_POST['updCol'] == 'title' && in_array($_POST['table'], array('list','check
 */
 $updVal = mysqli_real_escape_string($config["conn"], $updVal);
 
-// file_put_contents ('a.txt',$_POST['updCol'] . 'has' . $_POST['table'], FILE_APPEND);die;
+// file_put_contents ('_response.txt',$_POST['updCol'] . ' has ' . $_POST['table'], FILE_APPEND);die;
 
 // logic seems klunky but do not change without thorough testing
 
@@ -87,15 +91,15 @@ if ($_POST["id3"] !== 'undefined') $query .= " AND `" . $_POST["col3"] . "` = '"
 if ($_POST["id4"] !== 'undefined') $query .= " AND `" . $_POST["col4"] . "` = '" . $_POST["id4"] . "'";
 if ($_POST["id5"] !== 'undefined') $query .= " AND `" . $_POST["col5"] . "` = '" . $_POST["id5"] . "'";
 
-// file_put_contents ('a.txt',PHP_EOL . $query, FILE_APPEND);
+// file_put_contents ('_response.txt',PHP_EOL . $query, FILE_APPEND);
 
 $result = $db->query($query);
 
 if ($result->rowCount() > 0) {
-//    file_put_contents ('a.txt',PHP_EOL . 'has', FILE_APPEND);
+//    file_put_contents ('_response.txt',PHP_EOL . 'has', FILE_APPEND);
     $i = true;
 } else {
-//    file_put_contents ('a.txt',PHP_EOL . 'has not', FILE_APPEND);
+//    file_put_contents ('_response.txt',PHP_EOL . 'has not', FILE_APPEND);
     $i = false;
 }
 
@@ -115,8 +119,8 @@ if ($i) {
     if ($_POST["col4"] !== 'undefined') $query .= "`, `" . $_POST["col4"];
     if ($_POST["col5"] !== 'undefined') $query .= "`, `" . $_POST["col5"];
     $query .= "`)
-        VALUES ('" .
-        "','" . $updVal;
+        VALUES (NULL" .
+        ",'" . $updVal;
     if ($_POST["col2"]) $query .= "', '" . $_POST["id2"];
     if ($_POST["col3"]) $query .= "', '" . $_POST["id3"];
     if ($_POST["col4"]) $query .= "', '" . $_POST["id4"];
@@ -124,14 +128,16 @@ if ($i) {
     $query .= "')";
 }
 
-// file_put_contents ('a.txt',PHP_EOL . $query, FILE_APPEND);
+// file_put_contents ('_response.txt',PHP_EOL . $query, FILE_APPEND);
 
-// this $result is not used, only for debugging, but the query is needed
+// $result is not used, only for debugging, but the query is needed
 $result = $db->query($query);
 
-//file_put_contents ('a.txt',PHP_EOL . $i . ' x ' . $query, FILE_APPEND);
-//file_put_contents ('a.txt',PHP_EOL . $result, FILE_APPEND);
+// file_put_contents ('_response.txt',PHP_EOL . $i . ' x ' . $query, FILE_APPEND);
+// file_put_contents ('_response.txt',PHP_EOL . $result, FILE_APPEND);
 
-$db = NULL; // destroy connection
+// destroy connection
+
+$db = NULL;
 
 ?>

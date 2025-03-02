@@ -857,7 +857,7 @@ function getsql($config,$values,$sort,$querylabel) {
 
 		case "newinstance":
 			$sql="INSERT INTO `". $config['prefix'] ."instance`
-				VALUES ('', '{$values['name']}', '{$values['description']}')";
+        VALUES (NULL, '{$values['name']}', '{$values['description']}')";
 			break;
 
 		case "newcategory":
@@ -1191,7 +1191,7 @@ function getsql($config,$values,$sort,$querylabel) {
 
 		case "newchecklist":
 			$sql="INSERT INTO `". $config['prefix'] ."checklist`
-				VALUES (    '',
+        VALUES (    NULL,
 				            '{$values['title']}',
 						    '{$values['categoryId']}',
 						    '{$values['premiseA']}',

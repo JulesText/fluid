@@ -97,6 +97,10 @@ function sEf(editableObj,table,updCol,pcol1,pid1) {
 // saveTo from any html element type even if not in matrix.php, i.e. from fluid
 function sT(editableObj,table,updCol,pcol1,pid1,col2,id2,col3,id3,col4,id4,col5,id5,updVal) { // saveTo
 
+		//
+		// define vars
+		//
+
 		var eType = editableObj.tagName;
 		eType = eType.toLowerCase();
 		var bgcol = "#fff";
@@ -138,6 +142,36 @@ function sT(editableObj,table,updCol,pcol1,pid1,col2,id2,col3,id3,col4,id4,col5,
 		if (col4 == 'qId') col4 = 'qId';
 		if (col5 == 'iT') col5 = 'itemType';
 
+		//
+		// data validation
+		//
+
+		if (col4 == 'qId') id4 = parseInt(id4);
+
+		// the special days calc ids, to trigger recalculation of Effort / Year, Travel / Year, and Cost / Year
+		let calcDaysIds = [21, 22, 515, 516, 517, 518, 519, 520, 621, 623, 624, 625, 626, 627];
+		let calcDaysFlag = false;
+		if (col4 == 'qId' && calcDaysIds.includes(id4)) calcDaysFlag = true;
+
+		// the special month calc ids, to trigger recalculation of Sum / Season
+		let calcMonthFlag = false;
+		// months
+		let calcMonthNames = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+		let calcMonthIds = [583, 584];
+		if (col4 == 'qId' && calcMonthIds.includes(id4)) {
+			calcMonthFlag = true;
+			updVal = updVal.replace(/(<br\s*[\/]?>|\r\n\t|\n|\r\t)/gm,""); // remove line breaks and <br>
+			updVal = toTitleCase(updVal);
+			if (!calcMonthNames.includes(updVal)) return;
+		}
+		// probability scores
+		calcMonthIds = [587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598];
+		if (col4 == 'qId' && calcMonthIds.includes(id4)) calcMonthFlag = true;
+
+		//
+		// ajax query
+		//
+
 		var ajaxFailed = false; // flag variable to track if ajax request failed
 
 		$.ajax({
@@ -156,8 +190,8 @@ function sT(editableObj,table,updCol,pcol1,pid1,col2,id2,col3,id3,col4,id4,col5,
 							id2: id2,
 							col3: col3,
 							id3: id3,
-							id4: id4,
 							col4: col4,
+							id4: id4,
 							col5: col5,
 							id5: id5
 				}, function(resVal){
@@ -178,6 +212,10 @@ function sT(editableObj,table,updCol,pcol1,pid1,col2,id2,col3,id3,col4,id4,col5,
 								$(editableObj).css("background",bgcol);
 								$(editableObj).css("outline-color","#6a6");
 								if (col2 == 'visId') calcFormulae(id2);
+								// if one of the special days calc ids, recalculate
+								if (calcDaysFlag) calcDays(col2,id2,col3,id3,col5,id5);
+								// if one of the special month calc ids, recalculate
+								if (calcMonthFlag) calcMonths(col2,id2,col3,id3,col5,id5);
 						// otherwise throw warning
 						} else {
 							// throw warning only if ajax request has not failed previously
@@ -198,6 +236,38 @@ function sT(editableObj,table,updCol,pcol1,pid1,col2,id2,col3,id3,col4,id4,col5,
 	 });
 
 	 // known issue of multiple query requests sent to php when attribute edited more than once, very difficult to understand, don't bother fixing. Not harmful to database.
+}
+
+function calcDays(col2,id2,col3,id3,col5,id5) {
+
+	let table = "lookupqualities";
+	let pcol1 = "qaId";
+	let updCol = "value";
+	let col4 = "qId";
+	let id4 = "";
+
+	$.ajax({
+	url: "matrixsavedays.php",
+	type: "POST",
+	data:'table='+table+'&updCol='+updCol+'&pcol1='+pcol1+'&col2='+col2+'&id2='+id2+'&col3='+col3+'&id3='+id3+'&id4='+id4+'&col4='+col4+'&col5='+col5+'&id5='+id5
+	});
+
+}
+
+function calcMonths(col2,id2,col3,id3,col5,id5) {
+
+	let table = "lookupqualities";
+	let pcol1 = "qaId";
+	let updCol = "value";
+	let col4 = "qId";
+	let id4 = "";
+
+	$.ajax({
+	url: "matrixsavemonths.php",
+	type: "POST",
+	data:'table='+table+'&updCol='+updCol+'&pcol1='+pcol1+'&col2='+col2+'&id2='+id2+'&col3='+col3+'&id3='+id3+'&id4='+id4+'&col4='+col4+'&col5='+col5+'&id5='+id5
+	});
+
 }
 
 function cB(editableObj,table,updCol,pcol1,pid1,col2,id2,col3,id3,col4,id4,col5,id5) {
@@ -241,4 +311,10 @@ function editableCol(tableClass,nthChild,isEdit) {
 		// untested
 		if (nthChild.length < 1) return;
 		$('table.'+tableClass+' td:nth-child('+nthChild+')').attr("contenteditable", isEdit);
+}
+
+function toTitleCase(str) {
+    return str.toLowerCase().replace(/\b\w/g, function(char) {
+        return char.toUpperCase();
+    });
 }

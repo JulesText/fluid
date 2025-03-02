@@ -178,6 +178,7 @@ function curlReq($curly_tops) {
   $curls = [];
 
   if (curl_errno($curl)) {
+      $responseData = "Curl error encountered.";
       $curls['success'] = FALSE;
       $curls['data'] = "Curl error: " . curl_error($curl)
         . PHP_EOL . print_r($curly_tops, TRUE);

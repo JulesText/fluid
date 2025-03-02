@@ -463,7 +463,7 @@ foreach ((array) $attributes as $attr) {
             // updates the $output1 and $output2 variables, formulae defined in gtdfuncs.php
             if (!$someday && !$complete) {
 							eval(formula($attr['formulaVis1']));
-							/* file_put_contents ('a.txt',
+							/* file_put_contents ('_response.txt',
 									formula($attr['formulaVis1']) . "\n" .
 			            print_r($attr,true) . "\n" .
 									gettype($output1) . "\n" .
@@ -1447,41 +1447,41 @@ $debugSave = 'vsumvisn';
 // debug scripts
 switch ($debugSave) {
     case 'yrsval':
-        file_put_contents ('a.txt',
+        file_put_contents ('_response.txt',
             '$yrsval: ' . print_r($yrsval,true) . "\n"
             );
         break;
     case 'vsumvisn':
-        file_put_contents ('a.txt',
+        file_put_contents ('_response.txt',
             '$valuessummaryn: ' . print_r($valuessummaryn,true) . "\n" .
             '$valuessumvisn: ' . print_r($valuessumvisn,true) . "\n"
             );
         break;
     case 'certainties':
-        file_put_contents ('a.txt',
+        file_put_contents ('_response.txt',
             '$certaintiesitem: ' . print_r($certaintiesitem,true) . "\n" .
             '$certaintiesitemtemp: ' . print_r($certaintiesitemtemp,true) . "\n" .
             '$certainties: ' . print_r($certainties,true) . "\n"
             );
         break;
     case 'visions':
-        file_put_contents ('a.txt',
+        file_put_contents ('_response.txt',
             '$visions: ' . print_r($visions,true) . "\n"
             );
         break;
     case 'result':
-        file_put_contents ('a.txt',
+        file_put_contents ('_response.txt',
             '$result: ' . print_r($result,true) . "\n"
             );
         break;
     case 'valuessumhrs':
-        file_put_contents ('a.txt',
+        file_put_contents ('_response.txt',
             '$unqtimelineIds[0]: ' . $unqtimelineIds[0] . "\n" .
             '$valuessum: ' . print_r($valuessumvishours,true) . "\n"
             );
         break;
     case 'contextssum':
-        file_put_contents ('a.txt',
+        file_put_contents ('_response.txt',
             '$valParId: ' . $cntxtParId . "\n" .
             '$unqvaluessumId: ' . $unqcontextssumId . "\n" .
             '$scoreqIds: ' . print_r($scoreqIds,true) . "\n" .
@@ -1489,14 +1489,14 @@ switch ($debugSave) {
             );
         break;
     case 'valuessum':
-        file_put_contents ('a.txt',
+        file_put_contents ('_response.txt',
             '$valParId: ' . $valParId . "\n" .
             '$unqvaluessumId: ' . $unqvaluessumId . "\n" .
             '$valuessum: ' . print_r($valuessum,true) . "\n"
             );
         break;
     case 'optimise':
-        file_put_contents ('a.txt',
+        file_put_contents ('_response.txt',
             '$scoreqIds: ' . print_r($scoreqIds,true) . "\n" .
             '$scoreweights: ' . print_r($scoreweights,true) . "\n" .
             '$scoreopt: ' . print_r($scoreopt,true) . "\n" .
@@ -1504,7 +1504,7 @@ switch ($debugSave) {
             );
         break;
     case 'timeline':
-        file_put_contents ('a.txt',
+        file_put_contents ('_response.txt',
             '$yearqId: ' . $yearqId . "\n" .
             '$brainlessId: ' . $brainlessId . "\n" .
             '$hoursId: ' . $hoursId . "\n" .
@@ -1517,13 +1517,13 @@ switch ($debugSave) {
             );
         break;
     case 'tlinevis':
-        file_put_contents ('a.txt',
+        file_put_contents ('_response.txt',
             '$tlineviskey: ' . print_r($tlineviskey,true) . "\n" .
             '$tlinevis: ' . print_r($tlinevis,true)
             );
         break;
     case 'childitems':
-        file_put_contents ('a.txt',
+        file_put_contents ('_response.txt',
             'attr count: ' . count($attributes) .
             ', item count: ' . count($items) .
             ', $itemVar[id]: ' . $itemVar['id'] .
@@ -1534,7 +1534,7 @@ switch ($debugSave) {
             );
         break;
     case 'inactiveitems':
-        file_put_contents ('a.txt',
+        file_put_contents ('_response.txt',
             'attr[qId]: ' . $attr['qId'] .
             ', value: ' . $value .
             ', someday: ' . $someday .

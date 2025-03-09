@@ -1,3 +1,31 @@
+// ---- copy FA link ---- //
+
+// Event listener for the copy button
+document.addEventListener("DOMContentLoaded", function() {
+
+  const copyButton = document.querySelector('#copy-button');
+
+  copyButton.addEventListener('click', function() {
+
+    // Get the full path of the current URL
+    var fullPath = window.location.pathname + window.location.search;
+    // Get the file name from the full path
+    var linkURL = fullPath.split('/').pop();
+
+    // write/read url
+    const textArea = document.createElement('textarea');
+    textArea.value = linkURL;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+    copyButton.style.color = '#66dd66';
+
+  });
+});
+
+// ---- other func ----- //
+
 function validate(form) {
 
     // Ensure validate is being used correctly
@@ -10,20 +38,20 @@ function validate(form) {
         document.getElementById("errorMessage").innerHTML="Error: Validate function needs 'dateformat' form field.";
         return false;
     }
-    
+
     // Parse required list and check each required field
     var formValid=true;
     var formErrorMessage="Please correct the following:<br /><br />";
     var requiredList = form.required.value.split(",");
     var requiredItem;
-    
+
     // remove any previous error flags
     for(var i = 0;i<requiredList.length;i++){
         requiredItem = requiredList[i].split(":");
         form.elements[requiredItem[0]].className='';
         if (requiredItem[1]=='depends') form.elements[requiredItem[3]].className='';
     }
-    
+
     var thisfield;
     var checkType;
     var itemErrorMessage;
@@ -38,7 +66,7 @@ function validate(form) {
         checkType = requiredItem[1];
         itemErrorMessage = requiredItem[2];
         itemValue = thisfield.value;
-            
+
         switch (checkType) {
             case "date":
                 dateFormat = form.elements['dateformat'].value;
@@ -52,10 +80,10 @@ function validate(form) {
             	passed=checkForNull(thisfield) || !checkForNull(fieldRequires) || (fieldRequires.type==='hidden');
 ;
             	if (!passed) fieldRequires.className='formerror';
-				break; 
+				break;
             default:
                 document.getElementById("errorMessage").innerHTML="Error: Required type not valid.";
-                return false;                
+                return false;
         }
         if (!passed) {
             if (formValid) thisfield.focus();
@@ -64,7 +92,7 @@ function validate(form) {
             thisfield.className='formerror';
         }
     }
-        
+
     if(!formValid) {
         document.getElementById("errorMessage").innerHTML=formErrorMessage;
     }
@@ -135,7 +163,7 @@ function aps_keyUpHandler(e) {
 			aps_toggleVis(document.styleSheets[0].rules[0]);
 			aps_toggleVis(document.styleSheets[0].rules[1]);
 		}
-		
+
 	}
 	return false;
 }
@@ -177,13 +205,13 @@ function ts_makeSortable(table) {
         var firstRow = table.rows[0];
     }
     if (!firstRow) return;
-    
+
     // We have a first row: assume it's the header, and make its contents clickable links
     for (var i=0;i<firstRow.cells.length;i++) {
         var cell = firstRow.cells[i];
         var txt = ts_getInnerText(cell);
-        cell.innerHTML = '<a href="#" class="sortheader" '+ 
-        'onclick="ts_resortTable(this, '+i+');return false;">' + 
+        cell.innerHTML = '<a href="#" class="sortheader" '+
+        'onclick="ts_resortTable(this, '+i+');return false;">' +
         txt+'<span class="sortarrow"></span></a>';
     }
 }
@@ -193,7 +221,7 @@ function ts_getInnerText(el) {
 	if (typeof el == "undefined") { return el };
 	if (el.innerText) return el.innerText;	//Not needed but it is faster
 	var str = "";
-	
+
 	var cs = el.childNodes;
 	var l = cs.length;
 	for (var i = 0; i < l; i++) {
@@ -219,7 +247,7 @@ function ts_resortTable(lnk,clid) {
     var td = lnk.parentNode;
     var column = clid || td.cellIndex;
     var table = getParent(td,'TABLE');
-    
+
     // Work out a type for the column
     if (table.rows.length <= 1) return;
     var itm = ts_getInnerText(table.tBodies[0].rows[0].cells[column]);
@@ -246,13 +274,13 @@ function ts_resortTable(lnk,clid) {
         ARROW = '&nbsp;&nbsp;&darr;';
         span.setAttribute('sortdir','down');
     }
-    
+
     // We appendChild rows that already exist to the tbody, so it moves them rather than creating new ones
     // don't do sortbottom rows
     for (i=0;i<newRows.length;i++) { if (!newRows[i].className || (newRows[i].className && (newRows[i].className.indexOf('sortbottom') == -1))) table.tBodies[0].appendChild(newRows[i]);}
     // do sortbottom rows only
     for (i=0;i<newRows.length;i++) { if (newRows[i].className && (newRows[i].className.indexOf('sortbottom') != -1)) table.tBodies[0].appendChild(newRows[i]);}
-    
+
     // Delete any other arrows there may be showing
     var allspans = document.getElementsByTagName("span");
     for (var ci=0;ci<allspans.length;ci++) {
@@ -262,7 +290,7 @@ function ts_resortTable(lnk,clid) {
             }
         }
     }
-        
+
     span.innerHTML = ARROW;
 }
 
@@ -296,17 +324,17 @@ function ts_sort_date(a,b) {
     return 100;
 }
 
-function ts_sort_currency(a,b) { 
+function ts_sort_currency(a,b) {
     aa = ts_getInnerText(a.cells[SORT_COLUMN_INDEX]).replace(/[^0-9.]/g,'');
     bb = ts_getInnerText(b.cells[SORT_COLUMN_INDEX]).replace(/[^0-9.]/g,'');
     var retval = parseFloat(aa) - parseFloat(bb);
 	if (retval==0) return (a.rowIndex-b.rowIndex); else return retval;
 }
 
-function ts_sort_numeric(a,b) { 
+function ts_sort_numeric(a,b) {
     aa = parseFloat(ts_getInnerText(a.cells[SORT_COLUMN_INDEX]));
     if (isNaN(aa)) aa = 0;
-    bb = parseFloat(ts_getInnerText(b.cells[SORT_COLUMN_INDEX])); 
+    bb = parseFloat(ts_getInnerText(b.cells[SORT_COLUMN_INDEX]));
     if (isNaN(bb)) bb = 0;
     if (aa==bb) return (a.rowIndex-b.rowIndex); else return aa-bb;
 }

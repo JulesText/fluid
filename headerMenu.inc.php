@@ -17,7 +17,7 @@ $menu2=array();
 //$menu[] = array("link"=>"reportLists.php?listId=168&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Chores EEE");
 //$menu[] = array("link"=>"reportLists.php?listId=170&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Process FFF");
 $menu[] = array("link"=>"pertinence.html", 'title'=>"HHome Tabs", 'label' => "HHome Tabs");
-$menu[] = array("link"=>"listItems.php?type=*&everything=true&liveparents=*", 'form' => TRUE, 'label' => "Search ");
+$menu[] = array("link"=>"listItems.php?type=*&everything=true&liveparents=*", 'form' => TRUE, 'label' => 'Search ');
 
 /*
 $menu[] = array("link"=>"reportContext!Personal.php", 'title'=>"Process actions sorted by space context", 'label' => "Context report for non-personal categories");
@@ -26,7 +26,7 @@ $menu[] = array("link"=>"listItems.php?type=a&contextId=6&notspacecontext=true&l
 */
 $menu[] = array("link"=>"listLists.php?type=C", 'title'=>"Show reusable checklists", 'label' => "Show Checklists");
 #$menu[] = array("link"=>"listLists.php?type=L", 'title'=>"Show general-purpose lists", 'label' => "Show Lists");
-$menu[] = array("link"=>'','label'=>'');
+$menu[] = array("link"=>'', 'copy' => TRUE, 'label'=>'Copy page link');
 #$menu[] = array("link"=>"itemReport.php?itemId=18792", 'title'=>"~ BETTY", 'label' => "~ BETTY");
 $menu[] = array("link"=>"ToD.php", 'title'=>"Process the time of day", 'label' => "ToDB");
 $menu[] = array("link"=>"matrix.php?&live=true&qLimit=b", 'title'=>"Matrix", 'label' => "Matrix");
@@ -198,6 +198,9 @@ foreach ((array) $menu as $l) {
 
   if (isset($l['form'])) {
     $menProc .= "<tr>\n<td><form action='{$l['link']}' method='post'>{$l['label']}<input type='text' name='needle' id='needle' style='width: 150px'></form></td>\n</tr>\n";
+  } elseif (isset($l['copy'])) {
+    $menProc .= "<tr>\n
+        <td><a id='copy-button'>Copy page link</a></td>\n</tr>\n";
   } else {
     $menProc .= "<tr>\n
         <td><a href='{$l['link']}'>"

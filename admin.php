@@ -152,6 +152,7 @@ if ($showInstallations || $showCommands) { ?>
                     	//removeNextAction();
                     	query("deletenextactionparents",$config,$values);
                     	$values['itemType'] = $ref['type'];
+                      $values['filterquery'] = '';
                     	query("deletequalities",$config,$values);
                     }
                 }

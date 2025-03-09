@@ -307,6 +307,7 @@ switch ($action) {
         query("deletelistlookup",$config,$values);
         $values['itemType'] = $values['type'];
         $values['itemId'] = $values['listId'];
+        $values['filterquery'] = '';
         query("deletequalities",$config,$values);
         query("delete{$check}list",$config,$values);
         $numDeleted=query("remove{$check}listitems",$config,$values);

@@ -103,7 +103,7 @@ if ($_GET['visId'] > 0 && $_GET['visId'] != $_GET['itemId']) {
     $values['parentId'] = $_GET['visId'];
     $resultV = query("getchildlists",$config,$values,$sort);
     //var_dump($values);
-    if (count($resultV) > 0 && is_array($resultV)) {
+    if (is_array($resultV) && count($resultV) > 0) {
         foreach ((array) $resultV as $l) {
           $skip = FALSE;
           foreach ((array) $highlights as $h)
@@ -140,7 +140,7 @@ if ($_GET['visId'] > 0 && $_GET['visId'] != $_GET['itemId']) {
                 ?></td>
                 <td class="mx"><input class="mx" name="addedList[]" value="<?php echo $row['listId']; ?>" type="checkbox" <?php
 
-                        foreach ($resultListX as $resultListN) {
+                        if (is_array($resultListX)) foreach ($resultListX as $resultListN) {
                             if ($resultListN['listId'] == $row['listId']) echo 'checked="checked"';
                         }
 

@@ -329,8 +329,9 @@ function getsql($config,$values,$sort,$querylabel) {
 			$sql="DELETE
 				FROM `". $config['prefix'] . "lookupqualities`
 				WHERE `itemId` = '{$values['itemId']}'
-				AND `itemType` = '{$values['itemType']}'";
-			break;
+				AND `itemType` = '{$values['itemType']}'
+        {$values['filterquery']}";
+      break;
 
 		case "nullqualities":
 			$sql="DELETE

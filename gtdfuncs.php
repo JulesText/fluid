@@ -414,8 +414,13 @@ function nextScreen($url) {
         echo "<p>Next screen is <a href='$cleanurl'>$cleanurl</a> - would be auto-refresh in non-debug mode</p>";
     } else if (headers_sent()) {
         echo "<META HTTP-EQUIV='Refresh' CONTENT='0;url=$cleanurl' />\n"
-            ,"<script type='text/javascript'>window.location.replace('$cleanurl');</script>\n"
-            ,"</head><body><a href='$cleanurl'>Click here to continue on to $cleanurl</a>\n";
+            ."<script type='text/javascript'>"
+            ."var decodedUrl = decodeURIComponent('" . $cleanurl . "');"
+            ."decodedUrl = decodedUrl.replace(/&amp;/g, '&');"
+            ."window.location.replace(decodedUrl);"
+            ."</script>\n"
+            ."</head><body><a href='$cleanurl'>Click here to continue on to $cleanurl</a>\n";
+            die();
     } else {
         $header="Location: "
                 .$url;

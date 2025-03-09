@@ -125,7 +125,7 @@ function doAction($localAction) { // do the current action on the current item; 
 
     case 'parentupdate':
         if (!isset($_POST['type'])) $_POST = $_GET;
-        if (!isset($_POST['type'])) die;
+        if (!isset($_POST['type'])) die("$_POST[type] is null");
         $sort['getitems'] = 'NULL';
         $values['filterquery'] = " WHERE ia.type = '" . $_POST['type'] . "' ";
         if (isset($_POST['categoryId'])) $values['filterquery'] .= " AND ia.categoryId = '" . $_POST['categoryId'] . "'";
@@ -243,6 +243,7 @@ function deleteItem() { // delete all references to a specific item
 	removeNextAction();
 	query("deletenextactionparents",$config,$values);
 	$values['itemType'] = $values['type'];
+  $values['filterquery'] = '';
 	query("deletequalities",$config,$values);
 }
 
@@ -327,6 +328,7 @@ function changeType() {
     query("updateitemtype",$config,$values);
     if ($values['type'] == 'v') {
         $values['itemType'] = $_REQUEST['oldType'];
+        $values['filterquery'] = '';
         query("deletequalities",$config,$values);
     	query("deletelookup",$config,$values);
     }

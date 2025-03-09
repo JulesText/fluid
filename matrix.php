@@ -206,7 +206,7 @@ foreach ((array) $vis as $visn) {
                     childUpd('p',$visn['itemId'],$visn['itemId'],$visn['categoryId']) . '&nbsp;' .
                     childUpd('c',$visn['itemId'],$visn['itemId']/*,$visn['categoryId']*/) . '&nbsp;' .
                     childUpd('l',$visn['itemId'],$visn['itemId']/*,$visn['categoryId']*/) . '&nbsp;' .
-                    '<a href="itemReport.php?itemId=' . $visn['itemId'] . '&convert=true" target="_blank" class="mx">E</a>&nbsp;' .
+                    '<a href="itemReport.php?itemId=' . $visn['itemId'] . '" target="_blank" class="mx">E</a>&nbsp;' .
                     '<a href="' . $url . '&vLimit=' . $visn['itemId'] . '" target="_blank" class="mx">*</a>';
     $flag = 'y';
     if ($visn['dateCompleted']==NULL) {
@@ -312,7 +312,7 @@ foreach ((array) $vis as $visn) {
                     childUpd('p',$row['itemId'],$visn['itemId'],$row['categoryId']) . '&nbsp;' .
                     childUpd('c',$row['itemId'],$visn['itemId'],$row['categoryId']) . '&nbsp;' .
                     childUpd('l',$row['itemId'],$visn['itemId'],$row['categoryId']) . '&nbsp;' .
-                    '<a href="itemReport.php?itemId=' . $row['itemId'] . '&convert=true" target="_blank" class="mx" title="edit">E</a>&nbsp;' .
+                    '<a href="item.php?itemId=' . $row['itemId'] . '" target="_blank" class="mx" title="edit">E</a>&nbsp;' .
                     '<a href="processItems.php?action=deleteparlookup&itemId=' . $row['itemId'] . '&pId=' . $fostId . '" target="_blank" class="mx" title="orphan">-</a>';
         switch ($row['type']) {
             case 'o':
@@ -653,7 +653,7 @@ if (isset($_GET['orphans']) && $_GET['orphans'] == true) {
 
         $presort[$i]['items'] =
                     '<a href="processItems.php?itemId=' . $row ['itemId'] . '&action=delete&type=' . $row['type'] . '" target="_new" class="mx">DEL</a>&nbsp;
-                    <a href="itemReport.php?itemId=' . $row['itemId'] . '" target="_blank" class="mx">E</a>' . $str;
+                    <a href="item.php?itemId=' . $row['itemId'] . '" target="_blank" class="mx">E</a>' . $str;
 
         $i++;
     }

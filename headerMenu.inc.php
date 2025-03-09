@@ -61,7 +61,7 @@ if (!$expand) {
   $menu2[] = array("link"=>'','label'=>'Expand');
   $menu2[] = array("link"=> $_SERVER['REQUEST_URI'] . "&expand=TRUE", 'title'=>"Expand menu", 'label' => "Expand menu");
   if ($config['password_on']) {
-    $menu2[] = array("link"=> $_SERVER['REQUEST_URI'] . "&pass_off=TRUE", 'title'=>"Password off", 'label' => "Password off (" . $config['pass_off_minutes'] . " minutes)");
+    $menu2[] = array("link"=> "index.php?pass_off=TRUE", 'title'=>"Password off", 'label' => "Password off (" . $config['pass_off_minutes'] . " minutes)");
   } else {
     $menu2[] = array("link"=>'', 'label' => "Password back on: " . $config['pass_back_on']);
   }

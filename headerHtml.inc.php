@@ -146,7 +146,9 @@ i.e. styles/github.min.css
 they will all have .min. there
 https://github.com/highlightjs/highlight.js/tree/main/src/styles
 -->
-<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+<!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script> -->
+<script src="js/highlight.min.js"></script>
 <style>
 
 /* <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css"> */

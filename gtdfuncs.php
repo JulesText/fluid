@@ -416,7 +416,7 @@ function nextScreen($url) {
         $header="Location: "
                 .$url;
         header($header);
-        exit;
+        die();
 /*        $header="Location: http"
                 .((empty($_SERVER['HTTPS']))?'':'s')
                 ."://"

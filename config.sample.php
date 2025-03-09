@@ -55,17 +55,12 @@ $config['stream'] = FALSE; # not operational
 
 /*********  IP filter (revert to password) ************/
 
-$ip = include 'config.ip.txt';
-$iprange = array(
-/*    '23.129.106', // mobile
-    '23.144.107' */
-		'127.0.0.1'
-    );
+$config['email_admin'] = 'gg@gmail';
+
+$config['login_timeout'] = 30; // days
+
 $LOGIN_INFORMATION = array(
   'mickey' => 'mouse'
-);
-$LOGIN_INFORMATION_L2 = array(
-  'duck'
 );
 
 $config['pass_off_minutes'] = 2;

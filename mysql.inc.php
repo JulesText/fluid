@@ -1214,6 +1214,7 @@ function getsql($config,$values,$sort,$querylabel) {
 			break;
 
 		case "updatechecklist":
+        if ($values['menu'] == '') $values['menu'] = 'n';
 		    $sql="UPDATE `". $config['prefix'] ."checklist`
 				SET     `title`         = '{$values['title']}',
 						`categoryId`    = '{$values['categoryId']}',
@@ -1234,7 +1235,7 @@ function getsql($config,$values,$sort,$querylabel) {
             `thrs_score`    = '{$values['thrs_score']}',
             `thrs_obs`      = '{$values['thrs_obs']}'
 				WHERE `checklistId` ='{$values['listId']}'";
-				//echo '<pre>';var_dump($sql);die;
+				// echo '<pre>';var_dump($sql);die;
 			break;
 
 		case "updatechecklistitem":

@@ -55,11 +55,11 @@ function scoreCL($config, $values, $sort) {
 
   $result = query("getchecklistitems",$config,$values,$sort);
 
-  if (count($result) > 0) {
+  if (is_array($result) && count($result) > 0) {
       foreach ((array) $result as $row) if($prioritise == -1 || ($row['priority'] <= $prioritise && $prioritise > -1)) {
 
         $items_total++;
-        if ($row['assessed'] >= $list['thrs_obs']) {
+        if ($row['assessed'] >= $list['thrs_obs'] && $row['assessed'] > 0) {
           $score_items_obs++;
           if (100 * $row['score'] / $row['assessed'] >= $list['thrs_score']) $score_items_pass++;
         }
@@ -217,6 +217,7 @@ function instanceselectbox($config,$values,$sort) {
 
 function priorityselectbox($config,$values,$sort) {
     $result = query("priorityselectbox",$config,$values,$sort);
+    if ($result == 0) return -1;
     $result = array_merge([['priority' => '-1']], $result);
     $arrsize = count($result) - 1;
     $max = $result[$arrsize]['priority'];

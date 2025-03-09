@@ -691,7 +691,8 @@ function getsql($config,$values,$sort,$querylabel) {
 					LEFT OUTER JOIN `". $config['prefix'] ."categories` as c
 						ON (ia.`categoryId` = c.`categoryId`)
 					LEFT OUTER JOIN `". $config['prefix'] . "timeitems` as ti
-						ON (ia.`timeframeId` = ti.`timeframeId`) ".$values['filterquery']."
+						ON (ia.`timeframeId` = ti.`timeframeId`) "
+            . $values['filterquery']."
 				ORDER BY {$sort['getitems']}";
 			break;
 
@@ -1314,6 +1315,13 @@ function getsql($config,$values,$sort,$querylabel) {
 				SET `itemType` = '{$values['type']}'
 				WHERE `itemId` = '{$values['itemId']}'
 				AND `itemType` = '{$values['oldType']}'";
+			break;
+
+    case "updateitemvisqualities":
+			$sql="UPDATE `{$config['prefix']}lookupqualities`
+				SET `visId` = '{$values['visId']}'
+				WHERE `itemId` = '{$values['itemId']}'
+				AND `itemType` = '{$values['itemType']}'";
 			break;
 
 		case "updatelist":

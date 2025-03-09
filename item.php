@@ -152,6 +152,11 @@ if ($_GET['convert'] == true) {
     echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <a href="' . $_SERVER['REQUEST_URI'] . '&convert=true">Convert</a> ]';
 		$canchangetypesafely=array();
 }
+
+if (in_array($values['type'], array('o','g','p'))) {
+  echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <a href="childrenMove.php?type=' . $values['type'] . '&itemId=' . $values['itemId'] . '">Move in Matrix</a> ]';
+}
+
 $sep='';
 if ((in_array($values['type'],$canchangetypesafely) || $values['type'] == 'i') && $values['itemId']) {
         echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convert to&nbsp;&nbsp;&nbsp;[ ";

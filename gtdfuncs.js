@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   const copyButton = document.querySelector('#copy-button');
 
-  copyButton.addEventListener('click', function() {
+  if (copyButton) copyButton.addEventListener('click', function() {
 
     // Get the full path of the current URL
     var fullPath = window.location.pathname + window.location.search;

@@ -5,8 +5,9 @@ include_once('header.php');
 
 $values = array();
 if (!isset($_GET['categoryId'])) $_GET['categoryId'] = false;
-if ($_GET['catMultiId']) { $qry = " OR ia.`categoryId` = '' OR ia.`categoryId` = '" . $_GET["catMultiId"] . "'"; } else { $qry = ''; }
-$values['filterquery'] = " WHERE ia.type = '" . $_GET['type'] . "' ";
+if (isset($_GET['catMultiId'])) { $qry = " OR ia.`categoryId` = '' OR ia.`categoryId` = '" . $_GET["catMultiId"] . "'"; } else { $qry = ''; }
+$values['filterquery'] = " WHERE 1 = 1 ";
+if (isset($_GET['type'])) $values['filterquery'] .= " AND ia.type = '" . $_GET['type'] . "' ";
 if ($_GET['categoryId']) $values['filterquery'] .= " AND (ia.categoryId = '" . $_GET['categoryId'] . "'" . $qry . ")";
 $values['filterquery'] .= " AND its.dateCompleted IS NULL ";
 $result = query("getitems",$config,$values,$sort);
@@ -16,7 +17,6 @@ $createURL="item.php?parentId=" . $_GET['itemId'] . "&action=create&type=" . $_G
 $values['filterquery'] = " AND ia.type = '" . $_GET['type'] . "' ";
 $values['parentId'] = $_GET['itemId'];
 $resultCh = query("getchildren",$config,$values,$sort);
-
 
 /*
 echo '<pre>';
@@ -69,7 +69,7 @@ require_once("headerHtml.inc.php");
                 ?></td>
 
                 <td class="mx"><input class="mx" name="addedItem[]" value="<?php echo $row['itemId']; ?>" type="checkbox" <?php
-                        foreach ($resultCh as $resCh) {
+                        if (is_array($resultCh)) foreach ($resultCh as $resCh) {
                             if ($resCh['itemId'] == $row['itemId']) {
                                 if ($_REQUEST['visId'] > 0) {
                                     $values = array();

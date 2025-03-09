@@ -40,7 +40,11 @@ $cashtml = categoryselectbox($config,$values,$sort);
 require_once("headerHtml.inc.php");
 ?>
 <h2><?php echo ($values['listId'])?'Edit':'Create'," $check"; ?>list <?php
-echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst . "\">Show List</a>&nbsp;]&nbsp;&nbsp;&nbsp;"; ?>&nbsp;[ <a href="listCatCodes.php">cat codes</a> ]</h2>
+echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst . "\">Show List</a>&nbsp;]&nbsp;&nbsp;&nbsp;"; ?>&nbsp;[ <a href="listCatCodes.php">cat codes</a> ]<?php
+
+echo '&nbsp;&nbsp;&nbsp;[ <a href="childrenMove.php?type=' . $type . '&itemId=' . $values['listId'] . '">Move in Matrix</a> ]';
+
+?></h2>
 <form action='processLists.php' method='post' onsubmit="return validate(this);">
 	<div class='form'>
 	   <div class='formrow'><span class="error" id='errorMessage'></span></div>

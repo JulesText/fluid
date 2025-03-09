@@ -157,7 +157,7 @@ if ($data) {
     $dispArray['itemId']='itemId';
 }
 $dispArray['someday']='Sday';
-$dispArray['complete']='Comp';
+$dispArray['complete']='Compl';
 foreach ((array) $angles as $angle) {
     foreach ((array) $angle['qualities'] as $qual) {
         foreach ((array) $qual['attributes'] as $attr) {

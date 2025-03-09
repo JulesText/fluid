@@ -123,62 +123,62 @@ function doAction($localAction) { // do the current action on the current item; 
 			$updateGlobals['referrer']="{$updateGlobals['referrer']}";
 			break;
 
-        case 'parentupdate':
-            if (!isset($_POST['type'])) $_POST = $_GET;
-            if (!isset($_POST['type'])) die;
-            $sort['getitems'] = 'NULL';
-            $values['filterquery'] = " WHERE ia.type = '" . $_POST['type'] . "' ";
-            if (isset($_POST['categoryId'])) $values['filterquery'] .= " AND ia.categoryId = '" . $_POST['categoryId'] . "'";
-            $result = query("getitems",$config,$values,$sort);
-            // echo '<pre>';var_dump($result);die;
-            // echo '<pre>';var_dump($values['filterquery']);die;
-            // echo '<pre>';var_dump($_POST);die;
-            $values['parentId'] = $values['pId'];
-            # iterate all items of type defined (includes those not linked to vision if defined)
-            foreach ($result as $res) {
-                $values['itemId'] = $res['itemId'];
-                # check if we have a vision defined
-                if ($_POST['visId'] > 0) {
-                    $valuesV = array();
-                    $valuesV['parentId'] = $_POST['visId'];
-                    $valuesV['itemId'] = $values['itemId'];
-                    $resultV = query("checklookup",$config,$valuesV,$sort);
-                    # if the item is linked to vision then unlink
-                    if (count($resultV) > 0 && is_array($resultV)) {
-                        deleteparlookup();
-                    }
+    case 'parentupdate':
+        if (!isset($_POST['type'])) $_POST = $_GET;
+        if (!isset($_POST['type'])) die;
+        $sort['getitems'] = 'NULL';
+        $values['filterquery'] = " WHERE ia.type = '" . $_POST['type'] . "' ";
+        if (isset($_POST['categoryId'])) $values['filterquery'] .= " AND ia.categoryId = '" . $_POST['categoryId'] . "'";
+        $result = query("getitems",$config,$values,$sort);
+        // echo '<pre>';var_dump($result);die;
+        // echo '<pre>';var_dump($values['filterquery']);die;
+        // echo '<pre>';var_dump($_POST);die;
+        $values['parentId'] = $values['pId'];
+        # iterate all items of type defined (includes those not linked to vision if defined)
+        foreach ($result as $res) {
+            $values['itemId'] = $res['itemId'];
+            # check if we have a vision defined
+            if ($_POST['visId'] > 0) {
+                $valuesV = array();
+                $valuesV['parentId'] = $_POST['visId'];
+                $valuesV['itemId'] = $values['itemId'];
+                $resultV = query("checklookup",$config,$valuesV,$sort);
+                # if the item is linked to vision then unlink
+                if (is_array($resultV) && count($resultV) > 0) {
+                    deleteparlookup();
                 }
             }
-            $cnt=0;
-            # addedItem call only used by childrenUpdate.php script, called from matrix
-            # assumes $_POST['visId'] is set
-            # add all items to vision
+        }
+        $cnt=0;
+        # addedItem call only used by childrenUpdate.php script, called from matrix
+        # assumes $_POST['visId'] is set
+        # add all items to vision
+        if (isset($_POST['addedItem'])) {
+            foreach ($_POST['addedItem'] as $id) {
+                $values['newitemId'] = $id;
+                query("newparent",$config,$values);
+                $cnt++;
+            }
+        }
+
+        // caution the logic here is finnicky to change
+        if (isset($_POST['visId'])) {
+            $values['parentId'] = $_POST['visId'];
             if (isset($_POST['addedItem'])) {
                 foreach ($_POST['addedItem'] as $id) {
                     $values['newitemId'] = $id;
                     query("newparent",$config,$values);
-                    $cnt++;
                 }
+            } else {
+                $values['newitemId'] = $_POST['itemId'];
+                query("newparent",$config,$values);
+                $updateGlobals['referrer'] = 'itemReport.php?itemId=' . $_POST['itemId'];
             }
-
-            // caution the logic here is finnicky to change
-            if (isset($_POST['visId'])) {
-                $values['parentId'] = $_POST['visId'];
-                if (isset($_POST['addedItem'])) {
-                    foreach ($_POST['addedItem'] as $id) {
-                        $values['newitemId'] = $id;
-                        query("newparent",$config,$values);
-                    }
-                } else {
-                    $values['newitemId'] = $_POST['itemId'];
-                    query("newparent",$config,$values);
-                    $updateGlobals['referrer'] = 'itemReport.php?itemId=' . $_POST['itemId'];
-                }
-            }
-            $msg  = "$cnt child";
-            if ($cnt!==1) $msg .= 'ren';
-            //$_SESSION['message'][]=$msg;
-            if (isset($updateGlobals['referrer'])) $updateGlobals['referrer']="{$updateGlobals['referrer']}";
+        }
+        $msg  = "$cnt child";
+        if ($cnt!==1) $msg .= 'ren';
+        //$_SESSION['message'][]=$msg;
+        if (isset($updateGlobals['referrer'])) $updateGlobals['referrer']="{$updateGlobals['referrer']}";
 		break;
 
     case 'changeType':
@@ -524,15 +524,16 @@ function nextPage() { // set up the forwarding to the next page
             $nextURL=$tst;
             break;
 	}
-	if ($config['debug'] & _GTD_DEBUG) {
+
+  if ($config['debug'] & _GTD_DEBUG) {
         echo '<pre>$referrer=',print_r($updateGlobals['referrer'],true),'<br />'
             ,"type={$values['type']}<br />"
             ,'session=',print_r($_SESSION,true),'<br />'
             ,'</pre>';
     }
-    if ($nextURL=='') $nextURL="item.php?itemId=".$values['itemId'];
-    $_SESSION[$key]=$tst;
-    $nextURL=html_entity_decode($nextURL);
+  if ($nextURL=='') $nextURL="item.php?itemId=".$values['itemId'];
+  $_SESSION[$key]=$tst;
+  $nextURL=html_entity_decode($nextURL);
 
 	if ($updateGlobals['captureOutput']) {
         $logtext=ob_get_contents();

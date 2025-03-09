@@ -405,15 +405,18 @@ function getVarFromGetPost($varName,$default='') {
 }
 
 function nextScreen($url) {
+
     global $config;
+
     $cleanurl=htmlspecialchars($url);
+
     if ($config['debug'] & _GTD_WAIT) {
         echo "<p>Next screen is <a href='$cleanurl'>$cleanurl</a> - would be auto-refresh in non-debug mode</p>";
-    }elseif (headers_sent()) {
+    } else if (headers_sent()) {
         echo "<META HTTP-EQUIV='Refresh' CONTENT='0;url=$cleanurl' />\n"
             ,"<script type='text/javascript'>window.location.replace('$cleanurl');</script>\n"
             ,"</head><body><a href='$cleanurl'>Click here to continue on to $cleanurl</a>\n";
-    }else{
+    } else {
         $header="Location: "
                 .$url;
         header($header);

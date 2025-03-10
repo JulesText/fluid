@@ -35,8 +35,8 @@ if ($curls['success']) {
 
   update_chat_summary($chat_id, $curls['data'], $db);
 
-  file_put_contents('test.txt', PHP_EOL . '--' . PHP_EOL . 'attempted to write to db:', FILE_APPEND);
-  file_put_contents('test.txt', PHP_EOL . '$chat_id: ' . $chat_id . ' text: ' . $curls['data'], FILE_APPEND);
+  file_put_contents('_response.txt', PHP_EOL . '--' . PHP_EOL . 'attempted to write to db:', FILE_APPEND);
+  file_put_contents('_response.txt', PHP_EOL . '$chat_id: ' . $chat_id . ' text: ' . $curls['data'], FILE_APPEND);
 
 }
 

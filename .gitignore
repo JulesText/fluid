@@ -15,7 +15,7 @@ backup_scenario.php
 password_protect_v1.php
 password_protect_v2.php
 password_ip_clear.php
-test.txt
+_response.txt
 dt/node_modules
 dt/*.json
 

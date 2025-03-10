@@ -870,7 +870,7 @@ function getsql($config,$values,$sort,$querylabel) {
 		case "newchecklistitem":
 			$sql="INSERT INTO `". $config['prefix'] . "checklistitems`
 				VALUES (NULL, '{$values['item']}','{$values['notes']}','{$values['hyperlink']}',
-                        '{$values['listId']}', 'n', 'n', '', '', NULL, '')";
+                        '{$values['listId']}', 'n', 'n', 0, 0, '{$values['effort']}', '{$values['priority']}')";
 			break;
 
 		case "selectchecklistiteminst":
@@ -881,7 +881,7 @@ function getsql($config,$values,$sort,$querylabel) {
 		case "newchecklistiteminst":
 			$sql="INSERT INTO `". $config['prefix'] . "checklistitemsinst`
 				VALUES ('{$values['lastId']}', '{$values['listId']}', '{$values['instanceId']}',
-                        'n', 'n', '', '')";
+                        'n', 'n', 0, 0)";
 			break;
 
 		case "newitem":
@@ -1257,6 +1257,7 @@ function getsql($config,$values,$sort,$querylabel) {
         `notes` = '{$values['notes']}',
         `hyperlink` = '{$values['hyperlink']}',
         `item` = '{$values['item']}',
+        `effort` = '{$values['effort']}',
         `priority` = {$values['priority']}, ";
         $sql .= "
 				`checklistId` = '{$values['listId']}',

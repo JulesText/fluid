@@ -198,10 +198,10 @@ function curlReq($curly_tops) {
 
   curl_close($curl);
 
-  if ($curls['success']) file_put_contents('test.txt', '$curls[success]: TRUE');
-  else file_put_contents('test.txt', '$curls[success]: FALSE');
+  if ($curls['success']) file_put_contents('_response.txt', '$curls[success]: TRUE');
+  else file_put_contents('_response.txt', '$curls[success]: FALSE');
 
-  file_put_contents('test.txt',
+  file_put_contents('_response.txt',
     PHP_EOL
     . '$curls[data]:' . print_r($curls['data'], TRUE)
     . PHP_EOL . '$responseData: ' . print_r($responseData, TRUE)

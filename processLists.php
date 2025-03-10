@@ -43,6 +43,12 @@ switch ($action) {
         $values['hyperlink']=$_POST['hyperlink'];
         $values['checked']='n';
         $values['dateCompleted']='NULL';
+        $values['priority']=$_POST['priority'];
+        $values['effort']=$_POST['effort'];
+
+        foreach (array('priority','effort') as $field)
+            if (isset($values[$field]) && $values[$field] == '') $values[$field] = 0;
+
         $result = query("new{$check}listitem",$config,$values);
         if ($result) {
             $msg="Created";
@@ -82,11 +88,16 @@ switch ($action) {
             } else {
                 echo 'error ignored not posted';die;
             }
+            $values['effort']=$_POST['effort'];
             $values['score']=$_POST['score'];
             $values['assessed']=$_POST['assessed'];
         }
         else
             $values['dateCompleted']=(empty($_POST['dateCompleted']))?'NULL':"'{$_POST['dateCompleted']}'";
+
+        foreach (array('priority','effort','score', 'assessed') as $field)
+            if (isset($values[$field]) && $values[$field] == '') $values[$field] = 0;
+
         # query allows instance update
         $result=query("update{$check}listitem",$config,$values);
         $msg=($result) ? "Updated" : "No changes needed to";

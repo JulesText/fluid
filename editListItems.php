@@ -14,6 +14,7 @@ if ($values['itemId']) {
     if ($isChecklist) {
         $values['checked']=$row[0]['checked'];
         $values['ignored']=$row[0]['ignored'];
+        $values['effort']=$row[0]['effort'];
         $values['score']=$row[0]['score'];
         $values['assessed']=$row[0]['assessed'];
     }
@@ -73,18 +74,29 @@ require_once("headerHtml.inc.php");
         </div>
         <div class='formrow'>
             <?php
-            if ($values['itemId']) {
+            // if ($values['itemId']) {
                 ?>
-                <?php if (!$isInst) { ?>
+                <?php
+                if (!$isInst) {
+                ?>
                 <label class='left notfirst'>Priority:</label>
-                <input class='JKPadding' size=2 type='text' name='priority' id='priority' value='<?php echo $values['priority']; ?>' /><?php }
+                <input class='JKPadding' size=2 type='text' name='priority' id='priority' value='<?php echo $values['priority']; ?>' />
+                <?php
+                }
                 if ($isChecklist) { ?>
-                    <label class='left notfirst'>Score:</label>
-                    <input class='JKPadding' type='text' name='score' id='score' value='<?php echo $values['score']; ?>' size=2 />
-                    <label class='left notfirst'>Assessed:</label>
-                    <input class='JKPadding' type='text' name='assessed' id='assessed' value='<?php echo $values['assessed']; ?>' size=2 />
+                    <label class='left notfirst'>Effort:</label>
+                    <input class='JKPadding' size=2 type='text' name='effort' id='effort' value='<?php echo $values['effort']; ?>' />
+                    <?php
+                    if ($values['itemId']) { ?>
+                        <label class='left notfirst'>Score:</label>
+                        <input class='JKPadding' type='text' name='score' id='score' value='<?php echo $values['score']; ?>' size=2 />
+                        <label class='left notfirst'>Assessed:</label>
+                        <input class='JKPadding' type='text' name='assessed' id='assessed' value='<?php echo $values['assessed']; ?>' size=2 />
+                    <?php } ?>
                 	<input type='hidden' name='required' value='title:notnull:Title cannot be blank' />
-                <?php } else { ?>
+                <?php
+                } else {
+                ?>
                     <label class='left notfirst'>Date Completed:</label>
                     <input type='text' name='dateCompleted' id='dateCompleted' value='<?php echo $values['dateCompleted']; ?>' />
                     <button type='reset' id='f_trigger_b'>...</button>
@@ -104,9 +116,12 @@ require_once("headerHtml.inc.php");
                 	<input type='hidden' name='required'
         	           value='title:notnull:Title cannot be blank,dateCompleted:date:Completion date is not valid' />
                 <?php }
-            } else { ?>
-        	   <input type='hidden' name='required' value='title:notnull:Title cannot be blank' />
-            <?php } ?>
+            // } else {
+              ?>
+        	   <!-- <input type='hidden' name='required' value='title:notnull:Title cannot be blank' /> -->
+            <?php
+            // }
+            ?>
         </div>
     </div>
    <div class='formbuttons'>

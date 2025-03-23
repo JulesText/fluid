@@ -39,6 +39,11 @@ if (isset($_GET['calc']) && $_GET['calc'] == true) { $calc = 'true'; } else { $c
 if (isset($_GET['data']) && $_GET['data'] == true) { $data = true; } else { $data = false; }
 if (isset($_GET['career']) && $_GET['career'] == true) { $career = true; } else { $career = false; }
 
+// limit visions
+if (isset($_GET['live']) && $_GET['live'] == true) { $live = true; } else { $live = false; }
+if (isset($_GET['test']) && $_GET['test'] == true) { $test = true; } else { $test = false; }
+if (isset($_GET['vLimit'])) { $vLimit = $_GET['vLimit']; } else { $vLimit = false; }
+
 // call qualities angles
 $values = array();
 $values['qQuery'] = "`qType`";
@@ -119,11 +124,16 @@ $values['itemType'] = 'v';
 $visAttrRes = query("lookupqualities",$config,$values,$sort);
 
 $mxTitle = 'Matrix';
-if ($qLimit == 'h') {
+if ($qLimit == 'h') { // Qual: Scen [scenario]
     $values = array();
     $values['qaId'] = 1;
     $res = query("lookupqualities",$config,$values,$sort);
     foreach ((array) $res as $r) $mxTitle = $r['value'];
+} else if ($vLimit) { // vLimit in request for only 1 vision
+    $values = array();
+    $values['filterquery'] .= ' WHERE i.itemId = ' . $vLimit;
+    $vis = query("getitems",$config,$values,$sort);
+    $mxTitle = $vis[0]['title'];
 }
 
 require_once("headerHtml.inc.php");
@@ -172,10 +182,6 @@ $i=0;
 $maintable=array();
 
 // limit visions
-if (isset($_GET['live']) && $_GET['live'] == true) { $live = true; } else { $live = false; }
-if (isset($_GET['test']) && $_GET['test'] == true) { $test = true; } else { $test = false; }
-if (isset($_GET['vLimit'])) { $vLimit = $_GET['vLimit']; } else { $vLimit = false; }
-
 $values = array();
 $values['filterquery'] = ' WHERE ia.type = "v" ';
 if ($test) $values['filterquery'] .= ' AND i.title = "a test" ';

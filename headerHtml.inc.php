@@ -23,13 +23,13 @@ $title = $config['title'];
             default:*/
 if (isset($item['title'])) $title = $item['title'];
 if (isset($values['title'])) $title = $values['title'];
+if (isset($mxTitle)) $title = $mxTitle;
 $arr = str_split($title, 3);
 $arr[0] = preg_replace("/[0-9_,.]/", "", $arr[0]);
 $title = implode("", $arr);
 $title = ucwords(strtolower(ltrim($title)));
 #if (isset($type) && $type==='c') $title .= ' CL';
 #if (isset($type) && $type==='l') $title .= ' List';
-if (isset($mxTitle)) $title = $mxTitle;
      /*   }
     } */
 

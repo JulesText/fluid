@@ -47,7 +47,14 @@ require_once("headerHtml.inc.php");
 
 ?>
 <h1><?php echo ($values['itemId'])?'Edit ':'Create ',$check; ?>list item in <a href="reportLists.php?listId=<?php echo $values['listId']; ?>&type=<?php echo $type; ?>"><?php echo $ptitle . ($isChecklist ? ' CL' : ' LIST'); ?></a>
-&nbsp;&nbsp;&nbsp;[&nbsp;<a id='copy-button'>Link</a>&nbsp;]</h1>
+&nbsp;&nbsp;&nbsp;[&nbsp;<a id='copy-button'>Link</a>&nbsp;]
+<?php
+if ($check && $action == 'itemedit') {
+    $values['urlCL'] = 'processLists.php?action=moveitem&itemId=' . $values['itemId'] . '&checklistId=';
+    echo '&nbsp;&nbsp;&nbsp;' . parentlistselectbox($config,$values,$sort);
+}
+?>
+</h1>
 <form action="processLists.php" method="post" onsubmit="return validate(this);">
     <div class='form'>
         <div class='formrow'><span class="error" id='errorMessage'></span></div>

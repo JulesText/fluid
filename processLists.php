@@ -369,7 +369,22 @@ switch ($action) {
         $msg=($result) ? "Updated" : "No changes needed to";
         $_SESSION['message'][]= "$msg {$check}list: '{$values['title']}'";
         break;
-        //-----------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------
+    case 'moveitem':
+        $values['listId'] = $_REQUEST['checklistId'];
+        $values['instTable'] = '';
+        $result1 = query("movechecklistitem",$config,$values);
+        $values['instTable'] = 'inst';
+        $result2 = query("movechecklistitem",$config,$values);
+        $msg=($result1) ? "Moved item" : "Not moved";
+        $_SESSION['message'][]= "$msg";
+        $nextURL="editListItems.php?type=c&itemId=" . $values['itemId'];
+        break;
+    //-----------------------------------------------------------------------------------
+    echo $action;
+    var_dump($_REQUEST);die;
+
+
     default:
         break;
 }

@@ -215,6 +215,22 @@ function instanceselectbox($config,$values,$sort) {
     return $cashtml;
     }
 
+
+function parentlistselectbox($config,$values,$sort) {
+    $result = query("parentlistselectbox",$config,$values,$sort);
+    //echo '<pre>'; var_dump($result);die;
+    $cashtml='<select onchange="if (this.value) window.location.href=this.value">';
+    if ($result) {
+        foreach($result as $row) {
+            $cashtml .= '   <option value="' . $values['urlCL'] . $row['checklistId'].'"';
+            if($row['checklistId']==$values['listId']) $cashtml .= ' selected="selected"';
+            $cashtml .= '>'.makeclean($row['title'])."</option>\n";
+        }
+    }
+    $cashtml .= '</select>';
+    return $cashtml;
+    }
+
 function priorityselectbox($config,$values,$sort) {
     $result = query("priorityselectbox",$config,$values,$sort);
     if ($result == 0) return -1;

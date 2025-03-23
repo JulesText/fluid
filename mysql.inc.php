@@ -100,6 +100,13 @@ function getsql($config,$values,$sort,$querylabel) {
             $values[$key] = safeIntoDB($config, $value, $key);
 
 	switch ($querylabel) {
+
+    case "parentlistselectbox":
+      $sql="SELECT `checklistId`, `title`
+        FROM `". $config['prefix'] ."checklist`
+				ORDER BY `title` ASC";
+			break;
+
 		case "instanceselectbox":
 			$sql="SELECT `instanceId`, `name`, `description`
 				FROM `". $config['prefix'] ."instance`
@@ -1239,6 +1246,19 @@ function getsql($config,$values,$sort,$querylabel) {
 				WHERE `checklistId` ='{$values['listId']}'";
 				// echo '<pre>';var_dump($sql);die;
 			break;
+
+    case "movechecklistitem":
+        if (isset($values['instanceId']) && is_numeric($values['instanceId'])) {
+            $instTable = 'inst';
+        } else {
+            $instTable = '';
+        }
+        $sql="UPDATE `". $config['prefix'] . "checklistitems" . $values['instTable'] . "`
+  				SET
+  				`checklistId` = '{$values['listId']}'
+          WHERE `checklistItemId` = '{$values['itemId']}'";
+          // die($sql);
+    break;
 
 		case "updatechecklistitem":
 

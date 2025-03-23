@@ -933,7 +933,8 @@ function getsql($config,$values,$sort,$querylabel) {
                 '{$values['hyperlink']}',
                 '{$values['sortBy']}',
                 '{$values['menu']}',
-                '{$values['prioritise']}'
+                '{$values['prioritise']}',
+                '{$values['sortItems']}'
                 )";
       break;
 
@@ -1053,7 +1054,12 @@ function getsql($config,$values,$sort,$querylabel) {
 
 		case "selectchecklist":
 			$sql="SELECT cl.`checklistId` as listId, cl.`title`,
-						cl.`premiseA`,cl.`premiseB`,cl.`conclusion`,cl.`behaviour`, cl.`standard`, cl.`conditions`, cl.`metaphor`, cl.`categoryId`, cl.`hyperlink`, cl.`sortBy`, cl.`frequency`, cl.`effort`, cl.`scored`, cl.`menu`, cl.`prioritise`, cl.`thrs_score`, cl.`thrs_obs`, c.`category`
+						cl.`premiseA`,cl.`premiseB`,cl.`conclusion`
+            ,cl.`behaviour`, cl.`standard`, cl.`conditions`, cl.`metaphor`
+            , cl.`categoryId`, cl.`hyperlink`
+            , cl.`sortBy`, cl.`frequency`, cl.`effort`, cl.`scored`
+            , cl.`menu`, cl.`prioritise`, cl.`sortItems`, cl.`thrs_score`, cl.`thrs_obs`
+            , c.`category`
 				FROM `". $config['prefix'] ."checklist` as cl
 				LEFT OUTER JOIN `{$config['prefix']}categories` AS c USING (`categoryId`)
 				WHERE cl.`checklistId`='{$values['listId']}'";
@@ -1127,7 +1133,10 @@ function getsql($config,$values,$sort,$querylabel) {
 			break;
 
 		case "selectlist":
-			$sql="SELECT `listId` as listId, l.`title`, l.`premiseA`, l.`premiseB`, l.`conclusion`, l.`behaviour`,l.`standard`,l.`conditions`,l.`metaphor`,l.`categoryId`, l.`hyperlink`, l.`sortBy`, l.`menu`, l.`prioritise`, c.`category`
+			$sql="SELECT `listId` as listId, l.`title`
+        , l.`premiseA`, l.`premiseB`, l.`conclusion`, l.`behaviour`,l.`standard`,l.`conditions`
+        ,l.`metaphor`,l.`categoryId`, l.`hyperlink`
+        , l.`sortBy`, l.`menu`, l.`prioritise`, l.`sortItems`, c.`category`
 				FROM `". $config['prefix'] . "list` AS l
                 LEFT OUTER JOIN `{$config['prefix']}categories` AS c USING (`categoryId`)
 				WHERE `listId` = '{$values['listId']}'";
@@ -1218,7 +1227,8 @@ function getsql($config,$values,$sort,$querylabel) {
                 '{$values['menu']}',
                 '{$values['prioritise']}',
                 '{$values['thrs_score']}',
-                '{$values['thrs_obs']}'
+                '{$values['thrs_obs']}',
+                '{$values['sortItems']}'
 						    )";
 			break;
 
@@ -1242,7 +1252,8 @@ function getsql($config,$values,$sort,$querylabel) {
 						`menu`          = '{$values['menu']}',
             `prioritise`    = '{$values['prioritise']}',
             `thrs_score`    = '{$values['thrs_score']}',
-            `thrs_obs`      = '{$values['thrs_obs']}'
+            `thrs_obs`      = '{$values['thrs_obs']}',
+            `sortItems`     = '{$values['sortItems']}'
 				WHERE `checklistId` ='{$values['listId']}'";
 				// echo '<pre>';var_dump($sql);die;
 			break;
@@ -1360,7 +1371,8 @@ function getsql($config,$values,$sort,$querylabel) {
 						`hyperlink` = '{$values['hyperlink']}',
 						`sortBy` = '{$values['sortBy']}',
 						`menu` = '{$values['menu']}',
-						`prioritise` = '{$values['prioritise']}'
+            `prioritise` = '{$values['prioritise']}',
+            `sortItems` = '{$values['sortItems']}'
 				WHERE `listId` ='{$values['listId']}'";
 			break;
 

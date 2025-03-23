@@ -288,6 +288,7 @@ switch ($action) {
         $values['hyperlink'] = $_POST['hyperlink'];
         $values['sortBy'] = $_POST['sortBy'];
         $values['menu'] = $_POST['menu'];
+        $values['sortItems'] = $_POST['sortItems'];
         if ($check == 'check') {
             $values['frequency'] = $_POST['frequency'];
             $values['prioritise'] = $_POST['prioritise'];
@@ -344,6 +345,7 @@ switch ($action) {
         $values['hyperlink'] = $_POST['hyperlink'];
         $values['sortBy'] = $_POST['sortBy'];
         $values['menu'] = $_POST['menu'];
+        $values['sortItems'] = $_POST['sortItems'];
         if ($check == 'check') {
             $values['frequency'] = $_POST['frequency'];
             $values['effort'] = $_POST['effort'];
@@ -357,7 +359,7 @@ switch ($action) {
         if ($check == 'check') include('matrixsaveCL.php');
         $msg=($result) ? "Updated" : "No changes needed to";
         $_SESSION['message'][]= "$msg {$check}list: '{$values['title']}'";
-//        echo '<pre>';var_dump($result);die;
+        // echo '<pre>';var_dump($result);die;
         break;
     //-----------------------------------------------------------------------------------
     case 'listpriority':

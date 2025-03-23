@@ -30,7 +30,8 @@ if (count($result) > 0) {
 		'menu' => $res['menu'],
     'prioritise' => $res['prioritise'],
     'thrs_score' => $res['thrs_score'],
-    'thrs_obs' => $res['thrs_obs']
+    'thrs_obs' => $res['thrs_obs'],
+    'sortItems' => $res['sortItems']
     );
 } else {
     die;

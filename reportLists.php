@@ -11,7 +11,8 @@ if ($result==1) {
 }
 $row=$result[0];
 
-if (!isset($_GET['content']) || $_GET['content'] !== 'bulk') {
+if ((!isset($_GET['content']) || $_GET['content'] !== 'bulk') && $row['sortItems'] !== 'title') {
+  // die($row['sortItems']);
   $sort['getlistitems'] = $sort['getlistitemsprioritise'];
   $sort['getchecklistitems'] = $sort['getchecklistitemsprioritise'];
 }

@@ -20,13 +20,13 @@ function query($querylabel,$config,$values=NULL,$sort=NULL) {
 
     //grab correct query string from query library array
     //values automatically inserted into array
-    $query=getsql($config,$values,$sort,$querylabel);
+    $query = getsql($config,$values,$sort,$querylabel);
 
     // for testing only: display fully-formed query
     if ($config['debug'] & _GTD_DEBUG) echo "<p class='debug'>Query: ".$query."</p>";
 
     //perform query
-    $result=doQuery($config, $query, $querylabel);
+    $result = doQuery($config, $query, $querylabel);
 
     //for developer testing only, print result array
     if ($config['debug'] & _GTD_DEBUG) {

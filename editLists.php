@@ -9,7 +9,7 @@ if ($values['listId']) {
         include_once('footer.php');
         exit();
     }
-    foreach (array('title','categoryId','premiseA','premiseB','conclusion','behaviour','standard','conditions','metaphor','hyperlink','sortBy','frequency','effort','scored','menu','prioritise','thrs_score','thrs_obs') as $field)
+    foreach (array('title','categoryId','premiseA','premiseB','conclusion','behaviour','standard','conditions','metaphor','hyperlink','sortBy','frequency','effort','scored','menu','prioritise','thrs_score','thrs_obs','sortItems') as $field)
         $values[$field]=$row[0][$field];
     $values['score_total'] = scoreCL($config, $values, $sort);
     $action='listedit';
@@ -34,6 +34,7 @@ if ($values['listId']) {
     $values['prioritise']='';
     $values['thrs_score']='';
     $values['thrs_obs']='';
+    $values['sortItems']='';
     $action='listcreate';
 }
 $cashtml = categoryselectbox($config,$values,$sort);
@@ -112,6 +113,12 @@ echo '&nbsp;&nbsp;&nbsp;[ <a href="childrenMove.php?type=' . $type . '&itemId=' 
 		  <label for='delete'>Delete&nbsp;List</label>
       <input type="submit" value="Up Priorities" name="up_priorities" />
       <input type="submit" value="Down Priorities" name="down_priorities" />
+      <label for='sortItems' class='left first'>Sort items:</label>
+      <select name='sortItems' id='sortItems'>
+        <option value="priority" <?php if ($values['sortItems'] == 'priority') echo ' selected="selected"'; ?>>priority</option>
+        <option value="title" <?php if ($values['sortItems'] == 'title') echo ' selected="selected"'; ?>>title</option>
+      </select>
+
 		<?php }
     if ($check) { ?>
 		<br>

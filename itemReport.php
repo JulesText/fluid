@@ -101,6 +101,7 @@ echo $rtitle."&nbsp;Report:&nbsp;".makeclean($item['title']).(($item['isSomeday'
 if (!isset($_GET['content'])) {
   echo "&nbsp;&nbsp;&nbsp; [&nbsp;<a href='item.php?itemId={$values['itemId']}' title='Edit "
     ,makeclean($item['title']),"'>Edit</a>&nbsp;]";
+  echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a id=\"copy-button\">Link</a>&nbsp;]";
   echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"listsUpdate.php?itemId={$values['itemId']}&type=l\">Lists</a>&nbsp;]";
   echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"listsUpdate.php?itemId={$values['itemId']}&type=c\">Checklists</a>&nbsp;]";
 }

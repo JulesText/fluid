@@ -16,7 +16,7 @@ $menu2=array();
 //$menu[] = array("link"=>"reportLists.php?listId=13&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Health DDD");
 //$menu[] = array("link"=>"reportLists.php?listId=168&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Chores EEE");
 //$menu[] = array("link"=>"reportLists.php?listId=170&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Process FFF");
-$menu[] = array("link"=>"pertinence.html", 'title'=>"HHome Tabs", 'label' => "HHome Tabs");
+$menu[] = array("link"=>"tabs_pertinence.html", 'title'=>"HHome Tabs", 'label' => "HHome Tabs");
 $menu[] = array("link"=>"listItems.php?type=*&everything=true&liveparents=*", 'form' => TRUE, 'label' => 'Search ');
 
 /*
@@ -26,7 +26,7 @@ $menu[] = array("link"=>"listItems.php?type=a&contextId=6&notspacecontext=true&l
 */
 $menu[] = array("link"=>"listLists.php?type=C", 'title'=>"Show reusable checklists", 'label' => "Show Checklists");
 #$menu[] = array("link"=>"listLists.php?type=L", 'title'=>"Show general-purpose lists", 'label' => "Show Lists");
-$menu[] = array("link"=>'', 'copy' => TRUE, 'label'=>'Copy page link');
+// $menu[] = array("link"=>'', 'copy' => TRUE, 'label'=>'Copy page link');
 #$menu[] = array("link"=>"itemReport.php?itemId=18792", 'title'=>"~ BETTY", 'label' => "~ BETTY");
 $menu[] = array("link"=>"ToD.php", 'title'=>"Process the time of day", 'label' => "ToDB");
 $menu[] = array("link"=>"matrix.php?&live=true&qLimit=b", 'title'=>"Matrix", 'label' => "Matrix");

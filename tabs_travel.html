@@ -1,0 +1,42 @@
+<html>
+<body onload="pertinent()">
+<script>
+function pertinent() {
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    var windows = [
+        'fi.php?chat_id=e640cf28-5403-4096-bef1-2b4ed56efa02', // last window
+        'fi.php',
+        'reportLists.php?listId=198&type=c',
+        'reportLists.php?listId=56&type=c',
+        'reportLists.php?listId=197&type=c',
+        'itemReport.php?itemId=21607',
+        'reportLists.php?listId=196&type=c',
+        'matrix.php?&vLimit=5278&qLimit=k',
+        'matrix.php?&vLimit=5258&qLimit=k',
+        'matrix.php?&vLimit=6028&qLimit=k',
+        'matrix.php?&vLimit=2196&qLimit=k',
+        'matrix.php?&vLimit=5252&qLimit=k', // second window
+        'reportLists.php?listId=161&type=c' // first/current window
+    ];
+
+    var arrayLength = windows.length;
+
+    async function display() {
+        for (var i = 0; i < arrayLength - 1; i++) { // skip the last array item
+            window.open(windows[i]);
+            await sleep(200); // avoid windows from not opening due to server restrictions
+        }
+        window.location.assign(windows[i]); // first/current window
+    }
+
+    display();
+
+    return true;
+}
+</script>
+</body>
+</html>

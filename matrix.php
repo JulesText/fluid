@@ -1195,6 +1195,7 @@ if (!$data) {
         <td class='cont' onClick="window.location = 'matrix.php?orphans=true&qLimit=<?php echo $qLimit; ?>';">Orphs</td>
         <td class='cont' id='Calc' onClick="autoCalc = true;calcFormulae('<?php echo $vLimit; ?>');">Calc^</td>
         <td class='cont' id='ajaxResp'></td>
+        <td class='cont' id='copy-button'>Link</td>
 <?php } ?>
     </tr>
 <?php
@@ -1359,6 +1360,8 @@ if (!$scen && !$data) {
         <td class="mx">8760 hours a year, minus offset = 8000, <?php echo $unqhoursyearbrainless; ?> brainless</td>
     </tr><tr>
         <td class="mx">items can be deferred even if hours have been spent because hours simply indicate capacity relative to the coming 12 months</td>
+      </tr><tr>
+        <td class="mx">season scores 6 to 9 for fewer tourists and better temperature/rain, 6 = poor weather, 7 = peak tourist but good weather, 8 = do-able options despite weather, 9 = off-peak but fair weather</td>
     </tr><tr>
         <td class="mx">camera on screen shows awkward or false expression when lying about valuation</td>
     </tr><tr>

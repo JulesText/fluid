@@ -141,7 +141,7 @@ if (!empty($_GET['createnote'])) { ?>
 <?php }
 
 echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <a href="itemReport.php?itemId=' . $values['itemId'] . '">Report</a> ]';
-echo '&nbsp;&nbsp;&nbsp;[ <a id="copy-button">Link</a> ]';
+echo '&nbsp;&nbsp;&nbsp;[ <a id="copy-button">Copy</a> ]';
 
 if ($_GET['convert'] == true) {
     $canchangetypesafely=array('a','w','r','o','g','v','p');

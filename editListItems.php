@@ -47,7 +47,7 @@ require_once("headerHtml.inc.php");
 
 ?>
 <h1><?php echo ($values['itemId'])?'Edit ':'Create ',$check; ?>list item in <a href="reportLists.php?listId=<?php echo $values['listId']; ?>&type=<?php echo $type; ?>"><?php echo $ptitle . ($isChecklist ? ' CL' : ' LIST'); ?></a>
-&nbsp;&nbsp;&nbsp;[&nbsp;<a id='copy-button'>Link</a>&nbsp;]
+&nbsp;&nbsp;&nbsp;[&nbsp;<a id='copy-button'>Copy</a>&nbsp;]
 <?php
 if ($check && $action == 'itemedit') {
     $values['urlCL'] = 'processLists.php?action=moveitem&itemId=' . $values['itemId'] . '&checklistId=';

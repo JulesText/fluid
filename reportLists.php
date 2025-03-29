@@ -74,7 +74,7 @@ $( document ).ready(function() {
     }
     if (!isset($_GET['content'])) {
         echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst . "&content=bulk\">Edit Items</a>&nbsp;]";
-        echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a id=\"copy-button\">Link</a>&nbsp;]";
+        echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a id=\"copy-button\">Copy</a>&nbsp;]";
         echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst . "&content=limit\">Limit</a>&nbsp;]";
     }
     if ($check) {

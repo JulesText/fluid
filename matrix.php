@@ -1201,7 +1201,7 @@ if (!$data) {
         <td class='cont' onClick="window.location = 'matrix.php?orphans=true&qLimit=<?php echo $qLimit; ?>';">Orphs</td>
         <td class='cont' id='Calc' onClick="autoCalc = true;calcFormulae('<?php echo $vLimit; ?>');">Calc^</td>
         <td class='cont' id='ajaxResp'></td>
-        <td class='cont' id='copy-button'>Link</td>
+        <td class='cont' id='copy-button'>Copy</td>
 <?php } ?>
     </tr>
 <?php

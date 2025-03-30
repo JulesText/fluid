@@ -38,6 +38,7 @@ if (isset($_GET['scen']) && $_GET['scen'] == true) { $scen = true; } else { $sce
 if (isset($_GET['calc']) && $_GET['calc'] == true) { $calc = 'true'; } else { $calc = 'false'; }
 if (isset($_GET['data']) && $_GET['data'] == true) { $data = true; } else { $data = false; }
 if (isset($_GET['career']) && $_GET['career'] == true) { $career = true; } else { $career = false; }
+if (isset($_GET['travel']) && $_GET['travel'] == true) { $travel = true; } else { $travel = false; }
 
 // limit visions
 if (isset($_GET['live']) && $_GET['live'] == true) { $live = true; } else { $live = false; }
@@ -737,7 +738,7 @@ function drawTable() {
         ],
         "orderMulti": true, // shift click sequence of columns
         "info": false,
-        "searchDelay": 3000,
+        "searchDelay": 2000,
         "bAutoWidth": false,
         "dom": 'Bfrtip',
         "buttons": []//['columnsToggle']
@@ -915,6 +916,7 @@ $(document).ready(function() {
 
         if ($live) echo "toggleCheckB('someday');toggleCheckB('complete');\n\t";
         if ($career) echo "toggleCheckB('attr.771');\n\t";
+        if ($travel) echo "toggleCheckB('attr.26');\n\t";
         if (!$meta) echo "toggleCol(['3','4','5']);\n\t";
 
     ?>
@@ -965,6 +967,7 @@ var liveDisp = true;
 var compareDisp = true;
 var brainlessDisp = true;
 var careerDisp = true;
+var travelDisp = true;
 
 function toggleCheckB(ctype) {
 
@@ -1036,6 +1039,11 @@ function toggleCheckB(ctype) {
     if (ctype == 'attr.771') {
         hideR = careerDisp;
         careerDisp ^= true;
+        checkd = false;
+    }
+    if (ctype == 'attr.26') {
+        hideR = travelDisp;
+        travelDisp ^= true;
         checkd = false;
     }
     if (hideR) {
@@ -1192,6 +1200,7 @@ if (!$data) {
         <td class='cont' onClick="toggleCheckB('attr.24')">Compa</td>
         <td class='cont' onClick="toggleCheckB('attr.531')">Blss</td>
         <td class='cont' onClick="toggleCheckB('attr.771')">Creer</td>
+        <?php if ($travel) { ?><td class='cont' onClick="toggleCheckB('attr.26')">Trav</td><?php } ?>
         <td class='cont' onClick="toggleRow(['i0'])">in0</td>
         <td class='cont' onClick="toggleRow(['i1'])">in1</td>
         <td class='cont' onClick="toggleRow(['i2'])">in2</td>
@@ -1253,7 +1262,7 @@ if (!$data) {
         <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=j&scen=true&calc=true'; ?>';">Val</td>
         <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=i&calc=true&data=true'; ?>';">Data</td>
         <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=e&career=true'; ?>';">Creer</td>
-        <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=k'; ?>';">Trav</td>
+        <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=k&travel=true'; ?>';">Trav</td>
         <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=f'; ?>';">All</td>
         <td class='cont' onClick="window.location = '<?php echo $url . '&live=true'; ?>';">Live</td>
         <td class='cont' onClick="window.location = '<?php echo $url . '&calc=' . ($calc == 'true' ? 'false' : 'true'); ?>';">Calc</td>

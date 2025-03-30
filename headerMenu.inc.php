@@ -275,6 +275,10 @@ foreach ((array) $vres as $visn) {
     }
 }
 
+// deduplicate where in multiple visions
+$listMena = array_map('unserialize', array_unique(array_map('serialize', $listMena)));
+$listNoMena = array_map('unserialize', array_unique(array_map('serialize', $listNoMena)));
+
 // sort order for lists
 function sortBys ($a, $b) {
     return $a['sortBy'] - $b['sortBy'];

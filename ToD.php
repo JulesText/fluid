@@ -1,6 +1,9 @@
 <?php
 //This adjusts for apache GMT errors
-date_default_timezone_set('Australia/Sydney');
+// date_default_timezone_set('Australia/Sydney');
+date_default_timezone_set('Europe/Berlin');
+// date_default_timezone_set('Asia/Kolkata');
+// die('date_default_timezone_set: ' . date_default_timezone_get());
 
 //get hour of day
 $today = getdate();
@@ -24,6 +27,8 @@ if ( $hour == 23 || $hour == 0 ) $ToD = 'GB';
 if ( $hour == 1 || $hour == 2 ) $ToD = 'Liv';
 if ( $hour == 3 || $hour == 4 ) $ToD = 'L';
 if ( $hour == 5 || $hour == 6 ) $ToD = 'LI';
+
+// die($ToD);
 
 if ($ToD == 'St') header('Location:reportLists.php?listId=36&type=C');
 if ($ToD == 'Sp') header('Location:reportLists.php?listId=37&type=C');

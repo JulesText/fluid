@@ -1,0 +1,65 @@
+body {
+	font-size: 42px; /* JK display text */
+}
+
+h1 {
+	font-size: 42px; /* JK display text */
+}
+
+h2 {
+	font-size: 42px; /* JK display text */
+	border-bottom: 2px solid #ccb;
+}
+
+h3 {
+	font-size: 42px; /* JK display text */
+}
+
+h4 {
+	font-size: 15px; /* JK display text */
+}
+
+thead td, th {
+	padding: 2px 3px;
+	border: 1px solid #777;
+	font-size: 42px; /* JK display text */
+}
+
+tbody td {
+	border: 1px dotted #999;
+	font-size: 42px; /* JK display text */
+}
+
+.formrow textarea, .formrow #name {
+	width: 20em;
+	font-size: 42px; /* JK display text */
+}
+
+.formrow #title, #conclusion, #outcome, #hyperlink, #metaphor {
+	font-size: 42px; /* JK display text */
+	width: 20em;
+}
+
+select, input, textarea, button {
+	font-size: 24px;
+}
+
+input.JKPadding {
+	font-size: 24px;
+}
+
+input.score, input.notfirst{
+	height:2.0em;
+	width:2.0em;
+}
+
+select, input[type='text'], input[type='submit'], input[type='reset'], button, textarea {
+	font-size: 42px;
+}
+
+input.closeButton {
+	position: absolute; right:10px; top:10px;
+	color: red; padding: 200px;
+	font-size: 42px;
+	font-family: verdana;
+}

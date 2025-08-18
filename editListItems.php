@@ -51,7 +51,7 @@ require_once("headerHtml.inc.php");
 <?php
 if ($check && $action == 'itemedit') {
     $values['urlCL'] = 'processLists.php?action=moveitem&itemId=' . $values['itemId'] . '&checklistId=';
-    echo '&nbsp;&nbsp;&nbsp;' . parentlistselectbox($config,$values,$sort);
+    echo '&nbsp;&nbsp;&nbsp;Move:' . parentlistselectbox($config,$values,$sort);
 }
 ?>
 </h1>

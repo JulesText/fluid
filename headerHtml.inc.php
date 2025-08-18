@@ -45,6 +45,12 @@ if (!isset($_SESSION['useLiveEnhancements']))
 
 <!-- theme main stylesheet -->
 <link rel="stylesheet" href="themes/<?php echo $config['theme']; ?>/style.css" type="text/css"/>
+<?php
+if (isMobile()) echo "
+<!-- theme main stylesheet for mobile -->
+<link rel='stylesheet' href='themes/default/style_mob.css' type='text/css'/>
+";
+?>
 
 <!-- theme screen stylesheet (should check to see if this actually exists) -->
 <link rel="stylesheet" href="themes/<?php echo $config['theme']; ?>/style_screen.css" type="text/css" media="Screen" />

@@ -1,7 +1,7 @@
 <?php
 //This adjusts for apache GMT errors
-// date_default_timezone_set('Australia/Sydney');
-date_default_timezone_set('Europe/Berlin');
+date_default_timezone_set('Australia/Sydney');
+// date_default_timezone_set('Europe/Berlin');
 // date_default_timezone_set('Asia/Kolkata');
 // die('date_default_timezone_set: ' . date_default_timezone_get());
 

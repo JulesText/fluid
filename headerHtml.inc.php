@@ -46,7 +46,7 @@ if (!isset($_SESSION['useLiveEnhancements']))
 <!-- theme main stylesheet -->
 <link rel="stylesheet" href="themes/<?php echo $config['theme']; ?>/style.css" type="text/css"/>
 <?php
-if (isMobile()) echo "
+if (isMobile() && $_SERVER["PHP_SELF"] !== "/fi.php") echo "
 <!-- theme main stylesheet for mobile -->
 <link rel='stylesheet' href='themes/default/style_mob.css' type='text/css'/>
 ";

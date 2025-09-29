@@ -16,6 +16,7 @@ foreach ($result as $row) {
 array_pop($history);
 
 $model_id = $_POST['model_id'];
+if ($model_id == '5') $model_id = $config['fir_model_5'];
 if ($model_id == '4') $model_id = $config['fir_model_4'];
 if ($model_id == '3') $model_id = $config['fir_model_3'];
 

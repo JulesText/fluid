@@ -169,6 +169,8 @@ modelButton.addEventListener('click', event => {
     event.preventDefault();
     if (model_id == '3') {
       model_id = '4';
+    } else if (model_id == '4') {
+      model_id = '5';
     } else {
       model_id = '3';
     }

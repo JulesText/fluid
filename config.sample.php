@@ -49,6 +49,7 @@ $config['fir_pres_pen'] = 0; # presence penalty
 #'gpt-4'
 $config['fir_model_3'] = 'gpt-3.5-turbo';
 $config['fir_model_4'] = 'gpt-4';
+$config['fir_model_5'] = 'gpt-5';
 $config['fir_max_tkn'] = 1.0; # temperature: creativity = 1, none =  0 (deterministic)
 $config['fir_max_tkn'] = 1000; # default if word limit not set
 $config['stream'] = FALSE; # not operational

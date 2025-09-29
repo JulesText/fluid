@@ -60,7 +60,7 @@ function makeContextRow($row) {
     $rowout=array();
     $rowout['itemId']=$row['itemId'];
     $rowout['description'] = '<div contenteditable="true"' . ajaxUpd('itemDescription',$row['itemId']) . '>' . $row['description'] . '</div><br>' . faLink($row['hyperlink']);
-	$rowout['repeat'] = ($row['repeat']=="0")?'&nbsp;':$row['repeat'];
+	  $rowout['repeat'] = ($row['repeat']=="0")?'&nbsp;':$row['repeat'];
     if($row['deadline']) {
         $deadline=prettyDueDate($row['deadline'],$config['datemask'],$row['suppress'],$row['suppressIsDeadline']);
         $rowout['deadline'] =$deadline['date'];
@@ -69,13 +69,16 @@ function makeContextRow($row) {
     } else $rowout['deadline']='';
     $rowout['title']=$row['title'];
     $rowout['title.title']='Edit';
-	$rowout['ptitle']=$row['ptitle'];
-	$rowout['parentId']=$row['parentId'];
-	if ($row['parentId']=='') $rowout['parent.class']='noparent';
-	$rowout['checkboxname']='isMarked[]';
-	$rowout['checkbox.title']='Mark as complete';
-	$rowout['checkboxvalue']=$row['itemId'];
+  	$rowout['ptitle']=$row['ptitle'];
+  	$rowout['parentId']=$row['parentId'];
+  	if ($row['parentId']=='') $rowout['parent.class']='noparent';
+  	$rowout['checkboxname']='isMarked[]';
+  	$rowout['checkbox.title']='Mark as complete';
+  	$rowout['checkboxvalue']=$row['itemId'];
     $rowout['NA'] = $row['NA'];
+    $rowout['runningCount'] = $row['runningCount'];
+    $rowout['randomChoice'] = $row['randomChoice'];
+
     return $rowout;
 }
 function makeContextTable($maintable) {
@@ -156,28 +159,57 @@ $values['filterquery']      .=' WHERE '.sqlparts("liveparents",$config,$values);
 $tstsort=array('getitemsandparent'=>'NA DESC, cname ASC,timeframeId ASC,'.$sort['getitemsandparent']);
 $result = query("getitemsandparent",$config,$values,$tstsort);
 
+// echo "<pre>"; var_dump($result); die();
+
+
 $grandtot=count($result);
 $index=0;
 $lostitems=array();
 //Item listings by context and timeframe
 foreach ($contextNames as $cid=>$dummy1) {
+
+    // count total for context id and random item selection
+    $contextCount = 0;
+    foreach ($result as $row) {
+        if ((int) $row['contextId'] === $cid && $row['NA']) $contextCount++;
+    }
+    if ($contextCount) $randomChoice = rand(1, $contextCount);
+    else $randomChoice = 0;
+    $runningCount = 0;
+    $matrixcount[$cid]["random"] = "r = " . $randomChoice;
+
+    // generate html rows
     foreach ($timeframeNames as $tid=>$dummy2) {
+
         $maintable=array();
         $wasNAonEntry[$cid][$tid]=array();
+
+        // catch any lost items for later rendering
         while ($index<$grandtot
                 && (    !array_key_exists((int) $result[$index]['contextId'],$contextNames)
                      || !array_key_exists((int) $result[$index]['timeframeId'],$timeframeNames))) {
             array_push($lostitems,$result[$index++]);
         }
-		while ($index<$grandtot &&
-                (int) $result[$index]['contextId']===$cid &&
-                (int) $result[$index]['timeframeId']===$tid ) {
-            $row=$result[$index];
-            if ($row['NA']) array_push($wasNAonEntry[$cid][$tid],$row['itemId']);
-            array_push($maintable,makeContextRow($row));
-            $index++;
-		}
-		$matrixcount[$cid][$tid]=count($maintable);
+
+        // make main row
+    		while ($index<$grandtot &&
+                    (int) $result[$index]['contextId']===$cid &&
+                    (int) $result[$index]['timeframeId']===$tid ) {
+
+                $row = $result[$index]; // get row
+                if ($row['NA']) array_push($wasNAonEntry[$cid][$tid],$row['itemId']);
+                $runningCount++;
+                $row['runningCount'] = $runningCount . " of " . $contextCount;
+                if ($runningCount == $randomChoice) {
+                    $row['randomChoice'] = TRUE;
+                } else {
+                    $row['randomChoice'] = FALSE;
+                }
+                array_push($maintable,makeContextRow($row));
+                $index++;
+
+    		}
+    		$matrixcount[$cid][$tid]=count($maintable);
         if (count($maintable))
             $matrixout[$cid][$tid]=makeContextTable($maintable);
     }

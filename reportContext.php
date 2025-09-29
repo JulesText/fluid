@@ -1,6 +1,8 @@
 <?php include_once('header.php');
 include_once('reportContext.inc.php');
 require_once("headerHtml.inc.php");
+
+// echo "<pre>"; var_dump($matrixcount);die;
 ?>
 
 <!--
@@ -68,11 +70,12 @@ To edit a context select the context name.</p>
 <?php
 foreach ($contextNames as $cid => $cname) {
     if (!$runningtotals["c$cid"]) continue;
-    $ran = rand(1, $runningtotals["c$cid"]);
+    // $ran = rand(1, $runningtotals["c$cid"]);
     echo "<a id='c$cid'></a>\n";
     echo "<h1>" /*<a href='editCat.php?field=context&amp;id=$cid' "
         ,"title='Edit the $cname context'>" */
-        ,"<u>Context:&nbsp;$cname</u> (r = " . $ran . ")</h1>\n";
+        // ,"<u>Context:&nbsp;$cname</u> (r = " . $ran . ")</h1>\n";
+        ,"<u>Context:&nbsp;$cname</u> (" . $matrixcount[$cid]['random'] . ")</h1>\n";
 
    foreach ($timeframeNames as $tid => $tname) {
         if (isset($matrixout[$cid][$tid])) {
@@ -84,7 +87,7 @@ foreach ($contextNames as $cid => $cname) {
                 <table class="datatable sortable" summary="table of actions"
                     id='actiontable<?php echo "C{$cid}T{$tid}"; ?>'>
                     <?php
-                    echo $matrixout[$cid][$tid]; 
+                    echo $matrixout[$cid][$tid];
                     ?>
                 </table>
                 <div>

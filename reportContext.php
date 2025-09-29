@@ -1,8 +1,19 @@
-<?php include_once('header.php');
+<?php
+
+include_once('header.php');
+
+if (isset($_GET["random"]) && $_GET["random"] == 'true') $randomDisplay = TRUE;
+else $randomDisplay = FALSE;
+
 include_once('reportContext.inc.php');
 require_once("headerHtml.inc.php");
 
-// echo "<pre>"; var_dump($matrixcount);die;
+?>
+
+<?php
+
+if (!$randomDisplay) echo "<h1 style='text-align: right'><a href='" . $_SERVER['REQUEST_URI'] . "&random=true'>Random</a></h1>"
+
 ?>
 
 <!--
@@ -75,7 +86,9 @@ foreach ($contextNames as $cid => $cname) {
     echo "<h1>" /*<a href='editCat.php?field=context&amp;id=$cid' "
         ,"title='Edit the $cname context'>" */
         // ,"<u>Context:&nbsp;$cname</u> (r = " . $ran . ")</h1>\n";
-        ,"<u>Context:&nbsp;$cname</u> (" . $matrixcount[$cid]['random'] . ")</h1>\n";
+        ,"<u>Context:&nbsp;$cname</u>";
+    if ($randomDisplay) echo " (" . $matrixcount[$cid]['random'] . ")";
+    echo "</h1>\n";
 
    foreach ($timeframeNames as $tid => $tname) {
         if (isset($matrixout[$cid][$tid])) {

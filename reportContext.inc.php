@@ -200,7 +200,7 @@ foreach ($contextNames as $cid=>$dummy1) {
                 if ($row['NA']) array_push($wasNAonEntry[$cid][$tid],$row['itemId']);
                 $runningCount++;
                 $row['runningCount'] = $runningCount . " of " . $contextCount;
-                if ($runningCount == $randomChoice) {
+                if ($runningCount == $randomChoice && $randomDisplay) {
                     $row['randomChoice'] = TRUE;
                 } else {
                     $row['randomChoice'] = FALSE;

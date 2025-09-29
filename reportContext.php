@@ -20,9 +20,10 @@ if ($randomDisplay) {
         if ($row['count'] > 0) array_push($contexts, $row['context']);
     }
     $key = rand(0, count($contexts) - 1);
+    $randomContext = $contexts[$key];
     // echo "<pre>"; var_dump($matrixcount);die();
     // echo "<pre>" . $key . " " . $contexts[$key] . PHP_EOL; var_dump($contexts);die();
-    echo "<h1>Random context: " . $contexts[$key] . "</h1>";
+    echo "<h1>Random context: " . $randomContext . "</h1>";
 }
 
 ?>
@@ -92,6 +93,7 @@ To edit a context select the context name.</p>
 <?php
 foreach ($contextNames as $cid => $cname) {
     if (!$runningtotals["c$cid"]) continue;
+    if ($randomDisplay && $cname != $randomContext) continue;
     // $ran = rand(1, $runningtotals["c$cid"]);
     echo "<a id='c$cid'></a>\n";
     echo "<h1>" /*<a href='editCat.php?field=context&amp;id=$cid' "

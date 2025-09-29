@@ -12,7 +12,18 @@ require_once("headerHtml.inc.php");
 
 <?php
 
-if (!$randomDisplay) echo "<h1 style='text-align: right'>[ <a href='" . $_SERVER['REQUEST_URI'] . "&random=true'>Random</a> ]</h1>"
+if (!$randomDisplay) echo "<h1 style='text-align: right'>[ <a href='" . $_SERVER['REQUEST_URI'] . "&random=true'>Random</a> ]</h1>";
+
+if ($randomDisplay) {
+    $contexts = array();
+    foreach ($matrixcount as $row) {
+        if ($row['count'] > 0) array_push($contexts, $row['context']);
+    }
+    $key = rand(0, count($contexts) - 1);
+    // echo "<pre>"; var_dump($matrixcount);die();
+    // echo "<pre>" . $key . " " . $contexts[$key] . PHP_EOL; var_dump($contexts);die();
+    echo "<h1>Random context: " . $contexts[$key] . "</h1>";
+}
 
 ?>
 

@@ -168,6 +168,8 @@ $lostitems=array();
 //Item listings by context and timeframe
 foreach ($contextNames as $cid=>$dummy1) {
 
+    $matrixcount[$cid]["context"] = $dummy1;
+
     // count total for context id and random item selection
     $contextCount = 0;
     foreach ($result as $row) {
@@ -176,6 +178,7 @@ foreach ($contextNames as $cid=>$dummy1) {
     if ($contextCount) $randomChoice = rand(1, $contextCount);
     else $randomChoice = 0;
     $runningCount = 0;
+    $matrixcount[$cid]["count"] = $contextCount;
     $matrixcount[$cid]["random"] = "r = " . $randomChoice;
 
     // generate html rows
@@ -214,6 +217,7 @@ foreach ($contextNames as $cid=>$dummy1) {
             $matrixout[$cid][$tid]=makeContextTable($maintable);
     }
 }
+
 $_SESSION['lastfilterp']=$_SESSION['lastfiltera']=basename($thisurl['path']);
 if (count($lostitems)) {
     $cid='-1';

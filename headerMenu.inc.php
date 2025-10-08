@@ -16,7 +16,7 @@ $menu2=array();
 //$menu[] = array("link"=>"reportLists.php?listId=13&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Health DDD");
 //$menu[] = array("link"=>"reportLists.php?listId=168&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Chores EEE");
 //$menu[] = array("link"=>"reportLists.php?listId=170&type=C", 'title'=>"Week Schedule", 'label' => "Weekly Process FFF");
-$menu[] = array("link"=>"tabs_pertinence.html", 'title'=>"HHome Tabs", 'label' => "HHome Tabs");
+$menu[] = array("link"=>"tabs_pertinence.php", 'title'=>"HHome Tabs", 'label' => "HHome Tabs");
 $menu[] = array("link"=>"listItems.php?type=*&everything=true&liveparents=*", 'form' => TRUE, 'label' => 'Search ');
 
 /*

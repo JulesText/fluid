@@ -12,7 +12,7 @@ require_once("headerHtml.inc.php");
 
 <?php
 
-if (!$randomDisplay) echo "<h1 style='text-align: right'>[ <a href='" . $_SERVER['REQUEST_URI'] . "&random=true'>Random</a> ]</h1>";
+if (!$randomDisplay) echo "<h1 style='text-align: left'>[ <a href='" . $_SERVER['REQUEST_URI'] . "&random=true'>Random</a> ]</h1>";
 
 if ($randomDisplay) {
     $contexts = array();

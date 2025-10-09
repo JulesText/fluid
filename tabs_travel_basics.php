@@ -20,6 +20,8 @@ function pertinent() {
         'reportLists.php?listId=168&type=C&content=bulk',
         'reportLists.php?listId=170&type=c&content=bulk',
         'reportLists.php?listId=145&type=c&content=bulk',
+        'reportLists.php?listId=209&type=c&content=bulk',
+        'reportLists.php?listId=120&type=c&content=bulk',
         // 'reportLists.php?listId=198&type=c',
         'reportLists.php?listId=56&type=c&content=bulk',
         // 'reportLists.php?listId=197&type=c',

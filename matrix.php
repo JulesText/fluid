@@ -1200,7 +1200,8 @@ if (!$data) {
         <td class='cont' onClick="toggleCheckB('attr.24')">Compa</td>
         <td class='cont' onClick="toggleCheckB('attr.531')">Blss</td>
         <td class='cont' onClick="toggleCheckB('attr.771')">Creer</td>
-        <?php if ($travel) { ?><td class='cont' onClick="toggleCheckB('attr.26')">Trav</td><?php } ?>
+        <?php /* if ($travel) { ?><td class='cont' onClick="toggleCheckB('attr.26')">Trav</td><?php } */ ?>
+        <td class='cont' onClick="toggleCheckB('attr.26')">Trav</td>
         <td class='cont' onClick="toggleRow(['i0'])">in0</td>
         <td class='cont' onClick="toggleRow(['i1'])">in1</td>
         <td class='cont' onClick="toggleRow(['i2'])">in2</td>
@@ -1263,6 +1264,7 @@ if (!$data) {
         <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=i&calc=true&data=true'; ?>';">Data</td>
         <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=e&career=true'; ?>';">Creer</td>
         <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=k&travel=true'; ?>';">Trav</td>
+        <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=l&nometa=true'; ?>';">Budg</td>
         <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=f'; ?>';">All</td>
         <td class='cont' onClick="window.location = '<?php echo $url . '&live=true'; ?>';">Live</td>
         <td class='cont' onClick="window.location = '<?php echo $url . '&calc=' . ($calc == 'true' ? 'false' : 'true'); ?>';">Calc</td>

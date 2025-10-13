@@ -202,10 +202,28 @@ $sort = array(
     "getlistitemsbulk"      => "li.`item` desc, li.`priority`, li.`notes` asc",
     "getitemsandparent"     => "type ASC, ptitle ASC, title ASC, deadline ASC, dateCreated DESC",
     "getorphaneditems"      => "ia.`type` ASC, i.`title` ASC",
-    "getchecklistitems"     => "cli.`ignored` DESC, cli.`checked` DESC, SUBSTRING(cli.`item`, 1, 2) ASC, cli.`priority`, cli.`item`, cli.`notes` ASC",
-    "getchecklistitemsprioritise" => "cli.`ignored` DESC, cli.`checked` DESC, cli.`priority`, cli.`item` ASC, cli.`notes` ASC",
-    "getchecklistitemsbulk" => "cli.`item` ASC, cli.`priority`, cli.`effort` ASC, cli.`notes` ASC",
-    "getchecklistitemsinst" => "i.`ignored` DESC, i.`checked` DESC, cli.`item` ASC, cli.`notes` ASC",
+
+    ### CL item sort order ###
+    # 'title > notes 4 > prioritise'
+    "getchecklistitems"
+        => "cli.`ignored` DESC, cli.`checked` DESC, cli.`item`, SUBSTRING(cli.`notes`, 1, 4) ASC, cli.`priority`, SUBSTRING(cli.`notes`, 1, 20) ASC",
+    # 'title 2 > notes 4 > prioritise'
+    "getchecklistitems_title_notes"
+        => "cli.`ignored` DESC, cli.`checked` DESC, SUBSTRING(cli.`item`, 1, 2) ASC, SUBSTRING(cli.`notes`, 1, 4) ASC, cli.`priority`, SUBSTRING(cli.`notes`, 1, 20) ASC",
+    # 'title > prioritise > notes'
+    "getchecklistitems_title_prioritise"
+        => "cli.`ignored` DESC, cli.`checked` DESC, cli.`item` ASC, cli.`priority`, SUBSTRING(cli.`notes`, 1, 20) ASC",
+    # 'prioritise > title > notes'
+    "getchecklistitems_prioritise"
+        => "cli.`ignored` DESC, cli.`checked` DESC, cli.`priority`, cli.`item` ASC, SUBSTRING(cli.`notes`, 1, 20) ASC",
+    # edit items view
+    "getchecklistitemsbulk"
+        => "cli.`item` ASC, cli.`priority`, cli.`effort` ASC, cli.`notes` ASC",
+    "getchecklistitemsinst"
+        => "i.`ignored` DESC, i.`checked` DESC, cli.`item` ASC, cli.`notes` ASC",
+
+    ##########################
+    
     "getchecklists"         => "`title` ASC",
     "getlists"              => "c.`category` ASC",
     "getchecklistitems"     => "cli.`checked` DESC, cli.`item` ASC",

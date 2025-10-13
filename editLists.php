@@ -115,8 +115,10 @@ echo '&nbsp;&nbsp;&nbsp;[ <a href="childrenMove.php?type=' . $type . '&itemId=' 
       <input type="submit" value="Down Priorities" name="down_priorities" />
       <label for='sortItems' class='left first'>Sort items:</label>
       <select name='sortItems' id='sortItems'>
-        <option value="priority" <?php if ($values['sortItems'] == 'priority') echo ' selected="selected"'; ?>>priority</option>
-        <option value="title" <?php if ($values['sortItems'] == 'title') echo ' selected="selected"'; ?>>title</option>
+        <option value="priority" <?php if ($values['sortItems'] == 'priority') echo ' selected="selected"'; ?>>prioritise > title > notes</option>
+        <option value="title_notes" <?php if ($values['sortItems'] == 'title_notes') echo ' selected="selected"'; ?>>title 2 > notes 4 > prioritise</option>
+        <option value="title" <?php if ($values['sortItems'] == 'title') echo ' selected="selected"'; ?>>title > notes 4 > prioritise</option>
+        <option value="title_priority" <?php if ($values['sortItems'] == 'title_priority') echo ' selected="selected"'; ?>>title > prioritise > notes</option>
       </select>
 
 		<?php }

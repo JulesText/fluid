@@ -11,16 +11,22 @@ if ($result==1) {
 }
 $row=$result[0];
 
-if ((!isset($_GET['content']) || $_GET['content'] !== 'bulk') && $row['sortItems'] !== 'title') {
-  // die($row['sortItems']);
+### item sort order ###
+
+if (!isset($_GET['content']) || $_GET['content'] !== 'bulk') {
   $sort['getlistitems'] = $sort['getlistitemsprioritise'];
-  $sort['getchecklistitems'] = $sort['getchecklistitemsprioritise'];
+  if ($row['sortItems'] == 'title') $sort['getchecklistitems'] = $sort['getchecklistitems'];
+  if ($row['sortItems'] == 'priority') $sort['getchecklistitems'] = $sort['getchecklistitems_prioritise'];
+  if ($row['sortItems'] == 'title_priority') $sort['getchecklistitems'] = $sort['getchecklistitems_title_prioritise'];
+  if ($row['sortItems'] == 'title_notes') $sort['getchecklistitems'] = $sort['getchecklistitems_title_notes'];
 }
 
 if (isset($_GET['content']) && $_GET['content'] == 'bulk') {
   $sort['getlistitems'] = $sort['getlistitemsbulk'];
   $sort['getchecklistitems'] = $sort['getchecklistitemsbulk'];
 }
+
+#######################
 
 $values['filterquery']= " AND ".sqlparts("activelistitems",$config,$values);
 $result1=query("get{$check}listitems",$config,$values,$sort);

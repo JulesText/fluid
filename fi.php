@@ -38,6 +38,9 @@ $db = NULL; // Close the database connection
           <button id="word-button">Words</button>
           <span class="word_count" style="opacity:0"></span>
           <button id="copy-button">Copy</button>
+          <?php
+          if (isMobile()) echo "<input type='button' value='Close' onclick='closeMe();' class='closeButton' />";
+          ?>
         </div>
     </header>
 

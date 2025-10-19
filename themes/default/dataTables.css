@@ -1,4 +1,4 @@
-/* matrix datatable 
+/* matrix datatable
 reduced from https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css
 -row stripe, row hover
 */
@@ -37,7 +37,7 @@ table.dataTable thead .sorting_desc_disabled {
 td.dt-nowrap { white-space: nowrap }
 
 .dataTables_filter {
-    position: absolute; 
+    position: absolute;
     top: 60px;
     left: 15px;
     width: 100px;
@@ -45,28 +45,28 @@ td.dt-nowrap { white-space: nowrap }
 	border: 1px dotted #999;
 	font-size: 10px;
 	font-family: verdana;
-	color: #666; 
+	color: #666;
 }
 
 /* dataTable search field */
-input.fMin, 
+input.fMin,
 input.fMax,
 input.fTxt,
 input.fEmp,
 input.fChk,
-.dataTables_filter input 
+.dataTables_filter input
 {
 	font-weight: normal;
 	font-size: 10px;
 	font-family: verdana;
-	color: #666; 
+	color: #666;
 	background: #f6f6f0;
 	padding: 0px;
 	border: 0px;
 	margin: 0;
 }
 
-input.fMin, 
+input.fMin,
 input.fMax
 {
 	height: 1.5em;
@@ -74,7 +74,7 @@ input.fMax
 }
 
 input.fTxt,
-.dataTables_filter input 
+.dataTables_filter input
 {
 	height: 1.5em;
 	width: 100%;
@@ -91,7 +91,7 @@ table.mx tbody tr:hover {
 
 thead.mx {
     /*
-    position: fixed; 
+    position: fixed;
     top: 0;
     left: 0;
     z-index: 5;
@@ -108,7 +108,6 @@ td.mx, th.mx {
 	color: #666;
 	border: 1px dotted #999;
 	font-weight: normal;
-	font-size: 10px;
 	font-family: verdana;
 	/* white-space: nowrap; */
 	/* doesn't work
@@ -120,17 +119,22 @@ td.mx, th.mx {
 }
 
 td.mx {
-    white-space: nowrap; 
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+th.mx {
+  font-size: 12px;
 }
 
 td.cont {
 	color: #666;
 	border: 1px dotted #999;
 	font-weight: normal;
-	font-size: 10px;
+  font-size: 12px;
 	font-family: verdana;
 	padding: 2px;
-    white-space: nowrap; 
+    white-space: nowrap;
     cursor: pointer;
     *cursor: hand;
 }
@@ -191,20 +195,20 @@ td.item.mx.indent4 {
 }
 
 a.mx {
-    color: #ddd; 
+    color: #ddd;
     font-weight: normal;
 }
 a.mx:visited {
-    color: #ddd; 
+    color: #ddd;
     font-weight: normal;
 }
 
 .wh {
-    white-space: nowrap; 
+    white-space: nowrap;
 }
 
 table.matrixCont {
-    position: absolute; 
+    position: absolute;
     top: 0;
     z-index: 10;
 }

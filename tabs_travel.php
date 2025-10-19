@@ -13,7 +13,6 @@ function pertinent() {
         'https://www.google.com/maps/@17.920191,132.4221915,3z?entry=ttu&g_ep=EgoyMDI1MDkwNy4wIKXMDSoASAFQAw%3D%3D',
         'https://www.atlasobscura.com/articles/all-places-in-the-atlas-on-one-map',
         'reportLists.php?listId=198&type=c',
-        'reportLists.php?listId=56&type=c',
         'reportLists.php?listId=197&type=c',
         'reportLists.php?listId=211&type=c',
         'reportLists.php?listId=196&type=c',
@@ -23,8 +22,9 @@ function pertinent() {
         'matrix.php?&vLimit=2196&qLimit=k',
         'matrix.php?&vLimit=10542&qLimit=k',
         'matrix.php?&vLimit=5252&qLimit=k',
-        'matrix.php?&vLimit=21993&qLimit=k', // second window
-        'reportLists.php?listId=161&type=c', // first/current window
+        'matrix.php?&vLimit=21993&qLimit=k',
+        'reportLists.php?listId=161&type=c', // second window
+        'editListItems.php?itemId=8492&type=c', // first/current window
     ];
 
     var arrayLength = windows.length;

@@ -148,19 +148,19 @@ if ($_GET['convert'] == true) {
     $other = " unlink qualities and/or children first?";
 } elseif (in_array($values['type'], array('a','w','r'))) {
     $canchangetypesafely=array('a','w','r');
-    $other = '[ <a href="' . $_SERVER['REQUEST_URI'] . '&convert=true">Other</a> ]';
+    $other = '[&nbsp;<a href="' . $_SERVER['REQUEST_URI'] . '&convert=true">Other</a>&nbsp;]';
 } else {
-    echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <a href="' . $_SERVER['REQUEST_URI'] . '&convert=true">Convert</a> ]';
+    echo '&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;[&nbsp;<a href="' . $_SERVER['REQUEST_URI'] . '&convert=true">Convert</a>&nbsp;]';
 		$canchangetypesafely=array();
 }
 
 if (in_array($values['type'], array('o','g','p'))) {
-  echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <a href="childrenMove.php?type=' . $values['type'] . '&itemId=' . $values['itemId'] . '">Move in Matrix</a> ]';
+  echo '&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;[&nbsp;<a href="childrenMove.php?type=' . $values['type'] . '&itemId=' . $values['itemId'] . '">Move in Matrix</a>&nbsp;]';
 }
 
 $sep='';
 if ((in_array($values['type'],$canchangetypesafely) || $values['type'] == 'i') && $values['itemId']) {
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convert to&nbsp;&nbsp;&nbsp;[ ";
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Convert&nbsp;to&nbsp;&nbsp;&nbsp;[&nbsp;";
         foreach ($canchangetypesafely as $totype) {
             if ($totype!==$values['type']) {
                 echo "$sep <a href='processItems.php?action=changeType&amp;itemId="
@@ -168,10 +168,10 @@ if ((in_array($values['type'],$canchangetypesafely) || $values['type'] == 'i') &
                     ,$values['isSomeday'];
                 if (!empty($referrer)) echo "&amp;referrer=$referrer";
                 echo "'>",getTypes($totype),"</a>\n";
-                $sep=' ]&nbsp;&nbsp;&nbsp;[ ';
+                $sep='&nbsp;]&nbsp &nbsp;[&nbsp;';
             }
         }
-        echo " ]&nbsp;&nbsp;&nbsp;" . $other;
+        echo "&nbsp;]&nbsp;&nbsp;&nbsp;" . $other;
 }
 /*
 if ($show['type']) {

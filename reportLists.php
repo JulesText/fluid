@@ -68,18 +68,16 @@ $( document ).ready(function() {
 
 <?php
   if (isset($_GET['content']) && $_GET['content'] == 'bulk') {
-      echo "[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst . "\">Show List</a>&nbsp;]&nbsp;&nbsp;&nbsp;";
+      echo "[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst . "\">Show&nbsp;List</a>&nbsp;]&nbsp;&nbsp;&nbsp;";
   }
 ?>
-  <span class='editbar'>[
-    <a href='editLists.php<?php echo $urlVars . $urlInst; ?>'>Edit List</a>
-]</span>
+  <span class='editbar'>[&nbsp;<a href='editLists.php<?php echo $urlVars . $urlInst; ?>'>Edit&nbsp;List</a>&nbsp;]</span>
 <?php
     if ($row['hyperlink']) {
         echo "&nbsp;&nbsp;&nbsp;[&nbsp;" . faLink($row['hyperlink']) . "&nbsp;]";
     }
     if (!isset($_GET['content'])) {
-        echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst . "&content=bulk\">Edit Items</a>&nbsp;]";
+        echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst . "&content=bulk\">Edit&nbsp;Items</a>&nbsp;]";
         echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a id=\"copy-button\">Copy</a>&nbsp;]";
         echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst . "&content=limit\">Limit</a>&nbsp;]";
     }

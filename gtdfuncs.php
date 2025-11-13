@@ -635,6 +635,7 @@ function childUpd ($type,$itemId,$visId,$catId = '') {
         case 'o' : $title = 'role'; break;
     }
     switch ($type) {
+        case 'o' :
         case 'l' :
         case 'c' : $childUpd = '<a href="listsUpdate.php?itemId=' . $itemId . '&visId=' . $visId . '&type=' . $type . '&matrix=true' . $catId . $catMultiId . '" class="mx" target="_blank" title="' . $title . 's">' . strtoupper($type) . '</a>';
         break;

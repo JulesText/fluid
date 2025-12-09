@@ -60,7 +60,7 @@ select, input[type='text'], input[type='submit'], input[type='reset'], button, t
 input.closeButton {
 	position: absolute; right:10px; top:10px;
 	/* color: red;  */
-	padding: 200px;
+	padding: 20px;
 	font-size: 42px;
 	font-family: verdana;
 }

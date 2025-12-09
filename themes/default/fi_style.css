@@ -251,7 +251,7 @@ a.history-link {
 input.closeButton {
 	position: absolute; right:10px; top:10px;
   /* color: red;  */
-  padding: 140px;
+  padding: 20px;
   font-size: 28px;
 	font-family: verdana;
 }

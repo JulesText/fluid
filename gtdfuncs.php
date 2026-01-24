@@ -280,6 +280,23 @@ function timecontextselectbox($config,$values,$sort) {
     return $tshtml;
     }
 
+function tradeconditionselectbox($config,$values,$sort) {
+    $result = query("tradeconditionselectbox",$config,$values,$sort);
+    $tcshtml='<option value="0">--</option>'."\n";
+    if ($result) {
+        foreach($result as $row) {
+            $tcshtml .= '                    <option value="'.$row['tradeConditionId'].'" title="'.makeclean($row['description']).'"';
+            if ($row['tradeConditionId'] == $values['tradeConditionId']) {
+                $tcshtml .= ' selected="selected"';
+            } elseif ($values['tradeConditionId'] == '' && $row['tradeConditionId'] == 0) {
+                $tcshtml .= ' selected="selected"';
+            }
+            $tcshtml .= '>'.makeclean($row['tradeCondition'])."</option>\n";
+            }
+        }
+    return $tcshtml;
+    }
+
 function makeOption($row,$selected) {
     $cleandesc=makeclean($row['description']);
     $cleantitle=makeclean($row['title']);
@@ -398,14 +415,23 @@ function ajaxUpd($query, $id, $inst = NULL) {
       if ($query === 'itemComplete') $retval = " onClick=\"cB(this,'itemstatus','dateCompleted','itemId','{$id}')\" ";
       if ($query === 'itemTitle') $retval = " onFocus=\"sEf(this,'items','title','itemId','{$id}')\" ";
       if ($query === 'itemDescription') $retval = " onFocus=\"sEf(this,'items','description','itemId','{$id}')\" ";
+      if ($query === 'itemBehaviour') $retval = " onFocus=\"sEf(this,'items','behaviour','itemId','{$id}')\" ";
+      if ($query === 'itemStandard') $retval = " onFocus=\"sEf(this,'items','standard','itemId','{$id}')\" ";
+      if ($query === 'itemConditions') $retval = " onFocus=\"sEf(this,'items','conditions','itemId','{$id}')\" ";
+      if ($query === 'itemPremiseA') $retval = " onFocus=\"sEf(this,'items','premiseA','itemId','{$id}')\" ";
+      if ($query === 'itemPremiseB') $retval = " onFocus=\"sEf(this,'items','premiseB','itemId','{$id}')\" ";
+      if ($query === 'itemConclusion') $retval = " onFocus=\"sEf(this,'items','conclusion','itemId','{$id}')\" ";
       if ($query === 'itemLink') $retval = " onFocus=\"sEf(this,'items','hyperlink','itemId','{$id}')\" ";
       if ($query === 'itemDeadline') $retval = " onChange=\"sT(this,'itemattributes','deadline','itemId','{$id}')\" ";
+      if ($query === 'itemDateCreated') $retval = " onChange=\"sT(this,'itemstatus','dateCreated','itemId','{$id}')\" ";
       if ($query === 'itemCompletedNow') $retval = " onFocus=\"sT(this,'itemstatus','dateCompleted','itemId','{$id}')\" ";
       if ($query === 'itemCompletedEdit') $retval = " onChange=\"sT(this,'itemstatus','dateCompleted','itemId','{$id}')\" ";
       if ($query === 'itemSomeday') $retval = " onClick=\"cB(this,'itemattributes','isSomeday','itemId','{$id}')\" ";
       if ($query === 'itemTickler') $retval = " onClick=\"cB(this,'itemattributes','suppress','itemId','{$id}')\" ";
       if ($query === 'itemTicklerDays') $retval = " onChange=\"sT(this,'itemattributes','suppressUntil','itemId','{$id}')\" ";
       if ($query === 'itemTicklerDeadline') $retval = " onClick=\"cB(this,'itemattributes','suppressIsDeadline','itemId','{$id}')\" ";
+      if ($query === 'itemTrade') $retval = " onClick=\"cB(this,'itemattributes','isTrade','itemId','{$id}')\" ";
+      if ($query === 'itemTradeCondition') $retval = " onChange=\"sT(this,'itemattributes','tradeConditionId','itemId','{$id}')\" ";
       if ($query === 'checklistitemNotes') $retval = " onFocus=\"sEf(this,'checklistitems','notes','checklistItemId','{$id}')\" ";
       if ($query === 'checklistitem') $retval = " onClick=\"cB(this,'checklistitems','checked','checklistItemId','{$id}')\" ";
       if ($query === 'checklistiteminst') $retval = " onClick=\"cB(this,'checklistitemsinst','checked','checklistItemId','{$id}','instanceId','{$inst}')\" ";
@@ -526,19 +552,24 @@ function escapeChars($str) {  // TOFIX consider internationalization issues with
     return $outStr;
 }
 
-function getShow($where,$type) {
+function getShow($where,$values) {
+    $type = $values['type'];
+    // $values['isTrade']=='y'
     global $config;
     $show=array(
         'title'         => true,
 
         // only show if editing, not creating
         'lastModified'  =>($where==='edit'),
-        'dateCreated'   =>($where==='edit'),
+        'dateCreated'   =>($where==='edit' && $values['isTrade']=='y'),
+        'tradeCondition'   =>($where==='edit' && $values['isTrade']=='y'),
         'type'          =>($where==='edit' && ($type==='i' || $config['allowChangingTypes'])),
 
         // fields suppressed on certain types
         'description'   => ($type!=='m' && $type!=='v' && $type!=='p' && $type!=='o' && $type!=='g'),
-        'conclusion'=>($type!=='r' && $type!=='a'),
+        // 'conclusion'=>  ($type!=='r' && $type!=='a'),
+        'conclusion'=>  ($type=='m' || $type=='v' || $type=='p' || $type=='o' || $type=='g' || $values['isTrade']=='y'),
+        'behaviour'=>  ($type=='m' || $type=='v' || $type=='p' || $type=='o' || $type=='g' || $values['isTrade']=='y'),
         'desiredOutcome'=>($type!=='r'),
         'metaphor'=>($type!=='r' && $type!=='a' && $type!=='w' && $type!=='i'),
         'category'      =>($type!=='m'),
@@ -565,6 +596,7 @@ function getShow($where,$type) {
         foreach ($show as $key=>$value)
             $show[$key]=true;
 
+    // var_dump($show);die;
     return $show;
 }
 /*

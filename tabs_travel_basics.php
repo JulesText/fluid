@@ -25,6 +25,7 @@ function pertinent() {
         // 'reportLists.php?listId=198&type=c',
         'reportLists.php?listId=56&type=c&content=bulk',
         // 'reportLists.php?listId=197&type=c',
+        'reportLists.php?listId=211&type=c&content=bulk',
         'reportLists.php?listId=161&type=c&content=bulk',
         'matrix.php?&vLimit=21993&qLimit=k'
         // first/current window

@@ -33,6 +33,10 @@ switch ($field) {
         $query='categoryselectbox';
         $showTypes=false;
         break;
+    case 'trade-condition':
+        $query='tradeconditionselectbox';
+        $showTypes=false;
+        break;
     case 'context':
         $query='spacecontextselectbox';
         $showTypes=false;

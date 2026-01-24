@@ -43,6 +43,12 @@ th.col-desiredOutcome {
 	width: 30%;
 }
 
+th.col-fulloutcome {
+	white-space: nowrap;
+	min-width: 200px;
+	/* width: 200px; */
+}
+
 th.contList {
 	border: 1px dotted #999;
   cursor: pointer;
@@ -207,6 +213,10 @@ div.reportsection {
 	margin:20px;
 }
 
+div.inline-div-editable {
+	display: inline;
+	border:0.5px #aaa dashed;
+}
 
 /* the ! preceding each project without a next action defined (in listProjects.php) */
 span.noNextAction {

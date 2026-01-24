@@ -273,6 +273,7 @@ function updateItem() { // update all the values for the current item
 	removeNextAction();
     query("updateitemattributes",$config,$values);
     query("updateitem",$config,$values);
+    query("updateitemstatus",$config,$values);
     if ($values['type'] === $values['oldtype'])
     	setParents('update');
     else
@@ -364,7 +365,7 @@ function retrieveFormVars() {
 	foreach (
         array('type'=>'i','title'=>'untitled','description'=>''
             ,'premiseA'=>'','premiseB'=>'','conclusion'=>'','behaviour'=>'','standard'=>'','conditions'=>'','metaphor'=>'','hyperlink'=>'','categoryId'=>0,'contextId'=>0
-            ,'timeframeId'=>0)
+            ,'timeframeId'=>0,'tradeConditionId'=>0)
         as $field=>$default)
             $values[$field] = (empty($_POST[$field])) ? $default : $_POST[$field];
 
@@ -374,13 +375,26 @@ function retrieveFormVars() {
 	$values['suppress']   = (isset($_POST['suppress']) && $_POST['suppress']==='y')?'y':'n';
 	$values['suppressIsDeadline']   = (isset($_POST['suppressIsDeadline']) && $_POST['suppressIsDeadline']==='y')?'y':'n';
 	$values['delete']     = (isset($_POST['delete']) && $_POST['delete']==='y')?'y':NULL;
+  $values['isTrade']  = (isset($_POST['isTrade']) && $_POST['isTrade']==='y')?'y':'n';
+  // die($values['isTrade']);
+
+  // force blank vals
+  if ($values['isTrade'] == 'y') {
+    if ($values['premiseA'] == '') $values['premiseA'] = 'tbc';
+    if ($values['premiseB'] == '') $values['premiseB'] = 'tbc';
+    if ($values['conclusion'] == '') $values['conclusion'] = 'tbc';
+    if ($values['behaviour'] == '') $values['behaviour'] = 'tbc';
+    if ($values['standard'] == '') $values['standard'] = 'tbc';
+    if ($values['conditions'] == '') $values['conditions'] = 'tbc';
+  }
 
 	// integers
 	$values['suppressUntil']  = empty($_POST['suppressUntil'])?0:(int) $_POST['suppressUntil'];
 	$values['repeat']         = empty($_POST['repeat'])?0:(int) $_POST['repeat'];
 
 	// dates
-	$values['dateCompleted'] = (empty($_POST['dateCompleted'])) ? "NULL" : "'{$_POST['dateCompleted']}'";
+  $values['dateCreated'] = (empty($_POST['dateCreated'])) ? "NULL" : "'{$_POST['dateCreated']}'";
+  $values['dateCompleted'] = (empty($_POST['dateCompleted'])) ? "NULL" : "'{$_POST['dateCompleted']}'";
 	$values['deadline']      = (empty($_POST['deadline']))      ? "NULL" : "'{$_POST['deadline']}'";
 
 	if ($config['debug'] & _GTD_DEBUG) {
@@ -488,7 +502,8 @@ function nextPage() { // set up the forwarding to the next page
               'categoryId'=>'categoryId','contextId'=>'contextId',
               'timeframeId'=>'timeframeId','nextAction'=>'nextonly',
               'suppress'=>'suppress','deadline'=>'deadline',
-              'isSomeday'=>'isSomeday','suppressUntil'=>'suppressUntil'
+              'isSomeday'=>'isSomeday','suppressUntil'=>'suppressUntil',
+              'isTrade'=>'isTrade','tradeConditionId'=>'tradeConditionId'
               ) as $key=>$cat )
                   if (!empty($values[$key]) && $values[$key]!='NULL') $nextURL.="&amp;$cat=".str_replace("'","",$values[$key]);
             break;

@@ -21,6 +21,7 @@ if ($values['itemId']) { // editing an item
         echo "<p class='error'>Failed to retrieve item {$values['itemId']}</p>";
         return;
     }
+
 } else { // creating an item
     $where='create';
     //set defaults
@@ -37,10 +38,13 @@ if ($values['itemId']) { // editing an item
     $values['metaphor']='';
     $values['deadline']=null;
     $values['dateCompleted']=null;
+    $values['dateCreated']=null;
     $values['repeat']=null;
     $values['suppressUntil']=null;
     $values['type']=$_GET['type'];
     $values['isSomeday']=(isset($_GET['someday']) &&  $_GET['someday']=='true')?'y':'n';
+    $values['isTrade']=(isset($_GET['isTrade']) &&  $_GET['isTrade']=='y')?'y':'n';
+    $values['tradeCondition']='';
     $nextaction=isset($_GET['nextonly']) && ($_GET['nextonly']=='true' || $_GET['nextonly']==='y');
     foreach ( array('category','context','timeframe') as $cat)
         $values[$cat.'Id']= (isset($_GET[$cat.'Id']))?(int) $_GET[$cat.'Id']:0;
@@ -55,13 +59,19 @@ if ($values['itemId']) { // editing an item
         $nextaction=true;
     }
 }
-$show=getShow($where,$values['type']);
+
+$show=getShow($where,$values);
+// var_dump($show);die;
+
 if (!$values['itemId']) {
+
     if ($show['suppress'] && isset($_GET['suppress']) && ($_GET['suppress']=='true' || $_GET['suppress']==='y')) {
         $values['suppress']='y';
         $values['suppressUntil']=$_GET['suppressUntil'];
     } else $values['suppress']='n';
+
     if ($show['deadline'] && !empty($_GET['deadline']))$values['deadline']=$_GET['deadline'];
+
     $parents=array();
     if ($show['ptitle'] && !empty($_GET['parentId'])) {
         $values['parentId']=explode(',',$_GET['parentId']);
@@ -77,6 +87,7 @@ if (!$values['itemId']) {
             }
         }
     }
+
 }
 
 if (is_array($parents) && count($parents))
@@ -92,9 +103,12 @@ if ($nextaction) $typename="Next ".$typename;
 $values['timefilterquery'] = ($config['useTypesForTimeContexts'] && $values['type']!=='i')?" WHERE ".sqlparts("timetype",$config,$values):'';
 
 //create item, timecontext, and spacecontext selectboxes
+// default
+if ($values['timeframeId'] == '') $values['timeframeId'] = 2;
+$tshtml = timecontextselectbox($config,$values,$sort);
 $cashtml = categoryselectbox($config,$values,$sort);
 $cshtml = contextselectbox($config,$values,$sort);
-$tshtml = timecontextselectbox($config,$values,$sort);
+$tcshtml = tradeconditionselectbox($config,$values,$sort);
 
 $oldtype=$values['type'];
 
@@ -237,7 +251,46 @@ echo "</h2>\n";
                   if ($values['itemId']) echo ajaxUpd('itemNA', $values['itemId']);
                 ?> />
             <?php } else $hiddenvars['nextAction']=($nextaction)?'y':''; ?>
+            <?php echo "<label for='isTrade'>Trade:</label>\n";
+            echo "<input type='checkbox' name='isTrade' id='isTrade' value='y' title=''\n";
+            if ($values['isTrade']==='y') echo " checked='checked' class='checked'";
+            else echo " class = 'unchecked'";
+            if ($values['itemId']) echo ajaxUpd('itemTrade', $values['itemId']);
+            echo "/>";
+            ?>
         </div>
+
+        <?php if($show['dateCreated']) { ?>
+            <div class='formrow'>
+                <label for='dateCreated' class='left first'>Created:</label>
+                <input type='text' size='10' name='dateCreated' id='dateCreated' class='hasdate' value='<?php echo $values['dateCreated']; ?>' <?php
+                  if ($values['itemId']) echo ajaxUpd('itemDateCreated', $values['itemId']);
+                ?>/>
+                <button type='reset' id='dateCreated_trigger'>...</button>
+                    <script type='text/javascript'>
+                        Calendar.setup({
+                            firstDay    :   <?php echo (int) $config['firstDayOfWeek']; ?>,
+                            inputField  :   'dateCreated',   // id of the input field
+                            ifFormat    :   '%Y-%m-%d',    // format of the input field
+                            showsTime   :   false,          // will display a time selector
+                            button      :   'dateCreated_trigger',   // trigger for the calendar (button ID)
+                            singleClick :   true,          // single-click mode
+                            step        :   1               // show all years in drop-down boxes (instead of every other year as default)
+                        });
+                    </script>
+        <?php } else $hiddenvars['dateCreated']=$values['dateCreated']; ?>
+
+        <?php
+          if($show['tradeCondition']) { ?>
+          <label for='tradeCondition' class=''>Condition:</label>
+          <select name='tradeConditionId' id='tradeCondition' <?php
+            if ($values['itemId']) echo ajaxUpd('itemTradeCondition', $values['itemId']);
+            ?>>
+            <?php echo $tcshtml; ?>
+            </select>
+            <?php } else $hiddenvars['tradeConditionId']=$values['tradeConditionId']; ?>
+        </div>
+
         <?php
         if($show['title']) { ?>
             <div class='formrow'>
@@ -258,7 +311,11 @@ echo "</h2>\n";
                     ?>><?php echo makeclean($values['description']); ?></textarea>
             </div>
         <?php } else $hiddenvars['description']=$values['description'];
-        if ($show['conclusion'] && preg_match('/[mvogp]/', $values['type']) || !empty($values['premiseA']) || !empty($values['premiseB']) || !empty($values['conclusion']) ) { ?> <!-- 'm', 'v', 'o', 'g', 'p', 'a', 'r', 'w', 'i' -->
+        if ($show['conclusion']
+            // && preg_match('/[mvogp]/', $values['type'])
+            || !empty($values['premiseA'])
+            || !empty($values['premiseB'])
+            || !empty($values['conclusion']) ) { ?> <!-- 'm', 'v', 'o', 'g', 'p', 'a', 'r', 'w', 'i' -->
             <div class='formrow'>
                     <label for='premiseA' class='left first'>Premise&nbsp;A:</label>
                     <input class="JKPadding" type="text" name="premiseA" id="conclusion" value="<?php echo makeclean($values['premiseA']); ?>" />
@@ -274,88 +331,92 @@ echo "</h2>\n";
         <?php
         } // else $hiddenvars['behaviour']=$values['behaviour'];
 
-        if ($show['behaviour'] && preg_match('/[mvogp]/', $values['type']) || !empty($values['behaviour']) || !empty($values['standard']) || !empty($values['conditions']) ) { ?> <!-- 'm', 'v', 'o', 'g', 'p', 'a', 'r', 'w', 'i' -->
+        if ($show['behaviour']
+            // && preg_match('/[mvogp]/', $values['type'])
+            || !empty($values['behaviour'])
+            || !empty($values['standard'])
+            || !empty($values['conditions']) ) { ?> <!-- 'm', 'v', 'o', 'g', 'p', 'a', 'r', 'w', 'i' -->
             <div class='formrow'>
-                    <label for='outcome' class='left first'>Behaviour:</label>
+                    <label for='outcome' class='left first'>
+                    <?php if ($values['isTrade'] == 'y') {
+                      echo 'Enter price:';
+                    } else {
+                      echo 'Behaviour:';
+                    }
+                    ?>
+                    </label>
                     <input class="JKPadding" type="text" name="behaviour" id="outcome" value="<?php echo makeclean($values['behaviour']); ?>" />
             </div>
             <div class='formrow'>
-                    <label for='standards' class='left first'>Standards:</label>
+                    <label for='standards' class='left first'>
+                      <?php if ($values['isTrade'] == 'y') {
+                        echo 'Exit price:';
+                      } else {
+                        echo 'Standards:';
+                      }
+                      ?>
+                    </label>
                     <input class="JKPadding" type="text" name="standard" id="outcome" value="<?php echo makeclean($values['standard']); ?>" />
             </div>
             <div class='formrow'>
-                    <label for='conditions' class='left first'>Conditions:</label>
+                    <label for='conditions' class='left first'>
+                      <?php if ($values['isTrade'] == 'y') {
+                        echo 'Risk (p):';
+                      } else {
+                        echo 'Conditions:';
+                      }
+                      ?>
+                    </label>
                     <input class="JKPadding" type="text" name="conditions" id="outcome" value="<?php echo makeclean($values['conditions']); ?>" />
             </div>
         <?php
         } else $hiddenvars['behaviour']=$values['behaviour'];
 
-        if ($show['metaphor']) { ?> <!-- 'm', 'v', 'o', 'g', 'p' -->
-            <div class='formrow'>
-                    <label for='metaphor' class='left first'>Metaphor:</label>
-                    <input class="JKPadding" type="text" name='metaphor' id='metaphor' value='<?php echo makeclean($values["metaphor"]); ?>' />
-            </div>
-        <?php
-        } else $hiddenvars['metaphor']=$values['metaphor'];
 
-
-            ?>
-            <div class='formrow'>
-                <label for='hyperlink' class='left first'>Hyperlink:
-                    <?php
-                        if ($values['hyperlink']) {
-                            echo "<br>[&nbsp;" . faLink($values['hyperlink']) . "&nbsp;]";
-                        }
-                    ?>
-                </label>
-                <input class="JKPadding" type="text" name="hyperlink" id="hyperlink" value="<?php
-                  echo makeclean($values['hyperlink']) . '"';
-                  if ($values['itemId']) echo ajaxUpd('itemLink', $values['itemId']);
-                  ?> />
-            </div>
-            <div class='formrow'>
-                <?php if ($show['deadline']) { ?>
-                    <label for='deadline' class='left first'>Due date:</label>
-                    <input type='text' size='10' name='deadline' id='deadline' class='hasdate' value='<?php echo $values['deadline']; ?>' <?php
-                      if ($values['itemId']) echo ajaxUpd('itemDeadline', $values['itemId']);
-                    ?>/>
-                    <button type='reset' id='deadline_trigger'>...</button>
-                        <script type='text/javascript'>
-                            Calendar.setup({
-                                firstDay    :   <?php echo (int) $config['firstDayOfWeek']; ?>,
-                                inputField  :   'deadline',   // id of the input field
-                                ifFormat    :   '%Y-%m-%d',    // format of the input field
-                                showsTime   :   false,          // will display a time selector
-                                button      :   'deadline_trigger',   // trigger for the calendar (button ID)
-                                singleClick :   true,          // single-click mode
-                                step        :   1               // show all years in drop-down boxes (instead of every other year as default)
-                            });
-                        </script>
-                <?php } else $hiddenvars['deadline']=$values['deadline'];
-                if ($show['dateCompleted']) { ?>
-                    <label for='dateCompleted' class=''>Completed:</label><input type='text' size='10' class='hasdate' name='dateCompleted' id='dateCompleted' value='<?php echo $values['dateCompleted'] ?>' <?php
-                      if ($values['itemId'] && strlen($values['dateCompleted']) < 1) echo ajaxUpd('itemCompletedNow', $values['itemId']);
-                      if ($values['itemId'] && strlen($values['dateCompleted']) > 1) echo ajaxUpd('itemCompletedEdit', $values['itemId']);
-                    ?>/>
-                    <button type='reset' id='dateCompleted_trigger' <?php if (strlen($values['dateCompleted']) < 1) echo 'hidden'; ?>>...</button>
-                        <script type='text/javascript'>
-                            Calendar.setup({
-                                firstDay    :    <?php echo (int) $config['firstDayOfWeek']; ?>,
-                                inputField  :   'dateCompleted',      // id of the input field
-                                ifFormat    :   '%Y-%m-%d',    // format of the input field
-                                showsTime   :   false,          // will display a time selector
-                                button      :   'dateCompleted_trigger',   // trigger for the calendar (button ID)
-                                singleClick :   true,          // single-click mode
-                                step        :   1               // show all years in drop-down boxes (instead of every other year as default)
-                            });
-                        </script>
-                    <button type='button' id='dateCompleted_today' <?php if (strlen($values['dateCompleted']) > 1) echo 'hidden'; ?> onclick="javascript:completeToday('dateCompleted');focusOnForm('dateCompleted');">Today</button>
-                <?php } else $hiddenvars['dateCompleted']=$values['dateCompleted']; ?>
-            </div>
-            <?php if ($show['repeat']) { ?>
-            <div class='formrow'>
-                    <label for='repeat' class='left first'>Repeat every&nbsp;</label><input type='text' name='repeat' id='repeat' size='3' value='<?php echo $values['repeat']; ?>' /><label for='repeat'>&nbsp;days</label>
-            </div>
+        ?>
+        <div class='formrow'>
+            <?php if ($show['deadline']) { ?>
+                <label for='deadline' class='left first'>Due date:</label>
+                <input type='text' size='10' name='deadline' id='deadline' class='hasdate' value='<?php echo $values['deadline']; ?>' <?php
+                  if ($values['itemId']) echo ajaxUpd('itemDeadline', $values['itemId']);
+                ?>/>
+                <button type='reset' id='deadline_trigger'>...</button>
+                    <script type='text/javascript'>
+                        Calendar.setup({
+                            firstDay    :   <?php echo (int) $config['firstDayOfWeek']; ?>,
+                            inputField  :   'deadline',   // id of the input field
+                            ifFormat    :   '%Y-%m-%d',    // format of the input field
+                            showsTime   :   false,          // will display a time selector
+                            button      :   'deadline_trigger',   // trigger for the calendar (button ID)
+                            singleClick :   true,          // single-click mode
+                            step        :   1               // show all years in drop-down boxes (instead of every other year as default)
+                        });
+                    </script>
+            <?php } else $hiddenvars['deadline']=$values['deadline'];
+            if ($show['dateCompleted']) { ?>
+                <label for='dateCompleted' class=''>Completed:</label><input type='text' size='10' class='hasdate' name='dateCompleted' id='dateCompleted' value='<?php echo $values['dateCompleted'] ?>' <?php
+                  if ($values['itemId'] && strlen($values['dateCompleted']) < 1) echo ajaxUpd('itemCompletedNow', $values['itemId']);
+                  if ($values['itemId'] && strlen($values['dateCompleted']) > 1) echo ajaxUpd('itemCompletedEdit', $values['itemId']);
+                ?>/>
+                <button type='reset' id='dateCompleted_trigger' <?php if (strlen($values['dateCompleted']) < 1) echo 'hidden'; ?>>...</button>
+                    <script type='text/javascript'>
+                        Calendar.setup({
+                            firstDay    :    <?php echo (int) $config['firstDayOfWeek']; ?>,
+                            inputField  :   'dateCompleted',      // id of the input field
+                            ifFormat    :   '%Y-%m-%d',    // format of the input field
+                            showsTime   :   false,          // will display a time selector
+                            button      :   'dateCompleted_trigger',   // trigger for the calendar (button ID)
+                            singleClick :   true,          // single-click mode
+                            step        :   1               // show all years in drop-down boxes (instead of every other year as default)
+                        });
+                    </script>
+                <button type='button' id='dateCompleted_today' <?php if (strlen($values['dateCompleted']) > 1) echo 'hidden'; ?> onclick="javascript:completeToday('dateCompleted');focusOnForm('dateCompleted');">Today</button>
+            <?php } else $hiddenvars['dateCompleted']=$values['dateCompleted']; ?>
+        </div>
+        <?php if ($show['repeat']) { ?>
+        <div class='formrow'>
+                <label for='repeat' class='left first'>Repeat every&nbsp;</label><input type='text' name='repeat' id='repeat' size='3' value='<?php echo $values['repeat']; ?>' /><label for='repeat'>&nbsp;days</label>
+        </div>
         <?php } else $hiddenvars['repeat']=$values['repeat']; ?>
         <div class='formrow'>
 
@@ -397,58 +458,83 @@ echo "</h2>\n";
             $hiddenvars['suppressUntil']=$values['suppressUntil'];
         }
 
-if (!$values['itemId']) $hiddenvars['lastcreate']=$_SERVER['QUERY_STRING'];
-foreach ($hiddenvars as $key=>$val) echo hidePostVar($key,$val);
-$key='afterCreate'.$values['type'];
-// always use config value when creating
-if (!empty($config['afterCreate'][$values['type']]) && empty($_SESSION[$key]))
-    $_SESSION[$key]=$config['afterCreate'][$values['type']];
+        if ($show['metaphor']) { ?> <!-- 'm', 'v', 'o', 'g', 'p' -->
+            <div class='formrow'>
+                    <label for='metaphor' class='left first'>Metaphor:</label>
+                    <input class="JKPadding" type="text" name='metaphor' id='metaphor' value='<?php echo makeclean($values["metaphor"]); ?>' />
+            </div>
+        <?php
+        } else $hiddenvars['metaphor']=$values['metaphor'];
+        ?>
 
-if ($values['itemId'] && !empty($_SESSION[$key]))
-    $tst=$_SESSION[$key];
-else
-    $tst=$config['afterCreate'][$values['type']];
+        <div class='formrow'>
+            <label for='hyperlink' class='left first'>Hyperlink:
+                <?php
+                    if ($values['hyperlink']) {
+                        echo "<br>[&nbsp;" . faLink($values['hyperlink']) . "&nbsp;]";
+                    }
+                ?>
+            </label>
+            <input class="JKPadding" type="text" name="hyperlink" id="hyperlink" value="<?php
+              echo makeclean($values['hyperlink']) . '"';
+              if ($values['itemId']) echo ajaxUpd('itemLink', $values['itemId']);
+              ?> />
+        </div>
 
-echo "<div class='formrow'>\n<label class='left first'>View"
-    ,($values['itemId'])?/*'updating'*/'':''/*'creating'*/
-    ,":</label>&nbsp;\n";
+        <?php
+        if (!$values['itemId']) $hiddenvars['lastcreate']=$_SERVER['QUERY_STRING'];
+        foreach ($hiddenvars as $key=>$val) echo hidePostVar($key,$val);
+        $key='afterCreate'.$values['type'];
+        // always use config value when creating
+        if (!empty($config['afterCreate'][$values['type']]) && empty($_SESSION[$key]))
+            $_SESSION[$key]=$config['afterCreate'][$values['type']];
 
-if ($show['ptitle'])
-    echo "<input type='radio' name='afterCreate' id='parentNext' value='parent' class='first'"
-        ,($tst=='parent')?" checked='checked' ":""
-        ," /><label for='parentNext' class='right'>Parent</label>\n";
+        if ($values['itemId'] && !empty($_SESSION[$key]))
+            $tst=$_SESSION[$key];
+        else
+            $tst=$config['afterCreate'][$values['type']];
 
-echo "<input type='radio' name='afterCreate' id='itemNext' value='item' class='notfirst'"
-        ,($tst=='item')?" checked='checked' ":""
-        ," /><label for='itemNext' class='right'>Item</label>\n"
-    ,"<input type='radio' name='afterCreate' id='listNext' value='list' class='notfirst'"
-        ,($tst=='list')?" checked='checked' ":""
-        ," /><label for='listNext' class='right'>Items</label>\n"
-    ,"<input type='radio' name='afterCreate' id='anotherNext' value='another' class='notfirst'"
-        ,($tst=='another')?" checked='checked' ":""
-        ," /><label for='anotherNext' class='right'>Create another</label>\n";
-if ($values['type']==='p')
-    echo "<input type='radio' name='afterCreate' id='childNext' value='child' class='notfirst'"
-        ,($tst=='child')?" checked='checked' ":""
-        ," /><label for='childNext' class='right'>Create action</label>\n";
+        echo "<div class='formrow'>\n<label class='left first'>View"
+            ,($values['itemId'])?/*'updating'*/'':''/*'creating'*/
+            ,":</label>&nbsp;\n";
 
-if (!empty($hiddenvars['referrer']) || !empty($_SESSION[$key])) {
-    echo "<input type='radio' name='afterCreate' id='referrer' value='referrer' class='notfirst'"
-        ,($tst=='referrer')?" checked='checked' ":''
-        ," /><label for='referrer' class='right'>Previous</label>\n";
-}
+        if ($show['ptitle'])
+            echo "<input type='radio' name='afterCreate' id='parentNext' value='parent' class='first'"
+                ,($tst=='parent')?" checked='checked' ":""
+                ," /><label for='parentNext' class='right'>Parent</label>\n";
 
-echo "</div>\n</div> <!-- form div -->\n<div class='formbuttons'>\n"
-    ,"<input type='submit' value='"
-    ,($values['itemId'])?"Update $typename":'Create'
-    ,"' name='submit' />\n"
-    /*,"<input type='reset' value='Reset' />\n"*/;
-if ($values['itemId']) {
-    echo "<input type='checkbox' name='delete' id='delete' value='y' title='Deletes item. Child items are orphaned, NOT deleted.'/>\n"
-        ,"<label for='delete'>Delete&nbsp;$typename</label>\n"
-        ,"<input type='hidden' name='oldtype' value='$oldtype' />\n";
-}
-echo "</div>\n</form>\n";
+        echo "<input type='radio' name='afterCreate' id='itemNext' value='item' class='notfirst'"
+                ,($tst=='item')?" checked='checked' ":""
+                ," /><label for='itemNext' class='right'>Item</label>\n"
+            ,"<input type='radio' name='afterCreate' id='listNext' value='list' class='notfirst'"
+                ,($tst=='list')?" checked='checked' ":""
+                ," /><label for='listNext' class='right'>Items</label>\n"
+            ,"<input type='radio' name='afterCreate' id='anotherNext' value='another' class='notfirst'"
+                ,($tst=='another')?" checked='checked' ":""
+                ," /><label for='anotherNext' class='right'>Create another</label>\n";
+        if ($values['type']==='p')
+            echo "<input type='radio' name='afterCreate' id='childNext' value='child' class='notfirst'"
+                ,($tst=='child')?" checked='checked' ":""
+                ," /><label for='childNext' class='right'>Create action</label>\n";
+
+        if (!empty($hiddenvars['referrer']) || !empty($_SESSION[$key])) {
+            echo "<input type='radio' name='afterCreate' id='referrer' value='referrer' class='notfirst'"
+                ,($tst=='referrer')?" checked='checked' ":''
+                ," /><label for='referrer' class='right'>Previous</label>\n";
+        }
+
+        echo "</div>\n</div> <!-- form div -->\n<div class='formbuttons'>\n"
+            ,"<input type='submit' value='"
+            ,($values['itemId'])?"Update $typename":'Create'
+            ,"' name='submit' />\n"
+            /*,"<input type='reset' value='Reset' />\n"*/;
+            if ($values['itemId']) {
+            echo "<input type='checkbox' name='delete' id='delete' value='y' title='Deletes item. Child items are orphaned, NOT deleted.'/>\n"
+                ,"<label for='delete'>Delete&nbsp;$typename</label>\n"
+                ,"<input type='hidden' name='oldtype' value='$oldtype' />\n";
+              }
+
+        echo "</div>\n</form>\n";
 
 if ($values['itemId']) {
         echo "  <div class='detail'>\n";

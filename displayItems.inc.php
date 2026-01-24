@@ -303,7 +303,8 @@ foreach ($maintable as $row) {
                 else
                     echo getTypes($row[$key]);
                 break;
-            case 'description': // flows through to case 'outcome' deliberately
+            case 'description': // flows through to cases following deliberately
+            case 'dateCreated':
             case 'hyperlink':
             case 'premiseA':
             case 'premiseB':
@@ -318,11 +319,11 @@ foreach ($maintable as $row) {
             case 'fulloutcome':
                 echo trimTaggedString($row[$key],$config["trimLengthInReport"]);
                 break;
-			case 'deadline':
-				$values['itemId'] = $row['itemId'];
-				$result = query("selectitem",$config,$values,$sort);
-				echo $result[0]['deadline'];
-				break;
+      			case 'deadline':
+        				$values['itemId'] = $row['itemId'];
+        				$result = query("selectitem",$config,$values,$sort);
+        				echo $result[0]['deadline'];
+        				break;
             default:
                 echo $row[$key];
                 break;

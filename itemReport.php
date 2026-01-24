@@ -16,6 +16,7 @@ $values['extravarsfilterquery'] =sqlparts("getNA",$config,$values);;
 $result = query("getitemsandparent",$config,$values,$sort);
 $item = ($result)?$result[0]:array();
 $values['isSomeday']=($item['isSomeday']=="y")?'y':'n';
+$isTrade=($item['isTrade']=="y")?'y':'n';
 $values['type']=$item['type'];
 
 $pitemId = $values['itemId'];
@@ -237,7 +238,7 @@ if (!empty($childtype)) {
         } else {
             $createURL="item.php?parentId={$pitemId}&amp;action=create&amp;type=$thistype";
             // inherit some defaults from parent:
-            foreach (array('categoryId','contextId','deadline') as $field)
+            foreach (array('categoryId','contextId','deadline','isTrade') as $field)
                 if ($item[$field]) $createURL.="&amp;$field={$item[$field]}";
                 if ($values['isSomeday']!='y') $title="<a href='$createURL' title='Add new ".$typename[$thistype]."'>Add ".$title."</a>";
         }
@@ -255,10 +256,14 @@ if (!empty($childtype)) {
             $values = $valuesTemp;
         }
 
-
         if (!$result) {
             echo "<h3>No $title</h3></div>";
             continue;
+        }
+
+        $showOutcome = false;
+        foreach ($result as $row) {
+          if (strlen($row['behaviour']) > 1) $showOutcome = true;
         }
 
         $shownext= ($comp==='n') && ($values['type']==='a' || $values['type']==='w');
@@ -271,12 +276,18 @@ if (!empty($childtype)) {
             $outcomeField='behaviour';
         }
         $dispArray=array();
-        if ($shownext) $dispArray['NA']='NA';
+        if ($shownext) if ($isTrade == 'y') {
+            $dispArray['NA']='Live';
+        } else {
+            $dispArray['NA']='NA';
+        }
+        if ($isTrade == 'y') $dispArray['dateCreated']='Created';
         $dispArray['title']=$typename[$thistype].'s';
         $dispArray[$descriptionField]='Description';
         //$dispArray[$outcomeField]='Objective';
 
         switch ($values['type']) {
+
             case 'a': // deliberately flows through to 'w'
                 if ($comp=="n") {
 //                    $dispArray['suppress']='Suppress until';
@@ -285,36 +296,41 @@ if (!empty($childtype)) {
                 }
             case 'r': // deliberately flows through to 'w'
             case 'w':
-            $dispArray['deadline']='Due';
+                $dispArray['deadline']='Due';
                 //$dispArray['context']='Context';
                 if ($time) $dispArray['timeframe']='Time';
+                if ($isTrade == 'y') $dispArray[$outcomeField]='Outcome';
                 break;
-            case 'm': // deliberately flows through to 'p;
-            case 'v': // deliberately flows through to 'p;
-            case 'o': // deliberately flows through to 'p;
-            case 'g': // deliberately flows through to 'p;
+
+            case 'm': // deliberately flows through to 'g'
+            case 'v': // deliberately flows through to 'g'
+            case 'o': // deliberately flows through to 'g'
+            case 'g': // deliberately flows through to 'g'
+              if ($showOutcome) $dispArray[$outcomeField]='Outcome';
+              break;
+
             case 's': // deliberately flows through to 'p;
             case 'p': // deliberately flows through to default;
-                $dispArray[$outcomeField]='Outcome';
                 $dispArray['context']='Context';
             default:
                 $dispArray['category']='Category';
                 break;
         }
 
-//        $dispArray['created']='Date Created';
         if ($comp=="n") {
             $dispArray['checkbox']='Complete';
         } else {
             $dispArray['completed']='Date Completed';
         }
+
         foreach ($dispArray as $key=>$val) $show[$key]=true;
         if ($config['nextaction']==='single') $dispArray['NA.type']='radio';
         $i=0;
         $maintable=array();
 
         foreach ($result as $row) {
-            $cleantitle=makeclean($row['title']);
+
+            $cleantitle = makeclean($row['title']);
 
             $maintable[$i]=array();
             if ($i >= $limit) {
@@ -325,7 +341,13 @@ if (!empty($childtype)) {
                     break;
                 }
             }
+
             $maintable[$i]['itemId']=$row['itemId'];
+
+            if ($isTrade == 'y') {
+              $maintable[$i]['dateCreated'] = $row['dateCreated'];
+            }
+
             $tfield = $row['title'];
 
             if($row['metaphor']) {
@@ -338,21 +360,33 @@ if (!empty($childtype)) {
             }
 
             $maintable[$i]['title']= $tfield;
-            # exception if contains hyperlink avoid ajax update
-            if (strstr($row['description'], '<a href='))
-              $maintable[$i][$descriptionField] = $row['description'] . '<div>';
+
+
+            // var_dump($show);die;
+            # exception if contains hyperlink or is trade then avoid ajax update
+            if (strstr($row['description'], '<a href=')) {
+              $maintable[$i][$descriptionField] = $row['description'];
+              $maintable[$i][$descriptionField] .= '<div>';
+            }
             # exception if goal/role/project
             else if (in_array($row['type'], ['v','o','g','p'])) {
               $maintable[$i][$descriptionField] = $row['description'];
-              if ($row['premiseA']) $maintable[$i][$descriptionField] .= $row['premiseA'] . '<br><br>';
-              if ($row['premiseB']) $maintable[$i][$descriptionField] .= $row['premiseB'] . '<br><br>';
+              // if ($row['premiseA']) $maintable[$i][$descriptionField] .= $row['premiseA'] . '<br><br>';
+              // if ($row['premiseB']) $maintable[$i][$descriptionField] .= $row['premiseB'] . '<br><br>';
               if ($row['conclusion']) $maintable[$i][$descriptionField] .= $row['conclusion'] . '<br><br>';
               $maintable[$i][$descriptionField] .= '<div>';
-              // var_dump($row);die;
+            }
+            else if ($isTrade == 'y') {
+              $maintable[$i][$descriptionField] = "<div contenteditable='true'" . ajaxUpd('itemDescription', $row['itemId']) . ">" . $row['description'] . "</div>";
+              $maintable[$i][$descriptionField] .= "<br>P1: <div class='inline-div-editable' contenteditable='true'" . ajaxUpd('itemPremiseA', $row['itemId']) . ">" . $row['premiseA'] . "</div>";
+              $maintable[$i][$descriptionField] .= "<br>P2: <div class='inline-div-editable' contenteditable='true'" . ajaxUpd('itemPremiseB', $row['itemId']) . ">" . $row['premiseB'] . "</div>";
+              $maintable[$i][$descriptionField] .= "<br>C: <div class='inline-div-editable' contenteditable='true'" . ajaxUpd('itemConclusion', $row['itemId']) . ">" . $row['conclusion'] . "</div>";
+              $maintable[$i][$descriptionField] .= '<div>';
             }
             # otherwise do it
             else
               $maintable[$i][$descriptionField] = "<div contenteditable='true'" . ajaxUpd('itemDescription', $row['itemId']) . ">" . $row['description'];
+
             if ($row['hyperlink']) {
                 if (!empty($row['description'])) $maintable[$i][$descriptionField] .= "</div><div><br>";
                 else $maintable[$i][$descriptionField] .= "</div><div>";
@@ -361,12 +395,26 @@ if (!empty($childtype)) {
             $maintable[$i][$descriptionField] .= '</div>';
             $rfield = $row['premiseA'];
             if($row['premiseB']) $rfield .= '<br><br>' . $row['premiseB'];
-            if($row['conclusion']) $ofield .= '<br><br>' . $row['conclusion'];
+            if($row['conclusion']) $rfield .= '<br><br>' . $row['conclusion'];
             $maintable[$i]['conclusion']=$rfield;
 
-            $ofield = $row['behaviour'];
-            if($row['standard']) $ofield .= ',<br>' . $row['standard'];
-            if($row['conditions']) $ofield .= ',<br>' . $row['conditions'];
+            if ($isTrade == 'y') {
+               $maintable[$i]['tradeConditionId'] = $row['tradeConditionId'];
+               $maintable[$i]['tradeCondition'] = $row['tradeCondition'];
+               $maintable[$i]['rewardRisk'] =
+                    ((int) $row['conditions'] / 100) // risk (p)
+                    * (((int) $row['standard'] - (int) $row['behaviour'])
+                      / (int) $row['behaviour']) // expected reward
+                    * 100;
+                $maintable[$i]['behaviour'] = $row['behaviour'];
+                $maintable[$i]['standard'] = $row['standard'];
+                $maintable[$i]['conditions'] = $row['conditions'];
+                $ofield = '';
+            } else {
+              $ofield = $row['behaviour'];
+              // if($row['standard']) $ofield .= ',<br>' . $row['standard'];
+              // if($row['conditions']) $ofield .= ',<br>' . $row['conditions'];
+            }
             $maintable[$i][$outcomeField]=$ofield;
 /*            $maintable[$i]['created']=date($config['datemask'],
                     (empty($row['dateCreated']))
@@ -433,7 +481,67 @@ if (!empty($childtype)) {
             }
 
             $i++;
+
         }
+
+        // calculate valuations from risk_reward values
+        if ($isTrade == 'y') {
+
+          $trades = array_map(function($row) {
+            return ['dateCreated' => $row['dateCreated'], 'title' => $row['title']];
+          }, $maintable);
+          $trades = array_values(array_unique($trades, SORT_REGULAR));
+
+          foreach ($trades as &$trade) {
+            $trade['valuation'] = 0;
+            $trade['condition1'] = false;
+            $trade['condition2'] = false;
+            $trade['condition3'] = false;
+            $trade['risk'] = 0;
+            foreach ($maintable as $row) {
+              // var_dump();die;
+              if ($trade['dateCreated'] == $row['dateCreated']
+                  && $trade['title'] == $row['title']
+                  && $row['NA'] === true) {
+                    $trade['valuation'] += $row['rewardRisk'];
+                    $trade['risk'] += (int) $row['conditions'];
+                    // var_dump($row['tradeConditionId']);die;
+                    if ($row['tradeConditionId'] == 1) $trade['condition1'] = true;
+                    if ($row['tradeConditionId'] == 2) $trade['condition2'] = true;
+                    if ($row['tradeConditionId'] == 3) $trade['condition3'] = true;
+              }
+            }
+          }
+          unset($trade);
+
+          foreach ($maintable as &$row) {
+              foreach ($trades as $trade)
+                  if ($trade['dateCreated'] == $row['dateCreated'] && $trade['title'] == $row['title']) {
+                    if ($trade['risk'] !== 100) {
+                        $row['valuation'] = ' total risk(p) != 100';
+                    } else if (!($trade['condition1'] && $trade['condition2'] && $trade['condition3'])) {
+                        $row['valuation'] = ' trade condition missing';
+                    } else {
+                        $row['valuation'] = round($trade['valuation'], 0) . '%';
+                    }
+
+                  }
+              $rewardRisk = ((string) round($row['rewardRisk'], 0)) . '%';
+              $row[$outcomeField] .=
+                    $row['tradeCondition'] . PHP_EOL
+                    . "Enter price: <div class='inline-div-editable' contenteditable='true'"
+                        . ajaxUpd('itemBehaviour', $row['itemId']) . ">" . $row['behaviour'] . "</div>" . PHP_EOL
+                    . "Exit price: <div class='inline-div-editable' contenteditable='true'"
+                        . ajaxUpd('itemStandard', $row['itemId']) . ">" . $row['standard'] . "</div>" . PHP_EOL
+                    . "Risk (p): <div class='inline-div-editable' contenteditable='true'"
+                        . ajaxUpd('itemConditions', $row['itemId']) . ">" . $row['conditions'] . "</div>" . "%" . PHP_EOL
+                    . "Reward/risk: " . $rewardRisk;
+              $row['title'] .= '<br>Valuation:' . $row['valuation'];
+          }
+          unset($row);
+
+        }
+
         ?>
 <h2><?php echo $title; ?></h2>
         <?php

@@ -1,9 +1,10 @@
 <?php
 //This adjusts for apache GMT errors
-// date_default_timezone_set('Australia/Sydney');
+date_default_timezone_set('Australia/Sydney');
 // date_default_timezone_set('Europe/Berlin');
 // date_default_timezone_set('Asia/Kolkata');
-date_default_timezone_set('Asia/Jakarta'); 
+// date_default_timezone_set('Asia/Jakarta');
+// date_default_timezone_set('Asia/Tokyo');
 // die('date_default_timezone_set: ' . date_default_timezone_get());
 
 //get hour of day

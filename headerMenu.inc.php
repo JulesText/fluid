@@ -114,6 +114,7 @@ $menu2[] = array("link"=>"editCat.php?field=category", 'title'=>"Edit Meta-categ
 $menu2[] = array("link"=>"listCatCodes.php", 'title'=>"Category codes", 'label' => "Category codes");
 $menu2[] = array("link"=>"editCat.php?field=context", 'title'=>"Edit spatial contexts", 'label' => "Space Contexts");
 $menu2[] = array("link"=>"editCat.php?field=time-context", 'title'=>"Edit time contexts", 'label' => "Time Contexts");
+$menu2[] = array("link"=>"editCat.php?field=trade-condition", 'title'=>"Edit trade conditions", 'label' => "Trade Conditions");
 $menu2[] = array("link"=>'','label'=>'separator');
 $menu2[] = array("link"=>"phpmyadmin/index.php?db=gtd8", 'title'=>"PHPMyAdmin", 'label' => "PHPMyAdmin");
 if ($config['showAdmin'])

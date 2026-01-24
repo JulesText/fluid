@@ -27,6 +27,10 @@ if (isset($_POST['id'])) {
             $query='spacecontext';
             $getId='context';
             break;
+        case 'trade-condition':
+            $query='tradecondition';
+            $getId='tradecondition';
+            break;
         case 'time-context':
             $query='timecontext';
             $getId='timecontext';

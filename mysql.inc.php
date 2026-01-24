@@ -363,29 +363,29 @@ function getsql($config,$values,$sort,$querylabel) {
 					) as y ON (y.`parentId` = lu.`parentId`) {$values['filterquery']}";
 			break;
 
-        case 'countactionsbycontext':
-            $sql="SELECT cn.`name` AS cname,cn.`contextId`,COUNT(x.`itemId`) AS count
-                    FROM `{$config['prefix']}itemattributes` as x
-                    JOIN `{$config['prefix']}itemattributes` as ia USING (`itemId`)
-                    JOIN `{$config['prefix']}itemstatus` as its USING (`itemId`)
-					LEFT OUTER JOIN `{$config['prefix']}context` AS cn
-						ON (ia.`contextId` = cn.`contextId`)
-                    JOIN (
-                        SELECT DISTINCT nextAction FROM `{$config['prefix']}nextactions` AS na
-                            JOIN (SELECT i.`itemId` AS parentId,
-                                     ia.`isSomeday` AS pisSomeday,
-                                     ia.`deadline` AS pdeadline,
-						             ia.`suppress` AS psuppress,
-						             ia.`suppressUntil` AS psuppressUntil,
-						             its.`dateCompleted` AS pdateCompleted
-            					   FROM `{$config['prefix']}itemattributes` as ia
-            					   JOIN `{$config['prefix']}items` as i USING (`itemId`)
-            					   JOIN `{$config['prefix']}itemstatus` as its USING (`itemId`)
-                                ) AS y USING (`parentId`)
-                    ) AS nat ON (x.`itemId`=nat.`nextAction`)
-                     {$values['filterquery']}
-                     GROUP BY ia.`contextId` ORDER BY cn.`name`";
-            break;
+      case 'countactionsbycontext':
+          $sql="SELECT cn.`name` AS cname,cn.`contextId`,COUNT(x.`itemId`) AS count
+                  FROM `{$config['prefix']}itemattributes` as x
+                  JOIN `{$config['prefix']}itemattributes` as ia USING (`itemId`)
+                  JOIN `{$config['prefix']}itemstatus` as its USING (`itemId`)
+				LEFT OUTER JOIN `{$config['prefix']}context` AS cn
+					ON (ia.`contextId` = cn.`contextId`)
+                  JOIN (
+                      SELECT DISTINCT nextAction FROM `{$config['prefix']}nextactions` AS na
+                          JOIN (SELECT i.`itemId` AS parentId,
+                                   ia.`isSomeday` AS pisSomeday,
+                                   ia.`deadline` AS pdeadline,
+					             ia.`suppress` AS psuppress,
+					             ia.`suppressUntil` AS psuppressUntil,
+					             its.`dateCompleted` AS pdateCompleted
+          					   FROM `{$config['prefix']}itemattributes` as ia
+          					   JOIN `{$config['prefix']}items` as i USING (`itemId`)
+          					   JOIN `{$config['prefix']}itemstatus` as its USING (`itemId`)
+                              ) AS y USING (`parentId`)
+                  ) AS nat ON (x.`itemId`=nat.`nextAction`)
+                   {$values['filterquery']}
+                   GROUP BY ia.`contextId` ORDER BY cn.`name`";
+          break;
 
 		case "countnextactions":
 			$sql="SELECT INTERVAL(DATEDIFF(CURDATE(),ia.`deadline`),-6,0,1) AS `duecategory`,
@@ -661,10 +661,11 @@ function getsql($config,$values,$sort,$querylabel) {
 					i.`premiseA`,i.`premiseB`,i.`conclusion`,i.`behaviour`, i.`standard`, i.`conditions`, i.`metaphor`, i.`hyperlink`, i.`sortBy`, ia.`type`,
 					ia.`isSomeday`, ia.`deadline`, ia.`repeat`,
 					ia.`suppress`, ia.`suppressUntil`, ia.`suppressIsDeadline`,
+          ia.`isTrade`, ia.`tradeConditionId`,
 					its.`dateCreated`, its.`dateCompleted`,
 					its.`lastModified`, ia.`categoryId`,
 					c.`category`, ia.`contextId`,
-					cn.`name` AS cname, ia.`timeframeId`, ti.`timeframe`
+          cn.`name` AS cname, ia.`timeframeId`, ti.`timeframe`, tc.`tradeCondition`
 					, na.nextaction as NA
 				FROM `". $config['prefix'] . "itemattributes` as ia
 					JOIN `{$config['prefix']}lookup` AS lu USING (`itemId`)
@@ -676,9 +677,11 @@ function getsql($config,$values,$sort,$querylabel) {
 						ON (ia.`categoryId` = c.`categoryId`)
 					LEFT OUTER JOIN `". $config['prefix'] . "timeitems` AS ti
 						ON (ia.`timeframeId` = ti.`timeframeId`)
-				LEFT JOIN (
-						SELECT DISTINCT nextaction FROM {$config['prefix']}nextactions
-					) AS na ON(na.nextaction=i.itemId)
+          LEFT OUTER JOIN `". $config['prefix'] . "tradeconditions` as tc
+            ON (ia.`tradeConditionId` = tc.`tradeConditionId`)
+  				LEFT JOIN (
+  						SELECT DISTINCT nextaction FROM {$config['prefix']}nextactions
+  					) AS na ON(na.nextaction=i.itemId)
 				WHERE lu.`parentId`= '{$values['parentId']}' {$values['filterquery']}
 				ORDER BY {$sort['getchildren']}";
 			break;
@@ -717,6 +720,7 @@ function getsql($config,$values,$sort,$querylabel) {
     				x.`premiseA`, x.`premiseB`, x.`conclusion`, x.`behaviour`, x.`standard`, x.`conditions`, x.`metaphor`, x.`hyperlink`, x.`sortBy`, x.`type`, x.`isSomeday`,
     				x.`deadline`, x.`repeat`, x.`suppress`, x.`suppressIsDeadline`,
     				x.`suppressUntil`, x.`dateCreated`, x.`dateCompleted`,
+            x.`isTrade`, x.`tradeConditionId`,
     				x.`lastModified`, x.`categoryId`, x.`category`,
     				x.`contextId`, x.`cname`, x.`timeframeId`,
     				x.`timeframe`,
@@ -730,8 +734,9 @@ function getsql($config,$values,$sort,$querylabel) {
 							i.`premiseA`, i.`premiseB`, i.`conclusion`, i.`behaviour`, i.`standard`, i.`conditions`, i.`metaphor`, i.`hyperlink`, i.`sortBy`, ia.`type`, ia.`isSomeday`,
 							ia.`deadline`, ia.`repeat`, ia.`suppress`,
 							ia.`suppressUntil`, ia.`suppressIsDeadline`, its.`dateCreated`,
+              ia.`isTrade`, ia.`tradeConditionId`,
 							its.`dateCompleted`, its.`lastModified`,
-							ia.`categoryId`, c.`category`, ia.`contextId`,
+              ia.`categoryId`, c.`category`, ia.`contextId`, tc.`tradeCondition`,
 							cn.`name` AS cname, ia.`timeframeId`,
 							ti.`timeframe`, lu.`parentId`
 						FROM
@@ -746,6 +751,8 @@ function getsql($config,$values,$sort,$querylabel) {
 								ON (ia.`categoryId` = c.`categoryId`)
 							LEFT OUTER JOIN `". $config['prefix'] . "timeitems` as ti
 								ON (ia.`timeframeId` = ti.`timeframeId`)
+              LEFT OUTER JOIN `". $config['prefix'] . "tradeconditions` as tc
+                ON (ia.`tradeConditionId` = tc.`tradeConditionId`)
 							LEFT OUTER JOIN `". $config['prefix'] . "lookup` as lu
 								ON (ia.`itemId` = lu.`itemId`)".$values['childfilterquery']."
 				) as x
@@ -768,6 +775,8 @@ function getsql($config,$values,$sort,$querylabel) {
 							ia.`suppress` AS psuppress,
 							ia.`suppressIsDeadline` AS psuppressIsDeadline,
 							ia.`suppressUntil` AS psuppressUntil,
+              ia.`isTrade` AS pisTrade,
+              ia.`tradeConditionId` AS ptradeConditionId,
 							its.`dateCompleted` AS pdateCompleted
 						FROM
 								`". $config['prefix'] . "itemattributes` as ia
@@ -901,11 +910,11 @@ function getsql($config,$values,$sort,$querylabel) {
 		case "newitemattributes":
 			$sql="INSERT INTO `". $config['prefix'] . "itemattributes`
 						(`itemId`,`type`,`isSomeday`,`categoryId`,`contextId`,
-						`timeframeId`,`deadline`,`repeat`,`suppress`,`suppressIsDeadline`,`suppressUntil`)
+            `timeframeId`,`deadline`,`repeat`,`suppress`,`suppressIsDeadline`,`suppressUntil`,`isTrade`,`tradeConditionId`)
 				VALUES ('{$values['newitemId']}','{$values['type']}','{$values['isSomeday']}',
 						'{$values['categoryId']}','{$values['contextId']}','{$values['timeframeId']}',
 						{$values['deadline']},'{$values['repeat']}','{$values['suppress']}',
-						'{$values['suppressIsDeadline']}','{$values['suppressUntil']}')";
+            '{$values['suppressIsDeadline']}','{$values['suppressUntil']}','{$values['isTrade']}','{$values['tradeConditionId']}')";
 			break;
 
 		case "newitemstatus":
@@ -981,6 +990,12 @@ function getsql($config,$values,$sort,$querylabel) {
 		case "newspacecontext":
 			$sql="INSERT INTO `". $config['prefix'] . "context`
 						(`name`,`description`)
+				VALUES ('{$values['name']}', '{$values['description']}')";
+			break;
+
+    case "newtradecondition":
+      $sql="INSERT INTO `". $config['prefix'] . "tradeconditions`
+            (`tradeCondition`,`description`)
 				VALUES ('{$values['name']}', '{$values['description']}')";
 			break;
 
@@ -1094,8 +1109,9 @@ function getsql($config,$values,$sort,$querylabel) {
 					ia.`timeframeId`, ia.`isSomeday`,
 					ia.`deadline`, ia.`repeat`,
 					ia.`suppress`, ia.`suppressIsDeadline`, ia.`suppressUntil`,
+          ia.`isTrade`, ia.`tradeConditionId`,
 					its.`dateCreated`, its.`dateCompleted`,
-					its.`lastModified`, c.`category`, ti.`timeframe`,
+          its.`lastModified`, c.`category`, ti.`timeframe`, tc.`tradeCondition`,
 					cn.`name` AS `cname`
 				FROM `{$config['prefix']}items`          AS i
 				JOIN `{$config['prefix']}itemattributes` AS ia  USING (`itemId`)
@@ -1106,6 +1122,8 @@ function getsql($config,$values,$sort,$querylabel) {
 						ON (cn.`contextId` = ia.`contextId`)
 					LEFT OUTER JOIN `". $config['prefix'] . "timeitems` as ti
 						ON (ti.`timeframeId` = ia.`timeframeId`)
+          LEFT OUTER JOIN `". $config['prefix'] . "tradeconditions` as tc
+            ON (tc.`tradeConditionId` = ia.`tradeConditionId`)
 				WHERE i.`itemId` = '{$values['itemId']}'";
 			break;
 
@@ -1119,7 +1137,7 @@ function getsql($config,$values,$sort,$querylabel) {
 			break;
 
 		case "selectitemstatus":
-			$sql="SELECT ia.`itemId`, ia.`isSomeday`, its.`dateCompleted`
+      $sql="SELECT ia.`itemId`, ia.`isSomeday`, its.`dateCompleted`, its.`dateCreated`
 				FROM `{$config['prefix']}itemattributes` AS ia
 				JOIN `{$config['prefix']}itemstatus`     AS its
 				WHERE ia.`itemId` = '{$values['itemId']}'
@@ -1186,6 +1204,12 @@ function getsql($config,$values,$sort,$querylabel) {
 				FROM `". $config['prefix'] . "timeitems` as ti".$values['timefilterquery']."
 				ORDER BY {$sort['timecontextselectbox']}";
 			break;
+
+    case "tradeconditionselectbox":
+      $sql="SELECT `tradeConditionId`, `tradeCondition`, `description`
+        FROM `". $config['prefix'] . "tradeconditions`
+  			ORDER BY description";
+  		break;
 
 		case "touchitem":
 			$sql="UPDATE `". $config['prefix'] . "itemstatus`
@@ -1332,7 +1356,17 @@ function getsql($config,$values,$sort,$querylabel) {
 						`repeat` = '{$values['repeat']}',
 						`suppress`='{$values['suppress']}',
 						`suppressIsDeadline`='{$values['suppressIsDeadline']}',
-						`suppressUntil`='{$values['suppressUntil']}'
+            `suppressUntil`='{$values['suppressUntil']}',
+            `isTrade`='{$values['isTrade']}',
+            `tradeConditionId`='{$values['tradeConditionId']}'
+				WHERE `itemId` = '{$values['itemId']}'";
+			break;
+
+    case "updateitemstatus":
+			$sql="UPDATE `". $config['prefix'] . "itemstatus`
+				SET `dateCreated` = {$values['dateCreated']},
+						`lastModified`= CURRENT_DATE,
+						`dateCompleted` = {$values['dateCompleted']}
 				WHERE `itemId` = '{$values['itemId']}'";
 			break;
 
@@ -1416,6 +1450,13 @@ function getsql($config,$values,$sort,$querylabel) {
 				SET `name` ='{$values['name']}',
 						`description`='{$values['description']}'
 				WHERE `contextId` ='{$values['id']}'";
+			break;
+
+    case "updatetradecondition":
+      $sql="UPDATE `". $config['prefix'] . "tradeconditions`
+        SET `tradeCondition` ='{$values['name']}',
+						`description`='{$values['description']}'
+        WHERE `tradeConditionId` ='{$values['id']}'";
 			break;
 
 		case "updatetimecontext":

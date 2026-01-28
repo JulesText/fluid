@@ -39,6 +39,10 @@ th.col-description {
 	width: 30%;
 }
 
+th.col-fulldesc {
+	min-width: 250px;
+}
+
 th.col-desiredOutcome {
 	width: 30%;
 }
@@ -216,6 +220,7 @@ div.reportsection {
 div.inline-div-editable {
 	display: inline;
 	border:0.5px #aaa dashed;
+	/* min-width: 200px;  */
 }
 
 /* the ! preceding each project without a next action defined (in listProjects.php) */

@@ -922,7 +922,7 @@ function getsql($config,$values,$sort,$querylabel) {
 						(`itemId`,`dateCreated`,`lastModified`,`dateCompleted`)
 				VALUES (
 						'{$values['newitemId']}',
-						CURRENT_DATE,
+						{$values['dateCreated']},
 						CURRENT_DATE,
 						{$values['dateCompleted']})";
 			break;

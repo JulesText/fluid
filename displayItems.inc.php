@@ -85,26 +85,28 @@ foreach ($maintable as $row) {
 
         				$values = $tempValues;
 
-                        $cleaned=$row[$key];
-                        echo /* "<a href='itemReport.php?itemId={$row['itemId']}'>"
-                            ,"<img src='themes/{$config['theme']}/report.gif' class='noprint' alt='Report' title='View Report' /></a>"
-                            ,"<a href='item.php?itemId={$row['itemId']}'>"
-                            ,"<img src='themes/{$config['theme']}/edit.gif' class='noprint' alt='Edit ' title='Edit' /></a>"
-                            ,*/"<a ",(empty($row['NA']) && !$isActiveProject)?'':"class='nextactionlink'"
-                            ," title='"
-                            ,(empty($row['doreport']))?'Edit':'View Report'
-                            ,"' href='";
-                        if (empty($row['doreport']) && $isProject) echo "itemReport.php?itemId={$row['itemId']}'";
-                        else if (empty($row['doreport']) && !$isProject) echo "item.php?itemId={$row['itemId']}'";
-                        else if ($row['doreport'] == 'item') echo "item.php?itemId={$row['itemId']}'";
-                        else if ($row['doreport'] == 'parent') echo "itemReport.php?itemId={$row['itemId']}'";
-                        else if ($row['doreport'] == 'cl') echo "reportLists.php?listId={$row['itemId']}&type=c'";
-                        else if ($row['doreport'] == 'cli') echo "editListItems.php?itemId={$row['itemId']}&type=c'";
-                        else if ($row['doreport'] == 'l') echo "reportLists.php?listId={$row['itemId']}&type=l'";
-                        else if ($row['doreport'] == 'li') echo "editListItems.php?itemId={$row['itemId']}&type=l'";
-                        else if ($row['doreport'] == 'fi') echo "fi.php?chat_id={$row['itemId']}'";
-                        echo ">$cleaned</a>";
-        				echo $childString . ($hasTickler ? '<span style="opacity: 0.5"><br>TICKLED ITEM(S)</span>' : '');
+                $cleaned=$row[$key];
+                echo /* "<a href='itemReport.php?itemId={$row['itemId']}'>"
+                    ,"<img src='themes/{$config['theme']}/report.gif' class='noprint' alt='Report' title='View Report' /></a>"
+                    ,"<a href='item.php?itemId={$row['itemId']}'>"
+                    ,"<img src='themes/{$config['theme']}/edit.gif' class='noprint' alt='Edit ' title='Edit' /></a>"
+                    ,*/"<a ",(empty($row['NA']) && !$isActiveProject)?'':"class='nextactionlink'"
+                    ," title='"
+                    ,(empty($row['doreport']))?'Edit':'View Report'
+                    ,"' href='";
+                if (empty($row['doreport']) && $isProject) echo "itemReport.php?itemId={$row['itemId']}'";
+                else if (empty($row['doreport']) && !$isProject) echo "item.php?itemId={$row['itemId']}'";
+                else if ($row['doreport'] == 'item') echo "item.php?itemId={$row['itemId']}'";
+                else if ($row['doreport'] == 'parent') echo "itemReport.php?itemId={$row['itemId']}'";
+                else if ($row['doreport'] == 'cl') echo "reportLists.php?listId={$row['itemId']}&type=c'";
+                else if ($row['doreport'] == 'cli') echo "editListItems.php?itemId={$row['itemId']}&type=c'";
+                else if ($row['doreport'] == 'l') echo "reportLists.php?listId={$row['itemId']}&type=l'";
+                else if ($row['doreport'] == 'li') echo "editListItems.php?itemId={$row['itemId']}&type=l'";
+                else if ($row['doreport'] == 'fi') echo "fi.php?chat_id={$row['itemId']}'";
+                echo ">$cleaned</a>";
+
+                echo $childString . ($row['isTrade'] == 'y' ? '<span style="opacity: 0.5"><br>' . $row['dateCreated'] . ' </span>' : '');
+                echo $childString . ($hasTickler ? '<span style="opacity: 0.5"><br>TICKLED ITEM(S)</span>' : '');
         				if (isset($item['title'])) {
         					$values['itemId'] = $row['itemId'];
         					$presult = query("lookupparent",$config,$values,$sort);

@@ -176,3 +176,26 @@ function mapTypeToName(type) {
     } else {return typenames[type];}
 }
 // ======================================================================================
+
+function toggleTradeCondition() {
+
+  const tradeConditionDropdown = document.getElementById('tradeCondition');
+  const descriptionForm = document.getElementById('descriptionForm');
+  const conclusionForm = document.getElementById('conclusionForm');
+  const outcomeForm = document.getElementById('outcomeForm');
+
+  if (tradeConditionDropdown.value === '0') { // action item
+    descriptionForm.style.display = 'block';
+    conclusionForm.style.display = 'none';
+    outcomeForm.style.display = 'none';
+  } else if (tradeConditionDropdown.value === '1') { // evaluation
+      descriptionForm.style.display = 'block';
+      conclusionForm.style.display = 'block';
+      outcomeForm.style.display = 'none';
+  } else { // other condition
+    descriptionForm.style.display = 'none';
+    conclusionForm.style.display = 'block';
+    outcomeForm.style.display = 'block';
+  }
+
+}

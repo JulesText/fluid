@@ -212,6 +212,7 @@ if (!empty($childtype)) {
         $q=($comp==='y')?'completeditems':'pendingitems';  //suppressed items will be shown on report page
         $values['filterquery'] .= " AND ".sqlparts($q,$config,$values);
 
+        $sort['getchildren'] = $sort['getchildrenTrades'];
         $result = query("getchildren",$config,$values,$sort);
 				if (!empty($result) && is_array($result)) {
 					$count = count($result);
@@ -281,7 +282,7 @@ if (!empty($childtype)) {
         } else {
             $dispArray['NA']='NA';
         }
-        if ($isTrade == 'y') $dispArray['dateCreated']='Created';
+        // if ($isTrade == 'y') $dispArray['dateCreated']='Trade date';
         $dispArray['title']=$typename[$thistype].'s';
         $dispArray[$descriptionField]='Description';
         //$dispArray[$outcomeField]='Objective';
@@ -289,18 +290,17 @@ if (!empty($childtype)) {
         switch ($values['type']) {
 
             case 'a': // deliberately flows through to 'w'
-                if ($comp=="n") {
-//                    $dispArray['suppress']='Suppress until';
-                    $dispArray['deadline']='Due';
-//                  $dispArray['repeat']='Repeat';
-                }
-            case 'r': // deliberately flows through to 'w'
-            case 'w':
-                $dispArray['deadline']='Due';
-                //$dispArray['context']='Context';
-                if ($time) $dispArray['timeframe']='Time';
                 if ($isTrade == 'y') $dispArray[$outcomeField]='Outcome';
-                break;
+                if ($comp=="n") {
+                    $dispArray['deadline']='Due';
+                }
+            break;
+            case 'r':
+            case 'w':
+                if ($isTrade == 'y') $dispArray[$outcomeField]='Outcome';
+                $dispArray['deadline']='Due';
+                if ($time) $dispArray['timeframe']='Time';
+            break;
 
             case 'm': // deliberately flows through to 'g'
             case 'v': // deliberately flows through to 'g'
@@ -344,9 +344,11 @@ if (!empty($childtype)) {
 
             $maintable[$i]['itemId']=$row['itemId'];
 
-            if ($isTrade == 'y') {
+            if ($isTrade == 'y' && $row['isTrade'] == 'y') {
               $maintable[$i]['dateCreated'] = $row['dateCreated'];
             }
+
+            $maintable[$i]['isTrade'] = $row['isTrade'];
 
             $tfield = $row['title'];
 
@@ -359,10 +361,8 @@ if (!empty($childtype)) {
                     }
             }
 
-            $maintable[$i]['title']= $tfield;
+            $maintable[$i]['title'] = $tfield;
 
-
-            // var_dump($show);die;
             # exception if contains hyperlink or is trade then avoid ajax update
             if (strstr($row['description'], '<a href=')) {
               $maintable[$i][$descriptionField] = $row['description'];
@@ -377,10 +377,16 @@ if (!empty($childtype)) {
               $maintable[$i][$descriptionField] .= '<div>';
             }
             else if ($isTrade == 'y') {
-              $maintable[$i][$descriptionField] = "<div contenteditable='true'" . ajaxUpd('itemDescription', $row['itemId']) . ">" . $row['description'] . "</div>";
-              $maintable[$i][$descriptionField] .= "<br>P1: <div class='inline-div-editable' contenteditable='true'" . ajaxUpd('itemPremiseA', $row['itemId']) . ">" . $row['premiseA'] . "</div>";
-              $maintable[$i][$descriptionField] .= "<br>P2: <div class='inline-div-editable' contenteditable='true'" . ajaxUpd('itemPremiseB', $row['itemId']) . ">" . $row['premiseB'] . "</div>";
-              $maintable[$i][$descriptionField] .= "<br>C: <div class='inline-div-editable' contenteditable='true'" . ajaxUpd('itemConclusion', $row['itemId']) . ">" . $row['conclusion'] . "</div>";
+              $maintable[$i][$descriptionField] = '';
+              if (in_array($row['tradeConditionId'], ['',0,1,null])) $maintable[$i][$descriptionField] .= "<div contenteditable='true'" . ajaxUpd('itemDescription', $row['itemId']) . ">" . $row['description'] . "</div>";
+              if (!in_array($row['tradeConditionId'], ['',0,null])
+                  && (strlen($row['premiseA']) > 0 || strlen($row['premiseB']) > 0 || strlen($row['conclusion']) > 0)
+                ) {
+                  if (in_array($row['tradeConditionId'], [1])) $maintable[$i][$descriptionField] .= PHP_EOL;
+                  $maintable[$i][$descriptionField] .= "PA: <div class='inline-div-editable' contenteditable='true'" . ajaxUpd('itemPremiseA', $row['itemId']) . ">" . $row['premiseA'] . "</div>";
+                  $maintable[$i][$descriptionField] .= "<br>PB: <div class='inline-div-editable' contenteditable='true'" . ajaxUpd('itemPremiseB', $row['itemId']) . ">" . $row['premiseB'] . "</div>";
+                  $maintable[$i][$descriptionField] .= "<br>C: <div class='inline-div-editable' contenteditable='true'" . ajaxUpd('itemConclusion', $row['itemId']) . ">" . $row['conclusion'] . "</div>";
+              }
               $maintable[$i][$descriptionField] .= '<div>';
             }
             # otherwise do it
@@ -401,8 +407,9 @@ if (!empty($childtype)) {
             if ($isTrade == 'y') {
                $maintable[$i]['tradeConditionId'] = $row['tradeConditionId'];
                $maintable[$i]['tradeCondition'] = $row['tradeCondition'];
-               $maintable[$i]['rewardRisk'] =
-                    ((int) $row['conditions'] / 100) // risk (p)
+               if (!is_null($row['tradeConditionId']) && $row['tradeConditionId'] > 0)
+                  $maintable[$i]['rewardRisk'] =
+                    ((int) $row['conditions'] / 100) // chance (p)
                     * (((int) $row['standard'] - (int) $row['behaviour'])
                       / (int) $row['behaviour']) // expected reward
                     * 100;
@@ -437,22 +444,22 @@ if (!empty($childtype)) {
             if ($comp==='n') {
                 //Calculate reminder date as # suppress days prior to deadline
                 if ($row['suppress']==='y' && $row['deadline']!=='') {
-            $reminddate=getTickleDate($row['deadline'],$row['suppressUntil']);
-            if ($reminddate>time()) { // item is not yet tickled - count it, then skip displaying it
-                $suppressed++;
-                if ($_SESSION['useLiveEnhancements'])
-                                $maintable[$i]['row.class']='togglehidden';
-                        else {
-                            array_pop($maintable);
-                            continue;
-                        }
-        }
-//                  $maintable[$i]['suppress']=date($config['datemask'],$reminddate);
-                    $deadline=prettyDueDate($row['deadline'],$config['datemask'],$row['suppress'],$row['suppressIsDeadline']);
-                    $maintable[$i]['deadline']      =$deadline['date'];
-                    $maintable[$i]['deadline.class']=$deadline['class'];
-                    $maintable[$i]['deadline.title']=$deadline['title'];
-                } else
+                    $reminddate=getTickleDate($row['deadline'],$row['suppressUntil']);
+                    if ($reminddate>time()) { // item is not yet tickled - count it, then skip displaying it
+                    $suppressed++;
+                    if ($_SESSION['useLiveEnhancements'])
+                                    $maintable[$i]['row.class']='togglehidden';
+                            else {
+                                array_pop($maintable);
+                                continue;
+                            }
+                    }
+    //                  $maintable[$i]['suppress']=date($config['datemask'],$reminddate);
+                        $deadline=prettyDueDate($row['deadline'],$config['datemask'],$row['suppress'],$row['suppressIsDeadline']);
+                        $maintable[$i]['deadline']      =$deadline['date'];
+                        $maintable[$i]['deadline.class']=$deadline['class'];
+                        $maintable[$i]['deadline.title']=$deadline['title'];
+                    } else
 //                  $maintable[$i]['suppress']='&nbsp;';
 
                 if (empty($row['deadline']))
@@ -487,56 +494,74 @@ if (!empty($childtype)) {
         // calculate valuations from risk_reward values
         if ($isTrade == 'y') {
 
-          $trades = array_map(function($row) {
+          $index = array_map(function($row) {
             return ['dateCreated' => $row['dateCreated'], 'title' => $row['title']];
           }, $maintable);
-          $trades = array_values(array_unique($trades, SORT_REGULAR));
+          $index = array_values(array_unique($index, SORT_REGULAR));
 
-          foreach ($trades as &$trade) {
-            $trade['valuation'] = 0;
-            $trade['condition1'] = false;
-            $trade['condition2'] = false;
-            $trade['condition3'] = false;
-            $trade['risk'] = 0;
+          foreach ($index as &$element) {
+            $element['isStrategy'] = false;
+            $element['valuation'] = 0;
+            $element['condition1'] = false;
+            $element['condition2'] = false;
+            $element['condition3'] = false;
+            $element['condition4'] = false;
+            $element['chance'] = 0;
             foreach ($maintable as $row) {
-              // var_dump();die;
-              if ($trade['dateCreated'] == $row['dateCreated']
-                  && $trade['title'] == $row['title']
-                  && $row['NA'] === true) {
-                    $trade['valuation'] += $row['rewardRisk'];
-                    $trade['risk'] += (int) $row['conditions'];
-                    // var_dump($row['tradeConditionId']);die;
-                    if ($row['tradeConditionId'] == 1) $trade['condition1'] = true;
-                    if ($row['tradeConditionId'] == 2) $trade['condition2'] = true;
-                    if ($row['tradeConditionId'] == 3) $trade['condition3'] = true;
+
+              if ($element['dateCreated'] == $row['dateCreated']
+                  && $element['title'] == $row['title']
+                  && $row['isTrade'] == 'y'
+                  ) {
+                  $element['isStrategy'] = true;
+                  if ($row['tradeConditionId'] > 0 && $row['tradeCondition'] !== 'Evaluation*') {
+                      $element['valuation'] += $row['rewardRisk'];
+                      $element['chance'] += (int) $row['conditions'];
+                  }
+                  if ($row['tradeCondition'] == 'Evaluation*' && $row['deadline'] != '') $element['condition1'] = true;
+                  if ($row['tradeCondition'] == 'Time lapse*' && $row['deadline'] != '') $element['condition2'] = true;
+                  if ($row['tradeCondition'] == 'Stop loss*') $element['condition3'] = true;
+                  if ($row['tradeCondition'] == 'Take profit*') $element['condition4'] = true;
+
               }
             }
           }
-          unset($trade);
+          unset($element);
 
           foreach ($maintable as &$row) {
-              foreach ($trades as $trade)
-                  if ($trade['dateCreated'] == $row['dateCreated'] && $trade['title'] == $row['title']) {
-                    if ($trade['risk'] !== 100) {
-                        $row['valuation'] = ' total risk(p) != 100';
-                    } else if (!($trade['condition1'] && $trade['condition2'] && $trade['condition3'])) {
-                        $row['valuation'] = ' trade condition missing';
-                    } else {
-                        $row['valuation'] = round($trade['valuation'], 0) . '%';
-                    }
-
+              $row['valuation'] = '';
+              foreach ($index as $element)
+                  if ($element['dateCreated'] == $row['dateCreated'] && $element['title'] == $row['title']) {
+                      $row['isStrategy'] = $element['isStrategy'];
+                      if ($row['isStrategy']) {
+                          if ($element['chance'] !== 100) {
+                              $row['valuation'] .= ' total chance (p) != 100; ';
+                          }
+                          if (!($element['condition1'] && $element['condition2'] && $element['condition3'] && $element['condition4'])) {
+                              $row['valuation'] .= ' trade condition missing, or "Time lapse*" or "Evaluation*" missing due date; ';
+                          }
+                          if ($row['tradeCondition'] == 'Evaluation*') {
+                              $row['valuation'] .= round($element['valuation'], 0) . '%';
+                          }
+                      }
                   }
-              $rewardRisk = ((string) round($row['rewardRisk'], 0)) . '%';
-              $row[$outcomeField] .=
-                    $row['tradeCondition'] . PHP_EOL
+
+              if (!$row['isStrategy']) $row['dateCreated'] = "";
+
+              if ($row['tradeCondition'] == '') $row[$outcomeField] =
+                    $row['valuation'];
+              else if ($row['tradeCondition'] == 'Evaluation*') $row[$outcomeField] =
+                    "<u>" . $row['tradeCondition'] . "</u>" . PHP_EOL
+                    . 'Valuation: ' . $row['valuation'];
+              else if ($row['tradeCondition'] != '') $row[$outcomeField] =
+                    "<u>" . $row['tradeCondition'] . "</u>" . PHP_EOL
                     . "Enter price: <div class='inline-div-editable' contenteditable='true'"
                         . ajaxUpd('itemBehaviour', $row['itemId']) . ">" . $row['behaviour'] . "</div>" . PHP_EOL
                     . "Exit price: <div class='inline-div-editable' contenteditable='true'"
                         . ajaxUpd('itemStandard', $row['itemId']) . ">" . $row['standard'] . "</div>" . PHP_EOL
-                    . "Risk (p): <div class='inline-div-editable' contenteditable='true'"
+                    . "Chance (p): <div class='inline-div-editable' contenteditable='true'"
                         . ajaxUpd('itemConditions', $row['itemId']) . ">" . $row['conditions'] . "</div>" . "%" . PHP_EOL
-                    . "Reward/risk: " . $rewardRisk;
-              $row['title'] .= '<br>Valuation:' . $row['valuation'];
+                    . "Reward/risk: " . ((string) round($row['rewardRisk'], 0)) . '%';
           }
           unset($row);
 

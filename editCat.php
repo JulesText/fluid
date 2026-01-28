@@ -52,7 +52,9 @@ require_once("headerHtml.inc.php");
         </tr>
         <tr>
             <td><input type="submit" class="button" value="Update" name="submit" /></td>
-            <td><input type="reset" class="button" value="Reset" /></td>
+            <td>
+              <!-- <input type="reset" class="button" value="Reset" /> -->
+            </td>
             <?php if ($showTypes) { ?><td>&nbsp;</td><?php } ?>
             <?php if ($canDelete) { ?><td>and replace with</td><?php } ?>
         </tr>

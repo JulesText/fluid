@@ -281,8 +281,13 @@ function timecontextselectbox($config,$values,$sort) {
     }
 
 function tradeconditionselectbox($config,$values,$sort) {
+
+    $tcshtml='<option value="0"';
+    if ($values['tradeConditionId'] == 0)
+        $tcshtml .= ' selected="selected"';
+    $tcshtml .= '>Action item</option>'."\n";
+
     $result = query("tradeconditionselectbox",$config,$values,$sort);
-    $tcshtml='<option value="0">--</option>'."\n";
     if ($result) {
         foreach($result as $row) {
             $tcshtml .= '                    <option value="'.$row['tradeConditionId'].'" title="'.makeclean($row['description']).'"';
@@ -294,7 +299,9 @@ function tradeconditionselectbox($config,$values,$sort) {
             $tcshtml .= '>'.makeclean($row['tradeCondition'])."</option>\n";
             }
         }
+
     return $tcshtml;
+
     }
 
 function makeOption($row,$selected) {
@@ -554,22 +561,23 @@ function escapeChars($str) {  // TOFIX consider internationalization issues with
 
 function getShow($where,$values) {
     $type = $values['type'];
-    // $values['isTrade']=='y'
+    // die($values['isTrade']);
     global $config;
     $show=array(
         'title'         => true,
 
-        // only show if editing, not creating
+        // fields suppressed on certain types
+
         'lastModified'  =>($where==='edit'),
-        'dateCreated'   =>($where==='edit' && $values['isTrade']=='y'),
-        'tradeCondition'   =>($where==='edit' && $values['isTrade']=='y'),
+        'dateCreated'   => ($values['isTrade']=='y'),
+        'tradeCondition'   =>($values['isTrade']=='y'),
         'type'          =>($where==='edit' && ($type==='i' || $config['allowChangingTypes'])),
 
-        // fields suppressed on certain types
         'description'   => ($type!=='m' && $type!=='v' && $type!=='p' && $type!=='o' && $type!=='g'),
-        // 'conclusion'=>  ($type!=='r' && $type!=='a'),
-        'conclusion'=>  ($type=='m' || $type=='v' || $type=='p' || $type=='o' || $type=='g' || $values['isTrade']=='y'),
-        'behaviour'=>  ($type=='m' || $type=='v' || $type=='p' || $type=='o' || $type=='g' || $values['isTrade']=='y'),
+        'conclusion'=>  ($type=='m' || $type=='v' || $type=='p' || $type=='o' || $type=='g'
+                        || $values['isTrade']=='y' || !empty($values['premiseA']) || !empty($values['premiseB']) || !empty($values['conclusion'])),
+        'behaviour'=>  ($type=='m' || $type=='v' || $type=='p' || $type=='o' || $type=='g'
+                        || $values['isTrade'] == 'y' || !empty($values['behaviour']) || !empty($values['standard']) || !empty($values['conditions'])),
         'desiredOutcome'=>($type!=='r'),
         'metaphor'=>($type!=='r' && $type!=='a' && $type!=='w' && $type!=='i'),
         'category'      =>($type!=='m'),

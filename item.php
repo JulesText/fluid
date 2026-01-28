@@ -37,14 +37,15 @@ if ($values['itemId']) { // editing an item
     $values['hyperlink']='';
     $values['metaphor']='';
     $values['deadline']=null;
+    $values['isTrade']=(isset($_GET['isTrade']) &&  $_GET['isTrade']=='y')?'y':'n';
+    $values['tradeCondition']='';
+    $values['tradeConditionId']=0;
     $values['dateCompleted']=null;
-    $values['dateCreated']=null;
+    $values['dateCreated']=($values['isTrade'] == 'y') ? date("Y-m-d") : null;
     $values['repeat']=null;
     $values['suppressUntil']=null;
     $values['type']=$_GET['type'];
     $values['isSomeday']=(isset($_GET['someday']) &&  $_GET['someday']=='true')?'y':'n';
-    $values['isTrade']=(isset($_GET['isTrade']) &&  $_GET['isTrade']=='y')?'y':'n';
-    $values['tradeCondition']='';
     $nextaction=isset($_GET['nextonly']) && ($_GET['nextonly']=='true' || $_GET['nextonly']==='y');
     foreach ( array('category','context','timeframe') as $cat)
         $values[$cat.'Id']= (isset($_GET[$cat.'Id']))?(int) $_GET[$cat.'Id']:0;
@@ -283,11 +284,11 @@ echo "</h2>\n";
         <?php
           if($show['tradeCondition']) { ?>
           <label for='tradeCondition' class=''>Condition:</label>
-          <select name='tradeConditionId' id='tradeCondition' <?php
+          <select name='tradeConditionId' id='tradeCondition' onChange='toggleTradeCondition()' <?php
             if ($values['itemId']) echo ajaxUpd('itemTradeCondition', $values['itemId']);
             ?>>
             <?php echo $tcshtml; ?>
-            </select>
+            </select>* required
             <?php } else $hiddenvars['tradeConditionId']=$values['tradeConditionId']; ?>
         </div>
 
@@ -303,7 +304,12 @@ echo "</h2>\n";
         <?php } else $hiddenvars['title']=$values['title'];
 
         if ($show['description']) { ?>
-            <div class='formrow'>
+            <div class='formrow' <?php
+              if ($values['isTrade']==='y') {
+                echo " id='descriptionForm'";
+                if ($values['tradeConditionId'] > 1) echo " style='display: none'";
+              }
+            ?>>
                     <label for='description' class='left first'>Description:<br>Why?</label>
                     <textarea rows='10' cols='50' name='description' id='description' class='JKPadding'
                     <?php # item being edited (has itemId) not created so allow ajax save
@@ -311,63 +317,70 @@ echo "</h2>\n";
                     ?>><?php echo makeclean($values['description']); ?></textarea>
             </div>
         <?php } else $hiddenvars['description']=$values['description'];
-        if ($show['conclusion']
-            // && preg_match('/[mvogp]/', $values['type'])
-            || !empty($values['premiseA'])
-            || !empty($values['premiseB'])
-            || !empty($values['conclusion']) ) { ?> <!-- 'm', 'v', 'o', 'g', 'p', 'a', 'r', 'w', 'i' -->
-            <div class='formrow'>
-                    <label for='premiseA' class='left first'>Premise&nbsp;A:</label>
-                    <input class="JKPadding" type="text" name="premiseA" id="conclusion" value="<?php echo makeclean($values['premiseA']); ?>" />
-            </div>
-            <div class='formrow'>
-                    <label for='premiseB' class='left first'>Premise&nbsp;B:</label>
-                    <input class="JKPadding" type="text" name="premiseB" id="conclusion" value="<?php echo makeclean($values['premiseB']); ?>" />
-            </div>
-            <div class='formrow'>
-                    <label for='conclusion' class='left first'>Conclusion:</label>
-                    <input class="JKPadding" type="text" name="conclusion" id="conclusion" value="<?php echo makeclean($values['conclusion']); ?>" />
+
+        if ($show['conclusion']) { ?>
+            <div <?php
+                if ($values['isTrade']==='y') {
+                  echo " id='conclusionForm'";
+                  if ($values['tradeConditionId'] == 0) echo " style='display: none'";
+                }
+                ?>>
+                <div class='formrow'>
+                        <label for='premiseA' class='left first'>Premise&nbsp;A:</label>
+                        <input class="JKPadding" type="text" name="premiseA" id="conclusion" value="<?php echo makeclean($values['premiseA']); ?>" />
+                </div>
+                <div class='formrow'>
+                        <label for='premiseB' class='left first'>Premise&nbsp;B:</label>
+                        <input class="JKPadding" type="text" name="premiseB" id="conclusion" value="<?php echo makeclean($values['premiseB']); ?>" />
+                </div>
+                <div class='formrow'>
+                        <label for='conclusion' class='left first'>Conclusion:</label>
+                        <input class="JKPadding" type="text" name="conclusion" id="conclusion" value="<?php echo makeclean($values['conclusion']); ?>" />
+                </div>
             </div>
         <?php
         } // else $hiddenvars['behaviour']=$values['behaviour'];
 
-        if ($show['behaviour']
-            // && preg_match('/[mvogp]/', $values['type'])
-            || !empty($values['behaviour'])
-            || !empty($values['standard'])
-            || !empty($values['conditions']) ) { ?> <!-- 'm', 'v', 'o', 'g', 'p', 'a', 'r', 'w', 'i' -->
-            <div class='formrow'>
-                    <label for='outcome' class='left first'>
-                    <?php if ($values['isTrade'] == 'y') {
-                      echo 'Enter price:';
-                    } else {
-                      echo 'Behaviour:';
-                    }
-                    ?>
-                    </label>
-                    <input class="JKPadding" type="text" name="behaviour" id="outcome" value="<?php echo makeclean($values['behaviour']); ?>" />
-            </div>
-            <div class='formrow'>
-                    <label for='standards' class='left first'>
-                      <?php if ($values['isTrade'] == 'y') {
-                        echo 'Exit price:';
-                      } else {
-                        echo 'Standards:';
-                      }
-                      ?>
-                    </label>
-                    <input class="JKPadding" type="text" name="standard" id="outcome" value="<?php echo makeclean($values['standard']); ?>" />
-            </div>
-            <div class='formrow'>
-                    <label for='conditions' class='left first'>
-                      <?php if ($values['isTrade'] == 'y') {
-                        echo 'Risk (p):';
-                      } else {
-                        echo 'Conditions:';
-                      }
-                      ?>
-                    </label>
-                    <input class="JKPadding" type="text" name="conditions" id="outcome" value="<?php echo makeclean($values['conditions']); ?>" />
+        if ($show['behaviour']) { ?>
+            <div <?php
+                if ($values['isTrade']==='y') {
+                  echo " id='outcomeForm'";
+                  if ($values['tradeConditionId'] == 0) echo " style='display: none'";
+                }
+                ?>>
+                <div class='formrow'>
+                        <label for='outcome' class='left first'>
+                        <?php if ($values['isTrade'] == 'y') {
+                          echo 'Enter price:';
+                        } else {
+                          echo 'Behaviour:';
+                        }
+                        ?>
+                        </label>
+                        <input class="JKPadding" type="text" name="behaviour" id="outcome" value="<?php echo makeclean($values['behaviour']); ?>" />
+                </div>
+                <div class='formrow'>
+                        <label for='standards' class='left first'>
+                          <?php if ($values['isTrade'] == 'y') {
+                            echo 'Exit price:';
+                          } else {
+                            echo 'Standards:';
+                          }
+                          ?>
+                        </label>
+                        <input class="JKPadding" type="text" name="standard" id="outcome" value="<?php echo makeclean($values['standard']); ?>" />
+                </div>
+                <div class='formrow'>
+                        <label for='conditions' class='left first'>
+                          <?php if ($values['isTrade'] == 'y') {
+                            echo 'Chance (p):';
+                          } else {
+                            echo 'Conditions:';
+                          }
+                          ?>
+                        </label>
+                        <input class="JKPadding" type="text" name="conditions" id="outcome" value="<?php echo makeclean($values['conditions']); ?>" />
+                </div>
             </div>
         <?php
         } else $hiddenvars['behaviour']=$values['behaviour'];

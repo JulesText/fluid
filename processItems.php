@@ -378,22 +378,12 @@ function retrieveFormVars() {
   $values['isTrade']  = (isset($_POST['isTrade']) && $_POST['isTrade']==='y')?'y':'n';
   // die($values['isTrade']);
 
-  // force blank vals
-  if ($values['isTrade'] == 'y') {
-    if ($values['premiseA'] == '') $values['premiseA'] = 'tbc';
-    if ($values['premiseB'] == '') $values['premiseB'] = 'tbc';
-    if ($values['conclusion'] == '') $values['conclusion'] = 'tbc';
-    if ($values['behaviour'] == '') $values['behaviour'] = 'tbc';
-    if ($values['standard'] == '') $values['standard'] = 'tbc';
-    if ($values['conditions'] == '') $values['conditions'] = 'tbc';
-  }
-
 	// integers
 	$values['suppressUntil']  = empty($_POST['suppressUntil'])?0:(int) $_POST['suppressUntil'];
 	$values['repeat']         = empty($_POST['repeat'])?0:(int) $_POST['repeat'];
 
 	// dates
-  $values['dateCreated'] = (empty($_POST['dateCreated'])) ? "NULL" : "'{$_POST['dateCreated']}'";
+  $values['dateCreated'] = (empty($_POST['dateCreated'])) ? date("Y-m-d") : "'{$_POST['dateCreated']}'";
   $values['dateCompleted'] = (empty($_POST['dateCompleted'])) ? "NULL" : "'{$_POST['dateCompleted']}'";
 	$values['deadline']      = (empty($_POST['deadline']))      ? "NULL" : "'{$_POST['deadline']}'";
 

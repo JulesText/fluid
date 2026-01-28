@@ -104,8 +104,9 @@ foreach ($maintable as $row) {
                 else if ($row['doreport'] == 'li') echo "editListItems.php?itemId={$row['itemId']}&type=l'";
                 else if ($row['doreport'] == 'fi') echo "fi.php?chat_id={$row['itemId']}'";
                 echo ">$cleaned</a>";
-
-                echo $childString . ($row['isTrade'] == 'y' ? '<span style="opacity: 0.5"><br>' . $row['dateCreated'] . ' </span>' : '');
+				echo $childString
+                      . ($hasTickler ? '<span style="opacity: 0.5"><br>TICKLED ITEM(S)</span>' : '')
+                      . ($row['isTrade'] == 'y' ? '<span style="opacity: 0.5"><br>' . $row['dateCreated'] . ' </span>' : '');
                 echo $childString . ($hasTickler ? '<span style="opacity: 0.5"><br>TICKLED ITEM(S)</span>' : '');
         				if (isset($item['title'])) {
         					$values['itemId'] = $row['itemId'];

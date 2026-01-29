@@ -441,11 +441,14 @@ function ajaxUpd($query, $id, $inst = NULL) {
       if ($query === 'itemTicklerDeadline') $retval = " onClick=\"cB(this,'itemattributes','suppressIsDeadline','itemId','{$id}')\" ";
       if ($query === 'itemTrade') $retval = " onClick=\"cB(this,'itemattributes','isTrade','itemId','{$id}')\" ";
       if ($query === 'itemTradeCondition') $retval = " onChange=\"sT(this,'itemattributes','tradeConditionId','itemId','{$id}')\" ";
-      if ($query === 'checklistitemNotes') $retval = " onFocus=\"sEf(this,'checklistitems','notes','checklistItemId','{$id}')\" ";
       if ($query === 'checklistitem') $retval = " onClick=\"cB(this,'checklistitems','checked','checklistItemId','{$id}')\" ";
+      if ($query === 'checklistitemNotes') $retval = " onFocus=\"sEf(this,'checklistitems','notes','checklistItemId','{$id}')\" ";
       if ($query === 'checklistiteminst') $retval = " onClick=\"cB(this,'checklistitemsinst','checked','checklistItemId','{$id}','instanceId','{$inst}')\" ";
       if ($query === 'checklistitemignore') $retval = " onClick=\"cB(this,'checklistitems','ignored','checklistItemId','{$id}')\" ";
       if ($query === 'checklistiteminstignore') $retval = " onClick=\"cB(this,'checklistitemsinst','ignored','checklistItemId','{$id}','instanceId','{$inst}')\" ";
+      if ($query === 'checklistitemPriority') $retval = " onFocus=\"sEf(this,'checklistitems','priority','checklistItemId','{$id}')\" ";
+      if ($query === 'listitemPriority') $retval = " onFocus=\"sEf(this,'listitems','priority','listItemId','{$id}')\" ";
+      if ($query === 'listitemNotes') $retval = " onFocus=\"sEf(this,'listitems','notes','listItemId','{$id}')\" ";
     }
     return $retval;
 }

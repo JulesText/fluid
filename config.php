@@ -128,9 +128,9 @@ $sort = array(
     // "getitemsandparentTrades"     => "type ASC, dateCreated DESC, title ASC, ptitle ASC",
     "getorphaneditems"      => "ia.`type` ASC, i.`title` ASC",
     "selectchecklist"       => "cl.`title` ASC",
-//    "getchecklists"         => "c.`category` DESC, sortBy ASC, `title` ASC",
-//    "getlists"              => "c.`category` DESC, sortBy ASC",
+		//    "getchecklists"         => "c.`category` DESC, sortBy ASC, `title` ASC",
     "getchecklists"         => "`title` ASC",
+		//    "getlists"              => "c.`category` DESC, sortBy ASC",
     "getlists"              => "`title` ASC",
     "searchlists"           => "`type` ASC, `sortBy` ASC, `priority` ASC",
 
@@ -162,9 +162,9 @@ $sort = array(
         i.`description` DESC",
         // shows by next action then sortBy, then title, the tradeConditionId
     "getchildrenTrades"              => "
-        i.`title` DESC,
+				i.`title` ASC,
+				ia.`tradeConditionId` ASC,
         CASE WHEN na.`nextaction` IS NULL THEN 0 else 1 END DESC,
-        ia.`tradeConditionId` ASC,
         i.`description` ASC
         ",
     "getitems"              => "

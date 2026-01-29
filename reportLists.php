@@ -191,7 +191,7 @@ $( document ).ready(function() {
                     <tr>
                         <td class="JKSmallPadding" tabindex="2">
                             <?php
-                            if ($prioritise > 0) echo '<span style="opacity: 0.6; font-size: medium;">P' . $row['priority'] . '</span>&nbsp;';
+                            if ($prioritise > 0) echo '<span style="opacity: 0.6; font-size: medium;">P<div contenteditable="true" class="inline-div-editable" ' . ajaxUpd($check . "listitemPriority", $row['itemId']) . '>' . $row['priority'] . '</div></span>&nbsp;';
                             ?><a href="editListItems.php?itemId=<?php
                             echo $row['itemId'],'&amp;',$urlSuffix;
                             ?>" title="Edit"><?php echo makeclean($row['item']); ?></a>

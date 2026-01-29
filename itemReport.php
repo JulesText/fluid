@@ -16,7 +16,7 @@ $values['extravarsfilterquery'] =sqlparts("getNA",$config,$values);;
 $result = query("getitemsandparent",$config,$values,$sort);
 $item = ($result)?$result[0]:array();
 $values['isSomeday']=($item['isSomeday']=="y")?'y':'n';
-$isTrade=($item['isTrade']=="y")?'y':'n';
+$isTrade = ($item['isTrade']=="y")?'y':'n';
 $values['type']=$item['type'];
 
 $pitemId = $values['itemId'];
@@ -128,16 +128,18 @@ if(isset($nextId))  echo " [<a href='itemReport.php?itemId=$nextId' title='",mak
 echo "</div>\n<table id='report' summary='item attributes'><tbody>";
 //Item details
 if ($item['description']) echo "<tr><th width=200>Description:</th><td class=\"JKPadding\">" . nl2br(escapeChars($item['description'])) . "</td></tr>\n";
-if ($item['conclusion']) {
-    echo "<tr><th>Reasons:</th><td class=\"JKPadding\">",nl2br(escapeChars($item['premiseA']));
-    if ($item['premiseB']) echo "<br><br>", nl2br(escapeChars($item['premiseB']));
-    if ($item['conclusion']) echo "<br><br>", nl2br(escapeChars($item['conclusion']));
+if (strlen($item['conclusion']) > 1) {
+    echo "<tr><th>Reasons:</th><td class=\"JKPadding\">";
+    if ($item['premiseA']) echo "<div contenteditable='true'" . ajaxUpd('itemPremiseA', $item['itemId']) . ">" . $item['premiseA'] . "</div>";
+    if ($item['premiseB']) echo "<br><div contenteditable='true'" . ajaxUpd('itemPremiseB', $item['itemId']) . ">" . $item['premiseB'] . "</div>";
+    if ($item['conclusion']) echo "<br><div contenteditable='true'" . ajaxUpd('itemConclusion', $item['itemId']) . ">" . $item['conclusion'] . "</div>";
     echo "</td></tr>\n";
 }
-if ($item['behaviour']) {
-    echo "<tr><th>Desired&nbsp;Outcome:</th><td class=\"JKPadding\">",nl2br(escapeChars($item['behaviour']));
-    if ($item['standard']) echo ", <br>", nl2br(escapeChars($item['standard']));
-    if ($item['conditions']) echo ", <br>", nl2br(escapeChars($item['conditions']));
+if (strlen($item['behaviour']) > 1) {
+    echo "<tr><th>Desired&nbsp;Outcome:</th><td class=\"JKPadding\">";
+    if ($item['behaviour']) echo "<div contenteditable='true'" . ajaxUpd('itemBehaviour', $item['itemId']) . ">" . $item['behaviour'] . "</div>";
+    if ($item['standard']) echo "<br><div contenteditable='true'" . ajaxUpd('itemStandard', $item['itemId']) . ">" . $item['standard'] . "</div>";
+    if ($item['conditions']) echo "<br><div contenteditable='true'" . ajaxUpd('itemConditions', $item['itemId']) . ">" . $item['conditions'] . "</div>";
     echo "</td></tr>\n";
 }
 if ($item['hyperlink']) {
@@ -212,7 +214,7 @@ if (!empty($childtype)) {
         $q=($comp==='y')?'completeditems':'pendingitems';  //suppressed items will be shown on report page
         $values['filterquery'] .= " AND ".sqlparts($q,$config,$values);
 
-        $sort['getchildren'] = $sort['getchildrenTrades'];
+        if ($isTrade == 'y') $sort['getchildren'] = $sort['getchildrenTrades'];
         $result = query("getchildren",$config,$values,$sort);
 				if (!empty($result) && is_array($result)) {
 					$count = count($result);
@@ -231,7 +233,8 @@ if (!empty($childtype)) {
             $footertext='';
         }
         ?>
-<div class='reportsection'>
+
+    <div class='reportsection'>
         <?php
         $title=$typename[$thistype].'s';
         if ($comp==="y") {
@@ -376,7 +379,7 @@ if (!empty($childtype)) {
               if ($row['conclusion']) $maintable[$i][$descriptionField] .= $row['conclusion'] . '<br><br>';
               $maintable[$i][$descriptionField] .= '<div>';
             }
-            else if ($isTrade == 'y') {
+            else if ($isTrade == 'y' || strlen($row['conclusion']) > 1) {
               $maintable[$i][$descriptionField] = '';
               if (in_array($row['tradeConditionId'], ['',0,1,null])) $maintable[$i][$descriptionField] .= "<div contenteditable='true'" . ajaxUpd('itemDescription', $row['itemId']) . ">" . $row['description'] . "</div>";
               if (!in_array($row['tradeConditionId'], ['',0,null])

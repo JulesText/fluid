@@ -204,6 +204,9 @@ echo "</h2>\n";
     <div class='formrow'><span class="error" id='errorMessage'></span></div>
         <?php
 
+        if ($values['isTrade'] == 'y' && in_array($values['type'], ['a','w','r'])) $values['tradeDisplay'] = true;
+        else $values['tradeDisplay'] = false;
+
         if ($show['ptitle']) { ?>
             <div class='formrow'>
                 <label for='parenttable' class='left first'>Parent(s):</label>
@@ -261,7 +264,7 @@ echo "</h2>\n";
             ?>
         </div>
 
-        <?php if($show['dateCreated']) { ?>
+        <?php if($show['dateCreated'] && $values['tradeDisplay']) { ?>
             <div class='formrow'>
                 <label for='dateCreated' class='left first'>Created:</label>
                 <input type='text' size='10' name='dateCreated' id='dateCreated' class='hasdate' value='<?php echo $values['dateCreated']; ?>' <?php
@@ -282,7 +285,7 @@ echo "</h2>\n";
         <?php } else $hiddenvars['dateCreated']=$values['dateCreated']; ?>
 
         <?php
-          if($show['tradeCondition']) { ?>
+          if($show['tradeCondition'] && $values['tradeDisplay']) { ?>
           <label for='tradeCondition' class=''>Condition:</label>
           <select name='tradeConditionId' id='tradeCondition' onChange='toggleTradeCondition()' <?php
             if ($values['itemId']) echo ajaxUpd('itemTradeCondition', $values['itemId']);
@@ -322,7 +325,7 @@ echo "</h2>\n";
             <div <?php
                 if ($values['isTrade']==='y') {
                   echo " id='conclusionForm'";
-                  if ($values['tradeConditionId'] == 0) echo " style='display: none'";
+                  if ($values['tradeConditionId'] == 0 && $values['tradeDisplay']) echo " style='display: none'";
                 }
                 ?>>
                 <div class='formrow'>
@@ -345,12 +348,12 @@ echo "</h2>\n";
             <div <?php
                 if ($values['isTrade']==='y') {
                   echo " id='outcomeForm'";
-                  if ($values['tradeConditionId'] == 0) echo " style='display: none'";
+                  if ($values['tradeConditionId'] == 0 && $values['tradeDisplay']) echo " style='display: none'";
                 }
                 ?>>
                 <div class='formrow'>
                         <label for='outcome' class='left first'>
-                        <?php if ($values['isTrade'] == 'y') {
+                        <?php if ($values['tradeDisplay']) {
                           echo 'Enter price:';
                         } else {
                           echo 'Behaviour:';
@@ -361,7 +364,7 @@ echo "</h2>\n";
                 </div>
                 <div class='formrow'>
                         <label for='standards' class='left first'>
-                          <?php if ($values['isTrade'] == 'y') {
+                          <?php if ($values['tradeDisplay']) {
                             echo 'Exit price:';
                           } else {
                             echo 'Standards:';
@@ -372,7 +375,7 @@ echo "</h2>\n";
                 </div>
                 <div class='formrow'>
                         <label for='conditions' class='left first'>
-                          <?php if ($values['isTrade'] == 'y') {
+                          <?php if ($values['tradeDisplay']) {
                             echo 'Chance (p):';
                           } else {
                             echo 'Conditions:';

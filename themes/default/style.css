@@ -31,6 +31,11 @@ td.col-NA {
 	opacity: 0.25;
 }
 
+div.isTrade {
+	/* padding: 20px; */
+	opacity: 0.25;
+}
+
 checkbox {
 	opacity: 0.25;
 }

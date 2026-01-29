@@ -127,6 +127,12 @@ function sT(editableObj,table,updCol,pcol1,pid1,col2,id2,col3,id3,col4,id4,col5,
 			} else { alert('error: unrecognised element type ' + eType); return; }
 		}
 
+		// exception handling
+		if (table == 'itemstatus' && updCol == 'dateCreated'
+				&& (updVal == '\n' || updVal === '' || typeof updVal == 'undefined')) updVal = 'NULL';
+		if (table == 'itemattributes' && updCol == 'deadline'
+				&& (updVal == '\n' || typeof updVal == 'undefined')) updVal = 'NULL';
+
 		// alert(updVal);
 
 		//if (updVal == 'dateCompleteNullRandom34Lror') updVal = 'NULL';

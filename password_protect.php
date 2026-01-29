@@ -70,7 +70,7 @@ if (isset($_COOKIE['verify'])) {
 // check creds
 if ($submitted || $has_cookie) {
 
-  foreach ($LOGIN_INFORMATION as $login => $pass) {
+  foreach ($login_information as $login => $pass) {
 
     if ($cred == md5($login.'%'.$pass)) $verified = true;
 

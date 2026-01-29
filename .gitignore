@@ -6,7 +6,7 @@
 error_log
 
 # installation-specific configuration
-config.php
+config_private.php
 config.ip.txt
 config_pass_off_to.txt
 backup_db.php

@@ -430,7 +430,9 @@ function ajaxUpd($query, $id, $inst = NULL) {
       if ($query === 'itemConclusion') $retval = " onFocus=\"sEf(this,'items','conclusion','itemId','{$id}')\" ";
       if ($query === 'itemLink') $retval = " onFocus=\"sEf(this,'items','hyperlink','itemId','{$id}')\" ";
       if ($query === 'itemDeadline') $retval = " onChange=\"sT(this,'itemattributes','deadline','itemId','{$id}')\" ";
+      if ($query === 'itemDeadlineInline') $retval = " onFocus=\"sEf(this,'itemattributes','deadline','itemId','{$id}')\" ";
       if ($query === 'itemDateCreated') $retval = " onChange=\"sT(this,'itemstatus','dateCreated','itemId','{$id}')\" ";
+      if ($query === 'itemDateCreatedInline') $retval = " onFocus=\"sEf(this,'itemstatus','dateCreated','itemId','{$id}')\" ";
       if ($query === 'itemCompletedNow') $retval = " onFocus=\"sT(this,'itemstatus','dateCompleted','itemId','{$id}')\" ";
       if ($query === 'itemCompletedEdit') $retval = " onChange=\"sT(this,'itemstatus','dateCompleted','itemId','{$id}')\" ";
       if ($query === 'itemSomeday') $retval = " onClick=\"cB(this,'itemattributes','isSomeday','itemId','{$id}')\" ";

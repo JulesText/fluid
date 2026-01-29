@@ -104,10 +104,20 @@ foreach ($maintable as $row) {
                 else if ($row['doreport'] == 'li') echo "editListItems.php?itemId={$row['itemId']}&type=l'";
                 else if ($row['doreport'] == 'fi') echo "fi.php?chat_id={$row['itemId']}'";
                 echo ">$cleaned</a>";
-				echo $childString
-                      . ($hasTickler ? '<span style="opacity: 0.5"><br>TICKLED ITEM(S)</span>' : '')
-                      . ($row['isTrade'] == 'y' ? '<span style="opacity: 0.5"><br>' . $row['dateCreated'] . ' </span>' : '');
-                echo $childString . ($hasTickler ? '<span style="opacity: 0.5"><br>TICKLED ITEM(S)</span>' : '');
+
+                echo $childString;
+                if ($hasTickler) echo '<span style="opacity: 0.5"><br>TICKLED ITEM(S)</span>';
+                if (isset($isTrade) && $isTrade == 'y') {
+
+                    echo "<div class='isTrade'>Trade: <input value='{$row['itemId']}' type='checkbox'";
+                    if ($row['isTrade'] == 'y') echo " checked='checked' class='checked' ";
+                    else echo " class='unchecked'";
+                    echo ajaxUpd('itemTrade',$row['itemId']) . "/></div>";
+
+                    if ($row['isTrade'] == 'y') echo '<div contenteditable="true" class="isTrade" ' . ajaxUpd('itemDateCreatedInline', $row['itemId']) . '>' . $row['dateCreated'] . ' </div>';
+                }
+
+
         				if (isset($item['title'])) {
         					$values['itemId'] = $row['itemId'];
         					$presult = query("lookupparent",$config,$values,$sort);
@@ -325,7 +335,8 @@ foreach ($maintable as $row) {
       			case 'deadline':
         				$values['itemId'] = $row['itemId'];
         				$result = query("selectitem",$config,$values,$sort);
-        				echo $result[0]['deadline'];
+        				// echo $result[0]['deadline'];
+                echo '<div contenteditable="true" ' . ajaxUpd('itemDeadlineInline', $row['itemId']) . '>' . $result[0]['deadline'] . ' </div>';
         				break;
             default:
                 echo $row[$key];

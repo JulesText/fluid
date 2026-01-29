@@ -442,33 +442,33 @@ if (!empty($childtype)) {
 						}
 
             if ($comp==='n') {
+
                 //Calculate reminder date as # suppress days prior to deadline
                 if ($row['suppress']==='y' && $row['deadline']!=='') {
                     $reminddate=getTickleDate($row['deadline'],$row['suppressUntil']);
                     if ($reminddate>time()) { // item is not yet tickled - count it, then skip displaying it
-                    $suppressed++;
-                    if ($_SESSION['useLiveEnhancements'])
-                                    $maintable[$i]['row.class']='togglehidden';
-                            else {
-                                array_pop($maintable);
-                                continue;
-                            }
+                        $suppressed++;
+                        if ($_SESSION['useLiveEnhancements']) {
+                            $maintable[$i]['row.class']='togglehidden';
+                        } else {
+                            array_pop($maintable);
+                            continue;
+                        }
                     }
-    //                  $maintable[$i]['suppress']=date($config['datemask'],$reminddate);
-                        $deadline=prettyDueDate($row['deadline'],$config['datemask'],$row['suppress'],$row['suppressIsDeadline']);
-                        $maintable[$i]['deadline']      =$deadline['date'];
-                        $maintable[$i]['deadline.class']=$deadline['class'];
-                        $maintable[$i]['deadline.title']=$deadline['title'];
-                    } else
-//                  $maintable[$i]['suppress']='&nbsp;';
-
-                if (empty($row['deadline']))
-                    $maintable[$i]['deadline']=null;
-                else {
+//                  $maintable[$i]['suppress']=date($config['datemask'],$reminddate);
                     $deadline=prettyDueDate($row['deadline'],$config['datemask'],$row['suppress'],$row['suppressIsDeadline']);
-                    $maintable[$i]['deadline']      =$deadline['date'];
+                    $maintable[$i]['deadline']      =$deadline['date']; // not displayed until displayItems.inc.php but used for other logical conditions
                     $maintable[$i]['deadline.class']=$deadline['class'];
                     $maintable[$i]['deadline.title']=$deadline['title'];
+
+                } else if (empty($row['deadline'])) {
+                    // $maintable[$i]['deadline']=null;
+
+                } else {
+                    $deadline=prettyDueDate($row['deadline'],$config['datemask'],$row['suppress'],$row['suppressIsDeadline']);
+                    $maintable[$i]['deadline']      = $deadline['date']; // not displayed until displayItems.inc.php but used for other logical conditions
+                    $maintable[$i]['deadline.class']= $deadline['class'];
+                    $maintable[$i]['deadline.title']= $deadline['title'];
                 }
 
 //              $maintable[$i]['repeat']=($row['repeat']==0)?'&nbsp;':$row['repeat'];
@@ -506,6 +506,8 @@ if (!empty($childtype)) {
             $element['condition2'] = false;
             $element['condition3'] = false;
             $element['condition4'] = false;
+            $element['condition5'] = false;
+            $element['condition6'] = false;
             $element['chance'] = 0;
             foreach ($maintable as $row) {
 
@@ -518,10 +520,12 @@ if (!empty($childtype)) {
                       $element['valuation'] += $row['rewardRisk'];
                       $element['chance'] += (int) $row['conditions'];
                   }
-                  if ($row['tradeCondition'] == 'Evaluation*' && $row['deadline'] != '') $element['condition1'] = true;
-                  if ($row['tradeCondition'] == 'Time lapse*' && $row['deadline'] != '') $element['condition2'] = true;
-                  if ($row['tradeCondition'] == 'Stop loss*') $element['condition3'] = true;
-                  if ($row['tradeCondition'] == 'Take profit*') $element['condition4'] = true;
+                  if ($row['tradeCondition'] == 'Evaluation*') $element['condition1'] = true;
+                  if ($row['tradeCondition'] == 'Evaluation*' && $row['deadline'] != '') $element['condition2'] = true;
+                  if ($row['tradeCondition'] == 'Time lapse*') $element['condition3'] = true;
+                  if ($row['tradeCondition'] == 'Time lapse*' && $row['deadline'] != '') $element['condition4'] = true;
+                  if ($row['tradeCondition'] == 'Stop loss*') $element['condition5'] = true;
+                  if ($row['tradeCondition'] == 'Take profit*') $element['condition6'] = true;
 
               }
             }
@@ -537,9 +541,12 @@ if (!empty($childtype)) {
                           if ($element['chance'] !== 100) {
                               $row['valuation'] .= ' total chance (p) != 100; ';
                           }
-                          if (!($element['condition1'] && $element['condition2'] && $element['condition3'] && $element['condition4'])) {
-                              $row['valuation'] .= ' trade condition missing, or "Time lapse*" or "Evaluation*" missing due date; ';
-                          }
+                          if (!$element['condition1']) $row['valuation'] .= ' Evaluation* condition missing;';
+                          else if (!$element['condition2']) $row['valuation'] .= ' Evaluation* missing due date;';
+                          if (!$element['condition3']) $row['valuation'] .= ' Time lapse* condition missing;';
+                          else if (!$element['condition4']) $row['valuation'] .= ' Time lapse* missing due date;';
+                          if (!$element['condition5']) $row['valuation'] .= ' Stop loss* condition missing;';
+                          if (!$element['condition1']) $row['valuation'] .= ' Take profit* condition missing;';
                           if ($row['tradeCondition'] == 'Evaluation*') {
                               $row['valuation'] .= round($element['valuation'], 0) . '%';
                           }
@@ -550,18 +557,21 @@ if (!empty($childtype)) {
 
               if ($row['tradeCondition'] == '') $row[$outcomeField] =
                     $row['valuation'];
-              else if ($row['tradeCondition'] == 'Evaluation*') $row[$outcomeField] =
+              else if ($row['tradeCondition'] == 'Evaluation*' && $row['isTrade'] == 'y') $row[$outcomeField] =
                     "<u>" . $row['tradeCondition'] . "</u>" . PHP_EOL
                     . 'Valuation: ' . $row['valuation'];
+              else if ($row['tradeCondition'] == 'Evaluation*') $row[$outcomeField] =
+                    "<u>" . $row['tradeCondition'] . "</u>";
               else if ($row['tradeCondition'] != '') $row[$outcomeField] =
-                    "<u>" . $row['tradeCondition'] . "</u>" . PHP_EOL
-                    . "Enter price: <div class='inline-div-editable' contenteditable='true'"
-                        . ajaxUpd('itemBehaviour', $row['itemId']) . ">" . $row['behaviour'] . "</div>" . PHP_EOL
-                    . "Exit price: <div class='inline-div-editable' contenteditable='true'"
-                        . ajaxUpd('itemStandard', $row['itemId']) . ">" . $row['standard'] . "</div>" . PHP_EOL
-                    . "Chance (p): <div class='inline-div-editable' contenteditable='true'"
-                        . ajaxUpd('itemConditions', $row['itemId']) . ">" . $row['conditions'] . "</div>" . "%" . PHP_EOL
-                    . "Reward/risk: " . ((string) round($row['rewardRisk'], 0)) . '%';
+                    "<u>" . $row['tradeCondition'] . "</u>"
+                    . PHP_EOL . "Reward/risk: " . ((string) round($row['rewardRisk'], 0)) . '%'
+                    . PHP_EOL . "Enter price: <div class='inline-div-editable' contenteditable='true'"
+                        . ajaxUpd('itemBehaviour', $row['itemId']) . ">" . $row['behaviour'] . "</div>"
+                    . PHP_EOL . "Exit price: <div class='inline-div-editable' contenteditable='true'"
+                        . ajaxUpd('itemStandard', $row['itemId']) . ">" . $row['standard'] . "</div>"
+                    . PHP_EOL . "Chance (p): <div class='inline-div-editable' contenteditable='true'"
+                        . ajaxUpd('itemConditions', $row['itemId']) . ">" . $row['conditions'] . "</div>" . "%"
+                    ;
           }
           unset($row);
 

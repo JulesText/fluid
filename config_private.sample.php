@@ -23,6 +23,11 @@ $config = array(
 				"conn"    => NULL // store the sqli connection here
 );
 
+/*********  Server IP ************/
+
+// exception to not alter headers in headerHtml.inc.php if running on localhost server
+$config['servLocalIP'] = '127.0.0.1';
+
 /*********  openAI API ************/
 
 $config['openAI'] = 'xxx';

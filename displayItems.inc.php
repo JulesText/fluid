@@ -109,12 +109,13 @@ foreach ($maintable as $row) {
                 if ($hasTickler) echo '<span style="opacity: 0.5"><br>TICKLED ITEM(S)</span>';
                 if (isset($isTrade) && $isTrade == 'y') {
 
+                    echo '<div contenteditable="true" class="isTrade" ' . ajaxUpd('itemDateCreatedInline', $row['itemId']) . '>' . $row['dateCreated'] . '</div>';
+                    
                     echo "<div class='isTrade'>Trade <input value='{$row['itemId']}' type='checkbox'";
                     if ($row['isTrade'] == 'y') echo " checked='checked' class='checked' ";
                     else echo " class='unchecked'";
                     echo ajaxUpd('itemTrade',$row['itemId']) . "/></div>";
 
-                    if ($row['isTrade'] == 'y') echo '<div contenteditable="true" class="isTrade" ' . ajaxUpd('itemDateCreatedInline', $row['itemId']) . '>' . $row['dateCreated'] . ' </div>';
                 }
 
 

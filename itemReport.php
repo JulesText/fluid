@@ -347,7 +347,7 @@ if (!empty($childtype)) {
 
             $maintable[$i]['itemId']=$row['itemId'];
 
-            if ($isTrade == 'y' && $row['isTrade'] == 'y') {
+            if ($isTrade == 'y') {
               $maintable[$i]['dateCreated'] = $row['dateCreated'];
             }
 
@@ -426,11 +426,7 @@ if (!empty($childtype)) {
               // if($row['conditions']) $ofield .= ',<br>' . $row['conditions'];
             }
             $maintable[$i][$outcomeField]=$ofield;
-/*            $maintable[$i]['created']=date($config['datemask'],
-                    (empty($row['dateCreated']))
-                        ? null
-                        : strtotime($row['dateCreated']));
-*/
+
             $maintable[$i]['categoryId']=$row['categoryId'];
             $maintable[$i]['category']=makeclean($row['category']);
 
@@ -556,7 +552,7 @@ if (!empty($childtype)) {
                       }
                   }
 
-              if (!$row['isStrategy']) $row['dateCreated'] = "";
+              // if (!$row['isStrategy']) $row['dateCreated'] = "";
 
               if ($row['tradeCondition'] == '') $row[$outcomeField] =
                     $row['valuation'];

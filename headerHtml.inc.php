@@ -228,7 +228,7 @@ if ($config['debug'] || defined('_DEBUG'))
 error_reporting( error_reporting() & ~E_NOTICE );
 
 // try to prevent caching page
-if ($serv != $config['servLocalIP']) {
+if ($_SERVER['SERVER_NAME'] !== 'localhost') {
 	header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 	header("Cache-Control: no-store, no-cache, must-revalidate"); // HTTP/1.1
 	header("Cache-Control: post-check=0, pre-check=0", false);

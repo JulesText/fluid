@@ -13,7 +13,7 @@
 $config = array(
 
     //connection information
-        "host"    => '', //the hostname of your database server
+        "host"    => ($_SERVER['SERVER_NAME'] == 'localhost') ? 'database' : 'localhost', //the hostname of your database server, 'database' used on localhost running Docker, 'localhost' used on hosted server
         "db"      => '', //the name of your database
         "prefix"	=> '', // the GTD table prefix for your installation (optional)
         "user"    => '', //username for database access

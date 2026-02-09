@@ -410,7 +410,10 @@ if (!empty($childtype)) {
             if ($isTrade == 'y') {
                $maintable[$i]['tradeConditionId'] = $row['tradeConditionId'];
                $maintable[$i]['tradeCondition'] = $row['tradeCondition'];
-               if (!is_null($row['tradeConditionId']) && $row['tradeConditionId'] > 0)
+               if (!is_null($row['tradeConditionId'])
+                    && $row['tradeConditionId'] > 0
+                    && (int) $row['behaviour'] > 0
+                  )
                   $maintable[$i]['rewardRisk'] =
                     ((int) $row['conditions'] / 100) // chance (p)
                     * (((int) $row['standard'] - (int) $row['behaviour'])

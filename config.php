@@ -215,5 +215,4 @@ _GTD_WAIT     - pause after updating an item, to allow user to view processing s
 */
 $config["debug"] = 0;  // integer (actually a set of boolean flags)
 $config["debugKey"] = 'H'; // the key that will toggle the display of debug text - a letter here must typed in upper case.
-
 // php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

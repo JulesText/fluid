@@ -915,16 +915,17 @@ function getsql($config,$values,$sort,$querylabel) {
 						'{$values['categoryId']}','{$values['contextId']}','{$values['timeframeId']}',
 						{$values['deadline']},'{$values['repeat']}','{$values['suppress']}',
             '{$values['suppressIsDeadline']}','{$values['suppressUntil']}','{$values['isTrade']}','{$values['tradeConditionId']}')";
-			break;
+		break;
 
 		case "newitemstatus":
 			$sql="INSERT INTO `". $config['prefix'] . "itemstatus`
 						(`itemId`,`dateCreated`,`lastModified`,`dateCompleted`)
 				VALUES (
 						'{$values['newitemId']}',
-						{$values['dateCreated']},
+						'{$values['dateCreated']}',
 						CURRENT_DATE,
-						{$values['dateCompleted']})";
+						{$values['dateCompleted']})
+            ";
 			break;
 
     case "newlist":

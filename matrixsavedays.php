@@ -3,66 +3,66 @@ require_once('headerDB.inc.php');
 
 // check if unqhoursresearch, Hours Research exists
 $_POST["id4"] = 21;
-include('matrixquery.php');
+include('matrixQuery.php');
 $unqhoursresearch = $value;
 // get p if exists
 $_POST["id4"] = 22;
-include('matrixquery.php');
+include('matrixQuery.php');
 $unqhoursresearch_p = (isset($value) && ctype_digit($value)) ? $value + 1 : 10;
 
 // check if unqeffortday, Effort / Day exists
 $_POST["id4"] = 515;
-include('matrixquery.php');
+include('matrixQuery.php');
 $unqeffortday = (isset($value) && ctype_digit($value)) ? intval($value) : 7.5;
 // get p if exists
 $_POST["id4"] = 516;
-include('matrixquery.php');
+include('matrixQuery.php');
 $unqeffortday_p = (isset($value) && ctype_digit($value)) ? $value + 1 : 10;
 
 // check if unqtravelday, Travel / Day exists
 $_POST["id4"] = 517;
-include('matrixquery.php');
+include('matrixQuery.php');
 $unqtravelday = $value;
 // get p if exists
 $_POST["id4"] = 518;
-include('matrixquery.php');
+include('matrixQuery.php');
 $unqtravelday_p = (isset($value) && ctype_digit($value)) ? $value + 1 : 10;
 
 // check if unqnumdays, Days / Year exists
 $_POST["id4"] = 519;
-include('matrixquery.php');
+include('matrixQuery.php');
 $unqnumdays = $value;
 // get p if exists
 $_POST["id4"] = 520;
-include('matrixquery.php');
+include('matrixQuery.php');
 $unqnumdays_p = (isset($value) && ctype_digit($value)) ? $value + 1 : 10;
 
 // check if Cost Start exists
 $_POST["id4"] = 621;
-include('matrixquery.php');
+include('matrixQuery.php');
 $coststart = (isset($value) && ctype_digit($value)) ? intval($value) : 0;
 
 // check if unqcostbasday, Basics / Day exists
 $_POST["id4"] = 623;
-include('matrixquery.php');
+include('matrixQuery.php');
 $unqcostbasday = (isset($value) && ctype_digit($value)) ? intval($value) : 0;
 // get p if exists
 $_POST["id4"] = 624;
-include('matrixquery.php');
+include('matrixQuery.php');
 $unqcostbasday_p = (isset($value) && ctype_digit($value)) ? $value + 1 : 10;
 
 // check if unqcostaccday, Accom / Day exists
 $_POST["id4"] = 625;
-include('matrixquery.php');
+include('matrixQuery.php');
 $unqcostaccday = (isset($value) && ctype_digit($value)) ? intval($value) : 0;
 // get p if exists
 $_POST["id4"] = 626;
-include('matrixquery.php');
+include('matrixQuery.php');
 $unqcostaccday_p = (isset($value) && ctype_digit($value)) ? $value + 1 : 10;
 
 // check if Cost Extras exists
 $_POST["id4"] = 627;
-include('matrixquery.php');
+include('matrixQuery.php');
 $costextras = (isset($value) && ctype_digit($value)) ? intval($value) : 0;
 
 
@@ -76,12 +76,12 @@ if (isset($unqnumdays) && isset($unqeffortday)) {
 
   $_POST["id4"] = 511;
   $_POST["updVal"] = intval((($unqnumdays * 10 / $unqnumdays_p) * ($unqeffortday * 10 / $unqeffortday_p)) + ($unqhoursresearch * 10 / $unqhoursresearch_p));
-  include('matrixsave.php');
+  include('matrixSave.php');
 
   if ($unqnumdays_p !== 10 || $unqeffortday_p !== 10) {
     $_POST["id4"] = 512;
     $_POST["updVal"] = intval(($unqnumdays_p + $unqeffortday_p - 2) / 2);
-    include('matrixsave.php');
+    include('matrixSave.php');
   }
 
 }
@@ -91,12 +91,12 @@ if (isset($unqnumdays) && isset($unqtravelday)) {
 
   $_POST["id4"] = 513;
   $_POST["updVal"] = intval(($unqnumdays * 10 / $unqnumdays_p) * ($unqtravelday * 10 / $unqtravelday_p));
-  include('matrixsave.php');
+  include('matrixSave.php');
 
   if ($unqnumdays_p !== 10 || $unqtravelday_p !== 10) {
     $_POST["id4"] = 514;
     $_POST["updVal"] = intval(($unqnumdays_p + $unqtravelday_p - 2) / 2);
-    include('matrixsave.php');
+    include('matrixSave.php');
   }
 
 }
@@ -111,7 +111,7 @@ if (isset($unqnumdays) && ($unqcostbasday > 0 || $unqcostaccday > 0 || $coststar
                          + $coststart
                          + $costextras
                         );
-  include('matrixsave.php');
+  include('matrixSave.php');
 
 }
 

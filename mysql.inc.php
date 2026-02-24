@@ -890,14 +890,22 @@ function getsql($config,$values,$sort,$querylabel) {
 			break;
 
 		case "selectchecklistiteminst":
-			$sql="SELECT `checklistItemId`, `checklistId`
-				FROM `". $config['prefix'] ."checklistitems`";
+      $sql="SELECT `checklistId`, `checklistItemId`
+				FROM `". $config['prefix'] ."checklistitems`
+        ORDER BY `checklistId`, `checklistItemId`";
 			break;
 
 		case "newchecklistiteminst":
 			$sql="INSERT INTO `". $config['prefix'] . "checklistitemsinst`
-				VALUES ('{$values['lastId']}', '{$values['listId']}', '{$values['instanceId']}',
-                        'n', 'n', 0, 0)";
+        VALUES ('{$values['checklistItemId']}'
+                , '{$values['checklistId']}'
+                , '{$values['instanceId']}'
+                , 'n' /* checked */
+                , 'n' /* ignored */
+                , 0 /* score */
+                , 0 /* assessed */
+                )";
+                // die($sql);
 			break;
 
 		case "newitem":

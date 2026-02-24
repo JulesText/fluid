@@ -48,10 +48,10 @@ if (isset($_POST['id'])) {
         if ($field == 'instance') {
             $values['instanceId'] = $GLOBALS['lastinsertid'];
             $result = query("selectchecklistiteminst",$config,$values);
-            //echo '<pre>';var_dump($result);die;
+            // echo '<pre>';var_dump($result);die;
             foreach ((array) $result as $res) {
-                $values['lastId'] = $res['checklistItemId'];
-                $values['id'] = $res['checklistId'];
+                $values['checklistItemId'] = $res['checklistItemId'];
+                $values['checklistId'] = $res['checklistId'];
                 $result = query("newchecklistiteminst",$config,$values);
             }
         }

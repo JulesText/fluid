@@ -39,6 +39,7 @@ if (isset($_GET['calc']) && $_GET['calc'] == true) { $calc = 'true'; } else { $c
 if (isset($_GET['data']) && $_GET['data'] == true) { $data = true; } else { $data = false; }
 if (isset($_GET['career']) && $_GET['career'] == true) { $career = true; } else { $career = false; }
 if (isset($_GET['travel']) && $_GET['travel'] == true) { $travel = true; } else { $travel = false; }
+if (isset($_GET['compare']) && $_GET['compare'] == true) { $compare = true; } else { $compare = false; }
 
 // limit visions
 if (isset($_GET['live']) && $_GET['live'] == true) { $live = true; } else { $live = false; }
@@ -132,6 +133,7 @@ if ($qLimit == 'h') { // Qual: Scen [scenario]
     foreach ((array) $res as $r) $mxTitle = $r['value'];
 } else if ($vLimit) { // vLimit in request for only 1 vision
     $values = array();
+    if (!isset($values['filterquery'])) $values['filterquery'] = '';
     $values['filterquery'] .= ' WHERE i.itemId = ' . $vLimit;
     $vis = query("getitems",$config,$values,$sort);
     $mxTitle = $vis[0]['title'];
@@ -917,6 +919,7 @@ $(document).ready(function() {
         if ($live) echo "toggleCheckB('someday');toggleCheckB('complete');\n\t";
         if ($career) echo "toggleCheckB('attr.771');\n\t";
         if ($travel) echo "toggleCheckB('attr.26');\n\t";
+        if ($compare) echo "toggleCheckB('attr.24');\n\t";
         if (!$meta) echo "toggleCol(['3','4','5']);\n\t";
 
     ?>
@@ -1063,7 +1066,14 @@ function toggleCheckB(ctype) {
     }
 }
 
+// calcFormulae calls matrixCalc.php with qLimit and vLimit, which returns complete json array of calculated values
 function calcFormulae (vLimit) {
+
+    // option for matrixCalc.php to print attribute values to file for debug (_response.txt)
+    // values: false, result, yrsval, vsumvisn, certainties, visions, valuessumhrs,
+    //         contextssum, valuessum, optimise, timeline, tlinevis, childitems, inactiveitems
+    //         or attribute id (i.e. '511')
+    var debugSave = 'false';
 
     var tLine = [<?php echo $tLimit; ?>];
 
@@ -1073,21 +1083,29 @@ function calcFormulae (vLimit) {
     }
 
     $.ajax({
-        url: "matrixformula.php",
+        url: "matrixCalc.php",
         type: "POST",
-        data: 'qLimit=<?php echo $qLimit; ?>&vLimit='+vLimit,
+        data: 'qLimit=<?php echo $qLimit; ?>&vLimit='+vLimit+'&debugSave='+debugSave,
         dataType: "json",
         success: function(result) {
+
             // clear timeline
             $('table.mx').find('tr').find('td.atr.mx.yr').text('');
 
+            // debug
+            // alert(JSON.stringify(result));
+            // alert('x');
+
             // write response
             for (i = 0; i < result.length; ++i) {
-                // if (result[i]['value'] == '12345') alert(JSON.stringify(result[i]));
+
+                // debug
+                // if (result[i]['attrId'] == '511') alert(JSON.stringify(result[i]));
+
                 // check item type and write attribute to table
                 switch (result[i]['type']) {
                     case 'x':
-                        // check effort warning for timeline cells
+                        // check effort warning for timeline cells (colour highlight)
                         if ($.inArray(result[i]['attrId'], tLine) != -1) {
 
                             if (

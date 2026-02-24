@@ -181,13 +181,13 @@ function sT(editableObj,table,updCol,pcol1,pid1,col2,id2,col3,id3,col4,id4,col5,
 		var ajaxFailed = false; // flag variable to track if ajax request failed
 
 		$.ajax({
-		url: "matrixsave.php",
+		url: "matrixSave.php",
 		type: "POST",
 		data:'table='+table+'&updCol='+updCol+'&pcol1='+pcol1+'&pid1='+pid1+'&col2='+col2+'&id2='+id2+'&col3='+col3+'&id3='+id3+'&id4='+id4+'&col4='+col4+'&col5='+col5+'&id5='+id5+'&updVal='+encodeURIComponent(updVal),
 		success: function(result) {
 				// validate query
 				// compare update request with actual recorded value in db
-				$.post('matrixquery.php', {
+				$.post('matrixQuery.php', {
 							table: table,
 							updCol: updCol,
 							pcol1: pcol1,
@@ -253,7 +253,7 @@ function calcDays(col2,id2,col3,id3,col5,id5) {
 	let id4 = "";
 
 	$.ajax({
-	url: "matrixsavedays.php",
+	url: "matrixSaveDays.php",
 	type: "POST",
 	data:'table='+table+'&updCol='+updCol+'&pcol1='+pcol1+'&col2='+col2+'&id2='+id2+'&col3='+col3+'&id3='+id3+'&id4='+id4+'&col4='+col4+'&col5='+col5+'&id5='+id5
 	});
@@ -269,7 +269,7 @@ function calcMonths(col2,id2,col3,id3,col5,id5) {
 	let id4 = "";
 
 	$.ajax({
-	url: "matrixsavemonths.php",
+	url: "matrixSaveMonths.php",
 	type: "POST",
 	data:'table='+table+'&updCol='+updCol+'&pcol1='+pcol1+'&col2='+col2+'&id2='+id2+'&col3='+col3+'&id3='+id3+'&id4='+id4+'&col4='+col4+'&col5='+col5+'&id5='+id5
 	});
@@ -302,7 +302,7 @@ function cB(editableObj,table,updCol,pcol1,pid1,col2,id2,col3,id3,col4,id4,col5,
 function calcCL(checklistId) {
 		delay(function(){ // call CL calculation within delay cycle to allow CL item write to occur first
 				$.ajax({
-				url: "matrixsaveCL.php",
+				url: "matrixSaveCL.php",
 				type: "POST",
 				data:'listId='+checklistId,
 				success: function(result) {

@@ -1,0 +1,22 @@
+cleaned, but poorly formed $score[value] for item type p item id 21785 visId 5252:"
+"
+cleaned, but poorly formed $score[value] for item type p item id 21788 visId 5252:"
+"
+cleaned, but poorly formed $score[value] for item type p item id 21785 visId 5252:"
+"
+cleaned, but poorly formed $score[value] for item type c item id 198 visId 21993:"0
+"
+cleaned, but poorly formed $score[value] for item type l item id 40 visId 6028:"0
+"
+cleaned, but poorly formed $score[value] for item type p item id 11073 visId 5252:"0
+"
+cleaned, but poorly formed $score[value] for item type l item id 40 visId 6028:"0
+"
+cleaned, but poorly formed $score[value] for item type p item id 11073 visId 5252:"0
+"
+cleaned, but poorly formed $score[value] for item type c item id 198 visId 21993:"0
+"
+cleaned, but poorly formed $score[value] for item type l item id 40 visId 6028:"0
+"
+cleaned, but poorly formed $score[value] for item type c item id 198 visId 21993:"0
+"

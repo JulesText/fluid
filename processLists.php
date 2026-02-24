@@ -59,11 +59,12 @@ switch ($action) {
             $nextURL="listLists.php?id={$values['listId']}&$urlSuffix";
         }
         if ($check) {
-            $values['lastId'] = $GLOBALS['lastinsertid'];
+            $values['checklistItemId'] = $GLOBALS['lastinsertid'];
+            $values['checklistId'] = $values['listId'];
             $result = query("instanceselectbox",$config,$values);
             foreach ((array) $result as $res) {
-                $values['instanceId'] = $res['instanceId'];
-                $query = query("newchecklistiteminst",$config,$values);
+              $values['instanceId'] = $res['instanceId'];
+              $query = query("newchecklistiteminst",$config,$values);
             }
         }
         $_SESSION['message'][]="$msg {$check}list item: '{$values['item']}'";
@@ -296,7 +297,7 @@ switch ($action) {
             if (isset($_POST['scored']) && $_POST['scored'] == 'y') { $values['scored'] = 'y'; } else { $values['scored'] = 'n'; }
             $values['thrs_score'] = $_POST['thrs_score'];
             $values['thrs_obs'] = $_POST['thrs_obs'];
-            // no need to update matrixsaveCL.php as initial create
+            // no need to update matrixSaveCL.php as initial create
         }
 
         //TOFIX datecompleted, completed
@@ -353,10 +354,10 @@ switch ($action) {
             if (isset($_POST['scored']) && $_POST['scored'] == 'y') { $values['scored'] = 'y'; } else { $values['scored'] = 'n'; }
             $values['thrs_score'] = $_POST['thrs_score'];
             $values['thrs_obs'] = $_POST['thrs_obs'];
-            // update also matrixsaveCL.php
+            // update also matrixSaveCL.php
         }
         $result=query("update{$check}list",$config,$values);
-        if ($check == 'check') include('matrixsaveCL.php');
+        if ($check == 'check') include('matrixSaveCL.php');
         $msg=($result) ? "Updated" : "No changes needed to";
         $_SESSION['message'][]= "$msg {$check}list: '{$values['title']}'";
         // echo '<pre>';var_dump($result);die;
@@ -367,7 +368,7 @@ switch ($action) {
         $values = $result[0];
         $values['prioritise'] = $_REQUEST['prioritise'];
         $result=query("update{$check}list",$config,$values);
-        if ($check == 'check') include('matrixsaveCL.php');
+        if ($check == 'check') include('matrixSaveCL.php');
         $msg=($result) ? "Updated" : "No changes needed to";
         $_SESSION['message'][]= "$msg {$check}list: '{$values['title']}'";
         break;

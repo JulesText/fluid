@@ -30,7 +30,7 @@ require_once('headerDB.inc.php');
 
 if (isset($_POST["qLimit"])) { $qLimit = $_POST["qLimit"]; } else { $qLimit = 'a'; }
 if (isset($_POST["vLimit"]) && $_POST["vLimit"] != '') { $vLimit = $_POST["vLimit"]; } else { $vLimit = false; }
-
+if (isset($_POST["debugSave"]) && $_POST["debugSave"] != '') { $debugSave = $_POST["debugSave"]; } else { $debugSave = false; }
 
 // initialise array used to collate calculation results
 $result = array();
@@ -128,7 +128,7 @@ foreach ((array) $attributes as $attr) {
 
     // variable to flag when travel hours are being counted, and treat as brainless
     // attr: Travel / Year (int)
-    if ($attr['format'] == 'unqhourstravel') { $travelId = $attr['qId']; $unqhoursIds[] = $travelId; }
+    if ($attr['format'] == 'unqhourstravel') { $travelId = $attr['qId']; $unqhoursIds[] = $attr['qId']; }
 
     // attr: Effort / Year (int)
     if ($attr['format'] == 'unqhours') { $hoursId = $attr['qId']; $unqhoursIds[] = $attr['qId']; }
@@ -250,6 +250,13 @@ foreach ((array) $attributes as $attr) {
     //$weight = $weight / 10; // original weighting, range 0 to 1.0
     //$weight = ($weight / 20) + 0.5; // moderated to not disfavour low weighting too much, set range 0.5 to 1.0
     $weight = (float) 1;
+
+    // check if saving values for debug
+    if ($attr['qId'] == $debugSave) {
+        file_put_contents ('_response.txt', '$attr[qId]: ' . $attr['qId'] . PHP_EOL);
+        file_put_contents ('_response.txt', '$summary1: ' . $summary1 . PHP_EOL, FILE_APPEND);
+        file_put_contents ('_response.txt', '$summary2: ' . $summary2 . PHP_EOL, FILE_APPEND);
+    }
 
     // loop visions
     foreach ((array) $visions as $visn) {
@@ -519,8 +526,6 @@ foreach ((array) $attributes as $attr) {
 
             // special case for attributes scoring context
             if ($attr['parId'] == $cntxtParId) {
-//            if ($attr['qId'] == 41) {
-
                 // search if sum captured already from another context attribute, if so reuse sum
                 $i = 0;
                 foreach ((array) $contextssum as $contextsum) {
@@ -699,7 +704,8 @@ foreach ((array) $attributes as $attr) {
         // if output obtained, or the current attribute must force a response to the matrix, push the record onto the final result
         if ($output !== '' || in_array($attr['format'],$resForce)) {
             if ($output == '') $output = 0;
-            //$result[] = array('type' => 'v', 'visId' => $visn['itemId'], 'attrId' => $attr['qId'], 'value' => $output);
+            // $result[] = array('type' => 'v', 'visId' => $visn['itemId'], 'attrId' => $attr['qId'], 'value' => $output);
+            $result[] = array('type' => 'v', 'visId' => $visn['itemId'], 'attrId' => $attr['qId'], 'value' => $output1);
 
             // if score item and optimising, place in array
             if ($optim && array_key_exists($attr['qId'], $scoreqIds)) {
@@ -753,10 +759,16 @@ foreach ((array) $attributes as $attr) {
             eval(formula($attr['formulaSum2']));
         }
 
+        // check if saving values for debug
+        if ($attr['qId'] == $debugSave)
+            file_put_contents ('_response.txt', '$values[visId]: ' . $values['visId'] . PHP_EOL, FILE_APPEND);
+        if ($attr['qId'] == $debugSave)
+            file_put_contents ('_response.txt', '$summary1: ' . $summary1 . PHP_EOL . '$summary2: ' . $summary2 . PHP_EOL, FILE_APPEND);
+
     }
     // if output obtained, or the current attribute must force a response to the matrix, push the record onto the final result
-    // if ($summary1 !== '' || in_array($attr['format'],$resForce)) $result[] = array('type' => 'x', 'attrId' => $attr['qId'], 'form' => 'a', 'value' => $summary1);
-    // if ($summary2 !== '' || in_array($attr['format'],$resForce)) $result[] = array('type' => 'x', 'attrId' => $attr['qId'], 'form' => 'b', 'value' => $summary2);
+    if ($summary1 !== '' || in_array($attr['format'],$resForce)) $result[] = array('type' => 'x', 'attrId' => $attr['qId'], 'form' => 'a', 'value' => $summary1);
+    if ($summary2 !== '' || in_array($attr['format'],$resForce)) $result[] = array('type' => 'x', 'attrId' => $attr['qId'], 'form' => 'b', 'value' => $summary2);
 
     // if score item and optimising, place in array
     if ($optim && array_key_exists($attr['qId'], $scoreqIds)) {
@@ -819,7 +831,16 @@ foreach ((array) $scores as $score) {
             $item['visId'] == $score['visId'] &&
             $item['id'] == $score['id']
         ) {
-            $valuessumvisn[$score['visId']][$score['attrId']] += $item['yrs'] * $score['value'] * $item['active'];
+
+            # error check and clean
+            if (!is_numeric($score['value'])) {
+                file_put_contents ('_response.txt', 'cleaned, but poorly formed $score[value] for item type ' . $item['type'] . ' item id ' . $item['id'] . ' visId ' . $item['visId'] . ':"' . $score['value'] . '"' . PHP_EOL, FILE_APPEND);
+                $score['value'] = preg_replace('/[^0-9]/', '', $score['value']); # remove non-numeric
+                $score['value'] = (int) $score['value']; # if no numbers remain convert to 0
+            }
+
+            # calculate
+            $valuessumvisn[$score['visId']][$score['attrId']] += $item['yrs'] * (int) $score['value'] * $item['active'];
             break;
         }
     }
@@ -1138,8 +1159,14 @@ foreach ((array) $visions as $visn) {
 
 // push summary context sums hours onto final result
 // crude error catch here, maybe should not be calculating $contextsum to begin with unless called in qLimit?
-if (isset($unqcontextssumhrs))
-	$result[] = array('type' => 'x', 'attrId' => $unqcontextssumhrs, 'form' => 'a', 'value' => number_format($contextssummaryhours['value'] / $contextssummaryhours['hours'], 1));
+if (isset($unqcontextssumhrs)) {
+  if ($contextssummaryhours['hours'] > 0) {
+    $result[] = array('type' => 'x', 'attrId' => $unqcontextssumhrs, 'form' => 'a', 'value' => number_format($contextssummaryhours['value'] / $contextssummaryhours['hours'], 1));
+  } else {
+    $result[] = array('type' => 'x', 'attrId' => $unqcontextssumhrs, 'form' => 'a', 'value' => 'N/A');
+    file_put_contents ('_response.txt', 'poorly formed $contextssummaryhours[hours]: "' . $contextssummaryhours['hours'] . '"' . PHP_EOL, FILE_APPEND);
+  }
+}
 
 
 // timeline summary
@@ -1442,10 +1469,13 @@ function stDev ($arr)
         return (float) sqrt($variance / $num_of_elements);
     }
 
-$debugSave = 'vsumvisn';
-
-// debug scripts
+// debug output
 switch ($debugSave) {
+    case 'result':
+        file_put_contents ('_response.txt',
+            '$result: ' . print_r($result,true) . "\n"
+            );
+        break;
     case 'yrsval':
         file_put_contents ('_response.txt',
             '$yrsval: ' . print_r($yrsval,true) . "\n"
@@ -1467,11 +1497,6 @@ switch ($debugSave) {
     case 'visions':
         file_put_contents ('_response.txt',
             '$visions: ' . print_r($visions,true) . "\n"
-            );
-        break;
-    case 'result':
-        file_put_contents ('_response.txt',
-            '$result: ' . print_r($result,true) . "\n"
             );
         break;
     case 'valuessumhrs':
@@ -1509,7 +1534,7 @@ switch ($debugSave) {
             '$brainlessId: ' . $brainlessId . "\n" .
             '$hoursId: ' . $hoursId . "\n" .
             '$unqhoursIds: ' . print_r($unqhoursIds,true) . "\n" .
-            //'$sumHours: ' . print_r($sumHours,true) . "\n" .
+            // '$sumHours: ' . print_r($sumHours,true) . "\n" .
             '$unqtimelineIds: ' . print_r($unqtimelineIds,true) . "\n" .
             '$skipqIds: ' . print_r($skipqIds,true) . "\n" .
             'test : ' . "\n" .

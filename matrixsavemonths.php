@@ -18,12 +18,12 @@ $month_key = [
 
 // check if Month Start exists
 $_POST["id4"] = 583;
-include('matrixquery.php');
+include('matrixQuery.php');
 $month_start = $value;
 
 // check if Month End exists
 $_POST["id4"] = 584;
-include('matrixquery.php');
+include('matrixQuery.php');
 $month_end = $value;
 
 // set calculation range
@@ -62,7 +62,7 @@ $month_p = [];
 foreach ($month_key as $id => $arr) {
   if (!in_array($arr[1], $month_range)) continue;
   $_POST["id4"] = $id;
-  include('matrixquery.php');
+  include('matrixQuery.php');
   if (isset($value) && ctype_digit($value)) $month_p[] = intval($value);
 }
 
@@ -70,6 +70,6 @@ foreach ($month_key as $id => $arr) {
 $_POST["id4"] = 581;
 if (count($month_p) == 0) $_POST["updVal"] = '';
 else $_POST["updVal"] = intval(array_sum($month_p) / count($month_p));
-include('matrixsave.php');
+include('matrixSave.php');
 
 ?>

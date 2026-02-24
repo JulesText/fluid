@@ -30,7 +30,7 @@ $menu[] = array("link"=>"listLists.php?type=C", 'title'=>"Show reusable checklis
 #$menu[] = array("link"=>"itemReport.php?itemId=18792", 'title'=>"~ BETTY", 'label' => "~ BETTY");
 $menu[] = array("link"=>"ToD.php", 'title'=>"Process the time of day", 'label' => "ToDB");
 $menu[] = array("link"=>"matrix.php?&live=true&qLimit=b", 'title'=>"Matrix", 'label' => "Matrix");
-//warning: poorly formed GET variables for matrix can generate errors in matrixformula.php and matrix.php
+//warning: poorly formed GET variables for matrix can generate errors in matrixCalc.php and matrix.php
 $menu[] = array("link"=>"media/flow.gif", 'title'=>"Process item", 'label' => "Flow.gif");
 $menu[] = array("link"=>"fi.php", 'title'=>"FI Chat", 'label' => "FI Chat");
 $menu[] = array("link"=>"Lunar.php", 'title'=>"Phase", 'label' => "Phase");

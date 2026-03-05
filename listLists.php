@@ -134,14 +134,14 @@ require_once("headerHtml.inc.php");
                         if (!empty($resultParents)) {
                             foreach ($resultParents as $parent) {
                                 $values['itemId'] = $parent['itemId'];
-                                $title = query("getitembrief",$config,$values,$sort);
-                                foreach ($title as $text) { # will only be 1 result at most
-                                    echo strtoupper($text['type']) . ': ' . makeclean($text['title']);
-                                    if ($text['isSomeday'] == "n") echo ' (live)';
+                                $result = query("getitembrief",$config,$values,$sort);
+                                if ($result > 0) { # will only be 1 result at most
+                                    echo strtoupper($result[0]['type']) . ': ' . makeclean($result[0]['title']);
+                                    if ($result[0]['isSomeday'] == "n") echo ' (live)';
                                     else echo ' (sday)';
                                     echo '<br>';
 
-                                    if (strtoupper($text['type']) == 'V' && $text['isSomeday'] == "n") {
+                                    if (strtoupper($result[0]['type']) == 'V' && $result[0]['isSomeday'] == "n") {
                                       $listLive = TRUE;
                                       $listLiveV = $values['itemId'];
                                     }
@@ -158,13 +158,12 @@ require_once("headerHtml.inc.php");
                     if ($listLive) {
                       $values['visId'] = $listLiveV;
                       $values['itemId'] = $row['listId'];
-                      $values['qId'] = 1000; # is someday/live
+                      $values['qId'] = 1000; # qId for is someday/live
                       $values['itemType'] = $type;
                       unset($values['qaId']);
 
                       $result = query("lookupqualities",$config,$values,$sort);
-                      foreach ($result as $res)
-                        if ($res['value'] == 'y') $listLive = FALSE;
+                      if ($result > 0 && $result[0]['value'] == 'y') $listLive = FALSE;
 
                     }
                     if ($listLive) echo 'live';

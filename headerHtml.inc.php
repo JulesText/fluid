@@ -46,10 +46,17 @@ if (!isset($_SESSION['useLiveEnhancements']))
 <!-- theme main stylesheet -->
 <link rel="stylesheet" href="themes/<?php echo $config['theme']; ?>/style.css" type="text/css"/>
 <?php
-if (isMobile() && $_SERVER["PHP_SELF"] !== "/fi.php") echo "
+if (isMobile() && $_SERVER["PHP_SELF"] !== "/fi.php") {
+echo "
 <!-- theme main stylesheet for mobile -->
 <link rel='stylesheet' href='themes/default/style_mob.css' type='text/css'/>
 ";
+} else {
+echo "
+<!-- theme alternative stylesheet for desktop -->
+<link rel='stylesheet' href='themes/default/style_desktop.css' type='text/css'/>
+";
+}
 ?>
 
 <!-- theme screen stylesheet (should check to see if this actually exists) -->

@@ -128,7 +128,7 @@ if ($values['itemId']) {
     $hiddenvars['action']='create';
 
 $ptypes=getParentType($values['type']);
-if ($_SESSION['useLiveEnhancements']) {
+if (isset($_SESSION['useLiveEnhancements']) && $_SESSION['useLiveEnhancements']) {
     $alltypes=getTypes();
     $allowedSearchTypes=array();
     if (count($ptypes)>1) $allowedSearchTypes[0]='All';

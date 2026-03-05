@@ -64,3 +64,67 @@ input.closeButton {
 	font-size: 42px;
 	font-family: verdana;
 }
+
+/*------------------------------
+  live javascript effects CSS
+  ----------------------------*/
+#searcher {
+	top:6em;
+	left:30em;
+	right:1em;
+	bottom:1em;
+	/* position:fixed; */
+	z-Index:999;
+	background-Color:white;
+	border: 6px ridge #39c;
+	display:none;
+}
+#parenttable {
+		z-Index:950;
+}
+#searchresults {
+    /* position:fixed; */
+    right:2em;
+    left:32em;
+    bottom:2em;
+    top:12em;
+    /* overflow:scroll; */
+}
+#searchresults p {
+    padding:0.1em;
+    margin:0;
+}
+#searcher #donebox {
+    /* position:fixed; */
+		top:7em;
+    right:2em;
+    background-color:#c00;
+}
+#searcher #donebox a,#searcher #donebox a:link, #searcher #donebox a:visited {
+    color:#ddd;
+    font-size:2em;
+    text-decoration:none;
+}
+#searcher #donebox a:hover {
+    color:white;
+    border:1px solid #c00;
+}
+.togglehidden {
+    display:none;
+}
+div#freezer {
+	top:0;
+	left:0;
+    right:0;
+    bottom:0;
+	/* position:fixed; */
+	z-Index:900;
+	background-color:#000;
+	opacity:0.20;
+	filter:opacity(20%);
+	-Moz-Opacity:0.20;
+}
+.trans {
+    opacity:0;
+    border:0px;
+}

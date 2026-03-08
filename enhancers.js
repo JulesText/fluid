@@ -188,7 +188,7 @@ function toggleTradeCondition() {
     descriptionForm.style.display = 'block';
     conclusionForm.style.display = 'none';
     outcomeForm.style.display = 'none';
-  } else if (tradeConditionDropdown.value === '1') { // evaluation
+  } else if (tradeConditionDropdown.value === '1') { // valuation
       descriptionForm.style.display = 'block';
       conclusionForm.style.display = 'block';
       outcomeForm.style.display = 'none';

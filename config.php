@@ -123,7 +123,7 @@ $sort = array(
     "timecontextselectbox"  => "ti.`timeframe` DESC",
     "getlistitems"          => "li.`item` desc, li.`priority`, li.`notes` asc",
     "getlistitemsprioritise" => "li.`priority`, li.`item` desc, li.`notes` asc",
-    "getlistitemsbulk"          => "li.`item` desc, li.`priority`, li.`notes` asc",
+    "getlistitemsbulk"      => "li.`item` desc, li.`priority`, li.`notes` asc",
     "getitemsandparent"     => "type ASC, title ASC, ptitle ASC",
     // "getitemsandparentTrades"     => "type ASC, dateCreated DESC, title ASC, ptitle ASC",
     "getorphaneditems"      => "ia.`type` ASC, i.`title` ASC",
@@ -147,9 +147,20 @@ $sort = array(
     # 'prioritise > title > notes'
     "getchecklistitems_prioritise"
         => "cli.`ignored` DESC, cli.`checked` DESC, cli.`priority`, cli.`item` ASC, SUBSTRING(cli.`notes`, 1, 20) ASC",
-    # edit items view
+		## edit items view
+		# 'title > notes 4 > prioritise'
     "getchecklistitemsbulk"
-        => "cli.`priority`, cli.`item` ASC, cli.`effort` ASC, cli.`notes` ASC",
+        => "cli.`item`, SUBSTRING(cli.`notes`, 1, 4) ASC, cli.`priority`, SUBSTRING(cli.`notes`, 1, 20) ASC",
+    # 'title 2 > notes 4 > prioritise'
+    "getchecklistitemsbulk_title_notes"
+        => "SUBSTRING(cli.`item`, 1, 2) ASC, SUBSTRING(cli.`notes`, 1, 4) ASC, cli.`priority`, SUBSTRING(cli.`notes`, 1, 20) ASC",
+    # 'title > prioritise > notes'
+    "getchecklistitemsbulk_title_prioritise"
+        => "cli.`item` ASC, cli.`priority`, SUBSTRING(cli.`notes`, 1, 20) ASC",
+    # 'prioritise > title > notes'
+    "getchecklistitemsbulk_prioritise"
+        => "cli.`priority`, cli.`item` ASC, SUBSTRING(cli.`notes`, 1, 20) ASC",
+		## instance view
     "getchecklistitemsinst"
         => "i.`ignored` DESC, i.`checked` DESC, cli.`item` ASC, cli.`notes` ASC",
 

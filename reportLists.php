@@ -13,17 +13,30 @@ $row=$result[0];
 
 ### item sort order ###
 
-if (!isset($_GET['content']) || $_GET['content'] !== 'bulk') {
-  $sort['getlistitems'] = $sort['getlistitemsprioritise'];
+# normal list display
+if (!isset($_GET['content'])) {
+
+  # checklist sort
   if ($row['sortItems'] == 'title') $sort['getchecklistitems'] = $sort['getchecklistitems'];
   if ($row['sortItems'] == 'priority') $sort['getchecklistitems'] = $sort['getchecklistitems_prioritise'];
   if ($row['sortItems'] == 'title_priority') $sort['getchecklistitems'] = $sort['getchecklistitems_title_prioritise'];
   if ($row['sortItems'] == 'title_notes') $sort['getchecklistitems'] = $sort['getchecklistitems_title_notes'];
-}
 
-if (isset($_GET['content']) && $_GET['content'] == 'bulk') {
+  # list sort
+  $sort['getlistitems'] = $sort['getlistitemsprioritise'];
+
+# bulk edit items display
+} else if ($_GET['content'] == 'bulk') {
+
+  # checklist sort
+  if ($row['sortItems'] == 'title') $sort['getchecklistitems'] = $sort['getchecklistitemsbulk'];
+  if ($row['sortItems'] == 'priority') $sort['getchecklistitems'] = $sort['getchecklistitemsbulk_prioritise'];
+  if ($row['sortItems'] == 'title_priority') $sort['getchecklistitems'] = $sort['getchecklistitemsbulk_title_prioritise'];
+  if ($row['sortItems'] == 'title_notes') $sort['getchecklistitems'] = $sort['getchecklistitemsbulk_title_notes'];
+
+  # list sort
   $sort['getlistitems'] = $sort['getlistitemsbulk'];
-  $sort['getchecklistitems'] = $sort['getchecklistitemsbulk'];
+
 }
 
 #######################
@@ -241,6 +254,9 @@ $( document ).ready(function() {
                               else echo ajaxUpd('checklistiteminst', $row['itemId'], $values['instanceId']);
                             }
                             ?> />
+                          <?php
+                            if ($isChecklist) echo '<span style="opacity: 1.0; font-size: medium"><div contenteditable="true" class="inline-div-editable" ' . ajaxUpd("checklistitemEffort", $row['itemId']) . '>' . ($row['effort'] == "" ? "_" : $row['effort']) . '</div>m</span>';
+                          ?>
                         </td>
                     <?php if ($check && $scored) { ?>
                         <td class="JKSmallPaddingFaded"><input type="checkbox" name="ignored[]" title="Ignore" value="<?php

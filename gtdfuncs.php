@@ -447,6 +447,7 @@ function ajaxUpd($query, $id, $inst = NULL) {
       if ($query === 'checklistitemignore') $retval = " onClick=\"cB(this,'checklistitems','ignored','checklistItemId','{$id}')\" ";
       if ($query === 'checklistiteminstignore') $retval = " onClick=\"cB(this,'checklistitemsinst','ignored','checklistItemId','{$id}','instanceId','{$inst}')\" ";
       if ($query === 'checklistitemPriority') $retval = " onFocus=\"sEf(this,'checklistitems','priority','checklistItemId','{$id}')\" ";
+      if ($query === 'checklistitemEffort') $retval = " onFocus=\"sEf(this,'checklistitems','effort','checklistItemId','{$id}')\" ";
       if ($query === 'listitemPriority') $retval = " onFocus=\"sEf(this,'listitems','priority','listItemId','{$id}')\" ";
       if ($query === 'listitemNotes') $retval = " onFocus=\"sEf(this,'listitems','notes','listItemId','{$id}')\" ";
     }

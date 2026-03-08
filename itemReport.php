@@ -518,16 +518,16 @@ if (!empty($childtype)) {
                   && $row['isTrade'] == 'y'
                   ) {
                   $element['isStrategy'] = true;
-                  if ($row['tradeConditionId'] > 0 && $row['tradeCondition'] !== 'Evaluation*') {
+                  if ($row['tradeConditionId'] > 0 && $row['tradeCondition'] !== 'Valuation*') {
                       $element['valuation'] += $row['rewardRisk'];
                       $element['chance'] += (int) $row['conditions'];
                   }
-                  if ($row['tradeCondition'] == 'Evaluation*') $element['condition1'] = true;
-                  if ($row['tradeCondition'] == 'Evaluation*' && $row['deadline'] != '') $element['condition2'] = true;
-                  if ($row['tradeCondition'] == 'Time lapse*') $element['condition3'] = true;
-                  if ($row['tradeCondition'] == 'Time lapse*' && $row['deadline'] != '') $element['condition4'] = true;
-                  if ($row['tradeCondition'] == 'Stop loss*') $element['condition5'] = true;
-                  if ($row['tradeCondition'] == 'Take profit*') $element['condition6'] = true;
+                  if ($row['tradeCondition'] == 'Valuation*') $element['condition1'] = true;
+                  if ($row['tradeCondition'] == 'Valuation*' && $row['deadline'] != '') $element['condition2'] = true;
+                  if ($row['tradeCondition'] == 'Time Lapse*') $element['condition3'] = true;
+                  if ($row['tradeCondition'] == 'Time Lapse*' && $row['deadline'] != '') $element['condition4'] = true;
+                  if ($row['tradeCondition'] == 'Stop Loss*') $element['condition5'] = true;
+                  if ($row['tradeCondition'] == 'Take Profit*') $element['condition6'] = true;
 
               }
             }
@@ -543,13 +543,13 @@ if (!empty($childtype)) {
                           if ($element['chance'] !== 100) {
                               $row['valuation'] .= ' total chance (p) != 100; ';
                           }
-                          if (!$element['condition1']) $row['valuation'] .= ' Evaluation* condition missing;';
-                          else if (!$element['condition2']) $row['valuation'] .= ' Evaluation* missing due date;';
-                          if (!$element['condition3']) $row['valuation'] .= ' Time lapse* condition missing;';
-                          else if (!$element['condition4']) $row['valuation'] .= ' Time lapse* missing due date;';
-                          if (!$element['condition5']) $row['valuation'] .= ' Stop loss* condition missing;';
-                          if (!$element['condition1']) $row['valuation'] .= ' Take profit* condition missing;';
-                          if ($row['tradeCondition'] == 'Evaluation*') {
+                          if (!$element['condition1']) $row['valuation'] .= ' Valuation* condition missing;';
+                          else if (!$element['condition2']) $row['valuation'] .= ' Valuation* missing due date;';
+                          if (!$element['condition3']) $row['valuation'] .= ' Time Lapse* condition missing;';
+                          else if (!$element['condition4']) $row['valuation'] .= ' Time Lapse* missing due date;';
+                          if (!$element['condition5']) $row['valuation'] .= ' Stop Loss* condition missing;';
+                          if (!$element['condition1']) $row['valuation'] .= ' Take Profit* condition missing;';
+                          if ($row['tradeCondition'] == 'Valuation*') {
                               $row['valuation'] .= round($element['valuation'], 0) . '%';
                           }
                       }
@@ -559,10 +559,10 @@ if (!empty($childtype)) {
 
               if ($row['tradeCondition'] == '') $row[$outcomeField] =
                     $row['valuation'];
-              else if ($row['tradeCondition'] == 'Evaluation*' && $row['isTrade'] == 'y') $row[$outcomeField] =
+              else if ($row['tradeCondition'] == 'Valuation*' && $row['isTrade'] == 'y') $row[$outcomeField] =
                     "<u>" . $row['tradeCondition'] . "</u>" . PHP_EOL
                     . 'Valuation: ' . $row['valuation'];
-              else if ($row['tradeCondition'] == 'Evaluation*') $row[$outcomeField] =
+              else if ($row['tradeCondition'] == 'Valuation*') $row[$outcomeField] =
                     "<u>" . $row['tradeCondition'] . "</u>";
               else if ($row['tradeCondition'] != '') $row[$outcomeField] =
                     "<u>" . $row['tradeCondition'] . "</u>"

@@ -383,7 +383,7 @@ function retrieveFormVars() {
 	$values['repeat']         = empty($_POST['repeat'])?0:(int) $_POST['repeat'];
 
 	// dates
-  $values['dateCreated'] = (empty($_POST['dateCreated'])) ? date("Y-m-d") : "'{$_POST['dateCreated']}'";
+  $values['dateCreated'] = (empty($_POST['dateCreated'])) ? "'" . date("Y-m-d") . "'" : "'{$_POST['dateCreated']}'";
   $values['dateCompleted'] = (empty($_POST['dateCompleted'])) ? "NULL" : "'{$_POST['dateCompleted']}'";
 	$values['deadline']      = (empty($_POST['deadline']))      ? "NULL" : "'{$_POST['deadline']}'";
 

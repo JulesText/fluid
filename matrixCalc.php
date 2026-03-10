@@ -19,14 +19,10 @@ summary: final calc, separate brainless, push to result[]
 
 // would having a single array built from the loops, then all calculations done at the end, be easier to maintain code than the current cross-cutting structure?
 
+require_once('headerDB.inc.php');
 
 // start query time test
 $starttime = microtime(true);
-
-// declare time zone
-date_default_timezone_set('Africa/Lagos');
-
-require_once('headerDB.inc.php');
 
 if (isset($_POST["qLimit"])) { $qLimit = $_POST["qLimit"]; } else { $qLimit = 'a'; }
 if (isset($_POST["vLimit"]) && $_POST["vLimit"] != '') { $vLimit = $_POST["vLimit"]; } else { $vLimit = false; }

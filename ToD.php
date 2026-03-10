@@ -1,24 +1,18 @@
 <?php
-//This adjusts for apache GMT errors
-// date_default_timezone_set('Australia/Sydney');
-// date_default_timezone_set('Europe/Berlin');
-// date_default_timezone_set('Asia/Kolkata');
-// date_default_timezone_set('Asia/Jakarta');
-// date_default_timezone_set('Asia/Tokyo');
-// date_default_timezone_set('America/Los_Angeles');
-date_default_timezone_set('America/Guatemala');
-// die('date_default_timezone_set: ' . date_default_timezone_get());
 
-//get hour of day
+// get time zone
+require_once("config.php");
+
+// get hour of day
 $today = getdate();
 $hour = $today['hours'];
 $month = $today['mon'];
 
-//Adjust Daylight Saving start Oct to start Apr
-//clocks wound forward so reduce clock hour
+// Adjust Daylight Saving start Oct to start Apr
+// clocks wound forward so reduce clock hour
 if ( $month <= 3 || $month >= 10 ) $hour = $hour - 1;
 
-//identify meridian
+// identify meridian
 if ( $hour == 7 || $hour == 8 ) $ToD = 'St';
 if ( $hour == 9 || $hour == 10 ) $ToD = 'Sp';
 if ( $hour == 11 || $hour == 12 ) $ToD = 'H';

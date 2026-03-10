@@ -12,7 +12,10 @@ include_once('config_private.php');
 /**********  Non-private settings  ********/
 /******************************************/
 
-date_default_timezone_set('Australia/Sydney');
+// $config['timezone'] = 'Australia/Canberra';
+$config['timezone'] = 'America/New_York';
+date_default_timezone_set($config['timezone']);
+// die('date_default_timezone_set: ' . date_default_timezone_get());
 
 /*********  openAI API ************/
 

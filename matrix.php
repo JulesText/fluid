@@ -40,6 +40,7 @@ if (isset($_GET['data']) && $_GET['data'] == true) { $data = true; } else { $dat
 if (isset($_GET['career']) && $_GET['career'] == true) { $career = true; } else { $career = false; }
 if (isset($_GET['travel']) && $_GET['travel'] == true) { $travel = true; } else { $travel = false; }
 if (isset($_GET['compare']) && $_GET['compare'] == true) { $compare = true; } else { $compare = false; }
+if (isset($_GET['visions_hide']) && $_GET['visions_hide'] == true) { $visions_hide = true; } else { $visions_hide = false; }
 
 // limit visions
 if (isset($_GET['live']) && $_GET['live'] == true) { $live = true; } else { $live = false; }
@@ -921,6 +922,7 @@ $(document).ready(function() {
         if ($travel) echo "toggleCheckB('attr.26');\n\t";
         if ($compare) echo "toggleCheckB('attr.24');\n\t";
         if (!$meta) echo "toggleCol(['3','4','5']);\n\t";
+        if ($visions_hide) echo "toggleRow(['vision','blank']);\n\t";
 
     ?>
 /*
@@ -1372,7 +1374,7 @@ if (!$scen && !$data) {
     </tr><tr>
         <td class="mx">value = reward - loss</td>
     </tr><tr>
-        <td class="mx">cubic scores from -4 to +4 for loss to gain (strong, sound, weak, insignificant)</td>
+        <td class="mx">cubic scores from -4 to +4 for loss to gain (1 insignificant, 2 weak, 3 sound, 4 strong)</td>
     </tr><tr>
         <td class="mx">ordinal probabilities from 0 to 9 for likelihood (0%, 10%, 20% ... 90%)</td>
     </tr><tr>

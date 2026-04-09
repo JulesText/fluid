@@ -288,12 +288,12 @@ switch ($action) {
         $values['metaphor'] = $_POST['metaphor'];
         $values['hyperlink'] = $_POST['hyperlink'];
         $values['sortBy'] = $_POST['sortBy'];
-        $values['menu'] = $_POST['menu'];
-        $values['sortItems'] = $_POST['sortItems'];
+        $values['menu'] = (isset($_POST['menu']) ? $_POST['menu'] : 'n');
+        $values['sortItems'] = (isset($_POST['sortItems']) ? $_POST['sortItems'] : 'priority');
         if ($check == 'check') {
             $values['frequency'] = $_POST['frequency'];
             $values['prioritise'] = $_POST['prioritise'];
-            $values['effort'] = $_POST['effort'];
+            $values['effort'] = (isset($_POST['effort']) ? $_POST['effort'] : '0');
             if (isset($_POST['scored']) && $_POST['scored'] == 'y') { $values['scored'] = 'y'; } else { $values['scored'] = 'n'; }
             $values['thrs_score'] = $_POST['thrs_score'];
             $values['thrs_obs'] = $_POST['thrs_obs'];

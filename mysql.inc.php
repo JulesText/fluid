@@ -1255,7 +1255,7 @@ function getsql($config,$values,$sort,$querylabel) {
 						    '{$values['hyperlink']}',
 						    '{$values['sortBy']}',
 						    '{$values['frequency']}',
-						    '',
+                '{$values['effort']}',
 						    '{$values['scored']}',
                 '{$values['menu']}',
                 '{$values['prioritise']}',

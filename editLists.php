@@ -27,13 +27,13 @@ if ($values['listId']) {
     $values['metaphor']='';
     $values['hyperlink']='';
     $values['sortBy']='';
-    $values['frequency']='';
-    $values['effort']='';
+    $values['frequency']='0';
+    $values['effort']='0';
     $values['scored']='';
-    $values['menu']='';
-    $values['prioritise']='';
-    $values['thrs_score']='';
-    $values['thrs_obs']='';
+    $values['menu']='n';
+    $values['prioritise']='0';
+    $values['thrs_score']='80';
+    $values['thrs_obs']='5';
     $values['sortItems']='';
     $action='listcreate';
 }

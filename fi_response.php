@@ -16,12 +16,24 @@ foreach ($result as $row) {
 array_pop($history);
 
 $model_id = $_POST['model_id'];
-if ($model_id == '5') $model_id = $config['fir_model_5'];
-if ($model_id == '4') $model_id = $config['fir_model_4'];
-if ($model_id == '3') $model_id = $config['fir_model_3'];
+if ($model_id == '5') {
+  $model_id = $config['fir_model_5'];
+  $token_word = $config['fir_model_5_token_word'];
+  $model_temp = $config['fir_model_5_temp'];
+}
+if ($model_id == '4') {
+  $model_id = $config['fir_model_4'];
+  $token_word = $config['fir_model_4_token_word'];
+  $model_temp = $config['fir_model_4_temp'];
+}
+if ($model_id == '3') {
+  $model_id = $config['fir_model_3'];
+  $token_word = $config['fir_model_3_token_word'];
+  $model_temp = $config['fir_model_3_temp'];
+}
 
 $opts = [
-  'temperature' => $config['fir_temp']
+  'temperature' => $model_temp
   , 'frequency_penalty' => $config['fir_freq_pen']
   , 'presence_penalty' => $config['fir_pres_pen']
   , 'stream' => $config['stream']
@@ -32,7 +44,7 @@ $opts['messages'] = $history;
 # max number of tokens in response
 if ($_POST['word_count'] > 0) $max_tokens = $_POST['word_count'] * 2; // roughly 1.5 tokens / word
 else $max_tokens = $config['fir_max_tkn'];
-$opts['max_tokens'] = $max_tokens;
+$opts[$token_word] = $max_tokens;
 
 // Set up the API parameters
 $curly_tops['apiEndpoint'] = $config['fir_endpoint'];

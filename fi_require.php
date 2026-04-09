@@ -192,7 +192,7 @@ function curlReq($curly_tops) {
           $curls['data'] = $responseData["choices"][0]["message"]["content"];
       } else {
           $curls['success'] = FALSE;
-          $curls['data'] = "API error: Failed to retrieve expected result";
+          $curls['data'] = "API error: Failed to retrieve expected result: " . var_dump($responseData);
       }
   }
 

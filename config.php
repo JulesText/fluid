@@ -28,15 +28,17 @@ $config['fis_words'] = 5;
 
 # fi_response.php params
 $config['fir_endpoint'] = "https://api.openai.com/v1/chat/completions";
-$config['fir_temp'] = 0; # 0 for api determined, 0.1 is deterministic, 0.9 is random
 $config['fir_freq_pen'] = 0; # frequency penalty
 $config['fir_pres_pen'] = 0; # presence penalty
-#'gpt-3.5-turbo-16k' # unclear what 16k does (still 4k tokens)
-#'gpt-3.5-turbo' # 4k tokens
-#'gpt-4'
 $config['fir_model_3'] = 'gpt-3.5-turbo';
+$config['fir_model_3_token_word'] = 'max_tokens';
+$config['fir_model_3_temp'] = 0; # 0 for api determined, 0.1 is deterministic, 0.9 is random
 $config['fir_model_4'] = 'gpt-4';
-$config['fir_model_5'] = 'gpt-5';
+$config['fir_model_4_token_word'] = 'max_tokens';
+$config['fir_model_4_temp'] = 0; # 0 for api determined, 0.1 is deterministic, 0.9 is random
+$config['fir_model_5'] = 'gpt-5-2025-08-07';
+$config['fir_model_5_token_word'] = 'max_completion_tokens';
+$config['fir_model_5_temp'] = 1; # only default (1) is supported
 $config['fir_max_tkn'] = 1.0; # temperature: creativity = 1, none =  0 (deterministic)
 $config['fir_max_tkn'] = 1500; # default if word limit not set
 $config['stream'] = FALSE; # not operational

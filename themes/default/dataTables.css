@@ -104,7 +104,7 @@ thead.mx {
     *cursor: hand;
 }
 
-td.mx, th.mx {
+td.mx, th.mx, td.mxa {
 	color: #666;
 	border: 1px dotted #999;
 	font-weight: normal;
@@ -127,6 +127,19 @@ th.mx {
   font-size: 12px;
 }
 
+td.mxa, td.mxah {
+  color: #666;
+  white-space: nowrap;
+  font-size: 12px;
+  text-align: right;
+}
+
+td.mxah {
+  background: #eee;
+  cursor: pointer;
+  *cursor: hand;
+}
+
 td.cont {
 	color: #666;
 	border: 1px dotted #999;
@@ -134,9 +147,21 @@ td.cont {
   font-size: 12px;
 	font-family: verdana;
 	padding: 2px;
-    white-space: nowrap;
-    cursor: pointer;
-    *cursor: hand;
+  white-space: nowrap;
+  cursor: pointer;
+  *cursor: hand;
+}
+
+button.cont {
+	color: #666;
+	border: 1px dotted #999;
+	font-weight: normal;
+  font-size: 12px;
+	font-family: verdana;
+	padding: 2px;
+  white-space: nowrap;
+  cursor: pointer;
+  *cursor: hand;
 }
 
 td.mx.yr, th.mx.yr, td.mx.int, th.mx.int {

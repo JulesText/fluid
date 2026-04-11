@@ -31,3 +31,12 @@ function gtd_selectlistvisibility(vis) {
 	   gtd_selectLists[counter].style.visibility=vis;
 }
 window.onload=startList;
+
+function toggleTable(tableId) {
+		var elem = document.getElementById(tableId);
+		if (elem.style.display === "none") {
+				elem.style.display = "table";
+		} else {
+				elem.style.display = "none";
+		}
+}

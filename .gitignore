@@ -1,5 +1,6 @@
 # server files
 .ftpconfig
+.ftpconfig.bak
 .htaccess
 .ftpquota
 .ftpignore

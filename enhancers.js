@@ -199,3 +199,14 @@ function toggleTradeCondition() {
   }
 
 }
+
+// ================
+
+function toggleTable(tableId) {
+		var elem = document.getElementById(tableId);
+		if (elem.style.display === "none") {
+				elem.style.display = "table";
+		} else {
+				elem.style.display = "none";
+		}
+}

@@ -1368,7 +1368,7 @@ if (!$scen && !$data) {
 ?>
 
 <button onclick="toggleTable('assumptions')" class="cont">Mx Assumptions</button>
-<button onclick="toggleTable('careerAssumptions')" class="cont">Career Assumptions</button>
+<?php if ($qLimit == 'e') echo '<button onclick="toggleTable(\'careerAssumptions\')" class="cont">Career Assumptions</button>'; ?>
 <button onclick="toggleTable('pageSummary')" class="cont">Page stats</button>
 
 <table id="assumptions" style="display: none;">
@@ -1425,17 +1425,20 @@ if (!$scen && !$data) {
 <!-- <div id="careerAssumptions"><br><br> -->
 
 <table>
-  <tr>
-    <td class="mx">Scale score = max (Extinction reduction, Global economy, Poorest income, Healthy years)</td>
-  </tr><tr>
-    <td class="mx">Neglectedness score = min (Annual spending, Staff numbers, Supporter numbers)</td>
-  </tr><tr>
-    <td class="mx">Impact score = (Scale score + Neglectedness score + Solvability score)</td>
-  </tr><tr>
-    <td class="mx"></td>
-  </tr><tr>
-    <td class="mx">Rating = (Career capital score + Impact score + Conditions score) * Personal fit score</td>
-  </tr>
+  <tr><td class="mx">Overall Rating = (Career capital + Impact + Conditions) * Personal fit</td></tr>
+  <tr><td class="mx"></td></tr>
+  <tr><td class="mx">Career capital score = (Skills + Connections + Credentials)</td></tr>
+  <tr><td class="mx"></td></tr>
+  <tr><td class="mx">Impact score = (Scale + Neglectedness + Solvability)</td></tr>
+  <tr><td class="mx">Scale score = max (Extinction reduction, Global economy, Poorest income, Healthy years)</td></tr>
+  <tr><td class="mx">Neglectedness score = min (Annual spending, Staff numbers, Supporter numbers)</td></tr>
+  <tr><td class="mx"></td></tr>
+  <tr><td class="mx">Conditions score = (Engaging work + Constructive colleagues + Basic needs + Personal life)</td></tr>
+  <tr><td class="mx">Basic needs score = (Locality + Consistent income + Reasonable demand + Manageable hours)</td></tr>
+  <tr><td class="mx">Consistent income score = (Job security + Cost / year)</td></tr>
+  <tr><td class="mx">Locality score = (Desirable Location + Allergy Tolerable + Fast Transport)</td></tr>
+  <tr><td class="mx"></td></tr>
+  <tr><td class="mx">Personal fit score = (...)</td></tr>
 </table>
 
 <!-- paste from FR > estimates by 80k method v0.2 > mx format -->

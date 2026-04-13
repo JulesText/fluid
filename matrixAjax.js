@@ -174,6 +174,12 @@ function sT(editableObj,table,updCol,pcol1,pid1,col2,id2,col3,id3,col4,id4,col5,
 		calcMonthIds = [587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598];
 		if (col4 == 'qId' && calcMonthIds.includes(id4)) calcMonthFlag = true;
 
+
+		// the special career calc ids, to trigger recalculation of Career scores
+		let calcCareerIds = [791, 792, 793, 794, 795, 796, 797, 798, 811, 812, 813, 814, 815, 816, 821, 822];
+		let calcCareerFlag = false;
+		if (col4 == 'qId' && calcCareerIds.includes(id4)) calcCareerFlag = true;
+
 		//
 		// ajax query
 		//
@@ -222,6 +228,8 @@ function sT(editableObj,table,updCol,pcol1,pid1,col2,id2,col3,id3,col4,id4,col5,
 								if (calcDaysFlag) calcDays(col2,id2,col3,id3,col5,id5);
 								// if one of the special month calc ids, recalculate
 								if (calcMonthFlag) calcMonths(col2,id2,col3,id3,col5,id5);
+								// if one of the special career calc ids, recalculate
+								if (calcCareerFlag) calcCareer(col2,id2,col3,id3,col5,id5);
 						// otherwise throw warning
 						} else {
 							// throw warning only if ajax request has not failed previously
@@ -270,6 +278,22 @@ function calcMonths(col2,id2,col3,id3,col5,id5) {
 
 	$.ajax({
 	url: "matrixSaveMonths.php",
+	type: "POST",
+	data:'table='+table+'&updCol='+updCol+'&pcol1='+pcol1+'&col2='+col2+'&id2='+id2+'&col3='+col3+'&id3='+id3+'&id4='+id4+'&col4='+col4+'&col5='+col5+'&id5='+id5
+	});
+
+}
+
+function calcCareer(col2,id2,col3,id3,col5,id5) {
+
+	let table = "lookupqualities";
+	let pcol1 = "qaId";
+	let updCol = "value";
+	let col4 = "qId";
+	let id4 = "";
+
+	$.ajax({
+	url: "matrixSaveCareer.php",
 	type: "POST",
 	data:'table='+table+'&updCol='+updCol+'&pcol1='+pcol1+'&col2='+col2+'&id2='+id2+'&col3='+col3+'&id3='+id3+'&id4='+id4+'&col4='+col4+'&col5='+col5+'&id5='+id5
 	});

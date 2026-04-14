@@ -55,7 +55,7 @@ $values['effort'] = ceil($effort * $frequency / 60);
 
 $result = query("updatechecklist",$config,$values,$sort);
 
-//file_put_contents ('_response.txt',PHP_EOL . $result . ' x ' . $query, FILE_APPEND);
+// file_put_contents ('_response.txt', PHP_EOL . $result . ' x CL ' . $values['listId'] . ' x effort: ' . $values['effort'], FILE_APPEND);
 
 if (count($result) > 0) {
     $i = 1;

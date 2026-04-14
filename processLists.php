@@ -103,6 +103,9 @@ switch ($action) {
         $result=query("update{$check}listitem",$config,$values);
         $msg=($result) ? "Updated" : "No changes needed to";
         $_SESSION['message'][]= "$msg {$check}list item: '{$values['item']}'";
+
+        if ($check == 'check') include('matrixSaveCL.php');
+        
         break;
     //-----------------------------------------------------------------------------------
     case 'listclear':

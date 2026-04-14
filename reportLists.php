@@ -255,7 +255,7 @@ $( document ).ready(function() {
                             }
                             ?> />
                           <?php
-                            if ($isChecklist) echo '<span style="opacity: 1.0; font-size: medium"><div contenteditable="true" class="inline-div-editable" ' . ajaxUpd("checklistitemEffort", $row['itemId']) . '>' . ($row['effort'] == "" ? "_" : $row['effort']) . '</div>m</span>';
+                            if ($isChecklist) echo '<span style="opacity: 1.0; font-size: medium"><div contenteditable="true" class="inline-div-editable" onBlur="sT(this,\'checklistitems\',\'effort\',\'checklistItemId\',\'' . $row['itemId'] . '\'); calcCL(\'' . $row['listId'] . '\')" onFocus="sE(this)">' . ($row['effort'] == "" ? "_" : $row['effort']) . '</div>m</span>';
                           ?>
                         </td>
                     <?php if ($check && $scored) { ?>

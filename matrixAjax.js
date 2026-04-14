@@ -335,6 +335,7 @@ function calcCL(checklistId) {
 				}
 			 });
 		}, 200 );
+		// alert(checklistId);
 }
 
 function editableCol(tableClass,nthChild,isEdit) {

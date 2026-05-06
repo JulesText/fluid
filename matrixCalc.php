@@ -466,22 +466,22 @@ foreach ((array) $attributes as $attr) {
             // updates the $output1 and $output2 variables, formulae defined in gtdfuncs.php
             if (!$someday && !$complete) {
 							eval(formula($attr['formulaVis1']));
-							/* file_put_contents ('_response.txt',
-									formula($attr['formulaVis1']) . "\n" .
-			            print_r($attr,true) . "\n" .
-									gettype($output1) . "\n" .
-									'$output1 ' . $output1 ."\n" ."\n" .
-									gettype($output1) . "\n" .
-									'$pseudo2 ' . $pseudo2 ."\n" ."\n" .
-									gettype($value) . "\n" .
-									'$value ' . $value . "\n" ."\n" .
-									gettype($prob) . "\n" .
-									'$prob ' . $prob . "\n" ."\n" .
-									gettype($weight) . "\n" .
-									'$weight ' . $weight . "\n" ."\n" .
-									gettype($years) . "\n" .
-									'$years ' . $years . "\n"
-								);*/
+							// file_put_contents ('_response.txt',
+							// 		formula($attr['formulaVis1']) . "\n" .
+			        //     print_r($attr,true) . "\n" .
+							// 		gettype($output1) . "\n" .
+							// 		'$output1 ' . $output1 ."\n" ."\n" .
+							// 		gettype($output1) . "\n" .
+							// 		'$pseudo2 ' . $pseudo2 ."\n" ."\n" .
+							// 		gettype($value) . "\n" .
+							// 		'$value ' . $value . "\n" ."\n" .
+							// 		gettype($prob) . "\n" .
+							// 		'$prob ' . $prob . "\n" ."\n" .
+							// 		gettype($weight) . "\n" .
+							// 		'$weight ' . $weight . "\n" ."\n" .
+							// 		gettype($years) . "\n" .
+							// 		'$years ' . $years . "\n"
+							// 	);
 							eval(formula($attr['formulaVis2']));
             }
 
@@ -1378,7 +1378,7 @@ if (isset($unqprobabilityId)) {
 // result
 
 // remove empty elements from result array
-$result = array_values($result);
+// $result = array_values($result);
 // stop query time test
 $endtime = microtime(true);
 $duration = round($endtime - $starttime,1);

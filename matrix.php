@@ -54,6 +54,7 @@ $values['qValue'] = 'angle';
 $values['qSearch'] = "`disp`";
 $values['qNeedle'] = $qLimit;
 $angles = query("getqualities",$config,$values,$sort);
+// echo '<pre>';var_dump($angles);die;
 
 // call angles qualities
 $i = 0;
@@ -74,6 +75,7 @@ foreach ((array) $angles as $row) {
     $angles[$i]['qualities'] = $qualities;
     $i++;
 }
+// echo '<pre>';print_r($qualities);die;
 
 // remove attributes referring to existing tables
 // build array of non editable cell types
@@ -114,13 +116,21 @@ $attrMeta = query("getqualities",$config,$values,$sort);
 $values['qQuery'] = "`qType`";
 $values['qValue'] = 'variable';
 $attrVar = query("getqualities",$config,$values,$sort);
-
-foreach ((array) $attrVar as $row) {
-    if ($row['format'] == 'unqhoursyear') $unqhoursyear = $row['title'];
-    if ($row['format'] == 'unqhoursyearbrainless') $unqhoursyearbrainless = $row['title'];
-    if ($row['format'] == 'unqcorrelpref') $unqcorrelpref = $row['title'];
-    if ($row['format'] == 'unqcorrelbala') $unqcorrelbala = $row['title'];
+// error check, we need these variables for all displays
+$needVars = array('unqhoursyear', 'unqhoursyearbrainless');
+foreach ($attrVar as $var) {
+  if (in_array($var['format'], $needVars)) $needVars = array_diff($needVars, [$var['format']]);
+  if (count($needVars) == 0) break;
 }
+if (count($needVars) > 0) { echo '<pre>missing variable(s): '; var_dump($needVars); die; }
+
+if (is_array($attrVar)) # for some displays like Career disp = e, we expect no result for $attrVar query
+    foreach ((array) $attrVar as $row) {
+        if ($row['format'] == 'unqhoursyear') $unqhoursyear = $row['title'];
+        if ($row['format'] == 'unqhoursyearbrainless') $unqhoursyearbrainless = $row['title'];
+        if ($row['format'] == 'unqcorrelpref') $unqcorrelpref = $row['title'];
+        if ($row['format'] == 'unqcorrelbala') $unqcorrelbala = $row['title'];
+    }
 
 $values = array();
 $values['itemType'] = 'v';
@@ -239,11 +249,11 @@ foreach ((array) $vis as $visn) {
 
     $i++;
 
-    //RETRIEVE VARIABLES
+    // Retrieve variables
     $values=array();
     $values['itemId'] = (int) $visn['itemId'];
 
-    //Get item details
+    // Get item details
     $values['childfilterquery']=' WHERE '.sqlparts('singleitem',$config,$values);
     $values['filterquery']=sqlparts('isNA',$config,$values);
     $values['extravarsfilterquery'] =sqlparts("getNA",$config,$values);;
@@ -918,7 +928,7 @@ $(document).ready(function() {
         }
 
         if ($live) echo "toggleCheckB('someday');toggleCheckB('complete');\n\t";
-        if ($career) echo "toggleCheckB('attr.771');\n\t";
+        if ($career) echo "toggleCheckB('attr.27');\n\t";
         if ($travel) echo "toggleCheckB('attr.26');\n\t";
         if ($compare) echo "toggleCheckB('attr.24');\n\t";
         if (!$meta) echo "toggleCol(['3','4','5']);\n\t";
@@ -1041,7 +1051,7 @@ function toggleCheckB(ctype) {
         brainlessDisp ^= true;
         checkd = false;
     }
-    if (ctype == 'attr.771') {
+    if (ctype == 'attr.27') {
         hideR = careerDisp;
         careerDisp ^= true;
         checkd = false;
@@ -1219,7 +1229,7 @@ if (!$data) {
         <td class='cont' onClick="toggleCheckB('live')">Live</td>
         <td class='cont' onClick="toggleCheckB('attr.24')">Compa</td>
         <td class='cont' onClick="toggleCheckB('attr.531')">Blss</td>
-        <td class='cont' onClick="toggleCheckB('attr.771')">Creer</td>
+        <td class='cont' onClick="toggleCheckB('attr.27')">Creer</td>
         <?php /* if ($travel) { ?><td class='cont' onClick="toggleCheckB('attr.26')">Trav</td><?php } */ ?>
         <td class='cont' onClick="toggleCheckB('attr.26')">Trav</td>
         <td class='cont' onClick="toggleRow(['i0'])">in0</td>
@@ -1282,9 +1292,9 @@ if (!$data) {
         <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=h&live=true&nometa=true&calc=true&scen=true'; ?>';">Scen</td>
         <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=j&scen=true&calc=true'; ?>';">Val</td>
         <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=i&calc=true&data=true'; ?>';">Data</td>
-        <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=e&career=true'; ?>';">Creer</td>
-        <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=k&travel=true'; ?>';">Trav</td>
-        <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=l&nometa=true'; ?>';">Budg</td>
+        <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=e' . ($meta ? '&nometa=true' : '') . (!$career ? '&career=true' : ''); ?>';">Creer</td>
+        <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=k' . (!$travel ? '&travel=true' : ''); ?>';">Trav</td>
+        <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=l' . ($meta ? '&nometa=true' : ''); ?>';">Budg</td>
         <td class='cont' onClick="window.location = '<?php echo $urlq . '&qLimit=f'; ?>';">All</td>
         <td class='cont' onClick="window.location = '<?php echo $url . '&live=true'; ?>';">Live</td>
         <td class='cont' onClick="window.location = '<?php echo $url . '&calc=' . ($calc == 'true' ? 'false' : 'true'); ?>';">Calc</td>
@@ -1435,7 +1445,7 @@ if (!$scen && !$data) {
   <tr><td class="mx"></td></tr>
   <tr><td class="mx">Conditions score = (Engaging work + Constructive colleagues + Basic needs + Personal life)</td></tr>
   <tr><td class="mx">Basic needs score = (Locality + Consistent income + Reasonable demand + Manageable hours)</td></tr>
-  <tr><td class="mx">Consistent income score = (Job security + Cost / year)</td></tr>
+  <tr><td class="mx">Consistent income score = (Job security + Cost-earn / year)</td></tr>
   <tr><td class="mx">Locality score = (Desirable Location + Allergy Tolerable + Fast Transport)</td></tr>
   <tr><td class="mx"></td></tr>
   <tr><td class="mx">Personal fit score = (...)</td></tr>

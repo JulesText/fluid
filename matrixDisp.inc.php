@@ -134,8 +134,9 @@
                             $title = str_replace(' ', '.', $title); // replace space
                         }
                     }
+                    if (isset($valO['weight'])) $valO['description'] .= " (Weight = " . $valO['weight'] . "/9)";
                     $attrTit .= "<th class='attr {$valO['qId']} mx' title='{$valO['description']}'>{$title}</th>\n";
-                    if ($valO['title'] == '') { echo '<div style="position: relative; z-index: 10000;">disp mismatch attr ' . $valN['qId'] . '</div>'; }
+                    if ($valO['title'] == '') { echo '<div style="position: relative; z-index: 10000;">disp mismatch attr ' . $valN['qId'] . ' (check qualities > "disp" var)</div>'; }
                 }
                 // foreach ((array) $valN['attributes'] as $valO) $attrTit .= "<th class='attr {$valO['qId']} mx xm' title='{$valO['description']}'>{$valO['title']}<div class='xm'>{$valO['title']}</div></th>\n"; // fixed header
             }
@@ -192,6 +193,8 @@ foreach ((array) $maintable as $row) {
                                 echo " req";
                             } elseif (strpos($valO['typeReq'],$row["type"]) > -1 && !$tilda) {
                                 echo " req";
+                            } elseif (strpos($valO['typeNoEd'],$row["type"])) {
+                                echo " noed";
                             }
                             echo " " . $valO['style'];
                             if ($valO['style'] == 'hlnk') $mxlink = true;

@@ -170,6 +170,10 @@ body {
 	width: 98%;
 	/* width: 960px; */
 }
+#main {
+	margin-right: 11em;
+	clear:none;
+}
 
 #footer {
 	float: left;
@@ -178,6 +182,10 @@ body {
 	margin: 20px 0 10px 0;
 	text-align: right;
 }
+#footer {
+	clear: both;
+}
+
 
 #filter {
 	margin: 4px 0;
@@ -317,6 +325,9 @@ table input[type="checkbox"].score{
 .weeklytable {
 	width: 95%;
 }
+.weeklytable {
+	width: auto;
+}
 .formrow .text {
     position:relative;
     top:0.5em;
@@ -407,6 +418,12 @@ select, input, textarea, button {
 select, input[type='text'], input[type='submit'], input[type='reset'], button, textarea {
 	border: 2px solid #ccb;
 	font-size: 16px;
+}
+select, input, textarea {
+	font-size:11px;
+	margin:auto 0.25em;
+	padding:2px;
+	color:#666655;
 }
 
 div.success {
@@ -533,6 +550,11 @@ input.warning {
 	background: none;
 	/*border-bottom: 4px solid #eed;*/
 }
+#header {
+	margin: 10px auto;
+	background: none;
+	border-bottom: 4px solid #eed;
+}
 
 #sidebar {
 	border-right: 1px solid #eed;
@@ -553,12 +575,24 @@ input.warning {
 	background: #eed;
 	text-decoration: none;
 }
-
+#menulist a,#menulist a:link,#menulist a:visited {
+	text-decoration: inherit;
+}
+#menulist a:hover {
+	background: inherit;
+	text-decoration: inherit;
+}
 
 #menudiv li li { /* second-level list items */
 	border-top: .1em solid #eed;
 }
-
+#menudiv {
+	float: right;
+	border-left: 1px solid #eed;
+}
+#menudiv li li { /* second-level list items */
+	border-top: inherit;
+}
 
 a.pageheading:hover {
 	color:#006;

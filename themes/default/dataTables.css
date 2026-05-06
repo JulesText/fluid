@@ -184,6 +184,10 @@ td.req {
     background-color:#fcfdf2;
 }
 
+td.noed {
+    background-color:#eeeeee;
+}
+
 td.item.mx.v {
 	padding-left: 4px;
     color: #00A834;

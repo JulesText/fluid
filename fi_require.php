@@ -148,7 +148,7 @@ function curlReq($curly_tops) {
       CURLOPT_RETURNTRANSFER => TRUE,
       CURLOPT_ENCODING       => '',
       CURLOPT_MAXREDIRS      => 10,
-      CURLOPT_TIMEOUT        => 30,
+      CURLOPT_TIMEOUT        => 60,
       CURLOPT_FOLLOWLOCATION => TRUE,
       CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
       CURLOPT_CUSTOMREQUEST  => $curly_tops['method'],

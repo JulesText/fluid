@@ -135,7 +135,7 @@
                         }
                     }
                     if (isset($valO['weight'])) $valO['description'] .= " (Weight = " . $valO['weight'] . "/9)";
-                    $attrTit .= "<th class='attr {$valO['qId']} mx' title='{$valO['description']}'>{$title}</th>\n";
+                    $attrTit .= "<th class='attr {$valO['qId']} mx {$valO['style']}' title='{$valO['description']}'>{$title}</th>\n";
                     if ($valO['title'] == '') { echo '<div style="position: relative; z-index: 10000;">disp mismatch attr ' . $valN['qId'] . ' (check qualities > "disp" var)</div>'; }
                 }
                 // foreach ((array) $valN['attributes'] as $valO) $attrTit .= "<th class='attr {$valO['qId']} mx xm' title='{$valO['description']}'>{$valO['title']}<div class='xm'>{$valO['title']}</div></th>\n"; // fixed header
@@ -193,7 +193,7 @@ foreach ((array) $maintable as $row) {
                                 echo " req";
                             } elseif (strpos($valO['typeReq'],$row["type"]) > -1 && !$tilda) {
                                 echo " req";
-                            } elseif (strpos($valO['typeNoEd'],$row["type"])) {
+                            } elseif (strpos($valO['typeNoEd'],$row["type"]) > -1) {
                                 echo " noed";
                             }
                             echo " " . $valO['style'];
@@ -311,7 +311,8 @@ foreach ((array) $maintable as $row) {
             if (is_numeric($row["itemId"])) { // not blank
                 $tdstr = checkerB ('lq','qaId',$checkboxqaId,'val',$checkboxval,'vId',$row["visId"],'iId',$row["itemId"],'qId',$qId,'iT',$row["type"]);
             }
-        } elseif (!$editable || $key == 'item' || $data) { // by default item titles are not editable. data cells not editable as causes export problems with line breaks.
+        } elseif (!$editable || $key == 'item' || $data) {
+            // by default item titles are not editable. data cells not editable as causes export problems with line breaks.
         } elseif ($existItem) {
             $saveId = $row[$existKey];
             if (in_array($row["type"], array('c','l'))) $saveId = $row['itemId'];
@@ -322,7 +323,7 @@ foreach ((array) $maintable as $row) {
                 /* && $row['type'] !== 'v' */
                 !$existOnly
                 ) {
-                echo $editable . ' onBlur="sT(this,\'lq\',\'val\',\'qaId\',\'' . $row[$key . " qaId"] . '\',\'vId\',\'' . $row["visId"] . '\',\'iId\',\'' . $row["itemId"] . '\',\'qId\',\'' . $qId . '\',\'iT\',\'' . $row["type"] . '\')" onFocus="sE(this)"';
+                  echo $editable . ' onBlur="sT(this,\'lq\',\'val\',\'qaId\',\'' . $row[$key . " qaId"] . '\',\'vId\',\'' . $row["visId"] . '\',\'iId\',\'' . $row["itemId"] . '\',\'qId\',\'' . $qId . '\',\'iT\',\'' . $row["type"] . '\')" onFocus="sE(this)"';
         }
         $et4 += microtime(true) - $et4a;
         $et5a = microtime(true);

@@ -164,7 +164,14 @@ button.cont {
   *cursor: hand;
 }
 
-td.mx.yr, th.mx.yr, td.mx.int, th.mx.int {
+td.mx.yr, th.mx.yr
+, td.mx.int, th.mx.int
+, td.mx.int4, th.mx.int4
+, td.mx.int9, th.mx.int9
+, td.mx.int99, th.mx.int99
+, td.mx.intX, th.mx.intX
+, td.mx.intXY, th.mx.intXY
+ {
     text-align: right;
 }
 
@@ -172,7 +179,7 @@ td.mx.nl {
     color: #bbb;
 }
 
-td.mx.lnk, th.mx.lnk {
+td.mx.lnk {
     font-size: 2px;
 }
 
@@ -187,6 +194,38 @@ td.req {
 td.noed {
     background-color:#eeeeee;
 }
+
+/* th background hints */
+th.mx.attr.int4:not(.a,.b,.ho) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='16'%3E%3Ctext x='0' y='12' font-family='monospace' font-size='12' fill='%2300000030'%3E-4+4%3C/text%3E%3C/svg%3E");
+  background-position: right 3px bottom -3px;
+}
+th.mx.attr.int9:not(.a,.b,.ho) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16'%3E%3Ctext x='0' y='12' font-family='monospace' font-size='12' fill='%2300000030'%3E0+9%3C/text%3E%3C/svg%3E");
+  background-position: right 3px bottom -3px;
+}
+th.mx.attr.int99:not(.a,.b,.ho) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='16'%3E%3Ctext x='0' y='12' font-family='monospace' font-size='12' fill='%2300000030'%3E0+99%3C/text%3E%3C/svg%3E");
+  background-position: right 1px bottom -3px;
+}
+th.mx.attr.intX:not(.a,.b,.ho) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='16'%3E%3Ctext x='0' y='12' font-family='monospace' font-size='14' fill='%2300000030'%3E+%E2%88%9E%3C/text%3E%3C/svg%3E");
+  background-position: right 0px bottom -3px;
+}
+th.mx.attr.intXY:not(.a,.b,.ho) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='16'%3E%3Ctext x='0' y='12' font-family='monospace' font-size='14' fill='%2300000030'%3E-+%E2%88%9E%3C/text%3E%3C/svg%3E");
+  background-position: right 0px bottom -3px;
+}
+
+th.mx.attr.ch:not(.a,.b,.ho) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='16'%3E%3Ctext x='0' y='12' font-family='monospace' font-size='12' fill='%2300000030'%3Etext%3C/text%3E%3C/svg%3E");
+  background-position: left 3px bottom -3px;
+}
+th.mx.attr.lnk:not(.a,.b,.ho) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='16'%3E%3Ctext x='0' y='12' font-family='monospace' font-size='12' fill='%2300000030'%3Ehref%3C/text%3E%3C/svg%3E");
+  background-position: left 3px bottom -3px;
+}
+/* end th background hints */
 
 td.item.mx.v {
 	padding-left: 4px;

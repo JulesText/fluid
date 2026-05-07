@@ -176,9 +176,24 @@ function sT(editableObj,table,updCol,pcol1,pid1,col2,id2,col3,id3,col4,id4,col5,
 
 
 		// the special career calc ids, to trigger recalculation of Career scores
-		let calcCareerIds = [791, 792, 793, 794, 795, 796, 797, 798, 811, 812, 813, 814, 815, 816, 821, 822];
+		// also if any related ids in calcDaysFlag
+		let calcCareerIds = [
+			/* non-specifically career items*/
+			51, 52, 53, 54, /* Personal Fit */
+			521, 522, /* Sum-Cr */
+			/* specifically career items*/
+			722, 723, 724, 725, 726, 727, /* Career Capital */
+			771, 772, 773, 774, 775, 776, 777, 778, /* Impact Scale */
+			781, 782, 783, 784, 785, 786, /* Impact Neglectedness */
+			791, 792, /* Impact Solvability */
+			812, 813, 814, 815, 816, 817, /* Conditions Sum */
+			822, 823, /* Conditions Needs */
+			831, 832, 833, 834, 835, 836, /* Conditions Locality */
+			841, 842, 843, 844, /* Conditions Income */
+			853, 854 /* Personal Fit */
+		];
 		let calcCareerFlag = false;
-		if (col4 == 'qId' && calcCareerIds.includes(id4)) calcCareerFlag = true;
+		if ((col4 == 'qId' && calcCareerIds.includes(id4)) || calcDaysFlag) calcCareerFlag = true;
 
 		//
 		// ajax query

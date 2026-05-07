@@ -61,6 +61,7 @@ $i = 0;
 $attrStat = array();
 foreach ((array) $angles as $row) {
     $values['qQuery'] = "`parId`";
+    if ($qLimit == 'e') $values['qQuery'] = "`parIdCareer`"; // special case for Career view
     $values['qValue'] = $row['qId'];
     $qualities = query("getqualities",$config,$values,$sort);
 
@@ -1435,20 +1436,27 @@ if (!$scen && !$data) {
 <!-- <div id="careerAssumptions"><br><br> -->
 
 <table>
-  <tr><td class="mx">Overall Rating = (Career capital + Impact + Conditions) * Personal fit</td></tr>
-  <tr><td class="mx"></td></tr>
-  <tr><td class="mx">Career capital score = (Skills + Connections + Credentials)</td></tr>
-  <tr><td class="mx"></td></tr>
+  <tr><td class="mx">Sum-Cr / Year = Personal Fit * (Impact + Career Capital + Conditions) * Certainty / Years</td></tr>
+  <tr><td class="mx">Sum-Cr / Hrs = Personal Fit * (Impact + Career Capital + Conditions) * Certainty / (Years * Effort/Year)</td></tr>
+  <tr><td class="mx noed"></td></tr>
   <tr><td class="mx">Impact score = (Scale + Neglectedness + Solvability)</td></tr>
-  <tr><td class="mx">Scale score = max (Extinction reduction, Global economy, Poorest income, Healthy years)</td></tr>
-  <tr><td class="mx">Neglectedness score = min (Annual spending, Staff numbers, Supporter numbers)</td></tr>
-  <tr><td class="mx"></td></tr>
-  <tr><td class="mx">Conditions score = (Engaging work + Constructive colleagues + Basic needs + Personal life)</td></tr>
-  <tr><td class="mx">Basic needs score = (Locality + Consistent income + Reasonable demand + Manageable hours)</td></tr>
-  <tr><td class="mx">Consistent income score = (Job security + Cost-earn / year)</td></tr>
-  <tr><td class="mx">Locality score = (Desirable Location + Allergy Tolerable + Fast Transport)</td></tr>
-  <tr><td class="mx"></td></tr>
-  <tr><td class="mx">Personal fit score = (...)</td></tr>
+  <tr><td class="mx">Scale score = max (Extinction reduction, Global economy, Poorest income, Healthy years) ~ informed by (Beneficiaries, Benefits)</td></tr>
+  <tr><td class="mx">Neglectedness score = min (Annual spending, Staff numbers, Supporter numbers) ~ informed by (Beneficiaries, Benefits)</td></tr>
+  <tr><td class="mx">Solvability score ~ informed by (Costs, Risks, Solution, Professional Practices, Standard of Outputs, Delegation (?), Recovery (?))</td></tr>
+  <tr><td class="mx noed"></td></tr>
+  <tr><td class="mx">Personal Fit score = (Repeat*4 + Incomplete*4 + Align with Abilities) ~ informed by (Age min, Behaviour, Standard, Conditions, Work Role, Precursor)</td></tr>
+  <tr><td class="mx noed"></td></tr>
+  <tr><td class="mx">Career Capital score = (Build skills + Connections + Credentials)</td></tr>
+  <tr><td class="mx noed"></td></tr>
+  <tr><td class="mx">Conditions Sum score = (Reasonable Demand + Harmony with Values + Personal life + Conditions Needs score) ~ informed by (Collaborators, Start Date)</td></tr>
+  <tr><td class="mx">Conditions Needs score = (Manageable hours + Conditions Locality score + Conditions Income score)</td></tr>
+  <tr><td class="mx">Conditions Locality score = (Desirable Location + Allergy Tolerable + Fast Transport) ~ informed by Travel/Year</td></tr>
+  <tr><td class="mx">Conditions Income score = (Fair Pay + Job Security) ~ informed by (Cost-earn/Year, Cost-earn Notes)</td></tr>
+  <tr><td class="mx noed"></td></tr>
+  <tr><td class="mx">Certainty = ?</td></tr>
+  <tr><td class="mx">Effort/Year = (Effort/Day * Days/Year) + Hours Research</td></tr>
+  <tr><td class="mx">Travel/Year = (Travel/Day * Days/Year)</td></tr>
+  <tr><td class="mx noed"></td></tr>
 </table>
 
 <!-- paste from FR > estimates by 80k method v0.2 > mx format -->

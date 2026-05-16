@@ -852,4 +852,20 @@ function formula ($id) {
 /*
    ======================================================================================
 */
+
+function calc_p_mean ($arr) {
+
+  // assume values of 0 are set by default, remove them
+  $arr = array_filter($arr, function ($val) { return $val !== 0 && !is_null($val); });
+
+  if (count($arr) > 0) $p_mean = array_sum($arr) / count($arr);
+  else $p_mean = NULL;
+
+  return $p_mean;
+
+}
+/*
+   ======================================================================================
+*/
+
 // php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

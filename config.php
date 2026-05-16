@@ -14,9 +14,9 @@ include_once('config_private.php');
 
 // $config['timezone'] = 'Australia/Canberra';
 // $config['timezone'] = 'America/New_York';
-$config['timezone'] = 'Africa/Casablanca';
+// $config['timezone'] = 'Africa/Casablanca';
 // $config['timezone'] = 'Africa/Dakar';
-// $config['timezone'] = 'Africa/Kampala';
+$config['timezone'] = 'Africa/Kampala';
 date_default_timezone_set($config['timezone']);
 // die('date_default_timezone_set: ' . date_default_timezone_get());
 
@@ -72,7 +72,7 @@ $config['pass_back_on'] = date('Y-m-d H:i', $config['pass_off_to']);
 $config["title"]= 'Intertext'; // site name (appears at the top of each page)
 $config["datemask"] = 'Y-m-d'; // date format - required - affects sorting
 $config["datemaskYr"] = 'Y-m'; // date format - required - affects sorting
-$config["theme"] = 'default'; //default 
+$config["theme"] = 'default'; //default
 $config["title_suffix"]	= false; // true | false - add filename to title tag
 $config["trimLength"] = 2398;     // max visible length of descriptions when listing items
 $config["trimLengthInReport"] = 0;     // max visible length of descriptions when reporting children

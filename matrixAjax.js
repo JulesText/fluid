@@ -127,6 +127,9 @@ function sT(editableObj,table,updCol,pcol1,pid1,col2,id2,col3,id3,col4,id4,col5,
 			} else { alert('error: unrecognised element type ' + eType); return; }
 		}
 
+		// basic clean, helps avoid numbers with hidden space
+		updVal = updVal.trim(); // remove leading/trailing spaces
+
 		// exception handling
 		if (table == 'itemstatus' && updCol == 'dateCreated'
 				&& (updVal == '\n' || updVal === '' || typeof updVal == 'undefined')) updVal = 'NULL';
@@ -190,7 +193,7 @@ function sT(editableObj,table,updCol,pcol1,pid1,col2,id2,col3,id3,col4,id4,col5,
 			822, 823, /* Conditions Needs */
 			831, 832, 833, 834, 835, 836, /* Conditions Locality */
 			841, 842, 843, 844, /* Conditions Income */
-			853, 854 /* Personal Fit */
+			853, 854, 855, 856 /* Personal Fit */
 		];
 		let calcCareerFlag = false;
 		if ((col4 == 'qId' && calcCareerIds.includes(id4)) || calcDaysFlag) calcCareerFlag = true;

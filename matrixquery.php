@@ -39,7 +39,7 @@ if ($result->rowCount() > 0) {
   unset($value);
 }
 
-// file_put_contents ('_response.txt', PHP_EOL . $query , FILE_APPEND);
+// file_put_contents ('_response.txt', PHP_EOL . $query);
 // file_put_contents ('_response.txt', PHP_EOL . $value . PHP_EOL . '--', FILE_APPEND);
 
 $db = NULL; // destroy connection

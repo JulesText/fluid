@@ -853,17 +853,132 @@ function formula ($id) {
    ======================================================================================
 */
 
-function calc_p_mean ($arr) {
+function clean_mean ($arr) {
 
-  // assume values of 0 are set by default, remove them
-  $arr = array_filter($arr, function ($val) { return $val !== 0 && !is_null($val); });
+  $arr = clean_array($arr);
 
-  if (count($arr) > 0) $p_mean = array_sum($arr) / count($arr);
-  else $p_mean = NULL;
+  if (count($arr) > 0) $mean = array_sum($arr) / count($arr);
+  else $mean = NULL;
 
-  return $p_mean;
+  return $mean;
 
 }
+
+function clean_array ($arr) {
+
+  // assume values of NULL should be removed, but inclue 0 values
+  $arr = array_filter($arr, function ($val) { return !is_null($val); });
+
+  return $arr;
+
+}
+/*
+   ======================================================================================
+*/
+
+function create_variable_set($name, $qId, $pqId = 0, $power = 1) {
+
+  global ${$name}, ${$name.'_p'}, ${$name.'_w'};
+  global $config, $_POST, $weights;
+
+  // main variable value
+  $_POST["id4"] = $qId;
+  include('matrixQuery.php');
+  if (isset($value) && filter_var($value, FILTER_VALIDATE_FLOAT) !== false) {
+
+    ${$name} = $value ** $power;
+
+    // main variable weight
+    ${$name.'_w'} = $weights[$qId];
+
+    // p variable value
+    $_POST["id4"] = $pqId;
+    include('matrixQuery.php');
+    if ($pqId > 0 && isset($value) && filter_var($value, FILTER_VALIDATE_FLOAT) !== false) {
+
+      // multiply main variable value by probability
+      ${$name.'_p'} = $value + 1;
+      ${$name} *= ${$name.'_p'} / 10;
+
+    } else {
+
+      ${$name.'_p'} = NULL;
+
+    }
+
+  } else {
+
+    ${$name} = NULL;
+    ${$name.'_w'} = NULL;
+    ${$name.'_p'} = NULL;
+
+  }
+
+}
+
+/*
+   ======================================================================================
+*/
+
+function calculate_score ($res, $save_to, $vars, $factor, $scale) {
+
+  if ($res == 'xxxx') $debug = true;
+  else $debug = false;
+
+  global $config, $_POST;
+  global ${$res.'_score'}, ${$res.'_score_w'};
+  foreach ($vars as $var)
+    global ${$var}, ${$var.'_w'}, ${$var.'_p'};
+
+  $n = count($vars);
+  if ($debug) file_put_contents ('_response.txt', PHP_EOL . '$n = ' . count($vars));
+
+  // assume values of NULL should be removed, but inclue 0 values
+  $arr = [];
+  for ($i = 0; $i < $n; $i++) {
+    $var = $vars[$i];
+    if (!is_null(${$var})) $arr[] = $var;
+    if ($debug) file_put_contents ('_response.txt', PHP_EOL . '$' . $var . ' = ' . ${$var}, FILE_APPEND);
+    if ($debug) file_put_contents ('_response.txt', PHP_EOL . '$' . $var . '_w = ' . ${$var.'_w'}, FILE_APPEND);
+    if ($debug) file_put_contents ('_response.txt', PHP_EOL . '$' . $var . '_p = ' . ${$var.'_p'}, FILE_APPEND);
+  }
+
+  $n = count($arr);
+  if ($debug) file_put_contents ('_response.txt', PHP_EOL . '$n ' . $n, FILE_APPEND);
+
+  if ($n < 1) {
+
+    $score = NULL;
+    $w = NULL;
+
+  } else {
+
+    $w = 0;
+    foreach ($arr as $var) $w += ${$var.'_w'};
+    $w /= $n;
+    if ($debug) file_put_contents ('_response.txt', PHP_EOL . '$w = ' . $w, FILE_APPEND);
+
+    $score = 0;
+    foreach ($arr as $var) $score += ${$var} * ${$var.'_w'} / $w;
+    if ($debug) file_put_contents ('_response.txt', PHP_EOL . '$score = ' . $score, FILE_APPEND);
+    $score *= $scale / ($n * $factor);
+    $score = intval($score);
+    if ($debug) file_put_contents ('_response.txt', PHP_EOL . '$score rescaled = ' . $score, FILE_APPEND);
+
+  }
+
+  ${$res.'_score'} = $score;
+  ${$res.'_score_w'} = $w;
+  if ($debug) file_put_contents ('_response.txt', PHP_EOL . '$' . $res.'_score' . ' = ' . ${$res.'_score'}, FILE_APPEND);
+  if ($debug) file_put_contents ('_response.txt', PHP_EOL . '$' . $res.'_score_w' . ' = ' . ${$res.'_score_w'}, FILE_APPEND);
+
+  // save
+  $_POST["id4"] = (int)$save_to;
+  $_POST["updVal"] = $score;
+  include('matrixSave.php');
+
+}
+
 /*
    ======================================================================================
 */

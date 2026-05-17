@@ -16,7 +16,8 @@ getChat()
 
 var areaScroll = document.getElementById("area-scroll");
 
-model_id = "3";
+// get model_id from url or default to 3
+model_id = urlParams.get('model_id') || "3";
 const idModel = get(".model_id");
 idModel.textContent = model_id;
 
@@ -234,8 +235,9 @@ function sendMsg(msg) {
         .then(text => {
           div.innerHTML = text.replace(/(?:\r\n|\r|\n)/g, '<br>');
           var res = div.innerHTML;
-          if (res.includes("```")) {
-            window.location.href = "";
+          // reload page if formatted code or markdown included
+          if (res.includes("```") || res.includes("**") || res.includes("##")) {
+            window.location.href = 'fi.php?chat_id=' + CHAT_ID + '&model_id=' + model_id;
             // var lang = 'html';
             // if (res.includes("```javascript")) lang = 'javascript';
             // var regex = /```([^`]+)```/g;

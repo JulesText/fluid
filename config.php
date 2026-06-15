@@ -12,11 +12,10 @@ include_once('config_private.php');
 /**********  Non-private settings  ********/
 /******************************************/
 
-// $config['timezone'] = 'Australia/Canberra';
+$config['timezone'] = 'Australia/Canberra';
 // $config['timezone'] = 'America/New_York';
-// $config['timezone'] = 'Africa/Casablanca';
-// $config['timezone'] = 'Africa/Dakar';
-$config['timezone'] = 'Africa/Kampala';
+// $config['timezone'] = 'Africa/Kampala';
+// $config['timezone'] = 'Europe/London';
 date_default_timezone_set($config['timezone']);
 // die('date_default_timezone_set: ' . date_default_timezone_get());
 

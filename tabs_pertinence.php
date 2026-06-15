@@ -10,6 +10,7 @@ function pertinent() {
     var windows = [
         'fi.php', // last window
         'reportContext.php?notContext=25',
+        'reportLists.php?listId=172&type=c',
         'listItems.php?tickler=false&type=a&contextId=25&notspacecontext=true&dueonly=true&liveparents=*',
         'index.php',
         // 'reportLists.php?listId=118&type=c',

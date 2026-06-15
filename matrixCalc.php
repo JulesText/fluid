@@ -106,7 +106,7 @@ $attributes = query("getqualities",$config,$values,$sort);
 $unqhoursIds = array ();
 
 // holds ids for all variables of years on timeline
-$unqtimelineIds = array ();
+$unqtimelineIds = array (0 => NULL); // include key value for 0 as used in loop
 
 // holds ids for all variables with scores
 $scoreqIds = array();
@@ -121,6 +121,8 @@ $scoreweights = array();
 $optim = false;
 
 foreach ((array) $attributes as $attr) {
+
+    // file_put_contents('_response.txt', $attr['format'] . PHP_EOL, FILE_APPEND);
 
     // variable to flag when travel hours are being counted, and treat as brainless
     // attr: Travel / Year (int)
@@ -685,7 +687,15 @@ foreach ((array) $attributes as $attr) {
                     if (!$someday && !$complete) { $active = 1; } else { $active = 0; }
 
                     // update timeline array value, ignoring nil values
-                    if ($tlinevala !== 0 || $tlinevalb !== 0) $timeline[] = array('type' => $item['itemType'], 'visId' => $visn['itemId'], 'id' => $item['itemId'], 'attrId' => $unqtimelineIds[$yr], 'valuea' => $tlinevala, 'valueb' => $tlinevalb, 'active' => $active);
+                    if ($tlinevala !== 0 || $tlinevalb !== 0) $timeline[] = array(
+                        'type' => $item['itemType'],
+                        'visId' => $visn['itemId'],
+                        'id' => $item['itemId'],
+                        'attrId' => $unqtimelineIds[$yr],
+                        'valuea' => $tlinevala,
+                        'valueb' => $tlinevalb,
+                        'active' => $active
+                      );
 
                     // loop to next year on timeline
                     $yr++;

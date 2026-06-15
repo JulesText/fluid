@@ -63,9 +63,11 @@ if($cnt>1) {
         $nexttitle    =$result[$next]['title'];
     } else {
         $previtem = query("selectitemtitle",$config,array('itemId'=>$previousId),$sort);
-        $previoustitle=$previtem[0]['title'];
+        if (is_array($previtem)) $previoustitle = $previtem[0]['title'];
+        else $previoustitle = '';
         $nextitem = query("selectitemtitle",$config,array('itemId'=>$nextId),    $sort);
-        $nexttitle    =$nextitem[0]['title'];
+        if (is_array($nextitem)) $nexttitle = $nextitem[0]['title'];
+        else $nexttitle = '';
     }
 }
 

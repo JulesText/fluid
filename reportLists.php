@@ -115,7 +115,7 @@ $( document ).ready(function() {
 	?>CatCode: <?php echo makeclean($row['sortBy']);
 	if ($check) {
 	    $effort = $row['effort']
-	?>, Frequency: <?php echo makeclean($row['frequency']); ?> / Year, Effort: <?php echo $effort; ?> Hours
+  ?>, Frequency: <?php echo makeclean($row['frequency']); ?> / Year, Effort: <?php echo $effort; ?> Hours, <?php echo makeclean($row['effort_day']); ?> Hours / day
     <?php
       if ($scored) {
         $row['instanceId'] = $values['instanceId'];

@@ -1081,7 +1081,7 @@ function getsql($config,$values,$sort,$querylabel) {
 						cl.`premiseA`,cl.`premiseB`,cl.`conclusion`
             ,cl.`behaviour`, cl.`standard`, cl.`conditions`, cl.`metaphor`
             , cl.`categoryId`, cl.`hyperlink`
-            , cl.`sortBy`, cl.`frequency`, cl.`effort`, cl.`scored`
+            , cl.`sortBy`, cl.`frequency`, cl.`effort`, cl.`effort_day`, cl.`scored`
             , cl.`menu`, cl.`prioritise`, cl.`sortItems`, cl.`thrs_score`, cl.`thrs_obs`
             , c.`category`
 				FROM `". $config['prefix'] ."checklist` as cl

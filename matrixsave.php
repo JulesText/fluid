@@ -104,7 +104,7 @@ if ($result->rowCount() > 0) {
 }
 
 if ($i) {
-    $query = "UPDATE " . $_POST["table"] . " SET `" . $_POST["updCol"] . "` = " . ($_POST["updVal"] == 'NULL' ? "NULL" : "'" . $updVal . "'") . " WHERE 1 = 1 ";
+    $query = "UPDATE " . $_POST["table"] . " SET `" . $_POST["updCol"] . "` = " . ($_POST["updVal"] == 'NULL' ? "''" : "'" . $updVal . "'") . " WHERE 1 = 1 ";
     if ($_POST["pid1"]) $query .= " AND `" . $_POST["pcol1"] . "` = '" . $_POST["pid1"] . "'";
     if ($_POST["id2"] !== 'undefined') $query .= " AND `" . $_POST["col2"] . "` = '" . $_POST["id2"] . "'";
     if ($_POST["id3"] !== 'undefined') $query .= " AND `" . $_POST["col3"] . "` = '" . $_POST["id3"] . "'";

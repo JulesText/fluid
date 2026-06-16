@@ -32,7 +32,7 @@ foreach ((array) $fsets as $fset) {
             // remove leading and trailing spaces
             $fquery .= "UPDATE `" . $ftable . "` SET `" . $ffield . "` = TRIM(`" . $ffield . "`); \n";
             // ucase else scase
-            if (in_array($i, $fucases)) { 
+            if (in_array($i, $fucases)) {
                 $fquery .= "UPDATE `" . $ftable . "` SET `" . $ffield . "` = UCASE(`" . $ffield . "`); \n";
             } else {
                 $fquery .= "UPDATE `" . $ftable . "` SET `" . $ffield . "` = CONCAT(UCASE(LEFT(`" . $ffield . "`,1)),SUBSTRING(`" . $ffield . "`, 2)); \n";
@@ -50,4 +50,4 @@ $fdb = NULL; // destroy connection
 
 //echo round(1000 * (microtime(true) - $t), 0); // est. 25ms separately, but much more if in other code
 
-?>
+// php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

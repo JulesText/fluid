@@ -52,7 +52,7 @@ if (count($result1) > 0) {
 }
 
 $values['effort'] = ceil($effort * $frequency / 60);
-$values['effort_day'] = ceil($effort / 60);
+$values['effort_day'] = $effort / 60;
 
 $result = query("updatechecklist",$config,$values,$sort);
 

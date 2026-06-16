@@ -110,10 +110,12 @@ $db = new PDO('mysql:host=' . $config["host"] . ';dbname=' . $config["db"], $con
 //
 
 // select impact scale score, ignore null
-$impact_scale = max(clean_array([$extinction_reduction, $global_economy, $poorest_income, $healthy_years]));
+$arr = clean_array([$extinction_reduction, $global_economy, $poorest_income, $healthy_years]);
+$impact_scale = (count($arr) > 0) ? max($arr) : NULL;
 $impact_scale_w = clean_mean([$extinction_reduction_w, $global_economy_w, $poorest_income_w, $healthy_years_w]);
 // select impact neglectedness score
-$impact_neglectedness = min(clean_array([$annual_spending, $staff_numbers, $supporter_numbers]));
+$arr = clean_array([$annual_spending, $staff_numbers, $supporter_numbers]);
+$impact_neglectedness = (count($arr) > 0) ? min($arr) : NULL;
 $impact_neglectedness_w = clean_mean([$annual_spending_w, $staff_numbers_w, $supporter_numbers_w]);
 // calculate score (max raw 21 standardise to 99 * 3 units to sum not average)
 $vars = ['impact_scale', 'impact_neglectedness', 'impact_solvability'];

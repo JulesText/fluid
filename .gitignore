@@ -25,6 +25,9 @@ dt/*.json
 media/
 
 # unwanted system files created by osx or windows
+# VS code #
+.vscode
+.history
 # Compiled source #
 *.com
 *.class

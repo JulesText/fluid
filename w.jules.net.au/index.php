@@ -1,4 +1,6 @@
 <?php
+// 0. setup router with static ip $home_ip and map port 8443 to fixed local ip of machine with different port running DEVONthink server. Use a self-signed SSL certificate on the DEVONthink server and import it into your office browser to avoid SSL warnings. This script will act as a secure gateway to your home DEVONthink server
+
 // 1. CONFIGURE YOUR SECURITY PASSPHRASE
 $secret_password = "xxx";
 

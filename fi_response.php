@@ -6,17 +6,29 @@ $comment_id = insert_comment($_POST['chat_id'], $_POST['msg'], $db);
 
 $result = get_chat($_POST['chat_id'], $db);
 
-// format for API
-$history[] = [
+$system_message = [
   'role' => 'system'
   , 'content' => 'Respond with plain text and no markdown, headings, bold text, emojis, or decorative formatting. Allow code blocks and plain tables.'
-  ];
-foreach ($result as $row) {
-  $history[] = ['role' => 'user', 'content' => $row['comment_human']];
-  $history[] = ['role' => 'assistant', 'content' => $row['comment_ai']];
+];
+
+// Keep the newest complete exchanges within an approximate four-characters-per-token budget.
+$history_char_limit = $config['fir_history_max_tkn'] * 4;
+$history_chars = strlen($system_message['content']);
+$recent_history = [];
+foreach (array_reverse($result) as $row) {
+  $row_chars = strlen((string) $row['comment_human']) + strlen((string) $row['comment_ai']);
+  if (!empty($recent_history) && $history_chars + $row_chars > $history_char_limit) break;
+  $recent_history[] = $row;
+  $history_chars += $row_chars;
 }
-// remove the last empty assistant comment
-array_pop($history);
+
+$history[] = $system_message;
+foreach (array_reverse($recent_history) as $row) {
+  $history[] = ['role' => 'user', 'content' => $row['comment_human']];
+  if ($row['comment_ai'] !== NULL && $row['comment_ai'] !== '') {
+    $history[] = ['role' => 'assistant', 'content' => $row['comment_ai']];
+  }
+}
 
 $model_id = $_POST['model_id'];
 if ($model_id == '5') {

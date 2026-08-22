@@ -2,14 +2,14 @@
 
 /* _DRY_RUN = false | true - dry run won't change the database, but will
   mime all the actions that would be done: use _DEBUG true to see these */
-define("_DRY_RUN",false);
+define("_DRY_RUN", false);
 
-define("_ALLOWUNINSTALL",false); // NOT YET ACTIVE
+define("_ALLOWUNINSTALL", false); // NOT YET ACTIVE
 
 require_once("headerDB.inc.php");
 require_once('admin.inc.php');
 
-define("_DEBUG",true && ($config['debug'] & _GTD_DEBUG));
+define("_DEBUG", true && ($config['debug'] & _GTD_DEBUG));
 
 /*
 TOFIX: scan for available installations
@@ -27,74 +27,83 @@ mysql> INSERT INTO t SELECT * FROM t AS t1;
 ------------------------------------------------------------
 
 */
-$action=(isset($_GET['action']))?$_GET['action']:'validate';
-$showInstallations=true;
-$showCommands=true;
-$prefix=(isset($_GET['prefix']))?$_GET['prefix']:$config['prefix'];
-if (!checkPrefix($prefix)) $prefix='';
-$availableActions=array('validate','repair','backup');
-if (_ALLOWUNINSTALL) $availableActions[]='delete';
+$action = (isset($_GET['action'])) ? $_GET['action'] : 'validate';
+$showInstallations = true;
+$showCommands = true;
+$prefix = (isset($_GET['prefix'])) ? $_GET['prefix'] : $config['prefix'];
+if (!checkPrefix($prefix)) {
+    $prefix = '';
+}
+$availableActions = array('validate','repair','backup');
+if (_ALLOWUNINSTALL) {
+    $availableActions[] = 'delete';
+}
 
 switch ($action) {
     case 'backup':
-        $backup=backupData($prefix);
+        $backup = backupData($prefix);
         break;
     case 'delete':
-        if (!_ALLOWUNINSTALL) break;
+        if (!_ALLOWUNINSTALL) {
+            break;
+        }
         break;
     case 'none':
         break;
     case 'repair':
-        $toterrs=0;
-        $pre=checkErrors($prefix);
+        $toterrs = 0;
+        $pre = checkErrors($prefix);
         fixData($prefix);
-        $post=checkErrors($prefix);
-        $repair="<h2>Results of repairs on installation with prefix '$prefix'</h2>\n";
-        $repair.="<p>Repair complete.</p>";
-        if ($post['totals']['orphans'])
-            $repair.="<p>Now check <a href='orphans.php'>orphans</a>.</p>\n";
-        $repair.="<p>Check for <a href='listItems.php?type=p'>projects</a> that have no actions, or no next actions.</p>\n";
-        $repair.="<table summary='result of repairs'><thead>\n<tr><th>Before</th><th>After</th><th>&nbsp;</th></tr></thead><tbody>";
-        foreach($post['totals'] as $key=>$val)
-            $repair .="<tr><td>{$pre['totals'][$key]}</td><td>$val</td><th>$key</th></tr>\n";
-        foreach($post['errors'] as $key=>$val) {
-            $toterrs+=(int) $val;
-            $preval=$pre['errors'][$key];
-            $class1=($preval)?" class='warnresult' ":" class='goodresult' ";
-            if ($val)
-                $class2=" class='warnresult' ";
-            else if ($preval)
-                $class2=" class='goodresult' ";
-            else {
-                $class1='';
-                $class2='';
+        $post = checkErrors($prefix);
+        $repair = "<h2>Results of repairs on installation with prefix '$prefix'</h2>\n";
+        $repair .= "<p>Repair complete.</p>";
+        if ($post['totals']['orphans']) {
+            $repair .= "<p>Now check <a href='orphans.php'>orphans</a>.</p>\n";
+        }
+        $repair .= "<p>Check for <a href='listItems.php?type=p'>projects</a> that have no actions, or no next actions.</p>\n";
+        $repair .= "<table summary='result of repairs'><thead>\n<tr><th>Before</th><th>After</th><th>&nbsp;</th></tr></thead><tbody>";
+        foreach ($post['totals'] as $key => $val) {
+            $repair .= "<tr><td>{$pre['totals'][$key]}</td><td>$val</td><th>$key</th></tr>\n";
+        }
+        foreach ($post['errors'] as $key => $val) {
+            $toterrs += (int) $val;
+            $preval = $pre['errors'][$key];
+            $class1 = ($preval) ? " class='warnresult' " : " class='goodresult' ";
+            if ($val) {
+                $class2 = " class='warnresult' ";
+            } elseif ($preval) {
+                $class2 = " class='goodresult' ";
+            } else {
+                $class1 = '';
+                $class2 = '';
             }
             $repair .= "<tr><td $class1>{$preval}</td><td $class2>$val</td><td $class2>$key</td></tr>\n";
         }
-        $repair .="</tbody></table>\n";
-        $action=($toterrs)?'repair':'backup';
+        $repair .= "</tbody></table>\n";
+        $action = ($toterrs) ? 'repair' : 'backup';
         break;
     case 'validate':
-        $result=checkErrors($prefix);
-            $validate="<h2>Validation checks on installation with prefix $prefix</h2>";
-        if ($result===false) {
-            $validate.="<p class='error'>No database with prefix '$prefix'</p>\n";
-            $prefix=$config['prefix'];
+        $result = checkErrors($prefix);
+            $validate = "<h2>Validation checks on installation with prefix $prefix</h2>";
+        if ($result === false) {
+            $validate .= "<p class='error'>No database with prefix '$prefix'</p>\n";
+            $prefix = $config['prefix'];
         } else {
-            $toterrs=0;
-            $validate.="<p>Number of inconsistencies in the gtd-php data-set. NB some errors may overlap.</p>\n"
-                ."<table summary='validation checks'><thead>\n";
-            foreach($result['totals'] as $key=>$val)
-                $validate .="<tr><td>$val</td><th>$key</th></tr>\n";
-            $validate .="</thead><tbody>\n";
-            foreach($result['errors'] as $key=>$val) {
-                $class=($val)?" class='warnresult' ":" class='goodresult' ";
-                $validate .= "<tr><td $class>$val</td><td $class>$key</td></tr>\n";
-                $toterrs+=(int) $val;
+            $toterrs = 0;
+            $validate .= "<p>Number of inconsistencies in the gtd-php data-set. NB some errors may overlap.</p>\n"
+                . "<table summary='validation checks'><thead>\n";
+            foreach ($result['totals'] as $key => $val) {
+                $validate .= "<tr><td>$val</td><th>$key</th></tr>\n";
             }
-            $validate .="</tbody></table>\n";
+            $validate .= "</thead><tbody>\n";
+            foreach ($result['errors'] as $key => $val) {
+                $class = ($val) ? " class='warnresult' " : " class='goodresult' ";
+                $validate .= "<tr><td $class>$val</td><td $class>$key</td></tr>\n";
+                $toterrs += (int) $val;
+            }
+            $validate .= "</tbody></table>\n";
         }
-        $action=($toterrs)?'repair':'backup';
+        $action = ($toterrs) ? 'repair' : 'backup';
         break;
 }
 /* ------------------------------------------------------------------------
@@ -106,10 +115,12 @@ switch ($action) {
 <?php require_once("headerMenu.inc.php"); ?>
 <div id='main'>
 <h1>gtd-php Admin Tasks</h1>
-<?php if ($action==='delete') { ?>
+<?php if ($action === 'delete') { ?>
     <h2>Delete installation</h2>
 <?php }
-if (!empty($validate)) echo $validate;
+if (!empty($validate)) {
+    echo $validate;
+}
 
 if ($showInstallations || $showCommands) { ?>
     <h2>Action</h2>
@@ -126,7 +137,7 @@ if ($showInstallations || $showCommands) { ?>
         <div class='formrow'>
             <?php foreach ($availableActions as $doit) { ?>
                 <label class='notfirst left'><?php echo $doit; ?></label>
-                <input type='radio' name='action' value=<?php echo "'$doit'",($doit===$action)?" checked='checked' ":''; ?> />
+                <input type='radio' name='action' value=<?php echo "'$doit'",($doit === $action) ? " checked='checked' " : ''; ?> />
             <?php } ?>
             <input type='submit' name='submit' value='Go' />
         </div>
@@ -134,35 +145,35 @@ if ($showInstallations || $showCommands) { ?>
         <div class='formrow'>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="admin.php?comprefs=delete">Go</a>
             <?php
-                $q="SELECT * FROM `{$prefix}items` AS `i`
+                $q = "SELECT * FROM `{$prefix}items` AS `i`
                     JOIN `{$prefix}itemattributes` AS `ia`  USING (`itemId`)
                     JOIN `{$prefix}itemstatus`     AS `its` USING (`itemId`)
                     WHERE `its`.`dateCompleted` IS NOT NULL
                         AND ia.`type` = 'r'";
                 $refscomp = query($q);
                 echo count($refscomp);
-                if (isset($_GET['comprefs']) && $_GET['comprefs'] ==='delete') {
-                    foreach ($refscomp as $ref) {
-                        $values['itemId'] = $ref['itemId'];
-                        query("deleteitemstatus",$config,$values);
-                    	query("deleteitemattributes",$config,$values);
-                    	query("deleteitem",$config,$values);
-                    	query("deletelookup",$config,$values);
-                    	query("deletelookupparents",$config,$values);
-                    	//removeNextAction();
-                    	query("deletenextactionparents",$config,$values);
-                    	$values['itemType'] = $ref['type'];
-                      $values['filterquery'] = '';
-                    	query("deletequalities",$config,$values);
-                    }
+            if (isset($_GET['comprefs']) && $_GET['comprefs'] === 'delete') {
+                foreach ($refscomp as $ref) {
+                    $values['itemId'] = $ref['itemId'];
+                    query("deleteitemstatus", $config, $values);
+                    query("deleteitemattributes", $config, $values);
+                    query("deleteitem", $config, $values);
+                    query("deletelookup", $config, $values);
+                    query("deletelookupparents", $config, $values);
+                    //removeNextAction();
+                    query("deletenextactionparents", $config, $values);
+                    $values['itemType'] = $ref['type'];
+                    $values['filterquery'] = '';
+                    query("deletequalities", $config, $values);
                 }
+            }
             ?>
         </div>
         <h3>Delete orphaned actions/refs:</h3>
         <div class='formrow'>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="admin.php?orphans=delete">Go</a>
             <?php
-                $q="SELECT * FROM `{$prefix}items` AS `i`
+                $q = "SELECT * FROM `{$prefix}items` AS `i`
                         JOIN `{$prefix}itemattributes` AS `ia`  USING (`itemId`)
                         JOIN `{$prefix}itemstatus`     AS `its` USING (`itemId`)
                         WHERE (ia.`type` IN ('a','r','w')
@@ -170,27 +181,29 @@ if ($showInstallations || $showCommands) { ?>
                             ) OR ia.`type`='' OR ia.`type` IS NULL)";
                 $orphs = query($q);
                 echo count($orphs);
-                if (isset($_GET['orphans']) && $_GET['orphans'] ==='delete') {
-                    foreach ($orphs as $orph) {
-                        $values['itemId'] = $orph['itemId'];
-                        query("deleteitemstatus",$config,$values);
-                    	query("deleteitemattributes",$config,$values);
-                    	query("deleteitem",$config,$values);
-                    	query("deletelookup",$config,$values);
-                    	query("deletelookupparents",$config,$values);
-                    	//removeNextAction();
-                    	query("deletenextactionparents",$config,$values);
-                    	$values['itemType'] = $orph['type'];
-                    	query("deletequalities",$config,$values);
-                    }
+            if (isset($_GET['orphans']) && $_GET['orphans'] === 'delete') {
+                foreach ($orphs as $orph) {
+                    $values['itemId'] = $orph['itemId'];
+                    query("deleteitemstatus", $config, $values);
+                    query("deleteitemattributes", $config, $values);
+                    query("deleteitem", $config, $values);
+                    query("deletelookup", $config, $values);
+                    query("deletelookupparents", $config, $values);
+                    //removeNextAction();
+                    query("deletenextactionparents", $config, $values);
+                    $values['itemType'] = $orph['type'];
+                    query("deletequalities", $config, $values);
                 }
+            }
             ?>
         </div>
     <?php } ?>
     </form>
-<?php
+    <?php
 }
-if (!empty($repair)) echo $repair;
+if (!empty($repair)) {
+    echo $repair;
+}
 if (!empty($backup)) {
     ?><h2>Backup of installation with prefix '<?php echo $prefix; ?>'</h2>
     <textarea cols="120" id="cursorHere"rows="10"><?php echo $backup; ?></textarea>

@@ -8,13 +8,14 @@
             <input type='text' name='searcherneedle' id='searcherneedle' onkeyup='javascript:gtd_refinesearch(this);' />
             in the titles of
         <br /><?php
-            foreach ($allowedSearchTypes as $key=>$value)
-                echo "&nbsp;&nbsp;<label for='radio$key'>$value</label>\n"
-                    ,"<input type='radio' name='qtype' class='notfirst' value='$key' id='radio$key' "
-                    ," onclick='javascript:gtd_refinesearch(this);' "
-                        ,($key===$values['ptype'])?' checked="checked" ':''
-                    ," />&nbsp;\n";
-            ?><input type='hidden' name='returntype' value='table' />
+        foreach ($allowedSearchTypes as $key => $value) {
+            echo "&nbsp;&nbsp;<label for='radio$key'>$value</label>\n"
+                ,"<input type='radio' name='qtype' class='notfirst' value='$key' id='radio$key' "
+                ," onclick='javascript:gtd_refinesearch(this);' "
+                    ,($key === $values['ptype']) ? ' checked="checked" ' : ''
+                ," />&nbsp;\n";
+        }
+        ?><input type='hidden' name='returntype' value='table' />
         </p>
         <?php /*
         <table id='searchresults' summary='search results' class='datatable'>

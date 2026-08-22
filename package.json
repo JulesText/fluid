@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "scripts": {
+    "format:frontend": "prettier --write \"**/*.{js,css}\" && prettier --write --parser html \"tabs_*.php\"",
+    "check:frontend": "prettier --check \"**/*.{js,css}\" && prettier --check --parser html \"tabs_*.php\""
+  },
+  "devDependencies": {
+    "acorn": "^8.18.0",
+    "prettier": "^3.6.2"
+  }
+}

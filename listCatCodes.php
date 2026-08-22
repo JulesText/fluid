@@ -1,7 +1,7 @@
 <?php
 include_once('header.php');
 
-$codes = query("getcatcodedetails",$config,$values,$sort);
+$codes = query("getcatcodedetails", $config, $values, $sort);
 
 require_once("headerHtml.inc.php");
 ?>
@@ -14,13 +14,14 @@ require_once("headerHtml.inc.php");
         </tr>
         </thead>
         <tbody><?php foreach ($codes as $code) {
-                    if ($code['parentId'] == NULL) {
-                      echo '<tr><td>&nbsp;</td><td></td></tr>';
-                      echo '<tr><td></td>';
-                    } else
-                      echo '<tr><td>' . $code['sortBy'] . '</td>';
+            if ($code['parentId'] == null) {
+                echo '<tr><td>&nbsp;</td><td></td></tr>';
+                echo '<tr><td></td>';
+            } else {
+                echo '<tr><td>' . $code['sortBy'] . '</td>';
+            }
                     echo '<td>' . $code['title'] . '</td></tr>';
-                  } ?>
+               } ?>
         </tbody>
     </table>
 <?php

@@ -1,4 +1,5 @@
 <?php
+
 require_once('headerDB.inc.php');
 
 // file_put_contents ('_response.txt', 'table: ' . $_POST["table"]);
@@ -12,13 +13,16 @@ require_once('headerDB.inc.php');
 // file_put_contents ('_response.txt', PHP_EOL . 'id5: ' . $_POST["id5"], FILE_APPEND);
 // file_put_contents ('_response.txt', PHP_EOL . 'col5: ' . $_POST["col5"], FILE_APPEND);
 
-if ($_POST["id5"] == 'c') $is_cl = TRUE;
-else $is_cl = FALSE;
+if ($_POST["id5"] == 'c') {
+    $is_cl = true;
+} else {
+    $is_cl = false;
+}
 
 // check if unqhoursresearch, Hours Research exists
 $_POST["id4"] = 21;
 include('matrixQuery.php');
-$unqhoursresearch = (isset($value) && ctype_digit($value)) ? $value : NULL;
+$unqhoursresearch = (isset($value) && ctype_digit($value)) ? $value : null;
 // get p if exists
 $_POST["id4"] = 22;
 include('matrixQuery.php');
@@ -36,7 +40,7 @@ $unqeffortday_p = (isset($value) && ctype_digit($value)) ? $value + 1 : 10;
 // check if unqtravelday, Travel / Day exists
 $_POST["id4"] = 517;
 include('matrixQuery.php');
-$unqtravelday = (isset($value) && ctype_digit($value)) ? $value : NULL;
+$unqtravelday = (isset($value) && ctype_digit($value)) ? $value : null;
 // get p if exists
 $_POST["id4"] = 518;
 include('matrixQuery.php');
@@ -44,13 +48,13 @@ $unqtravelday_p = (isset($value) && ctype_digit($value)) ? $value + 1 : 10;
 
 // check if unqnumdays, Days / Year exists
 if ($is_cl) {
-  $values['listId'] = $_POST["id3"];
-  $result = query("selectchecklist",$config,$values,$sort);
-  $unqnumdays = $result[0]['frequency'];
+    $values['listId'] = $_POST["id3"];
+    $result = query("selectchecklist", $config, $values, $sort);
+    $unqnumdays = $result[0]['frequency'];
 } else {
-  $_POST["id4"] = 519;
-  include('matrixQuery.php');
-  $unqnumdays = (isset($value) && ctype_digit($value)) ? $value : NULL;
+    $_POST["id4"] = 519;
+    include('matrixQuery.php');
+    $unqnumdays = (isset($value) && ctype_digit($value)) ? $value : null;
 }
 // get p if exists
 $_POST["id4"] = 520;
@@ -94,66 +98,60 @@ $db = new PDO('mysql:host=' . $config["host"] . ';dbname=' . $config["db"], $con
 
 // calculation for unqhours, Effort / Year
 if (
-  isset($unqnumdays)
-  && isset($unqeffortday)
-  && !$is_cl // this is hardcoded, should not save 511 to lookupqualities for checklists type c
+    isset($unqnumdays)
+    && isset($unqeffortday)
+    && !$is_cl // this is hardcoded, should not save 511 to lookupqualities for checklists type c
 ) {
-
-  $_POST["id4"] = 511;
-  $_POST["updVal"] = intval((($unqnumdays * 10 / $unqnumdays_p) * ($unqeffortday * 10 / $unqeffortday_p)) + ($unqhoursresearch * 10 / $unqhoursresearch_p));
-  if (filter_var($_POST["updVal"], FILTER_VALIDATE_FLOAT) == false) $_POST["updVal"] = 0;
-  include('matrixSave.php');
-
-  if ($unqnumdays_p !== 10 || $unqeffortday_p !== 10) {
-    $_POST["id4"] = 512;
-    $_POST["updVal"] = intval(($unqnumdays_p + $unqeffortday_p - 2) / 2);
+    $_POST["id4"] = 511;
+    $_POST["updVal"] = intval((($unqnumdays * 10 / $unqnumdays_p) * ($unqeffortday * 10 / $unqeffortday_p)) + ($unqhoursresearch * 10 / $unqhoursresearch_p));
+    if (filter_var($_POST["updVal"], FILTER_VALIDATE_FLOAT) == false) {
+        $_POST["updVal"] = 0;
+    }
     include('matrixSave.php');
-  }
 
-} else if (!$is_cl) {
-  $_POST["id4"] = 511;
-  $_POST["updVal"] = 0;
-  include('matrixSave.php');
+    if ($unqnumdays_p !== 10 || $unqeffortday_p !== 10) {
+        $_POST["id4"] = 512;
+        $_POST["updVal"] = intval(($unqnumdays_p + $unqeffortday_p - 2) / 2);
+        include('matrixSave.php');
+    }
+} elseif (!$is_cl) {
+    $_POST["id4"] = 511;
+    $_POST["updVal"] = 0;
+    include('matrixSave.php');
 }
 
 // calculation for unqhourstravel, Travel / Year
 if (isset($unqnumdays) && isset($unqtravelday)) {
-
-  $_POST["id4"] = 513;
-  $_POST["updVal"] = intval(($unqnumdays * 10 / $unqnumdays_p) * ($unqtravelday * 10 / $unqtravelday_p));
-  if (filter_var($_POST["updVal"], FILTER_VALIDATE_FLOAT) == false) $_POST["updVal"] = 0;
-  include('matrixSave.php');
-
-  if (!$is_cl && ($unqnumdays_p !== 10 || $unqtravelday_p !== 10)) {
-    $_POST["id4"] = 514;
-    $_POST["updVal"] = intval(($unqnumdays_p + $unqtravelday_p - 2) / 2);
+    $_POST["id4"] = 513;
+    $_POST["updVal"] = intval(($unqnumdays * 10 / $unqnumdays_p) * ($unqtravelday * 10 / $unqtravelday_p));
+    if (filter_var($_POST["updVal"], FILTER_VALIDATE_FLOAT) == false) {
+        $_POST["updVal"] = 0;
+    }
     include('matrixSave.php');
-  }
 
+    if (!$is_cl && ($unqnumdays_p !== 10 || $unqtravelday_p !== 10)) {
+        $_POST["id4"] = 514;
+        $_POST["updVal"] = intval(($unqnumdays_p + $unqtravelday_p - 2) / 2);
+        include('matrixSave.php');
+    }
 } else {
-
-  $_POST["id4"] = 513;
-  $_POST["updVal"] = 0;
-  include('matrixSave.php');
-
+    $_POST["id4"] = 513;
+    $_POST["updVal"] = 0;
+    include('matrixSave.php');
 }
 
 // calculation for Cost / Year
 if (isset($unqnumdays) && ($unqcostbasday > 0 || $unqcostaccday > 0 || $coststart > 0 || $costextras > 0)) {
-
-  $_POST["id4"] = 622;
-  $_POST["updVal"] = intval(
-                          ($unqnumdays * 10 / $unqnumdays_p) * ($unqcostbasday * 10 / $unqcostbasday_p)
+    $_POST["id4"] = 622;
+    $_POST["updVal"] = intval(
+        ($unqnumdays * 10 / $unqnumdays_p) * ($unqcostbasday * 10 / $unqcostbasday_p)
                          + ($unqnumdays * 10 / $unqnumdays_p) * ($unqcostaccday * 10 / $unqcostaccday_p)
                          + $coststart
                          + $costextras
-                        );
-  include('matrixSave.php');
-
+    );
+    include('matrixSave.php');
 }
 
 // destroy connection
 
-$db = NULL;
-
-?>
+$db = null;

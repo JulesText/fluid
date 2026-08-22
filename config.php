@@ -43,7 +43,7 @@ $config['fir_model_3_token_word'] = 'max_tokens';
 $config['fir_model_3_temp'] = 0; # 0 for api determined, 0.1 is deterministic, 0.9 is random
 $config['fir_history_max_tkn'] = 8000; # approximate input-token limit for recent chat history
 $config['fir_max_tkn'] = 1500; # default if word limit not set
-$config['stream'] = FALSE; # not operational
+$config['stream'] = false; # not operational
 
 /*********  password filter ************/
 
@@ -57,8 +57,11 @@ $file = fopen("config_pass_off_to.txt", "r");
 $config['pass_off_to'] = intval(fgets($file));
 fclose($file);
 
-if ($config['pass_off_to'] > 0 && $config['time_now'] < $config['pass_off_to']) $config['password_on'] = FALSE;
-else $config['password_on'] = TRUE;
+if ($config['pass_off_to'] > 0 && $config['time_now'] < $config['pass_off_to']) {
+    $config['password_on'] = false;
+} else {
+    $config['password_on'] = true;
+}
 
 $config['pass_back_on'] = date('Y-m-d H:i', $config['pass_off_to']);
 
@@ -68,16 +71,16 @@ $config['pass_back_on'] = date('Y-m-d H:i', $config['pass_off_to']);
 // The following settings change settings for the user interface.
 // These can be left at their default values, or changed if you have a different preference.
 
-$config["title"]= 'Intertext'; // site name (appears at the top of each page)
+$config["title"] = 'Intertext'; // site name (appears at the top of each page)
 $config["datemask"] = 'Y-m-d'; // date format - required - affects sorting
 $config["datemaskYr"] = 'Y-m'; // date format - required - affects sorting
 $config["theme"] = 'default'; //default
-$config["title_suffix"]	= false; // true | false - add filename to title tag
+$config["title_suffix"] = false; // true | false - add filename to title tag
 $config["trimLength"] = 2398;     // max visible length of descriptions when listing items
 $config["trimLengthInReport"] = 0;     // max visible length of descriptions when reporting children
 $config["firstDayOfWeek"] = 6; // 0=Sunday, 1=Monday, ... 6=Saturday
-$config['ReportMaxCompleteChildren']=0;  // maximum number of child items of any one type shown in itemReport
-$config['useLiveEnhancements']=true; // javascript productivity aids: tested on PC/IE7, PC/Firefox2, Linux/Firefox2, Linux/Epiphany, Linux/Konqueror3
+$config['ReportMaxCompleteChildren'] = 0;  // maximum number of child items of any one type shown in itemReport
+$config['useLiveEnhancements'] = true; // javascript productivity aids: tested on PC/IE7, PC/Firefox2, Linux/Firefox2, Linux/Epiphany, Linux/Konqueror3
 
 // These are the shortcut settings for menu options.  Add a key for any page or page view in the main menus.
 // Note IE only allows 26 access keys (a-z).
@@ -90,31 +93,31 @@ $acckey = array();
 
 $config["contextsummary"] = 'all';  //all | nextaction (Show all actions on context report, or nextactions only?)
 $config["nextaction"] = 'multiple'; //single | multiple (Allow single or multiple nextactions per project)
-$config["afterCreate"]	= array (  // parent | item | list | another - default view after creating an item
-			'i'		=>	'another', // inbox preference
-			'a'		=>	'parent', // action preference
-			'w'		=>	'parent', // waiting-on preference
-			'r'		=>	'parent', // reference preference
-			'p'		=>	'item', // project preference
-			'm'		=>	'item', // value preference
-			'v'		=>	'item', // vision preference
-			'o'		=>	'item', // role preference
-			'g'		=>	'item' // goal preference
-	    );
+$config["afterCreate"]  = array (  // parent | item | list | another - default view after creating an item
+            'i'     =>  'another', // inbox preference
+            'a'     =>  'parent', // action preference
+            'w'     =>  'parent', // waiting-on preference
+            'r'     =>  'parent', // reference preference
+            'p'     =>  'item', // project preference
+            'm'     =>  'item', // value preference
+            'v'     =>  'item', // vision preference
+            'o'     =>  'item', // role preference
+            'g'     =>  'item' // goal preference
+        );
 
 // uses initials as above; so o=role, m=value, etc., each in single quotes, separated by commas
-$config['suppressAsOrphans']="'i','m','v','o','g','p'";
+$config['suppressAsOrphans'] = "'i','m','v','o','g','p'";
 
 /*********  Customize Weekly Review  ************/
-$config['reviewProjectsWithoutOutcomes']=true; // false | true - list projects which have no outcome
-$config['show7']=true; // false | true - show the Seven Habits of Highly Effective People and Sharpening the Saw in Weekly Review
+$config['reviewProjectsWithoutOutcomes'] = true; // false | true - list projects which have no outcome
+$config['show7'] = true; // false | true - show the Seven Habits of Highly Effective People and Sharpening the Saw in Weekly Review
 
 // Entirely optional: add custom items to the weekly review.
 // Uncomment to use, add more fields to the array for more lines.
 
 $custom_review = array(
-	"x" => "yz",
-	"m" => "no"
+    "x" => "yz",
+    "m" => "no"
 );
 
 /*********  Advanced Settings  ************/
@@ -135,9 +138,9 @@ $sort = array(
     // "getitemsandparentTrades"     => "type ASC, dateCreated DESC, title ASC, ptitle ASC",
     "getorphaneditems"      => "ia.`type` ASC, i.`title` ASC",
     "selectchecklist"       => "cl.`title` ASC",
-		//    "getchecklists"         => "c.`category` DESC, sortBy ASC, `title` ASC",
+        //    "getchecklists"         => "c.`category` DESC, sortBy ASC, `title` ASC",
     "getchecklists"         => "`title` ASC",
-		//    "getlists"              => "c.`category` DESC, sortBy ASC",
+        //    "getlists"              => "c.`category` DESC, sortBy ASC",
     "getlists"              => "`title` ASC",
     "searchlists"           => "`type` ASC, `sortBy` ASC, `priority` ASC",
 
@@ -154,8 +157,8 @@ $sort = array(
     # 'prioritise > title > notes'
     "getchecklistitems_prioritise"
         => "cli.`ignored` DESC, cli.`checked` DESC, cli.`priority`, cli.`item` ASC, SUBSTRING(cli.`notes`, 1, 20) ASC",
-		## edit items view
-		# 'title > notes 4 > prioritise'
+        ## edit items view
+        # 'title > notes 4 > prioritise'
     "getchecklistitemsbulk"
         => "cli.`item`, SUBSTRING(cli.`notes`, 1, 4) ASC, cli.`priority`, SUBSTRING(cli.`notes`, 1, 20) ASC",
     # 'title 2 > notes 4 > prioritise'
@@ -167,7 +170,7 @@ $sort = array(
     # 'prioritise > title > notes'
     "getchecklistitemsbulk_prioritise"
         => "cli.`priority`, cli.`item` ASC, SUBSTRING(cli.`notes`, 1, 20) ASC",
-		## instance view
+        ## instance view
     "getchecklistitemsinst"
         => "i.`ignored` DESC, i.`checked` DESC, cli.`item` ASC, cli.`notes` ASC",
 
@@ -207,16 +210,16 @@ $config['forceAllFields'] = false; // false | true - all fields will always be d
 $config['allowChangingTypes'] = false; // false | true - allows the user to change the types of any item (false=change only inbox items)
 $config['showAdmin'] = true; // false | true - adds the Admin option to the menu items
 $config['charset'] = 'ISO8859-15'; // character-encoding for pages: utf-8 IS NOT YET SUPPORTED, nor is any other multi-byte character set
-$config['withholdVersionInfo']=false; // true | false - if false, will send the version numbers of your installations of gtd-php, PHP and MySQL when you report a bug
-$config['addons']=array();
+$config['withholdVersionInfo'] = false; // true | false - if false, will send the version numbers of your installations of gtd-php, PHP and MySQL when you report a bug
+$config['addons'] = array();
 /*
     addons go below this line.  For example:
 */
-$config['addons']['achievements']=array(
-        'link'=>"addons/achievements/achievements.php",
-        'title'=>"Completion rates", 'label' => "Achievements",
-        'where'=>'listItems.php?type=a&amp;tickler=true','when'=>'after',
-        'options'=>array('jpgraphdir'=>'jpgraph/')
+$config['addons']['achievements'] = array(
+        'link' => "addons/achievements/achievements.php",
+        'title' => "Completion rates", 'label' => "Achievements",
+        'where' => 'listItems.php?type=a&amp;tickler=true','when' => 'after',
+        'options' => array('jpgraphdir' => 'jpgraph/')
       );
 
 $config['formatTidy'] = true; // lazy check of items text formatting, called from cron

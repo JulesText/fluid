@@ -8,8 +8,8 @@ $result = get_chat($chat_id, $db);
 
 $chat = "";
 foreach ($result as $row) {
-  $chat .= $row['comment_human'] . '\n';
-  $chat .= $row['comment_ai'] . '\n';
+    $chat .= $row['comment_human'] . '\n';
+    $chat .= $row['comment_ai'] . '\n';
 }
 
 // Set up the API endpoint URL and parameters
@@ -32,15 +32,13 @@ $curly_tops['headers'] = array(
 $curls = curlReq($curly_tops);
 
 if ($curls['success']) {
+    update_chat_summary($chat_id, $curls['data'], $db);
 
-  update_chat_summary($chat_id, $curls['data'], $db);
-
-  file_put_contents('_response.txt', PHP_EOL . '--' . PHP_EOL . 'attempted to write to db:', FILE_APPEND);
-  file_put_contents('_response.txt', PHP_EOL . '$chat_id: ' . $chat_id . ' text: ' . $curls['data'], FILE_APPEND);
-
+    file_put_contents('_response.txt', PHP_EOL . '--' . PHP_EOL . 'attempted to write to db:', FILE_APPEND);
+    file_put_contents('_response.txt', PHP_EOL . '$chat_id: ' . $chat_id . ' text: ' . $curls['data'], FILE_APPEND);
 }
 
 echo $curls['data'];
 
 // Close the database connection
-$db = NULL;
+$db = null;

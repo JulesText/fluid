@@ -2,8 +2,11 @@
 
 include_once('header.php');
 
-if (isset($_GET["random"]) && $_GET["random"] == 'true') $randomDisplay = TRUE;
-else $randomDisplay = FALSE;
+if (isset($_GET["random"]) && $_GET["random"] == 'true') {
+    $randomDisplay = true;
+} else {
+    $randomDisplay = false;
+}
 
 include_once('reportContext.inc.php');
 require_once("headerHtml.inc.php");
@@ -12,12 +15,16 @@ require_once("headerHtml.inc.php");
 
 <?php
 
-if (!$randomDisplay) echo "<h1 style='text-align: left'>[ <a href='" . $_SERVER['REQUEST_URI'] . "&random=true'>Random</a> ]</h1>";
+if (!$randomDisplay) {
+    echo "<h1 style='text-align: left'>[ <a href='" . $_SERVER['REQUEST_URI'] . "&random=true'>Random</a> ]</h1>";
+}
 
 if ($randomDisplay) {
     $contexts = array();
     foreach ($matrixcount as $row) {
-        if ($row['count'] > 0) array_push($contexts, $row['context']);
+        if ($row['count'] > 0) {
+            array_push($contexts, $row['context']);
+        }
     }
     $key = rand(0, count($contexts) - 1);
     $randomContext = $contexts[$key];
@@ -36,9 +43,9 @@ if ($randomDisplay) {
     <thead><tr>
         <td>Context</td>
         <?php
-        $runningtotals=array();
+        $runningtotals = array();
         foreach ($timeframeNames as $tcId => $tname) {
-            $runningtotals["t$tcId"]=0;
+            $runningtotals["t$tcId"] = 0;
             ?>
             <td><a href='editCat.php?field=time-context&amp;id=<?php echo $tcId; ?>'
                     title='Edit time context'><?php echo makeclean($tname); ?>
@@ -48,39 +55,39 @@ if ($randomDisplay) {
         <td>Total</td>
     </tr></thead>
     <tbody><?php foreach ($contextNames as $cid => $cname) {
-        $runningtotals["c$cid"]=0;
+        $runningtotals["c$cid"] = 0;
         ?>
         <tr>
-	       <td><a href='editCat.php?field=context&amp;id=<?php echo $cid; ?>'
+           <td><a href='editCat.php?field=context&amp;id=<?php echo $cid; ?>'
                 title='Edit context'><?php echo makeclean($cname); ?></a>
            </td>
            <?php foreach ($timeframeNames as $tid => $tname) {
-        		if ($count=$matrixcount[$cid][$tid]) {
-			         echo "<td><a href='#c{$cid}t{$tid}'>$count</a></td>\n";
-			         $runningtotals["c$cid"]+=$count;
-			         $runningtotals["t$tid"]+=$count;
+                if ($count = $matrixcount[$cid][$tid]) {
+                     echo "<td><a href='#c{$cid}t{$tid}'>$count</a></td>\n";
+                     $runningtotals["c$cid"] += $count;
+                     $runningtotals["t$tid"] += $count;
                 } else { ?>
                     <td>0</td>
-                <?php
+                    <?php
                 }
-            }
+           }
             ?>
             <td><?php
-                echo ($count=$runningtotals["c$cid"])
-                    ?"<a href='#c$cid'>$count</a>"
-                    :0;
-                ?>
+                echo ($count = $runningtotals["c$cid"])
+                    ? "<a href='#c$cid'>$count</a>"
+                    : 0;
+            ?>
             </td>
         </tr>
-        <?php } ?>
+           <?php } ?>
         <tr>
             <td>Total</td>
             <?php
-            $runningtotals['grand']=0;
+            $runningtotals['grand'] = 0;
             foreach ($timeframeNames as $tid => $tname) {
-	            $runningtotals['grand']+=$runningtotals["t$tid"];
-	            ?>
-        	    <td><?php echo $runningtotals["t$tid"]; ?></td>
+                $runningtotals['grand'] += $runningtotals["t$tid"];
+                ?>
+                <td><?php echo $runningtotals["t$tid"]; ?></td>
             <?php } ?>
             <td><?php echo $runningtotals['grand']; ?></td>
         </tr>
@@ -92,18 +99,24 @@ To edit a context select the context name.</p>
 -->
 <?php
 foreach ($contextNames as $cid => $cname) {
-    if (!$runningtotals["c$cid"]) continue;
-    if ($randomDisplay && $cname != $randomContext) continue;
+    if (!$runningtotals["c$cid"]) {
+        continue;
+    }
+    if ($randomDisplay && $cname != $randomContext) {
+        continue;
+    }
     // $ran = rand(1, $runningtotals["c$cid"]);
     echo "<a id='c$cid'></a>\n";
     echo "<h1>" /*<a href='editCat.php?field=context&amp;id=$cid' "
         ,"title='Edit the $cname context'>" */
         // ,"<u>Context:&nbsp;$cname</u> (r = " . $ran . ")</h1>\n";
         ,"<u>Context:&nbsp;$cname</u>";
-    if ($randomDisplay) echo " (" . $matrixcount[$cid]['random'] . ")";
+    if ($randomDisplay) {
+        echo " (" . $matrixcount[$cid]['random'] . ")";
+    }
     echo "</h1>\n";
 
-   foreach ($timeframeNames as $tid => $tname) {
+    foreach ($timeframeNames as $tid => $tname) {
         if (isset($matrixout[$cid][$tid])) {
             echo "<a id='c{$cid}t{$tid}'></a>\n"
                 ,"<h3><!--<a href='editCat.php?field=time-context&amp;id=$tid' title='$tname'>-->"
@@ -117,9 +130,9 @@ foreach ($contextNames as $cid => $cname) {
                     ?>
                 </table>
                 <div>
-                	<input type="hidden" name="referrer" value="<?php echo basename($thisurl['path']),"#c{$cid}t{$tid}"; ?>" />
+                    <input type="hidden" name="referrer" value="<?php echo basename($thisurl['path']),"#c{$cid}t{$tid}"; ?>" />
                     <input type="hidden" name="multi" value="y" />
-        		    <input type="hidden" name="wasNAonEntry" value="<?php echo implode(' ',$wasNAonEntry[$cid][$tid]); ?> " />
+                    <input type="hidden" name="wasNAonEntry" value="<?php echo implode(' ', $wasNAonEntry[$cid][$tid]); ?> " />
                     <input type="hidden" name="action" value="complete" />
                     <input type="submit" style="height: 0px; width: 0px; border: 0px;" value="Update Actions" name="submit" />
                 </div>
@@ -128,7 +141,7 @@ foreach ($contextNames as $cid => $cname) {
         }
     }
 
-	echo "<br><br><br><br><br>";
+    echo "<br><br><br><br><br>";
 }
 include_once('footer.php');
 ?>

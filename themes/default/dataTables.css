@@ -34,18 +34,20 @@ table.dataTable thead .sorting_desc_disabled {
 }
 */
 
-td.dt-nowrap { white-space: nowrap }
+td.dt-nowrap {
+  white-space: nowrap;
+}
 
 .dataTables_filter {
-    position: absolute;
-    top: 60px;
-    left: 15px;
-    width: 100px;
-    z-index: 20;
-	border: 1px dotted #999;
-	font-size: 10px;
-	font-family: verdana;
-	color: #666;
+  position: absolute;
+  top: 60px;
+  left: 15px;
+  width: 100px;
+  z-index: 20;
+  border: 1px dotted #999;
+  font-size: 10px;
+  font-family: verdana;
+  color: #666;
 }
 
 /* dataTable search field */
@@ -54,43 +56,40 @@ input.fMax,
 input.fTxt,
 input.fEmp,
 input.fChk,
-.dataTables_filter input
-{
-	font-weight: normal;
-	font-size: 10px;
-	font-family: verdana;
-	color: #666;
-	background: #f6f6f0;
-	padding: 0px;
-	border: 0px;
-	margin: 0;
+.dataTables_filter input {
+  font-weight: normal;
+  font-size: 10px;
+  font-family: verdana;
+  color: #666;
+  background: #f6f6f0;
+  padding: 0px;
+  border: 0px;
+  margin: 0;
 }
 
 input.fMin,
-input.fMax
-{
-	height: 1.5em;
-	width: 1.5em;
+input.fMax {
+  height: 1.5em;
+  width: 1.5em;
 }
 
 input.fTxt,
-.dataTables_filter input
-{
-	height: 1.5em;
-	width: 100%;
+.dataTables_filter input {
+  height: 1.5em;
+  width: 100%;
 }
 
 table.mx tbody tr:hover {
-	background: #EEE;
-    color: blue;
-    /*
+  background: #eee;
+  color: blue;
+  /*
     table-layout: fixed;
     width: 1000px;
     */
 }
 
 thead.mx {
-    /*
+  /*
     position: fixed;
     top: 0;
     left: 0;
@@ -99,18 +98,21 @@ thead.mx {
     */
 }
 
-.ho, .toggle.mx.v {
-    cursor: pointer;
-    *cursor: hand;
+.ho,
+.toggle.mx.v {
+  cursor: pointer;
+  *cursor: hand;
 }
 
-td.mx, th.mx, td.mxa {
-	color: #666;
-	border: 1px dotted #999;
-	font-weight: normal;
-	font-family: verdana;
-	/* white-space: nowrap; */
-	/* doesn't work
+td.mx,
+th.mx,
+td.mxa {
+  color: #666;
+  border: 1px dotted #999;
+  font-weight: normal;
+  font-family: verdana;
+  /* white-space: nowrap; */
+  /* doesn't work
 	width: 75px;
 	height: 30px;
 	overflow: hidden;
@@ -119,15 +121,16 @@ td.mx, th.mx, td.mxa {
 }
 
 td.mx {
-    white-space: nowrap;
-    font-size: 14px;
+  white-space: nowrap;
+  font-size: 14px;
 }
 
 th.mx {
   font-size: 12px;
 }
 
-td.mxa, td.mxah {
+td.mxa,
+td.mxah {
   color: #666;
   white-space: nowrap;
   font-size: 12px;
@@ -141,144 +144,152 @@ td.mxah {
 }
 
 td.cont {
-	color: #666;
-	border: 1px dotted #999;
-	font-weight: normal;
+  color: #666;
+  border: 1px dotted #999;
+  font-weight: normal;
   font-size: 12px;
-	font-family: verdana;
-	padding: 2px;
+  font-family: verdana;
+  padding: 2px;
   white-space: nowrap;
   cursor: pointer;
   *cursor: hand;
 }
 
 button.cont {
-	color: #666;
-	border: 1px dotted #999;
-	font-weight: normal;
+  color: #666;
+  border: 1px dotted #999;
+  font-weight: normal;
   font-size: 12px;
-	font-family: verdana;
-	padding: 2px;
+  font-family: verdana;
+  padding: 2px;
   white-space: nowrap;
   cursor: pointer;
   *cursor: hand;
 }
 
-td.mx.yr, th.mx.yr
-, td.mx.int, th.mx.int
-, td.mx.int4, th.mx.int4
-, td.mx.int9, th.mx.int9
-, td.mx.int99, th.mx.int99
-, td.mx.intX, th.mx.intX
-, td.mx.intXY, th.mx.intXY
- {
-    text-align: right;
+td.mx.yr,
+th.mx.yr,
+td.mx.int,
+th.mx.int,
+td.mx.int4,
+th.mx.int4,
+td.mx.int9,
+th.mx.int9,
+td.mx.int99,
+th.mx.int99,
+td.mx.intX,
+th.mx.intX,
+td.mx.intXY,
+th.mx.intXY {
+  text-align: right;
 }
 
 td.mx.nl {
-    color: #bbb;
+  color: #bbb;
 }
 
 td.mx.lnk {
-    font-size: 2px;
+  font-size: 2px;
 }
 
 td.mx {
-    background-color:#f6f6f0;
+  background-color: #f6f6f0;
 }
 
 td.req {
-    background-color:#fcfdf2;
+  background-color: #fcfdf2;
 }
 
 td.noed {
-    background-color:#eeeeee;
+  background-color: #eeeeee;
 }
 
 /* th background hints */
-th.mx.attr.int4:not(.a,.b,.ho) {
+th.mx.attr.int4:not(.a, .b, .ho) {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='16'%3E%3Ctext x='0' y='12' font-family='monospace' font-size='12' fill='%2300000030'%3E-4+4%3C/text%3E%3C/svg%3E");
   background-position: right 3px bottom -3px;
 }
-th.mx.attr.int9:not(.a,.b,.ho) {
+th.mx.attr.int9:not(.a, .b, .ho) {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16'%3E%3Ctext x='0' y='12' font-family='monospace' font-size='12' fill='%2300000030'%3E0+9%3C/text%3E%3C/svg%3E");
   background-position: right 3px bottom -3px;
 }
-th.mx.attr.int99:not(.a,.b,.ho) {
+th.mx.attr.int99:not(.a, .b, .ho) {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='16'%3E%3Ctext x='0' y='12' font-family='monospace' font-size='12' fill='%2300000030'%3E0+99%3C/text%3E%3C/svg%3E");
   background-position: right 1px bottom -3px;
 }
-th.mx.attr.intX:not(.a,.b,.ho) {
+th.mx.attr.intX:not(.a, .b, .ho) {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='16'%3E%3Ctext x='0' y='12' font-family='monospace' font-size='14' fill='%2300000030'%3E+%E2%88%9E%3C/text%3E%3C/svg%3E");
   background-position: right 0px bottom -3px;
 }
-th.mx.attr.intXY:not(.a,.b,.ho) {
+th.mx.attr.intXY:not(.a, .b, .ho) {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='16'%3E%3Ctext x='0' y='12' font-family='monospace' font-size='14' fill='%2300000030'%3E-+%E2%88%9E%3C/text%3E%3C/svg%3E");
   background-position: right 0px bottom -3px;
 }
 
-th.mx.attr.ch:not(.a,.b,.ho) {
+th.mx.attr.ch:not(.a, .b, .ho) {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='16'%3E%3Ctext x='0' y='12' font-family='monospace' font-size='12' fill='%2300000030'%3Etext%3C/text%3E%3C/svg%3E");
   background-position: left 3px bottom -3px;
 }
-th.mx.attr.lnk:not(.a,.b,.ho) {
+th.mx.attr.lnk:not(.a, .b, .ho) {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='16'%3E%3Ctext x='0' y='12' font-family='monospace' font-size='12' fill='%2300000030'%3Ehref%3C/text%3E%3C/svg%3E");
   background-position: left 3px bottom -3px;
 }
 /* end th background hints */
 
 td.item.mx.v {
-	padding-left: 4px;
-    color: #00A834;
+  padding-left: 4px;
+  color: #00a834;
 }
 
 td.item.mx.o {
-	padding-left: 14px;
-    color: #a355D9;
+  padding-left: 14px;
+  color: #a355d9;
 }
 
 td.item.mx.g {
-	padding-left: 14px;
-    color: #b35202;
+  padding-left: 14px;
+  color: #b35202;
 }
 
-td.item.mx.p, td.item.mx.c, td.item.mx.l {
-	padding-left: 14px;
+td.item.mx.p,
+td.item.mx.c,
+td.item.mx.l {
+  padding-left: 14px;
 }
 
 td.item.mx.indent1 {
-	padding-left: 24px;
+  padding-left: 24px;
 }
 
 td.item.mx.indent2 {
-	padding-left: 34px;
+  padding-left: 34px;
 }
 
 td.item.mx.indent3 {
-	padding-left: 44px;
+  padding-left: 44px;
 }
 
 td.item.mx.indent4 {
-	padding-left: 54px;
+  padding-left: 54px;
 }
 
 a.mx {
-    color: #ddd;
-    font-weight: normal;
+  color: #ddd;
+  font-weight: normal;
 }
 a.mx:visited {
-    color: #ddd;
-    font-weight: normal;
+  color: #ddd;
+  font-weight: normal;
 }
 
 .wh {
-    white-space: nowrap;
+  white-space: nowrap;
 }
 
 table.matrixCont {
-    position: absolute;
-    top: 0;
-    z-index: 10;
+  position: absolute;
+  top: 0;
+  z-index: 10;
 }
 
 table.summary {
@@ -308,12 +319,12 @@ th.xm {
 }
 
 div.xm {
-    position: absolute;
-    background: transparent;
-    top: 0;
-	color: #666;
-	border: 1px dotted #999;
-	font-weight: normal;
-	font-size: 10px;
-	font-family: verdana;
+  position: absolute;
+  background: transparent;
+  top: 0;
+  color: #666;
+  border: 1px dotted #999;
+  font-weight: normal;
+  font-size: 10px;
+  font-family: verdana;
 }

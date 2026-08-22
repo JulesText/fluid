@@ -1,6 +1,7 @@
 <?php
 
 /******************************************/
+
 /**********   Private settings    ********/
 /******************************************/
 
@@ -15,12 +16,12 @@ $config = array(
     //connection information
         "host"    => ($_SERVER['SERVER_NAME'] == 'localhost') ? 'database' : 'localhost', //the hostname of your database server, 'database' used on localhost running Docker, 'localhost' used on hosted server
         "db"      => '', //the name of your database
-        "prefix"	=> '', // the GTD table prefix for your installation (optional)
+        "prefix"    => '', // the GTD table prefix for your installation (optional)
         "user"    => '', //username for database access
         "pass"    => '', //database password
     //database information
         "dbtype"  => 'mysql',  //database type: currently only mysql is valid.  DO NOT CHANGE!
-				"conn"    => NULL // store the sqli connection here
+                "conn"    => null // store the sqli connection here
 );
 
 /*********  Server IP ************/

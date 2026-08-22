@@ -1,63 +1,63 @@
 <html>
-<body onload="pertinent()">
-<script>
-function pertinent() {
+  <body onload="pertinent()">
+    <script>
+      function pertinent() {
+        function sleep(ms) {
+          return new Promise((resolve) => setTimeout(resolve, ms));
+        }
 
-    function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
+        var windows = [
+          "fi.php", // last window
+          "reportContext.php?notContext=25",
+          // 'reportLists.php?listId=172&type=c',
+          "listItems.php?tickler=false&type=a&contextId=25&notspacecontext=true&dueonly=true&liveparents=*",
+          "index.php",
+          "reportLists.php?listId=118&type=c",
+          "reportLists.php?listId=119&type=c",
+          "Lunar.php",
+          "reportLists.php?listId=13&type=C",
+          "reportLists.php?listId=168&type=C",
+          "reportLists.php?listId=160&type=c",
+          "reportLists.php?listId=170&type=C",
+          // 'reportLists.php?listId=56&type=C',
+          "listItems.php?tickler=false&type=w&contextId=25&notspacecontext=true&nextonly=true&dueonly=true&liveparents=*",
+          "reportLists.php?listId=120&type=C",
+          "ical://x",
+          "ToD.php", // second window
+          "editListItems.php?itemId=3646&type=C&expand=TRUE", // first/current window
+        ];
 
-    var windows = [
-        'fi.php', // last window
-        'reportContext.php?notContext=25',
-        // 'reportLists.php?listId=172&type=c',
-        'listItems.php?tickler=false&type=a&contextId=25&notspacecontext=true&dueonly=true&liveparents=*',
-        'index.php',
-        'reportLists.php?listId=118&type=c',
-        'reportLists.php?listId=119&type=c',
-        'Lunar.php',
-        'reportLists.php?listId=13&type=C',
-        'reportLists.php?listId=168&type=C',
-        'reportLists.php?listId=160&type=c',
-        'reportLists.php?listId=170&type=C',
-        // 'reportLists.php?listId=56&type=C',
-        'listItems.php?tickler=false&type=w&contextId=25&notspacecontext=true&nextonly=true&dueonly=true&liveparents=*',
-        'reportLists.php?listId=120&type=C',
-        'ical://x',
-        'ToD.php', // second window
-        'editListItems.php?itemId=3646&type=C&expand=TRUE' // first/current window
-    ];
+        // firefox sequence
+        //    var windows = [
+        //        'reportContext.php?notContext=25', // last window
+        //        'index.php',
+        //        'ToD.php', // second window
+        //        'editListItems.php?itemId=3646&type=C' // first/current window
+        //    ];
 
-// firefox sequence
-//    var windows = [
-//        'reportContext.php?notContext=25', // last window
-//        'index.php',
-//        'ToD.php', // second window
-//        'editListItems.php?itemId=3646&type=C' // first/current window
-//    ];
+        // brave sequence
+        //    var windows = [
+        //        'reportContext.php?notContext=25', // second window
+        //        'index.php',
+        //        'ToD.php', // last window
+        //        'editListItems.php?itemId=3646&type=C' // first/current window
+        //    ];
 
-// brave sequence
-//    var windows = [
-//        'reportContext.php?notContext=25', // second window
-//        'index.php',
-//        'ToD.php', // last window
-//        'editListItems.php?itemId=3646&type=C' // first/current window
-//    ];
+        var arrayLength = windows.length;
 
-    var arrayLength = windows.length;
-
-    async function display() {
-        for (var i = 0; i < arrayLength - 1; i++) { // skip the last array item
+        async function display() {
+          for (var i = 0; i < arrayLength - 1; i++) {
+            // skip the last array item
             window.open(windows[i]);
             await sleep(1000); // avoid windows from not opening due to server restrictions
+          }
+          window.location.assign(windows[i]); // first/current window
         }
-        window.location.assign(windows[i]); // first/current window
-    }
 
-    display();
+        display();
 
-    return true;
-}
-</script>
-</body>
+        return true;
+      }
+    </script>
+  </body>
 </html>

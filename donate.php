@@ -5,11 +5,11 @@
 <h3>Help Support gtd-php through your donations</h3>
 <p>
 Donations to the project are greatly appreciated and are used to
- help us to pay for hosting services that support our cvs and svn 
+ help us to pay for hosting services that support our cvs and svn
 repositories, the user forums, documnentation and related activities.
 </p>
 <p>
- You can donate via paypal by simply clicking on the following button. 
+ You can donate via paypal by simply clicking on the following button.
 </p>
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <p>
@@ -28,5 +28,5 @@ repositories, the user forums, documnentation and related activities.
 
 
 <?php
-	include_once('footer.php')
+    include_once('footer.php')
 ?>

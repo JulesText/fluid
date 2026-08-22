@@ -1,0 +1,11 @@
+media/
+dt/node_modules/
+node_modules/
+vendor/
+**/*.min.js
+**/*.min.css
+calendar.js
+calendar-setup.js
+js/calendar-en.js
+js/jquery-1.12.4.js
+js/matrixTable.js

@@ -14,19 +14,19 @@ require_once("headerDB.inc.php");
 
 // get active visions
 
-$values['type']= "v";
+$values['type'] = "v";
 $values['isSomeday'] = "n";
-$stem  = " WHERE ".sqlparts("typefilter",$config,$values)
-        ." AND ".sqlparts("activeitems",$config,$values);
-$values['filterquery'] = $stem." AND ".sqlparts("issomeday",$config,$values);
-$vres = query("getitems",$config,$values,$sort);
+$stem  = " WHERE " . sqlparts("typefilter", $config, $values)
+        . " AND " . sqlparts("activeitems", $config, $values);
+$values['filterquery'] = $stem . " AND " . sqlparts("issomeday", $config, $values);
+$vres = query("getitems", $config, $values, $sort);
 
 // get someday lists
 $sdays = array();
 $listMena = array();
 $values = array();
 $values['qId'] = 1000;
-$lists = query('lookupqualities',$config,$values,$sort);
+$lists = query('lookupqualities', $config, $values, $sort);
 if (count($lists) > 0 && is_array($lists)) {
     foreach ((array) $lists as $l) {
         if ($l['value'] == 'y') {
@@ -40,11 +40,11 @@ foreach ((array) $vres as $visn) {
     $values = array();
     $values['parentId'] = $visn['itemId'];
     $values['type'] = 'c';
-    $clists = query("getchildlists",$config,$values,$sort);
+    $clists = query("getchildlists", $config, $values, $sort);
     $values['type'] = 'l';
-    $lists = query("getchildlists",$config,$values,$sort);
+    $lists = query("getchildlists", $config, $values, $sort);
     if (!empty($lists) && is_array($lists) && count($lists) > 0 && !empty($clists) && is_array($clists) && count($clists) > 0) {
-        $lists = array_merge($clists,$lists);
+        $lists = array_merge($clists, $lists);
     } elseif (!empty($clists) && is_array($clists) && count($clists) > 0) {
         $lists = $clists;
     }
@@ -56,24 +56,35 @@ foreach ((array) $vres as $visn) {
                     $s['visId'] == $visn['itemId'] &&
                     $s['itemId'] == $list['listId'] &&
                     $s['itemType'] == $list['type']
-                    ) continue 2;
+                ) {
+                    continue 2;
+                }
             }
             // exclude lists without priorities unless all (unprioritised) requested
             if (!isset($_GET['unprioritised'])) {
-              if ($list['type'] == 'c') $check = 'check';
-              else $check = '';
-              $values['queryTable'] = $check . 'listitems';
-              $values['queryKey'] = $check . 'listId';
-              $values['queryValue'] = $list['listId'];
-              $priorities = query("priorityselectbox",$config,$values,$sort);
-              if (count($priorities) == 1) continue 1;
+                if ($list['type'] == 'c') {
+                    $check = 'check';
+                } else {
+                    $check = '';
+                }
+                $values['queryTable'] = $check . 'listitems';
+                $values['queryKey'] = $check . 'listId';
+                $values['queryValue'] = $list['listId'];
+                $priorities = query("priorityselectbox", $config, $values, $sort);
+                if (count($priorities) == 1) {
+                    continue 1;
+                }
             }
             // otherwise, add to menu
             // get list details
             $values['listId'] = $list['listId'];
             $values['type'] = $list['type'];
-            if ($list['type'] == 'c') { $qry = "selectchecklist"; } else { $qry = "selectlist"; }
-            $listN = query($qry,$config,$values,$sort);
+            if ($list['type'] == 'c') {
+                $qry = "selectchecklist";
+            } else {
+                $qry = "selectlist";
+            }
+            $listN = query($qry, $config, $values, $sort);
             $listNarr = array(
                 'listId' => $list['listId'],
                 'type' => $list['type'],
@@ -86,7 +97,8 @@ foreach ((array) $vres as $visn) {
 }
 
 // sort order for lists
-function sortBys ($a, $b) {
+function sortBys($a, $b)
+{
     return $a['sortBy'] - $b['sortBy'];
 }
 usort($listMena, 'sortBys');
@@ -108,7 +120,7 @@ function pertinent() {
 <?php
 $comma = '';
 foreach ($listMena as $l) {
-    echo $comma. "'reportLists.php?listId={$l['listId']}&type={$l['type']}'";
+    echo $comma . "'reportLists.php?listId={$l['listId']}&type={$l['type']}'";
     $comma = ',';
 }
 ?>

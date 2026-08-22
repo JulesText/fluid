@@ -1,85 +1,95 @@
 <?php
+
 $values = array();
-$thiscat=array();
-$field=$_GET['field'];
+$thiscat = array();
+$field = $_GET['field'];
 
 if (isset($_GET['id'])) {
-    $id=(int) $_GET['id'];
-    $thiscat['id']=$id;
-    if ($id===0) {
-        $title="Create $field";
-        $canDelete=false;
-        $thiscat['name']='';
-        $thiscat['description']='';
-        $thiscat['type']='a';
+    $id = (int) $_GET['id'];
+    $thiscat['id'] = $id;
+    if ($id === 0) {
+        $title = "Create $field";
+        $canDelete = false;
+        $thiscat['name'] = '';
+        $thiscat['description'] = '';
+        $thiscat['type'] = 'a';
     } else {
-        $title="Edit $field";
-        $canDelete=true;
+        $title = "Edit $field";
+        $canDelete = true;
     }
 } else {
-    $id=0;
-    $thiscat['id']=false;
-    $title="$field List";
-    $canDelete=false;
+    $id = 0;
+    $thiscat['id'] = false;
+    $title = "$field List";
+    $canDelete = false;
 }
 
-$keys=array('id','name','description');
+$keys = array('id','name','description');
 switch ($field) {
     case 'instance':
-        $query='instanceselectbox';
-        $showTypes=false;
+        $query = 'instanceselectbox';
+        $showTypes = false;
         break;
     case 'category':
-        $query='categoryselectbox';
-        $showTypes=false;
+        $query = 'categoryselectbox';
+        $showTypes = false;
         break;
     case 'trade-condition':
-        $query='tradeconditionselectbox';
-        $showTypes=false;
+        $query = 'tradeconditionselectbox';
+        $showTypes = false;
         break;
     case 'context':
-        $query='spacecontextselectbox';
-        $showTypes=false;
+        $query = 'spacecontextselectbox';
+        $showTypes = false;
         break;
     case 'time-context':
-        $query='timecontextselectbox' ;
+        $query = 'timecontextselectbox' ;
         $values['timefilterquery'] = '';
-        $keys[]='type';
-        $showTypes=$config['useTypesForTimeContexts'];
+        $keys[] = 'type';
+        $showTypes = $config['useTypesForTimeContexts'];
         break;
     default:
-        $query='';
-        $showTypes=false;
+        $query = '';
+        $showTypes = false;
         break;
 }
-$result = query($query,$config,$values,$sort);
-$catlist=array();
-$count=0;
-$thiscat=false;
+$result = query($query, $config, $values, $sort);
+$catlist = array();
+$count = 0;
+$thiscat = false;
 
 if ($result) {
- 	$firstcat=0;
- 	$nextcat=-1;
+    $firstcat = 0;
+    $nextcat = -1;
     foreach ($result as $checkcat) {
-    	$newcat=array();
-    	$i=0;
-        foreach ($checkcat as $item)
-        	$newcat[$keys[$i++]]=$item;
-        if (!$firstcat) $firstcat=$newcat['id'];
-        if (!$nextcat) $nextcat=$newcat['id'];
-        if ($newcat['id']==$id) {
-            $thiscat=$newcat;
-            $nextcat=0;
-        } else $catlist[]=$newcat;
+        $newcat = array();
+        $i = 0;
+        foreach ($checkcat as $item) {
+            $newcat[$keys[$i++]] = $item;
+        }
+        if (!$firstcat) {
+            $firstcat = $newcat['id'];
+        }
+        if (!$nextcat) {
+            $nextcat = $newcat['id'];
+        }
+        if ($newcat['id'] == $id) {
+            $thiscat = $newcat;
+            $nextcat = 0;
+        } else {
+            $catlist[] = $newcat;
+        }
         $count++;
     }
-    if (!$nextcat)
-        $nextcat=$firstcat;
-    else if ($nextcat===-1)
-        $nextcat=0;
+    if (!$nextcat) {
+        $nextcat = $firstcat;
+    } elseif ($nextcat === -1) {
+        $nextcat = 0;
+    }
 }
-if (!$thiscat && $id)
-    $title=makeClean("Failed to find $field with id=$id");
-if ($config['debug'] & _GTD_DEBUG) echo "<pre>catlist:",print_r($catlist,true),'</pre>';
-
-?>
+if (!$thiscat && $id) {
+    $title = makeClean("Failed to find $field with id=$id");
+}
+if ($config['debug'] & _GTD_DEBUG) {
+    echo "<pre>catlist:",print_r($catlist, true),'</pre>';
+}

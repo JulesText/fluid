@@ -1,5 +1,7 @@
 <button onclick="toggleTable('assumptions')" class="cont">Mx Assumptions</button>
-<?php if ($qLimit == 'e') echo '<button onclick="toggleTable(\'careerAssumptions\')" class="cont">Career Assumptions</button>'; ?>
+<?php if ($qLimit == 'e') {
+    echo '<button onclick="toggleTable(\'careerAssumptions\')" class="cont">Career Assumptions</button>';
+} ?>
 <button onclick="toggleTable('pageSummary')" class="cont">Page stats</button>
 
 <table id="assumptions" style="display: none;">
@@ -80,19 +82,19 @@
 
 <!-- paste from FR > estimates by 80k method v0.2 > mx format -->
 <table>
-<tr>	<td class="mxah" colspan="13" style="text-align: left;"	title="Ultimately we want to know the expected 'good done' per unit of resources invested in a problem, ie one year of effort or per dollar donation">	Problem ~ Impact table	</td>
-</tr><tr>	<td class="mxah"	title="If we solved this problem, by how much would the world become a better place? Solving this problem would be equivalent to:">	Scale	</td><td class="mxa">			</td><td class="mxa">			</td><td class="mxa">			</td><td class="mxa">			</td><td class="mxa">	</td><td class="mxah"	title="How many people, or dollars, are currently being dedicated to solving the problem?">	Neglectedness	</td><td class="mxa">			</td><td class="mxa">			</td><td class="mxa">			</td><td class="mxa">	</td><td class="mxah"	title="If we doubled direct effort on this problem, what fraction of the remaining problem would we expect to solve?">	Solvability	</td><td class="mxa">			</td>
-</tr><tr>	<td class="mxah"	title="Illustrative examples on each score">	Score	</td><td class="mxah"	title="A reduction in the risk of extinction (or increase in the expected value of the future) of">	Extinction reduction	</td><td class="mxah"	title="Raising global economic output proportionally by this amount per year">	Global economy	</td><td class="mxah"	title="Increase in income among the world's poorest 2 billion people">	Poorest income	</td><td class="mxah"	title="Saving this many years of healthy life each year">	Healthy years	</td><td class="mxa">	</td><td class="mxah"	title="Pending examples">	Score	</td><td class="mxah"	title="What is the direct annual spending on the problem?">	Annual spending	</td><td class="mxah"	title="What is the number of full time staff working on the problem?">	Staff numbers	</td><td class="mxah"	title="What is the number of active supporters of work on the problem?">	Supporter numbers	</td><td class="mxa">	</td><td class="mxah"	title="Pending examples">	Score	</td><td class="mxah"	title="The doubling of the direct effort described in Neglectedness would be expected to solve this much of the problem defined in Scale">	Solvability	</td>
-</tr><tr>	<td class="mxah"	title="Become a millionaire">	0	</td><td class="mxa">		0.0000000%	</td><td class="mxa">		$1,000,000	</td><td class="mxa">		$30,000	</td><td class="mxa">		10	</td><td class="mxa">	</td><td class="mxa">		0	</td><td class="mxa">		> $100,000,000,000	</td><td class="mxa">		 > 1,000,000 	</td><td class="mxa">		> 1,000,000,000 	</td><td class="mxa">	</td><td class="mxa">		0	</td><td class="mxa">		< 0.01%	</td>
-</tr><tr>	<td class="mxah"	title="Save 3 lives">	1	</td><td class="mxa">		0.0000001%	</td><td class="mxa">		$10,000,000	</td><td class="mxa">		$300,000	</td><td class="mxa">		100	</td><td class="mxa">	</td><td class="mxa">		1	</td><td class="mxa">		$100,000,000,000	</td><td class="mxa">		 1,000,000 	</td><td class="mxa">		 1,000,000,000 	</td><td class="mxa">	</td><td class="mxa">		1	</td><td class="mxa">		0.01%	</td>
-</tr><tr>	<td class="mxah"	title="Turn 10,000 people vegan">	2	</td><td class="mxa">		0.0000010%	</td><td class="mxa">		$100,000,000	</td><td class="mxa">		$3,000,000	</td><td class="mxa">		1,000	</td><td class="mxa">	</td><td class="mxa">		2	</td><td class="mxa">		$10,000,000,000	</td><td class="mxa">		 100,000 	</td><td class="mxa">		 100,000,000 	</td><td class="mxa">	</td><td class="mxa">		2	</td><td class="mxa">		0.10%	</td>
-</tr><tr>	<td class="mxah"	title="Remove 5 min/day needless red tape for US teachers">	3	</td><td class="mxa">		0.0000100%	</td><td class="mxa">		$1,000,000,000	</td><td class="mxa">		$30,000,000	</td><td class="mxa">		10,000	</td><td class="mxa">	</td><td class="mxa">		3	</td><td class="mxa">		$1,000,000,000	</td><td class="mxa">		 10,000 	</td><td class="mxa">		 10,000,000 	</td><td class="mxa">	</td><td class="mxa">		3	</td><td class="mxa">		1.00%	</td>
-</tr><tr>	<td class="mxah"	title="Identify all risky asteroids">	4	</td><td class="mxa">		0.0001000%	</td><td class="mxa">		$10,000,000,000	</td><td class="mxa">		$300,000,000	</td><td class="mxa">		100,000	</td><td class="mxa">	</td><td class="mxa">		4	</td><td class="mxa">		$100,000,000	</td><td class="mxa">		 1,000 	</td><td class="mxa">		 1,000,000 	</td><td class="mxa">	</td><td class="mxa">		4	</td><td class="mxa">		10.00%	</td>
-</tr><tr>	<td class="mxah"	title="Eliminate land use restrictions in major US cities">	5	</td><td class="mxa">		0.0010000%	</td><td class="mxa">		$100,000,000,000	</td><td class="mxa">		$3,000,000,000	</td><td class="mxa">		1,000,000	</td><td class="mxa">	</td><td class="mxa">		5	</td><td class="mxa">		$10,000,000	</td><td class="mxa">		 100 	</td><td class="mxa">		 100,000 	</td><td class="mxa">	</td><td class="mxa">		5	</td><td class="mxa">		100.00%	</td>
-</tr><tr>	<td class="mxah"	title="Increase aid by a third and spent it on cash transfers">	6	</td><td class="mxa">		0.0100000%	</td><td class="mxa">		$1,000,000,000,000	</td><td class="mxa">		$30,000,000,000	</td><td class="mxa">		10,000,000	</td><td class="mxa">	</td><td class="mxa">		6	</td><td class="mxa">		$1,000,000	</td><td class="mxa">		 10 	</td><td class="mxa">		 10,000 	</td><td class="mxa">	</td><td class="mxa">		6	</td><td class="mxa">			</td>
-</tr><tr>	<td class="mxah"	title="Cure cancer">	7	</td><td class="mxa">		0.1000000%	</td><td class="mxa">		$10,000,000,000,000	</td><td class="mxa">		$300,000,000,000	</td><td class="mxa">		100,000,000	</td><td class="mxa">	</td><td class="mxa">		7	</td><td class="mxa">		$100,000	</td><td class="mxa">		 1 	</td><td class="mxa">		 1,000 	</td><td class="mxa">	</td><td class="mxa">		7	</td><td class="mxa">			</td>
-</tr><tr>	<td class="mxah"	title="Eliminate extreme poverty">	8	</td><td class="mxa">		1.0000000%	</td><td class="mxa">		$100,000,000,000,000	</td><td class="mxa">		$3,000,000,000,000	</td><td class="mxa">		1,000,000,000	</td><td class="mxa">	</td><td class="mxa">		8	</td><td class="mxa">			</td><td class="mxa">			</td><td class="mxa">			</td><td class="mxa">	</td><td class="mxa">		8	</td><td class="mxa">			</td>
-</tr><tr>	<td class="mxah"	title="Eliminate the risk of both nuclear war and pandemics">	9	</td><td class="mxa">		10.0000000%	</td><td class="mxa">			</td><td class="mxa">			</td><td class="mxa">			</td><td class="mxa">	</td><td class="mxa">		9	</td><td class="mxa">			</td><td class="mxa">			</td><td class="mxa">			</td><td class="mxa">	</td><td class="mxa">		9	</td><td class="mxa">			</td>
+<tr>    <td class="mxah" colspan="13" style="text-align: left;" title="Ultimately we want to know the expected 'good done' per unit of resources invested in a problem, ie one year of effort or per dollar donation">  Problem ~ Impact table  </td>
+</tr><tr>   <td class="mxah"    title="If we solved this problem, by how much would the world become a better place? Solving this problem would be equivalent to:"> Scale   </td><td class="mxa">           </td><td class="mxa">           </td><td class="mxa">           </td><td class="mxa">           </td><td class="mxa">   </td><td class="mxah"   title="How many people, or dollars, are currently being dedicated to solving the problem?"> Neglectedness   </td><td class="mxa">           </td><td class="mxa">           </td><td class="mxa">           </td><td class="mxa">   </td><td class="mxah"   title="If we doubled direct effort on this problem, what fraction of the remaining problem would we expect to solve?">  Solvability </td><td class="mxa">           </td>
+</tr><tr>   <td class="mxah"    title="Illustrative examples on each score">    Score   </td><td class="mxah"   title="A reduction in the risk of extinction (or increase in the expected value of the future) of"> Extinction reduction    </td><td class="mxah"   title="Raising global economic output proportionally by this amount per year">  Global economy  </td><td class="mxah"   title="Increase in income among the world's poorest 2 billion people">  Poorest income  </td><td class="mxah"   title="Saving this many years of healthy life each year">   Healthy years   </td><td class="mxa">   </td><td class="mxah"   title="Pending examples">   Score   </td><td class="mxah"   title="What is the direct annual spending on the problem?"> Annual spending </td><td class="mxah"   title="What is the number of full time staff working on the problem?">  Staff numbers   </td><td class="mxah"   title="What is the number of active supporters of work on the problem?">    Supporter numbers   </td><td class="mxa">   </td><td class="mxah"   title="Pending examples">   Score   </td><td class="mxah"   title="The doubling of the direct effort described in Neglectedness would be expected to solve this much of the problem defined in Scale">  Solvability </td>
+</tr><tr>   <td class="mxah"    title="Become a millionaire">   0   </td><td class="mxa">       0.0000000%  </td><td class="mxa">       $1,000,000  </td><td class="mxa">       $30,000 </td><td class="mxa">       10  </td><td class="mxa">   </td><td class="mxa">       0   </td><td class="mxa">       > $100,000,000,000  </td><td class="mxa">        > 1,000,000    </td><td class="mxa">       > 1,000,000,000     </td><td class="mxa">   </td><td class="mxa">       0   </td><td class="mxa">       < 0.01% </td>
+</tr><tr>   <td class="mxah"    title="Save 3 lives">   1   </td><td class="mxa">       0.0000001%  </td><td class="mxa">       $10,000,000 </td><td class="mxa">       $300,000    </td><td class="mxa">       100 </td><td class="mxa">   </td><td class="mxa">       1   </td><td class="mxa">       $100,000,000,000    </td><td class="mxa">        1,000,000  </td><td class="mxa">        1,000,000,000  </td><td class="mxa">   </td><td class="mxa">       1   </td><td class="mxa">       0.01%   </td>
+</tr><tr>   <td class="mxah"    title="Turn 10,000 people vegan">   2   </td><td class="mxa">       0.0000010%  </td><td class="mxa">       $100,000,000    </td><td class="mxa">       $3,000,000  </td><td class="mxa">       1,000   </td><td class="mxa">   </td><td class="mxa">       2   </td><td class="mxa">       $10,000,000,000 </td><td class="mxa">        100,000    </td><td class="mxa">        100,000,000    </td><td class="mxa">   </td><td class="mxa">       2   </td><td class="mxa">       0.10%   </td>
+</tr><tr>   <td class="mxah"    title="Remove 5 min/day needless red tape for US teachers"> 3   </td><td class="mxa">       0.0000100%  </td><td class="mxa">       $1,000,000,000  </td><td class="mxa">       $30,000,000 </td><td class="mxa">       10,000  </td><td class="mxa">   </td><td class="mxa">       3   </td><td class="mxa">       $1,000,000,000  </td><td class="mxa">        10,000     </td><td class="mxa">        10,000,000     </td><td class="mxa">   </td><td class="mxa">       3   </td><td class="mxa">       1.00%   </td>
+</tr><tr>   <td class="mxah"    title="Identify all risky asteroids">   4   </td><td class="mxa">       0.0001000%  </td><td class="mxa">       $10,000,000,000 </td><td class="mxa">       $300,000,000    </td><td class="mxa">       100,000 </td><td class="mxa">   </td><td class="mxa">       4   </td><td class="mxa">       $100,000,000    </td><td class="mxa">        1,000  </td><td class="mxa">        1,000,000  </td><td class="mxa">   </td><td class="mxa">       4   </td><td class="mxa">       10.00%  </td>
+</tr><tr>   <td class="mxah"    title="Eliminate land use restrictions in major US cities"> 5   </td><td class="mxa">       0.0010000%  </td><td class="mxa">       $100,000,000,000    </td><td class="mxa">       $3,000,000,000  </td><td class="mxa">       1,000,000   </td><td class="mxa">   </td><td class="mxa">       5   </td><td class="mxa">       $10,000,000 </td><td class="mxa">        100    </td><td class="mxa">        100,000    </td><td class="mxa">   </td><td class="mxa">       5   </td><td class="mxa">       100.00% </td>
+</tr><tr>   <td class="mxah"    title="Increase aid by a third and spent it on cash transfers"> 6   </td><td class="mxa">       0.0100000%  </td><td class="mxa">       $1,000,000,000,000  </td><td class="mxa">       $30,000,000,000 </td><td class="mxa">       10,000,000  </td><td class="mxa">   </td><td class="mxa">       6   </td><td class="mxa">       $1,000,000  </td><td class="mxa">        10     </td><td class="mxa">        10,000     </td><td class="mxa">   </td><td class="mxa">       6   </td><td class="mxa">           </td>
+</tr><tr>   <td class="mxah"    title="Cure cancer">    7   </td><td class="mxa">       0.1000000%  </td><td class="mxa">       $10,000,000,000,000 </td><td class="mxa">       $300,000,000,000    </td><td class="mxa">       100,000,000 </td><td class="mxa">   </td><td class="mxa">       7   </td><td class="mxa">       $100,000    </td><td class="mxa">        1  </td><td class="mxa">        1,000  </td><td class="mxa">   </td><td class="mxa">       7   </td><td class="mxa">           </td>
+</tr><tr>   <td class="mxah"    title="Eliminate extreme poverty">  8   </td><td class="mxa">       1.0000000%  </td><td class="mxa">       $100,000,000,000,000    </td><td class="mxa">       $3,000,000,000,000  </td><td class="mxa">       1,000,000,000   </td><td class="mxa">   </td><td class="mxa">       8   </td><td class="mxa">           </td><td class="mxa">           </td><td class="mxa">           </td><td class="mxa">   </td><td class="mxa">       8   </td><td class="mxa">           </td>
+</tr><tr>   <td class="mxah"    title="Eliminate the risk of both nuclear war and pandemics">   9   </td><td class="mxa">       10.0000000% </td><td class="mxa">           </td><td class="mxa">           </td><td class="mxa">           </td><td class="mxa">   </td><td class="mxa">       9   </td><td class="mxa">           </td><td class="mxa">           </td><td class="mxa">           </td><td class="mxa">   </td><td class="mxa">       9   </td><td class="mxa">           </td>
 </tr>
 </table>
 
@@ -115,35 +117,35 @@
         <td class="mx">Page gen (s)</td>
         <td class='pgen mx'>
         <?php
-        if(isset($starttime)) {
+        if (isset($starttime)) {
             $endtime = microtime(true);
-            echo round($endtime - $starttime,1);
+            echo round($endtime - $starttime, 1);
         }
         ?>
         </td>
         <td class='pgen mx'>Base qry:
         <?php
-            echo round($et1 - $starttime,1);
+            echo round($et1 - $starttime, 1);
         ?>
         </td>
         <td class='pgen mx'>Disp 2:
         <?php
-            echo round($et2,1);
+            echo round($et2, 1);
         ?>
         </td>
         <td class='pgen mx'>Disp 3:
         <?php
-            echo round($et3,1);
+            echo round($et3, 1);
         ?>
         </td>
         <td class='pgen mx'>Disp 4:
         <?php
-            echo round($et4,1);
+            echo round($et4, 1);
         ?>
         </td>
         <td class='pgen mx'>Disp 5:
         <?php
-            echo round($et5,1);
+            echo round($et5, 1);
         ?>
         </td>
         <td class='mx' onClick="window.location = 'matrix.php?test=true';">Test</td>

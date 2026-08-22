@@ -1,4 +1,5 @@
 <?php
+
 require_once('headerDB.inc.php');
 
 // get weights
@@ -6,17 +7,20 @@ $values['qQuery'] = 1;
 $values['qValue'] = 1;
 $values['qSearch'] = 'disp';
 $values['qNeedle'] = 'e'; // for career
-$result = query("getqualities",$config,$values,$sort);
+$result = query("getqualities", $config, $values, $sort);
 $weights = array();
-foreach ($result as $row)
+foreach ($result as $row) {
     $weights[$row['qId']] = $row['weight'];
+}
 
 // check if Career flag true to recalculate career
 // this code file is called from matrixAjax.js for some non-specifically career items like effort/year
 // so only calculate Career if it's for a career item
 $_POST["id4"] = 27;
 include('matrixQuery.php');
-if (!isset($value) || $value !== 'y') die();
+if (!isset($value) || $value !== 'y') {
+    die();
+}
 
 ///////////////////
 // populate vars //
@@ -96,7 +100,9 @@ create_variable_set('personal_life', 816, 817, 3);
 //
 
 create_variable_set('unqyears', 521, 522);
-if (is_null($unqyears)) $unqyears = 1;
+if (is_null($unqyears)) {
+    $unqyears = 1;
+}
 create_variable_set('unqhours', 511, 512);
 
 //////////////////
@@ -111,11 +117,11 @@ $db = new PDO('mysql:host=' . $config["host"] . ';dbname=' . $config["db"], $con
 
 // select impact scale score, ignore null
 $arr = clean_array([$extinction_reduction, $global_economy, $poorest_income, $healthy_years]);
-$impact_scale = (count($arr) > 0) ? max($arr) : NULL;
+$impact_scale = (count($arr) > 0) ? max($arr) : null;
 $impact_scale_w = clean_mean([$extinction_reduction_w, $global_economy_w, $poorest_income_w, $healthy_years_w]);
 // select impact neglectedness score
 $arr = clean_array([$annual_spending, $staff_numbers, $supporter_numbers]);
-$impact_neglectedness = (count($arr) > 0) ? min($arr) : NULL;
+$impact_neglectedness = (count($arr) > 0) ? min($arr) : null;
 $impact_neglectedness_w = clean_mean([$annual_spending_w, $staff_numbers_w, $supporter_numbers_w]);
 // calculate score (max raw 21 standardise to 99 * 3 units to sum not average)
 $vars = ['impact_scale', 'impact_neglectedness', 'impact_solvability'];
@@ -186,7 +192,9 @@ $conditions_income_p = clean_mean([$fair_pay_p, $job_security_p]);
 //
 
 // calculate score (max raw each +/- 99 standardise to 99)
-if (!is_null($manageable_hours)) $manageable_hours *= 99/64;
+if (!is_null($manageable_hours)) {
+    $manageable_hours *= 99 / 64;
+}
 $vars = ['manageable_hours', 'conditions_locality_score', 'conditions_income_score'];
 calculate_score('conditions_needs', 821, $vars, 99, 99); // save score unqcareercondneeds
 
@@ -198,7 +206,9 @@ $conditions_needs_p = clean_mean([$manageable_hours_p, $conditions_locality_p, $
 //
 
 // calculate score (max raw each +/- 64 standardise to 99)
-if (!is_null($conditions_needs_score)) $conditions_needs_score *= 64/99;
+if (!is_null($conditions_needs_score)) {
+    $conditions_needs_score *= 64 / 99;
+}
 $vars = ['reasonable_demand', 'harmony_values', 'personal_life', 'conditions_needs_score'];
 calculate_score('conditions_sum', 811, $vars, 64, 99); // save Score unqcareercondsum
 
@@ -241,6 +251,4 @@ include('matrixSave.php');
 // destroy connection
 //
 
-$db = NULL;
-
-?>
+$db = null;

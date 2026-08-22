@@ -196,7 +196,6 @@ body {
   color: #000;
 }
 
-
 /* Styles for the tab content */
 .tabcontent {
   display: none;
@@ -210,22 +209,30 @@ body {
 }
 
 .sidebar-header {
-     font-weight: bold;
-     text-align: center;
-     margin-bottom: 26px;
-     cursor: auto;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 26px;
+  cursor: auto;
 }
 
-#delete-button, #quit-button, #newchat-button, #summary-button, #history-button, #model-button, #word-button, #copy-button {
-  background: none!important;
+#delete-button,
+#quit-button,
+#newchat-button,
+#summary-button,
+#history-button,
+#model-button,
+#word-button,
+#copy-button {
+  background: none !important;
   border: none;
-  padding: 0!important;
+  padding: 0 !important;
   color: #262626;
   text-decoration: underline;
   cursor: pointer;
 }
 
-.model_id, .word_count {
+.model_id,
+.word_count {
   padding-right: 5px;
   text-align: left;
 }
@@ -240,18 +247,20 @@ body {
 }
 
 a.history-link {
-  background: none!important;
+  background: none !important;
   font-weight: normal;
   border: none;
-  padding: 0!important;
+  padding: 0 !important;
   color: rgb(255, 255, 255);
   cursor: pointer;
 }
 
 input.closeButton {
-	position: absolute; right:10px; top:10px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
   /* color: red;  */
   padding: 20px;
   font-size: 28px;
-	font-family: verdana;
+  font-family: verdana;
 }

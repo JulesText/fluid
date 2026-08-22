@@ -1,0 +1,10 @@
+{
+  "require-dev": {
+    "squizlabs/php_codesniffer": "^3.13"
+  },
+  "scripts": {
+    "format:php": "phpcbf --standard=phpcs.xml.dist",
+    "check:php": "phpcs --standard=phpcs.xml.dist",
+    "review:php-lines": "phpcs --standard=phpcs-lines.xml.dist"
+  }
+}

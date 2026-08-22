@@ -1,51 +1,58 @@
 <?php
+
 /*
     MySQL extensions to standard SQL have been avoided where known & where practical
   ===============================================================
 
 */
 error_reporting(E_ALL ^ E_DEPRECATED);
-function connectdb($config) {
+function connectdb($config)
+{
 
     $config["conn"] = mysqli_connect($config['host'], $config['user'], $config['pass'], $config['db'])
-        or die ("Unable to connect to MySQL server: check your host, user and pass settings in config.php!");
+        or die("Unable to connect to MySQL server: check your host, user and pass settings in config.php!");
 
     return $config;
 }
 /*
   ===============================================================
 */
-function getDBVersion() {
+function getDBVersion()
+{
     return mysql_get_server_info();
 }
 /*
   ===============================================================
 */
-function getDBtables($db) {
-    $tablelist=array();
-    $tables=mysql_list_tables($db);
-	while ($tbl = mysql_fetch_row($tables))
-	   array_push($tablelist,$tbl[0]);
+function getDBtables($db)
+{
+    $tablelist = array();
+    $tables = mysql_list_tables($db);
+    while ($tbl = mysql_fetch_row($tables)) {
+        array_push($tablelist, $tbl[0]);
+    }
     return $tablelist;
 }
 /*
   ===============================================================
 */
-function doQuery($config, $query, $label=NULL) {
+function doQuery($config, $query, $label = null)
+{
 
     // parse result into multitdimensional array $result[row#][field name] = field value
     $reply = mysqli_query($config["conn"], $query);
 
-    if ($reply===false) {                       // failed query - return FALSE
-        $result=false;
-    } elseif ($reply===true) {                  // query was not a SELECT OR SHOW, so return number of rows affected
+    if ($reply === false) {                       // failed query - return FALSE
+        $result = false;
+    } elseif ($reply === true) {                  // query was not a SELECT OR SHOW, so return number of rows affected
         $result = mysqli_affected_rows($config["conn"]);
-    } else if (mysqli_num_rows($reply)===0) {   // empty SELECT/SHOW - return zero
-        $result=0;
+    } elseif (mysqli_num_rows($reply) === 0) {   // empty SELECT/SHOW - return zero
+        $result = 0;
     } else {                                    // successful SELECT/SHOW - return array of results
-        $result=array();
-        while ($mysql_result = mysqli_fetch_assoc($reply))
-            $result[]=$mysql_result;
+        $result = array();
+        while ($mysql_result = mysqli_fetch_assoc($reply)) {
+            $result[] = $mysql_result;
+        }
     }
 
     /* get last autoincrement insert id:
@@ -56,30 +63,39 @@ function doQuery($config, $query, $label=NULL) {
     $GLOBALS['lastinsertid'] = mysqli_insert_id($config["conn"]);
 
     $error = mysqli_errno($config["conn"]);
-    if ($error) $_SESSION['message'][]=
-                "Error $error in query '$label': '".mysqli_error($config["conn"])."'";
+    if ($error) {
+        $_SESSION['message'][] =
+                "Error $error in query '$label': '" . mysqli_error($config["conn"]) . "'";
+    }
 
     return $result;
 }
 /*
   ===============================================================
 */
-function safeIntoDB($config, &$value, $key=NULL) {
-	// don't clean arrays - clean individual strings/values
-	if (is_array($value)) {
-		foreach ($value as $key=>$string) $value[$key] = safeIntoDB($config, $string, $key);
-		return $value;
-	} else {
-		// don't clean filters - we've cleaned those separately in the sqlparts function
-		if (strpos($key,'filterquery')===false
-			&& !preg_match("/^'\d\d\d\d-\d\d-\d\d'$/",$value) ) // and don't clean dates
-			{
-			if ( get_magic_quotes_gpc() && !empty($value) && is_string($value) )
-				$value = stripslashes($value);
-			$value = mysqli_real_escape_string($config["conn"], $value);
-		} else { return $value;}
-		return $value;
-	}
+function safeIntoDB($config, &$value, $key = null)
+{
+    // don't clean arrays - clean individual strings/values
+    if (is_array($value)) {
+        foreach ($value as $key => $string) {
+            $value[$key] = safeIntoDB($config, $string, $key);
+        }
+        return $value;
+    } else {
+        // don't clean filters - we've cleaned those separately in the sqlparts function
+        if (
+            strpos($key, 'filterquery') === false
+            && !preg_match("/^'\d\d\d\d-\d\d-\d\d'$/", $value)
+        ) { // and don't clean dates
+            if (get_magic_quotes_gpc() && !empty($value) && is_string($value)) {
+                $value = stripslashes($value);
+            }
+            $value = mysqli_real_escape_string($config["conn"], $value);
+        } else {
+            return $value;
+        }
+        return $value;
+    }
 }
 /*
   ===============================================================
@@ -93,261 +109,280 @@ function safeIntoDB($config, &$value, $key=NULL) {
 //"remove" = remove by association Id (items associated with a project, etc)
 //"Count" = # of a particular type in table
 //"selectbox" = get results to create a selectbox- for assignment or filter
-function getsql($config,$values,$sort,$querylabel) {
+function getsql($config, $values, $sort, $querylabel)
+{
 
-    if (is_array($values))
-        foreach ($values as $key=>$value)
+    if (is_array($values)) {
+        foreach ($values as $key => $value) {
             $values[$key] = safeIntoDB($config, $value, $key);
+        }
+    }
 
-	switch ($querylabel) {
-
-    case "parentlistselectbox":
-      $sql="SELECT `checklistId`, `title`
-        FROM `". $config['prefix'] ."checklist`
+    switch ($querylabel) {
+        case "parentlistselectbox":
+            $sql = "SELECT `checklistId`, `title`
+        FROM `" . $config['prefix'] . "checklist`
 				ORDER BY `title` ASC";
-			break;
+            break;
 
-		case "instanceselectbox":
-			$sql="SELECT `instanceId`, `name`, `description`
-				FROM `". $config['prefix'] ."instance`
+        case "instanceselectbox":
+            $sql = "SELECT `instanceId`, `name`, `description`
+				FROM `" . $config['prefix'] . "instance`
 				ORDER BY `description` ASC";
-			break;
+            break;
 
-    case "priorityselectbox":
-			$sql="SELECT DISTINCT `priority`
-				FROM `". $config['prefix'] . $values['queryTable'] . "`
+        case "priorityselectbox":
+            $sql = "SELECT DISTINCT `priority`
+				FROM `" . $config['prefix'] . $values['queryTable'] . "`
         WHERE `" . $values['queryKey'] . "` = " . $values['queryValue'] . "
 				ORDER BY `priority` ASC";
-        #die($sql);
-			break;
+            #die($sql);
+            break;
 
-		case "categoryselectbox":
-			$sql="SELECT c.`categoryId`, c.`category`, c.`description`
-				FROM `". $config['prefix'] ."categories` as c
+        case "categoryselectbox":
+            $sql = "SELECT c.`categoryId`, c.`category`, c.`description`
+				FROM `" . $config['prefix'] . "categories` as c
 				ORDER BY {$sort['categoryselectbox']}";
-			break;
+            break;
 
-		case "checkchecklistitem":
-		    $instTable = '';
-		    $instQuery = '';
-		    if (isset($values['instanceId']) && is_numeric($values['instanceId'])) {
-    		    $instTable = 'inst';
-		        $instQuery = " AND `instanceId` = '{$values['instanceId']}' ";
-		    }
+        case "checkchecklistitem":
+            $instTable = '';
+            $instQuery = '';
+            if (isset($values['instanceId']) && is_numeric($values['instanceId'])) {
+                $instTable = 'inst';
+                $instQuery = " AND `instanceId` = '{$values['instanceId']}' ";
+            }
 
-			$sql="UPDATE `". $config['prefix'] ."checklistitems" . $instTable . "`
+            $sql = "UPDATE `" . $config['prefix'] . "checklistitems" . $instTable . "`
 				SET `{$values['field']}` = 'y'
 				WHERE `checklistItemId` IN ({$values['itemfilterquery']})"
-				. $instQuery;
-			break;
+                . $instQuery;
+            break;
 
-		case "checklistselectbox":
-			$sql="SELECT cl.`checklistId`, cl.`title`,
+        case "checklistselectbox":
+            $sql = "SELECT cl.`checklistId`, cl.`title`,
 						cl.`premiseA`,cl.`premiseB`,cl.`conclusion`,cl.`behaviour`, cl.`standard`, cl.`conditions`, cl.`metaphor`, cl.`categoryId`, cl.`hyperlink`, cl.`sortBy`, c.`category`
-				FROM `". $config['prefix'] ."checklist` as cl
-				LEFT OUTER JOIN `". $config['prefix'] ."categories` as c USING (`categoryId`)
+				FROM `" . $config['prefix'] . "checklist` as cl
+				LEFT OUTER JOIN `" . $config['prefix'] . "categories` as c USING (`categoryId`)
 				ORDER BY {$sort['checklistselectbox']}";
-			break;
+            break;
 
-		case "clearchecklist":
-		    $instTable = '';
-		    $instQuery = '';
-		    if (isset($values['instanceId']) && is_numeric($values['instanceId'])) {
-    		    $instTable = 'inst';
-		        $instQuery = " AND `instanceId` = '{$values['instanceId']}' ";
-		    }
+        case "clearchecklist":
+            $instTable = '';
+            $instQuery = '';
+            if (isset($values['instanceId']) && is_numeric($values['instanceId'])) {
+                $instTable = 'inst';
+                $instQuery = " AND `instanceId` = '{$values['instanceId']}' ";
+            }
 
-			$sql="UPDATE `". $config['prefix'] ."checklistitems" . $instTable . "`
+            $sql = "UPDATE `" . $config['prefix'] . "checklistitems" . $instTable . "`
 				SET `checked` = 'n'
 				WHERE `checklistId` = '{$values['listId']}'"
-				. $instQuery;
-			break;
+                . $instQuery;
+            break;
 
-		case "clearchecklistignore":
-		    $instTable = '';
-		    $instQuery = '';
-		    if (isset($values['instanceId']) && is_numeric($values['instanceId'])) {
-    		    $instTable = 'inst';
-		        $instQuery = " AND `instanceId` = '{$values['instanceId']}' ";
-		    }
+        case "clearchecklistignore":
+            $instTable = '';
+            $instQuery = '';
+            if (isset($values['instanceId']) && is_numeric($values['instanceId'])) {
+                $instTable = 'inst';
+                $instQuery = " AND `instanceId` = '{$values['instanceId']}' ";
+            }
 
-			$sql="UPDATE `". $config['prefix'] ."checklistitems" . $instTable . "`
+            $sql = "UPDATE `" . $config['prefix'] . "checklistitems" . $instTable . "`
 				SET `ignored` = 'n'
 				WHERE `checklistId` = '{$values['listId']}'"
-				. $instQuery;
-			break;
+                . $instQuery;
+            break;
 
-		case "clearchecklistscore":
-		    $instTable = '';
-		    $instQuery = '';
-		    if (isset($values['instanceId']) && is_numeric($values['instanceId'])) {
-    		    $instTable = 'inst';
-		        $instQuery = " AND `instanceId` = '{$values['instanceId']}' ";
-		    }
+        case "clearchecklistscore":
+            $instTable = '';
+            $instQuery = '';
+            if (isset($values['instanceId']) && is_numeric($values['instanceId'])) {
+                $instTable = 'inst';
+                $instQuery = " AND `instanceId` = '{$values['instanceId']}' ";
+            }
 
-			$sql="UPDATE `". $config['prefix'] ."checklistitems" . $instTable . "`
+            $sql = "UPDATE `" . $config['prefix'] . "checklistitems" . $instTable . "`
 				SET `assessed` = 0,
 				    `score` = 0
 				WHERE `checklistId` = '{$values['listId']}'"
-				. $instQuery;
-			break;
+                . $instQuery;
+            break;
 
-    case "checklistprioritiesup":
-      $sql="UPDATE `". $config['prefix'] ."checklistitems`
+        case "checklistprioritiesup":
+            $sql = "UPDATE `" . $config['prefix'] . "checklistitems`
         SET `priority` = `priority` + 1
         WHERE `checklistId` = '{$values['listId']}'";
-      break;
+            break;
 
-    case "checklistprioritiesdown":
-      $sql="UPDATE `". $config['prefix'] ."checklistitems`
+        case "checklistprioritiesdown":
+            $sql = "UPDATE `" . $config['prefix'] . "checklistitems`
         SET `priority` = `priority` - 1
         WHERE `checklistId` = '{$values['listId']}'";
-      break;
+            break;
 
-    case "listprioritiesup":
-      $sql="UPDATE `". $config['prefix'] ."listitems`
+        case "listprioritiesup":
+            $sql = "UPDATE `" . $config['prefix'] . "listitems`
         SET `priority` = `priority` + 1
         WHERE `listId` = '{$values['listId']}'";
-      break;
+            break;
 
-    case "listprioritiesdown":
-      $sql="UPDATE `". $config['prefix'] ."listitems`
+        case "listprioritiesdown":
+            $sql = "UPDATE `" . $config['prefix'] . "listitems`
         SET `priority` = `priority` - 1
         WHERE `listId` = '{$values['listId']}'";
-      break;
+            break;
 
-		case "assesschecklist":
-		    $instTable = '';
-		    $instQuery = '';
-		    $instUse = FALSE;
-		    if (isset($values['instanceId']) && is_numeric($values['instanceId'])) {
-    		    $instUse = TRUE;
-    		    $instTable = 'inst';
-		        $instQuery = " AND `instanceId` = '{$values['instanceId']}' ";
-		    }
+        case "assesschecklist":
+            $instTable = '';
+            $instQuery = '';
+            $instUse = false;
+            if (isset($values['instanceId']) && is_numeric($values['instanceId'])) {
+                $instUse = true;
+                $instTable = 'inst';
+                $instQuery = " AND `instanceId` = '{$values['instanceId']}' ";
+            }
 
-		    $prioritiseQuery = '';
-		    if (isset($values['prioritise']) && $values['prioritise'] > -1 && !$instUse) {
-		        $prioritiseQuery = " AND `priority` = 0 ";
-		    }
+            $prioritiseQuery = '';
+            if (isset($values['prioritise']) && $values['prioritise'] > -1 && !$instUse) {
+                $prioritiseQuery = " AND `priority` = 0 ";
+            }
 
-			$sql="UPDATE `". $config['prefix'] ."checklistitems" . $instTable . "`
+            $sql = "UPDATE `" . $config['prefix'] . "checklistitems" . $instTable . "`
 				SET `assessed` = `assessed` + 1
 				WHERE `checklistId` = '{$values['listId']}'
 				AND `ignored` = 'n'"
-				. $instQuery
-				. $prioritiseQuery;
+                . $instQuery
+                . $prioritiseQuery;
 
-			break;
+            break;
 
-		case "scorechecklist":
+        case "scorechecklist":
+            $instTable = '';
+            $instQuery = '';
+            $instUse = false;
 
-		    $instTable = '';
-		    $instQuery = '';
-		    $instUse = FALSE;
+            if (isset($values['instanceId']) && is_numeric($values['instanceId'])) {
+                $instUse = true;
+                $instTable = 'inst';
+                $instQuery = " AND `instanceId` = '{$values['instanceId']}' ";
+            }
 
-		    if (isset($values['instanceId']) && is_numeric($values['instanceId'])) {
-    		    $instUse = TRUE;
-    		    $instTable = 'inst';
-		        $instQuery = " AND `instanceId` = '{$values['instanceId']}' ";
-		    }
+            $prioritiseQuery = '';
+            if (isset($values['prioritise']) && $values['prioritise'] > -1 && !$instUse) {
+                $prioritiseQuery = " AND `priority` = 0 ";
+            }
 
-		    $prioritiseQuery = '';
-		    if (isset($values['prioritise']) && $values['prioritise'] > -1 && !$instUse) {
-		        $prioritiseQuery = " AND `priority` = 0 ";
-		    }
-
-			$sql="UPDATE `". $config['prefix'] ."checklistitems" . $instTable . "`
+            $sql = "UPDATE `" . $config['prefix'] . "checklistitems" . $instTable . "`
 				SET `score` = `score` + 1
 				WHERE `checklistId` = '{$values['listId']}'
 				AND `ignored` = 'n'
 				AND `checklistItemId` IN ({$values['itemfilterquery']})"
-				. $instQuery
-				. $prioritiseQuery;
-			//echo '<pre>' . $sql; die;
-			break;
+                . $instQuery
+                . $prioritiseQuery;
+            //echo '<pre>' . $sql; die;
+            break;
 
-		case "clearitemlists":
-			$sql="DELETE FROM `". $config['prefix'] ."lookuplist`
+        case "clearitemlists":
+            $sql = "DELETE FROM `" . $config['prefix'] . "lookuplist`
 				WHERE `parentId` = '{$values['itemId']}'
 				AND `listType` = '{$values['type']}'
 				";
         // echo $sql;die;
-			break;
+            break;
 
-		case "delitemlist":
-			$sql="DELETE FROM `". $config['prefix'] ."lookuplist`
+        case "delitemlist":
+            $sql = "DELETE FROM `" . $config['prefix'] . "lookuplist`
 				WHERE `parentId` = '{$values['parentId']}'
 				AND `listType` = '{$values['listType']}'
 				AND `listId` = '{$values['listId']}'
 				";
-			break;
+            break;
 
-		case "completeitem":
-			$sql="UPDATE `". $config['prefix'] ."itemstatus`
-				SET `dateCompleted`=" . $values['dateCompleted'].
-				", `lastModified` = CURRENT_DATE
+        case "completeitem":
+            $sql = "UPDATE `" . $config['prefix'] . "itemstatus`
+				SET `dateCompleted`=" . $values['dateCompleted'] .
+                ", `lastModified` = CURRENT_DATE
 				WHERE `itemId`=" . $values['itemId'];
-			break;
+            break;
 
-		case "completelistitem":
-			$sql="UPDATE `". $config['prefix'] ."listitems`
+        case "completelistitem":
+            $sql = "UPDATE `" . $config['prefix'] . "listitems`
 				SET `dateCompleted`={$values['dateCompleted']}
 				WHERE `listItemId` IN ({$values['itemfilterquery']})";
-			break;
+            break;
 
-		case "copynextaction":
-			$sql="INSERT INTO `". $config['prefix'] ."nextactions` (`parentId`,`nextaction`)
+        case "copynextaction":
+            $sql = "INSERT INTO `" . $config['prefix'] . "nextactions` (`parentId`,`nextaction`)
 				VALUES ('{$values['parentId']}','{$values['newitemId']}')
 				ON DUPLICATE KEY UPDATE `nextaction`='{$values['newitemId']}'";
-			break;
+            break;
 
-		case "getchildlists":
-			$sql="SELECT `parentId` as itemId, `listId` as listId,
+        case "getchildlists":
+            $sql = "SELECT `parentId` as itemId, `listId` as listId,
 						`listType` as type
-				FROM `". $config['prefix'] . "lookuplist`
+				FROM `" . $config['prefix'] . "lookuplist`
 				WHERE 1 = 1";
-    			if (isset($values['parentId']))	$sql .= " AND `parentId` = {$values['parentId']}";
-    			if (isset($values['type']))	$sql .= " AND `listType` = '{$values['type']}'";
-    			if (isset($values['listId']))	$sql .= " AND `listId` = '{$values['listId']}'";
-			break;
+            if (isset($values['parentId'])) {
+                $sql .= " AND `parentId` = {$values['parentId']}";
+            }
+            if (isset($values['type'])) {
+                $sql .= " AND `listType` = '{$values['type']}'";
+            }
+            if (isset($values['listId'])) {
+                $sql .= " AND `listId` = '{$values['listId']}'";
+            }
+            break;
 
-		case "getqualities":
-			$sql="SELECT *
-				FROM `". $config['prefix'] . "qualities`
+        case "getqualities":
+            $sql = "SELECT *
+				FROM `" . $config['prefix'] . "qualities`
 				WHERE {$values['qQuery']} = '{$values['qValue']}' ";
-    			if (isset($values['qSearch'])) $sql .= " AND {$values['qSearch']} LIKE '%{$values['qNeedle']}%' ";
-    			//if (isset($values['qLimit'])) $sql .= " AND `disp` LIKE '%{$values['qLimit']}%' ";
-				$sql .= "ORDER BY {$sort['getqualities']}";
-    break;
+            if (isset($values['qSearch'])) {
+                $sql .= " AND {$values['qSearch']} LIKE '%{$values['qNeedle']}%' ";
+            }
+                //if (isset($values['qLimit'])) $sql .= " AND `disp` LIKE '%{$values['qLimit']}%' ";
+                $sql .= "ORDER BY {$sort['getqualities']}";
+            break;
 
-		case "lookupqualities":
-			$sql="SELECT *
-				FROM `". $config['prefix'] . "lookupqualities`
+        case "lookupqualities":
+            $sql = "SELECT *
+				FROM `" . $config['prefix'] . "lookupqualities`
 				WHERE 1 = 1";
-    			if (isset($values['visId'])) $sql .= "	AND `visId` = '{$values['visId']}'";
-    			if (isset($values['itemId'])) $sql .= "	AND `itemId` = '{$values['itemId']}'";
-    			if (isset($values['qId'])) $sql .= " AND `qId` = '{$values['qId']}'";
-    			if (isset($values['itemType'])) $sql .= " AND `itemType` = '{$values['itemType']}'";
-    			if (isset($values['qaId'])) $sql .= " AND `qaId` = '{$values['qaId']}'";
-    break;
+            if (isset($values['visId'])) {
+                $sql .= "	AND `visId` = '{$values['visId']}'";
+            }
+            if (isset($values['itemId'])) {
+                $sql .= "	AND `itemId` = '{$values['itemId']}'";
+            }
+            if (isset($values['qId'])) {
+                $sql .= " AND `qId` = '{$values['qId']}'";
+            }
+            if (isset($values['itemType'])) {
+                $sql .= " AND `itemType` = '{$values['itemType']}'";
+            }
+            if (isset($values['qaId'])) {
+                $sql .= " AND `qaId` = '{$values['qaId']}'";
+            }
+            break;
 
-		case "deletequalities":
-			$sql="DELETE
-				FROM `". $config['prefix'] . "lookupqualities`
+        case "deletequalities":
+            $sql = "DELETE
+				FROM `" . $config['prefix'] . "lookupqualities`
 				WHERE `itemId` = '{$values['itemId']}'
 				AND `itemType` = '{$values['itemType']}'
         {$values['filterquery']}";
-      break;
+            break;
 
-		case "nullqualities":
-			$sql="DELETE
-				FROM `". $config['prefix'] . "lookupqualities`
+        case "nullqualities":
+            $sql = "DELETE
+				FROM `" . $config['prefix'] . "lookupqualities`
 				WHERE `value` = ''";
-			break;
+            break;
 
-		case "countactions":
-			$sql="SELECT COUNT(DISTINCT i.`itemId`) AS nactions
+        case "countactions":
+            $sql = "SELECT COUNT(DISTINCT i.`itemId`) AS nactions
                     FROM `{$config['prefix']}items` as i
 					JOIN `{$config['prefix']}itemstatus` as its USING (`itemId`)
                     JOIN `{$config['prefix']}itemattributes` as ia USING (`itemId`)
@@ -361,10 +396,10 @@ function getsql($config,$values,$sort,$querylabel) {
 							JOIN `{$config['prefix']}items` AS i USING (`itemId`)
 							JOIN `{$config['prefix']}itemstatus` AS its  USING (`itemId`)
 					) as y ON (y.`parentId` = lu.`parentId`) {$values['filterquery']}";
-			break;
+            break;
 
-      case 'countactionsbycontext':
-          $sql="SELECT cn.`name` AS cname,cn.`contextId`,COUNT(x.`itemId`) AS count
+        case 'countactionsbycontext':
+            $sql = "SELECT cn.`name` AS cname,cn.`contextId`,COUNT(x.`itemId`) AS count
                   FROM `{$config['prefix']}itemattributes` as x
                   JOIN `{$config['prefix']}itemattributes` as ia USING (`itemId`)
                   JOIN `{$config['prefix']}itemstatus` as its USING (`itemId`)
@@ -385,10 +420,10 @@ function getsql($config,$values,$sort,$querylabel) {
                   ) AS nat ON (x.`itemId`=nat.`nextAction`)
                    {$values['filterquery']}
                    GROUP BY ia.`contextId` ORDER BY cn.`name`";
-          break;
+            break;
 
-		case "countnextactions":
-			$sql="SELECT INTERVAL(DATEDIFF(CURDATE(),ia.`deadline`),-6,0,1) AS `duecategory`,
+        case "countnextactions":
+            $sql = "SELECT INTERVAL(DATEDIFF(CURDATE(),ia.`deadline`),-6,0,1) AS `duecategory`,
 			           COUNT(DISTINCT i.`itemId`) AS nnextactions
                     FROM `{$config['prefix']}items` as i
 					JOIN `{$config['prefix']}itemstatus` as its USING (`itemId`)
@@ -408,116 +443,116 @@ function getsql($config,$values,$sort,$querylabel) {
                     ) AS nat ON (i.`itemId`=nat.`nextAction`)
                     {$values['filterquery']}
 					GROUP BY `duecategory`";
-			break;
-		case "countselected":
-			$sql="SELECT FOUND_ROWS()";
-			break;
-		case "countspacecontexts":
-			$sql="SELECT COUNT(*)
-				FROM `". $config['prefix'] ."context`";
-			break;
-		case "deleteinstance":
-			$sql="DELETE FROM `". $config['prefix'] ."instance`
+            break;
+        case "countselected":
+            $sql = "SELECT FOUND_ROWS()";
+            break;
+        case "countspacecontexts":
+            $sql = "SELECT COUNT(*)
+				FROM `" . $config['prefix'] . "context`";
+            break;
+        case "deleteinstance":
+            $sql = "DELETE FROM `" . $config['prefix'] . "instance`
 				WHERE `instanceId`='{$values['id']}'";
-			break;
-		case "deletecategory":
-			$sql="DELETE FROM `". $config['prefix'] ."categories`
+            break;
+        case "deletecategory":
+            $sql = "DELETE FROM `" . $config['prefix'] . "categories`
 				WHERE `categoryId`='{$values['id']}'";
-			break;
-		case "deletechecklist":
-			$sql="DELETE FROM `". $config['prefix'] ."checklist`
+            break;
+        case "deletechecklist":
+            $sql = "DELETE FROM `" . $config['prefix'] . "checklist`
 				WHERE `checklistId`='{$values['listId']}'";
-			break;
-		case "deletechecklistitem":
-			$sql="DELETE FROM `". $config['prefix'] ."checklistitems`
+            break;
+        case "deletechecklistitem":
+            $sql = "DELETE FROM `" . $config['prefix'] . "checklistitems`
 				WHERE `checklistItemId`='{$values['itemId']}'";
-			break;
-		case "deletechecklistiteminst":
-			$sql="DELETE FROM `". $config['prefix'] ."checklistitemsinst`
+            break;
+        case "deletechecklistiteminst":
+            $sql = "DELETE FROM `" . $config['prefix'] . "checklistitemsinst`
 				WHERE `checklistItemId`='{$values['itemId']}'";
-			break;
-		case "deletelist":
-			$sql="DELETE FROM `". $config['prefix'] ."list`
+            break;
+        case "deletelist":
+            $sql = "DELETE FROM `" . $config['prefix'] . "list`
 				WHERE `listId`='{$values['listId']}'";
-			break;
-		case "deletelistitem":
-			$sql="DELETE FROM `". $config['prefix'] ."listitems`
+            break;
+        case "deletelistitem":
+            $sql = "DELETE FROM `" . $config['prefix'] . "listitems`
 				WHERE `listItemId`='{$values['itemId']}'";
-			break;
-		case "deletelistlookup":
-			$sql="DELETE FROM `". $config['prefix'] ."lookuplist`
+            break;
+        case "deletelistlookup":
+            $sql = "DELETE FROM `" . $config['prefix'] . "lookuplist`
 				WHERE `listId`='{$values['listId']}'
 				AND `listType`='{$values['type']}'";
-			break;
-		case "deleteitem":
-			$sql="DELETE FROM `". $config['prefix'] ."items`
+            break;
+        case "deleteitem":
+            $sql = "DELETE FROM `" . $config['prefix'] . "items`
 				WHERE `itemId`='{$values['itemId']}'";
-			break;
-		case "deleteitemattributes":
-			$sql="DELETE FROM `". $config['prefix'] ."itemattributes`
+            break;
+        case "deleteitemattributes":
+            $sql = "DELETE FROM `" . $config['prefix'] . "itemattributes`
 				WHERE `itemId`='{$values['itemId']}'";
-			break;
-		case "deleteitemstatus":
-			$sql="DELETE FROM `". $config['prefix'] ."itemstatus`
+            break;
+        case "deleteitemstatus":
+            $sql = "DELETE FROM `" . $config['prefix'] . "itemstatus`
 				WHERE `itemId`='{$values['itemId']}'";
-			break;
-		case "deletelookup":
-			$sql="DELETE FROM `". $config['prefix'] ."lookup`
+            break;
+        case "deletelookup":
+            $sql = "DELETE FROM `" . $config['prefix'] . "lookup`
 				WHERE `itemId` ='{$values['itemId']}'";
-			break;
-		case "checklookup":
-			$sql="SELECT * FROM `". $config['prefix'] ."lookup`
+            break;
+        case "checklookup":
+            $sql = "SELECT * FROM `" . $config['prefix'] . "lookup`
 				WHERE `itemId` ='{$values['itemId']}'
 				AND `parentId` ='{$values['parentId']}'";
-			break;
-		case "lookuparray":
-			$sql="SELECT * FROM `". $config['prefix'] ."lookup`
+            break;
+        case "lookuparray":
+            $sql = "SELECT * FROM `" . $config['prefix'] . "lookup`
 				";
-			break;
-		case "deletelookupparents":
-			$sql="DELETE FROM `". $config['prefix'] ."lookup`
+            break;
+        case "deletelookupparents":
+            $sql = "DELETE FROM `" . $config['prefix'] . "lookup`
 				WHERE `parentId` ='{$values['itemId']}'";
-			break;
-		case "deleteparlookup":
-			$sql="DELETE FROM `". $config['prefix'] ."lookup`
+            break;
+        case "deleteparlookup":
+            $sql = "DELETE FROM `" . $config['prefix'] . "lookup`
 				WHERE `itemId` ='{$values['itemId']}'
 				AND `parentId` ='{$values['parentId']}'
 				";
-			break;
-		case "deletenextaction":
-			$sql="DELETE FROM `". $config['prefix'] ."nextactions`
+            break;
+        case "deletenextaction":
+            $sql = "DELETE FROM `" . $config['prefix'] . "nextactions`
 				WHERE `nextAction`='{$values['itemId']}'";
-			break;
-		case "deletenextactionparents":
-			$sql="DELETE FROM `". $config['prefix'] ."nextactions`
+            break;
+        case "deletenextactionparents":
+            $sql = "DELETE FROM `" . $config['prefix'] . "nextactions`
 				WHERE `parentId` ='{$values['itemId']}'";
-			break;
-		case "deletenote":
-			$sql="DELETE FROM `". $config['prefix'] ."tickler`
+            break;
+        case "deletenote":
+            $sql = "DELETE FROM `" . $config['prefix'] . "tickler`
 				WHERE `ticklerId`='{$values['noteId']}'";
-			break;
-		case "deletespacecontext":
-			$sql="DELETE FROM `". $config['prefix'] ."context`
+            break;
+        case "deletespacecontext":
+            $sql = "DELETE FROM `" . $config['prefix'] . "context`
 				WHERE `contextId`='{$values['id']}'";
-			break;
-		case "deletetimecontext":
-			$sql="DELETE FROM `". $config['prefix'] ."timeitems`
+            break;
+        case "deletetimecontext":
+            $sql = "DELETE FROM `" . $config['prefix'] . "timeitems`
 				WHERE `timeframeId`='{$values['id']}'";
-			break;
+            break;
 
-		case "getchecklistitems":
-		    $table = 'cli';
-		    $join = '';
-		    $inst = '';
-		    $sorts = $sort['getchecklistitems'];
-		    if (isset($values['instanceId']) && is_numeric($values['instanceId'])) {
-		        $table = 'i';
-    		    $join = " LEFT JOIN `{$config['prefix']}checklistitemsinst` AS i
+        case "getchecklistitems":
+            $table = 'cli';
+            $join = '';
+            $inst = '';
+            $sorts = $sort['getchecklistitems'];
+            if (isset($values['instanceId']) && is_numeric($values['instanceId'])) {
+                $table = 'i';
+                $join = " LEFT JOIN `{$config['prefix']}checklistitemsinst` AS i
 				ON (cli.`checklistitemId` = i.`checklistitemId`) ";
-    		    $inst = " AND i.`instanceId` = '{$values['instanceId']}' ";
-    		    $sorts = $sort['getchecklistitemsinst'];
-		    }
-			$sql="SELECT cli.`checklistitemId` AS `itemId`, cli.`item`, cli.`notes`, cli.`hyperlink`,
+                $inst = " AND i.`instanceId` = '{$values['instanceId']}' ";
+                $sorts = $sort['getchecklistitemsinst'];
+            }
+            $sql = "SELECT cli.`checklistitemId` AS `itemId`, cli.`item`, cli.`notes`, cli.`hyperlink`,
 						cli.`checklistId` AS `listId`, cli.`priority`, cli.`effort`,
 						" . $table . ".`checked`,
 						" . $table . ".`ignored`,
@@ -529,10 +564,10 @@ function getsql($config,$values,$sort,$querylabel) {
 				" . $inst . "
                 ORDER BY {$sorts}";
             //echo '<pre>'. $sql;die;
-			break;
+            break;
 
-    case "searchlists":
-  		$sql="
+        case "searchlists":
+            $sql = "
         SELECT 'cl' AS `type`
         , `checklistId` AS `itemId`
         , `title`
@@ -625,39 +660,39 @@ function getsql($config,$values,$sort,$querylabel) {
 
         ORDER BY {$sort['searchlists']}";
              // echo '<pre>'. $sql;die;
-		break;
+            break;
 
-		case "getchecklists":
-			$sql="SELECT l.`checklistId` as listId, l.`title`,
+        case "getchecklists":
+            $sql = "SELECT l.`checklistId` as listId, l.`title`,
 						l.`premiseA`,l.`premiseB`,l.`conclusion`,l.`behaviour`, l.`standard`, l.`conditions`, l.`metaphor`, l.`categoryId`, l.`hyperlink`, l.`sortBy`, l.`scored`, l.`effort`, l.`menu`, c.`category`,
 						cc.`parentId` as ccparentId, cc.`title` as cctitle, ccc.`title` as ccctitle
-				FROM `". $config['prefix'] ."checklist` as l
+				FROM `" . $config['prefix'] . "checklist` as l
 				LEFT OUTER JOIN `{$config['prefix']}categories` as c USING (`categoryId`)
 				LEFT JOIN `{$config['prefix']}catcodes` as cc
 				ON LEFT(l.`sortBy`,2) = cc.`sortBy`
 				LEFT JOIN `{$config['prefix']}catcodes` as ccc
 				ON cc.`parentId` = ccc.`sortBy`
 				"
-				.$values['filterquery']." ORDER BY {$sort['getchecklists']}";
-		break;
+                . $values['filterquery'] . " ORDER BY {$sort['getchecklists']}";
+            break;
 
-		case "getcatcodes":
-			$sql="SELECT `sortBy`, `title`
-				FROM `". $config['prefix'] ."catcodes`
+        case "getcatcodes":
+            $sql = "SELECT `sortBy`, `title`
+				FROM `" . $config['prefix'] . "catcodes`
 				WHERE ISNULL(`parentId`)
         ORDER BY `sortBy` ASC
 				";
-		break;
+            break;
 
-    case "getcatcodedetails":
-			$sql="SELECT `sortBy`, `title`, `parentId`
-				FROM `". $config['prefix'] ."catcodes`
+        case "getcatcodedetails":
+            $sql = "SELECT `sortBy`, `title`, `parentId`
+				FROM `" . $config['prefix'] . "catcodes`
         ORDER BY `sortBy` ASC
 				";
-		break;
+            break;
 
-		case "getchildren":
-			$sql="SELECT i.`itemId`, i.`title`, i.`description`,
+        case "getchildren":
+            $sql = "SELECT i.`itemId`, i.`title`, i.`description`,
 					i.`premiseA`,i.`premiseB`,i.`conclusion`,i.`behaviour`, i.`standard`, i.`conditions`, i.`metaphor`, i.`hyperlink`, i.`sortBy`, ia.`type`,
 					ia.`isSomeday`, ia.`deadline`, ia.`repeat`,
 					ia.`suppress`, ia.`suppressUntil`, ia.`suppressIsDeadline`,
@@ -667,55 +702,55 @@ function getsql($config,$values,$sort,$querylabel) {
 					c.`category`, ia.`contextId`,
           cn.`name` AS cname, ia.`timeframeId`, ti.`timeframe`, tc.`tradeCondition`
 					, na.nextaction as NA
-				FROM `". $config['prefix'] . "itemattributes` as ia
+				FROM `" . $config['prefix'] . "itemattributes` as ia
 					JOIN `{$config['prefix']}lookup` AS lu USING (`itemId`)
-					JOIN `". $config['prefix'] . "items` AS i USING (`itemId`)
-					JOIN `". $config['prefix'] . "itemstatus` AS its USING (`itemId`)
-					LEFT OUTER JOIN `". $config['prefix'] . "context` AS cn
+					JOIN `" . $config['prefix'] . "items` AS i USING (`itemId`)
+					JOIN `" . $config['prefix'] . "itemstatus` AS its USING (`itemId`)
+					LEFT OUTER JOIN `" . $config['prefix'] . "context` AS cn
 						ON (ia.`contextId` = cn.`contextId`)
-					LEFT OUTER JOIN `". $config['prefix'] ."categories` AS c
+					LEFT OUTER JOIN `" . $config['prefix'] . "categories` AS c
 						ON (ia.`categoryId` = c.`categoryId`)
-					LEFT OUTER JOIN `". $config['prefix'] . "timeitems` AS ti
+					LEFT OUTER JOIN `" . $config['prefix'] . "timeitems` AS ti
 						ON (ia.`timeframeId` = ti.`timeframeId`)
-          LEFT OUTER JOIN `". $config['prefix'] . "tradeconditions` as tc
+          LEFT OUTER JOIN `" . $config['prefix'] . "tradeconditions` as tc
             ON (ia.`tradeConditionId` = tc.`tradeConditionId`)
   				LEFT JOIN (
   						SELECT DISTINCT nextaction FROM {$config['prefix']}nextactions
   					) AS na ON(na.nextaction=i.itemId)
 				WHERE lu.`parentId`= '{$values['parentId']}' {$values['filterquery']}
 				ORDER BY {$sort['getchildren']}";
-			break;
+            break;
 
-		case "getgtdphpversion":
-			//$sql="SELECT `version` FROM `{$config['prefix']}version`";
-			break;
+        case "getgtdphpversion":
+            //$sql="SELECT `version` FROM `{$config['prefix']}version`";
+            break;
 
-		case "getitems":
-			$sql="SELECT i.`itemId`, i.`title`, i.`description`, i.`sortBy`, ia.`deadline`, ia.`isSomeday`, its.`dateCompleted`, c.`category`, c.`categoryId`, ia.`type`
-				FROM `". $config['prefix'] . "itemattributes` as ia
-					JOIN `". $config['prefix'] . "items` as i
+        case "getitems":
+            $sql = "SELECT i.`itemId`, i.`title`, i.`description`, i.`sortBy`, ia.`deadline`, ia.`isSomeday`, its.`dateCompleted`, c.`category`, c.`categoryId`, ia.`type`
+				FROM `" . $config['prefix'] . "itemattributes` as ia
+					JOIN `" . $config['prefix'] . "items` as i
 						ON (ia.`itemId` = i.`itemId`)
-					JOIN `". $config['prefix'] . "itemstatus` as its
+					JOIN `" . $config['prefix'] . "itemstatus` as its
 						ON (ia.`itemId` = its.`itemId`)
-					LEFT OUTER JOIN `". $config['prefix'] . "context` as cn
+					LEFT OUTER JOIN `" . $config['prefix'] . "context` as cn
 						ON (ia.`contextId` = cn.`contextId`)
-					LEFT OUTER JOIN `". $config['prefix'] ."categories` as c
+					LEFT OUTER JOIN `" . $config['prefix'] . "categories` as c
 						ON (ia.`categoryId` = c.`categoryId`)
-					LEFT OUTER JOIN `". $config['prefix'] . "timeitems` as ti
+					LEFT OUTER JOIN `" . $config['prefix'] . "timeitems` as ti
 						ON (ia.`timeframeId` = ti.`timeframeId`) "
-            . $values['filterquery']."
+            . $values['filterquery'] . "
 				ORDER BY {$sort['getitems']}";
-			break;
+            break;
 
-		case "getitemsattr":
-			$sql="SELECT itemId, type
-				FROM `". $config['prefix'] . "itemattributes`
+        case "getitemsattr":
+            $sql = "SELECT itemId, type
+				FROM `" . $config['prefix'] . "itemattributes`
 				";
 
-			break;
+            break;
 
-		case "getitemsandparent":
-			$sql="SELECT
+        case "getitemsandparent":
+            $sql = "SELECT
     				x.`itemId`, x.`title`, x.`description`,
     				x.`premiseA`, x.`premiseB`, x.`conclusion`, x.`behaviour`, x.`standard`, x.`conditions`, x.`metaphor`, x.`hyperlink`, x.`sortBy`, x.`type`, x.`isSomeday`,
     				x.`deadline`, x.`repeat`, x.`suppress`, x.`suppressIsDeadline`,
@@ -740,21 +775,21 @@ function getsql($config,$values,$sort,$querylabel) {
 							cn.`name` AS cname, ia.`timeframeId`,
 							ti.`timeframe`, lu.`parentId`
 						FROM
-								`". $config['prefix'] . "itemattributes` as ia
-							JOIN `". $config['prefix'] . "items` as i
+								`" . $config['prefix'] . "itemattributes` as ia
+							JOIN `" . $config['prefix'] . "items` as i
 								ON (ia.`itemId` = i.`itemId`)
-							JOIN `". $config['prefix'] . "itemstatus` as its
+							JOIN `" . $config['prefix'] . "itemstatus` as its
 								ON (ia.`itemId` = its.`itemId`)
-							LEFT OUTER JOIN `". $config['prefix'] . "context` as cn
+							LEFT OUTER JOIN `" . $config['prefix'] . "context` as cn
 								ON (ia.`contextId` = cn.`contextId`)
-							LEFT OUTER JOIN `". $config['prefix'] ."categories` as c
+							LEFT OUTER JOIN `" . $config['prefix'] . "categories` as c
 								ON (ia.`categoryId` = c.`categoryId`)
-							LEFT OUTER JOIN `". $config['prefix'] . "timeitems` as ti
+							LEFT OUTER JOIN `" . $config['prefix'] . "timeitems` as ti
 								ON (ia.`timeframeId` = ti.`timeframeId`)
-              LEFT OUTER JOIN `". $config['prefix'] . "tradeconditions` as tc
+              LEFT OUTER JOIN `" . $config['prefix'] . "tradeconditions` as tc
                 ON (ia.`tradeConditionId` = tc.`tradeConditionId`)
-							LEFT OUTER JOIN `". $config['prefix'] . "lookup` as lu
-								ON (ia.`itemId` = lu.`itemId`)".$values['childfilterquery']."
+							LEFT OUTER JOIN `" . $config['prefix'] . "lookup` as lu
+								ON (ia.`itemId` = lu.`itemId`)" . $values['childfilterquery'] . "
 				) as x
 					LEFT OUTER JOIN
 					(
@@ -779,124 +814,124 @@ function getsql($config,$values,$sort,$querylabel) {
               ia.`tradeConditionId` AS ptradeConditionId,
 							its.`dateCompleted` AS pdateCompleted
 						FROM
-								`". $config['prefix'] . "itemattributes` as ia
-							JOIN `". $config['prefix'] . "items` as i
+								`" . $config['prefix'] . "itemattributes` as ia
+							JOIN `" . $config['prefix'] . "items` as i
 								ON (ia.`itemId` = i.`itemId`)
-							JOIN `". $config['prefix'] . "itemstatus` as its
+							JOIN `" . $config['prefix'] . "itemstatus` as its
 								ON (ia.`itemId` = its.`itemId`)
 					) as y ON (y.parentId = x.parentId)
 				{$values['filterquery']} GROUP BY x.`itemId`
 				ORDER BY {$sort['getitemsandparent']}";
-			break;
+            break;
 
-		case "getitembrief":
-			$sql="SELECT i.`title`, i.`description`, i.`premiseA`, i.`premiseB`, i.`conclusion`, i.`behaviour`, i.`standard`, i.`conditions`, i.`metaphor`, ia.`type`, ia.`isSomeday`
-				FROM  `". $config['prefix'] . "items` AS i
-        LEFT JOIN `". $config['prefix'] . "itemattributes` AS ia
+        case "getitembrief":
+            $sql = "SELECT i.`title`, i.`description`, i.`premiseA`, i.`premiseB`, i.`conclusion`, i.`behaviour`, i.`standard`, i.`conditions`, i.`metaphor`, ia.`type`, ia.`isSomeday`
+				FROM  `" . $config['prefix'] . "items` AS i
+        LEFT JOIN `" . $config['prefix'] . "itemattributes` AS ia
         ON i.itemId = ia.itemId
 				WHERE ia.`itemId` = {$values['itemId']}";
-			break;
+            break;
 
-		case "getlistitems":
-			$sql="SELECT li.`listItemId` as itemId, li.`item`, li.`notes`, li.`hyperlink`,
+        case "getlistitems":
+            $sql = "SELECT li.`listItemId` as itemId, li.`item`, li.`notes`, li.`hyperlink`,
                          li.`listId` as listId, li.`dateCompleted`, li.`priority`
-				FROM `". $config['prefix'] . "listitems` as li
-					LEFT JOIN `". $config['prefix'] . "list` as l
+				FROM `" . $config['prefix'] . "listitems` as li
+					LEFT JOIN `" . $config['prefix'] . "list` as l
 						on li.`listId` = l.`listId`
-				WHERE l.`listId` = '{$values['listId']}' ".$values['filterquery']."
+				WHERE l.`listId` = '{$values['listId']}' " . $values['filterquery'] . "
 				ORDER BY {$sort['getlistitems']}";
-			break;
+            break;
 
-		case "getlists":
-			$sql="SELECT l.`listId` as listId, l.`title`, l.`premiseA`,l.`premiseB`,l.`conclusion`,l.`behaviour`, l.`standard`, l.`conditions`, l.`metaphor`, l.`categoryId`, l.`hyperlink`, l.`sortBy`, c.`category`
-				FROM `". $config['prefix'] . "list` as l
+        case "getlists":
+            $sql = "SELECT l.`listId` as listId, l.`title`, l.`premiseA`,l.`premiseB`,l.`conclusion`,l.`behaviour`, l.`standard`, l.`conditions`, l.`metaphor`, l.`categoryId`, l.`hyperlink`, l.`sortBy`, c.`category`
+				FROM `" . $config['prefix'] . "list` as l
 				LEFT OUTER JOIN `{$config['prefix']}categories` as c USING (`categoryId`) "
-				.$values['filterquery']." ORDER BY {$sort['getlists']}";
-			break;
+                . $values['filterquery'] . " ORDER BY {$sort['getlists']}";
+            break;
 
-		case "getnotes":
-			$sql="SELECT `ticklerId`, `title`, `note`, `date`
-				FROM `". $config['prefix'] . "tickler`  as tk".$values['filterquery']."
+        case "getnotes":
+            $sql = "SELECT `ticklerId`, `title`, `note`, `date`
+				FROM `" . $config['prefix'] . "tickler`  as tk" . $values['filterquery'] . "
 				ORDER BY {$sort['getnotes']}";
-			break;
+            break;
 
-		case "getorphaneditems":
-			$sql="SELECT ia.`itemId`, ia.`type`, i.`title`, i.`description`, i.`sortBy`, ia.`isSomeday`
+        case "getorphaneditems":
+            $sql = "SELECT ia.`itemId`, ia.`type`, i.`title`, i.`description`, i.`sortBy`, ia.`isSomeday`
 				FROM `{$config['prefix']}itemattributes` AS ia
 				JOIN `{$config['prefix']}items`		  AS i   USING (itemId)
 				JOIN `{$config['prefix']}itemstatus`	 AS its USING (itemId)
 				WHERE (ia.`type` NOT IN ({$values['notOrphansfilterquery']})
 					       AND (ia.`itemId` NOT IN
-						(SELECT lu.`itemId` FROM `". $config['prefix'] . "lookup` as lu)
+						(SELECT lu.`itemId` FROM `" . $config['prefix'] . "lookup` as lu)
                            ) OR ia.`type` IS NULL OR ia.`type`='')
 				ORDER BY {$sort['getorphaneditems']}";
-			break;
+            break;
 
-		case "getarrayorphans":
-			/*$sql="SELECT i.`itemId`, ia.`type`, i.`title`, i.`description`, ia.`isSomeday`, its.`dateCompleted`
-				FROM `{$config['prefix']}itemattributes` AS ia
-				LEFT JOIN `{$config['prefix']}items` AS i USING (itemId)
-				LEFT JOIN `{$config['prefix']}itemstatus` AS its USING (itemId)
-				RIGHT JOIN `{$config['prefix']}lookup` AS lu USING (itemId)
-				WHERE lu.parentId NOT IN ({$values['filterquery']})
-				AND ia.type IN ({$values['filterquerytype']})
-				ORDER BY {$sort['getitems']}";*/
-			$sql="SELECT ia.`itemId`
+        case "getarrayorphans":
+            /*$sql="SELECT i.`itemId`, ia.`type`, i.`title`, i.`description`, ia.`isSomeday`, its.`dateCompleted`
+                FROM `{$config['prefix']}itemattributes` AS ia
+                LEFT JOIN `{$config['prefix']}items` AS i USING (itemId)
+                LEFT JOIN `{$config['prefix']}itemstatus` AS its USING (itemId)
+                RIGHT JOIN `{$config['prefix']}lookup` AS lu USING (itemId)
+                WHERE lu.parentId NOT IN ({$values['filterquery']})
+                AND ia.type IN ({$values['filterquerytype']})
+                ORDER BY {$sort['getitems']}";*/
+            $sql = "SELECT ia.`itemId`
 				FROM `{$config['prefix']}itemattributes` AS ia
 				WHERE ia.type IN ({$values['filterquerytype']})
 				ORDER BY {$sort['getitems']}";
-			break;
+            break;
 
-		case "getspacecontexts":
-			$sql="SELECT `contextId`, `name`
-				FROM `". $config['prefix'] . "context` ORDER BY `name` ASC";
-			break;
+        case "getspacecontexts":
+            $sql = "SELECT `contextId`, `name`
+				FROM `" . $config['prefix'] . "context` ORDER BY `name` ASC";
+            break;
 
-		case "gettimecontexts":
-			$sql="SELECT `timeframeId`, `timeframe`, `description`
-				FROM `". $config['prefix'] . "timeitems` AS ti
+        case "gettimecontexts":
+            $sql = "SELECT `timeframeId`, `timeframe`, `description`
+				FROM `" . $config['prefix'] . "timeitems` AS ti
 				{$values['timefilterquery']} ORDER BY `timeframeId` ASC";
-			break;
+            break;
 
 
-		case "lookupparent":
-			$sql="SELECT lu.`parentId`,i.`title` AS `ptitle`,ia.`isSomeday`,ia.`type` AS `ptype`
-				FROM `". $config['prefix'] . "lookup` AS lu
+        case "lookupparent":
+            $sql = "SELECT lu.`parentId`,i.`title` AS `ptitle`,ia.`isSomeday`,ia.`type` AS `ptype`
+				FROM `" . $config['prefix'] . "lookup` AS lu
 				JOIN `{$config['prefix']}items` AS i ON (lu.`parentId` = i.`itemId`)
 				JOIN `{$config['prefix']}itemattributes` AS ia ON (lu.`parentId` = ia.`itemId`)
 				WHERE lu.`itemId`='{$values['itemId']}'";
-			break;
+            break;
 
-		case "lookupparentshort":
-			$sql="SELECT `parentId`
-				FROM `". $config['prefix'] . "lookup`
+        case "lookupparentshort":
+            $sql = "SELECT `parentId`
+				FROM `" . $config['prefix'] . "lookup`
 				WHERE `itemId`='{$values['itemId']}'";
-			break;
+            break;
 
-		case "newinstance":
-			$sql="INSERT INTO `". $config['prefix'] ."instance`
+        case "newinstance":
+            $sql = "INSERT INTO `" . $config['prefix'] . "instance`
         VALUES (NULL, '{$values['name']}', '{$values['description']}')";
-			break;
+            break;
 
-		case "newcategory":
-			$sql="INSERT INTO `". $config['prefix'] ."categories`
+        case "newcategory":
+            $sql = "INSERT INTO `" . $config['prefix'] . "categories`
 				VALUES (NULL, '{$values['name']}', '{$values['description']}')";
-			break;
+            break;
 
-		case "newchecklistitem":
-			$sql="INSERT INTO `". $config['prefix'] . "checklistitems`
+        case "newchecklistitem":
+            $sql = "INSERT INTO `" . $config['prefix'] . "checklistitems`
 				VALUES (NULL, '{$values['item']}','{$values['notes']}','{$values['hyperlink']}',
                         '{$values['listId']}', 'n', 'n', 0, 0, '{$values['effort']}', '{$values['priority']}')";
-			break;
+            break;
 
-		case "selectchecklistiteminst":
-      $sql="SELECT `checklistId`, `checklistItemId`
-				FROM `". $config['prefix'] ."checklistitems`
+        case "selectchecklistiteminst":
+            $sql = "SELECT `checklistId`, `checklistItemId`
+				FROM `" . $config['prefix'] . "checklistitems`
         ORDER BY `checklistId`, `checklistItemId`";
-			break;
+            break;
 
-		case "newchecklistiteminst":
-			$sql="INSERT INTO `". $config['prefix'] . "checklistitemsinst`
+        case "newchecklistiteminst":
+            $sql = "INSERT INTO `" . $config['prefix'] . "checklistitemsinst`
         VALUES ('{$values['checklistItemId']}'
                 , '{$values['checklistId']}'
                 , '{$values['instanceId']}'
@@ -906,27 +941,27 @@ function getsql($config,$values,$sort,$querylabel) {
                 , 0 /* assessed */
                 )";
                 // die($sql);
-			break;
+            break;
 
-		case "newitem":
-			$sql="INSERT INTO `". $config['prefix'] . "items`
+        case "newitem":
+            $sql = "INSERT INTO `" . $config['prefix'] . "items`
 						(`title`,`description`,`premiseA`,`premiseB`,`conclusion`,`behaviour`,`standard`,`conditions`,`metaphor`,`hyperlink`)
 				VALUES ('{$values['title']}',
 						'{$values['description']}','{$values['premiseA']}','{$values['premiseB']}','{$values['conclusion']}','{$values['behaviour']}','{$values['standard']}','{$values['conditions']}','{$values['metaphor']}','{$values['hyperlink']}')";
-			break;
+            break;
 
-		case "newitemattributes":
-			$sql="INSERT INTO `". $config['prefix'] . "itemattributes`
+        case "newitemattributes":
+            $sql = "INSERT INTO `" . $config['prefix'] . "itemattributes`
 						(`itemId`,`type`,`isSomeday`,`categoryId`,`contextId`,
             `timeframeId`,`deadline`,`repeat`,`suppress`,`suppressIsDeadline`,`suppressUntil`,`isTrade`,`tradeConditionId`)
 				VALUES ('{$values['newitemId']}','{$values['type']}','{$values['isSomeday']}',
 						'{$values['categoryId']}','{$values['contextId']}','{$values['timeframeId']}',
 						{$values['deadline']},'{$values['repeat']}','{$values['suppress']}',
             '{$values['suppressIsDeadline']}','{$values['suppressUntil']}','{$values['isTrade']}','{$values['tradeConditionId']}')";
-		break;
+            break;
 
-		case "newitemstatus":
-			$sql="INSERT INTO `". $config['prefix'] . "itemstatus`
+        case "newitemstatus":
+            $sql = "INSERT INTO `" . $config['prefix'] . "itemstatus`
 						(`itemId`,`dateCreated`,`lastModified`,`dateCompleted`)
 				VALUES (
 						'{$values['newitemId']}',
@@ -934,10 +969,10 @@ function getsql($config,$values,$sort,$querylabel) {
 						CURRENT_DATE,
 						{$values['dateCompleted']})
             ";
-			break;
+            break;
 
-    case "newlist":
-      $sql="INSERT INTO `". $config['prefix'] . "list`
+        case "newlist":
+            $sql = "INSERT INTO `" . $config['prefix'] . "list`
         VALUES (    NULL,
                     '{$values['title']}',
                 '{$values['categoryId']}',
@@ -954,10 +989,10 @@ function getsql($config,$values,$sort,$querylabel) {
                 '{$values['prioritise']}',
                 '{$values['sortItems']}'
                 )";
-      break;
+            break;
 
-		case "newlistitem":
-			$sql="INSERT INTO `". $config['prefix'] . "listitems`
+        case "newlistitem":
+            $sql = "INSERT INTO `" . $config['prefix'] . "listitems`
 				VALUES (
 					NULL,
 					'{$values['item']}',
@@ -967,130 +1002,130 @@ function getsql($config,$values,$sort,$querylabel) {
 					NULL,
 					0
 					)";
-			break;
+            break;
 
-		case "newnextaction":
-			$sql="INSERT INTO `". $config['prefix'] . "nextactions`
+        case "newnextaction":
+            $sql = "INSERT INTO `" . $config['prefix'] . "nextactions`
 						(`parentId`,`nextaction`)
 				VALUES ('{$values['parentId']}','{$values['newitemId']}')
 				ON DUPLICATE KEY UPDATE `nextaction`='{$values['newitemId']}'";
-			break;
+            break;
 
-		case "newnote":
-			$sql="INSERT INTO `". $config['prefix'] . "tickler`
+        case "newnote":
+            $sql = "INSERT INTO `" . $config['prefix'] . "tickler`
 						(`date`,`title`,`note`,`repeat`,`suppressUntil`)
 				VALUES ('{$values['date']}','{$values['title']}',
 						'{$values['note']}','{$values['repeat']}',
 						'{$values['suppressUntil']}')";
-			break;
+            break;
 
-		case "newparent":
-			$sql="REPLACE INTO `". $config['prefix'] . "lookup`
+        case "newparent":
+            $sql = "REPLACE INTO `" . $config['prefix'] . "lookup`
 						(`parentId`,`itemId`)
 				VALUES ('{$values['parentId']}','{$values['newitemId']}')";
-			break;
+            break;
 
-		case "newlistparent":
-			$sql="REPLACE INTO `". $config['prefix'] . "lookuplist`
+        case "newlistparent":
+            $sql = "REPLACE INTO `" . $config['prefix'] . "lookuplist`
 						(`parentId`,`listId`,`listType`)
 				VALUES ('{$values['itemId']}','{$values['listId']}','{$values['type']}')";
-			break;
+            break;
 
-		case "newspacecontext":
-			$sql="INSERT INTO `". $config['prefix'] . "context`
+        case "newspacecontext":
+            $sql = "INSERT INTO `" . $config['prefix'] . "context`
 						(`name`,`description`)
 				VALUES ('{$values['name']}', '{$values['description']}')";
-			break;
+            break;
 
-    case "newtradecondition":
-      $sql="INSERT INTO `". $config['prefix'] . "tradeconditions`
+        case "newtradecondition":
+            $sql = "INSERT INTO `" . $config['prefix'] . "tradeconditions`
             (`tradeCondition`,`description`)
 				VALUES ('{$values['name']}', '{$values['description']}')";
-			break;
+            break;
 
-		case "newtimecontext":
-			$sql="INSERT INTO `". $config['prefix'] . "timeitems`
+        case "newtimecontext":
+            $sql = "INSERT INTO `" . $config['prefix'] . "timeitems`
 						(`timeframe`,`description`,`type`)
 				VALUES ('{$values['name']}', '{$values['description']}', '{$values['type']}')";
-			break;
+            break;
 
-		case "parentselectbox":
-			$sql="SELECT i.`itemId`, i.`title`,
+        case "parentselectbox":
+            $sql = "SELECT i.`itemId`, i.`title`,
 						i.`description`, ia.`isSomeday`,ia.`type`
-				FROM `". $config['prefix'] . "items` as i
+				FROM `" . $config['prefix'] . "items` as i
 				JOIN `{$config['prefix']}itemattributes` as ia USING (`itemId`)
 				JOIN `{$config['prefix']}itemstatus` as its USING (`itemId`)
 				WHERE (its.`dateCompleted` IS NULL) {$values['ptypefilterquery']}
 				ORDER BY ia.`type`,i.`title`";
-				#ORDER BY {$sort['parentselectbox']}";
-			break;
+                #ORDER BY {$sort['parentselectbox']}";
+            break;
 
-		case "reassigncategory":
-			$sql="UPDATE `". $config['prefix'] . "itemattributes`
+        case "reassigncategory":
+            $sql = "UPDATE `" . $config['prefix'] . "itemattributes`
 				SET `categoryId`='{$values['newId']}'
 				WHERE `categoryId`='{$values['id']}'";
-			break;
+            break;
 
-		case "reassignspacecontext":
-			$sql="UPDATE `". $config['prefix'] . "itemattributes`
+        case "reassignspacecontext":
+            $sql = "UPDATE `" . $config['prefix'] . "itemattributes`
 				SET `contextId`='{$values['newId']}'
 				WHERE `contextId`='{$values['id']}'";
-			break;
+            break;
 
-		case "reassigntimecontext":
-			$sql="UPDATE `". $config['prefix'] . "itemattributes`
+        case "reassigntimecontext":
+            $sql = "UPDATE `" . $config['prefix'] . "itemattributes`
 				SET `timeframeId`='{$values['newId']}'
 				WHERE `timeframeId`='{$values['id']}'";
-			break;
+            break;
 
-		case "removechecklistitems":
-			$sql="DELETE
-				FROM `". $config['prefix'] . "checklistitems`
+        case "removechecklistitems":
+            $sql = "DELETE
+				FROM `" . $config['prefix'] . "checklistitems`
 				WHERE `checklistId`='{$values['listId']}'";
-			break;
+            break;
 
-		case "deleteinstancerecords":
-			$sql="DELETE
-				FROM `". $config['prefix'] . "checklistitemsinst`
+        case "deleteinstancerecords":
+            $sql = "DELETE
+				FROM `" . $config['prefix'] . "checklistitemsinst`
 				WHERE `instanceId`='{$values['id']}'";
-			break;
+            break;
 
-		case "removelistitems":
-			$sql="DELETE
-				FROM `". $config['prefix'] . "listitems`
+        case "removelistitems":
+            $sql = "DELETE
+				FROM `" . $config['prefix'] . "listitems`
 				WHERE `listId`='{$values['listId']}'";
-			break;
+            break;
 
-		case "repeatnote":
-			$sql="UPDATE `". $config['prefix'] . "tickler`
-				SET `date` = DATE_ADD(`date`, INTERVAL ".$values['repeat']." DAY),
+        case "repeatnote":
+            $sql = "UPDATE `" . $config['prefix'] . "tickler`
+				SET `date` = DATE_ADD(`date`, INTERVAL " . $values['repeat'] . " DAY),
 					`note` = '{$values['note']}', `title` = '{$values['title']}',
 					`repeat` = '{$values['repeat']}',
 					`suppressUntil` = '{$values['suppressUntil']}'
 				WHERE `ticklerId` = '{$values['noteId']}'";
-			break;
+            break;
 
-		case "selectcategory":
-			$sql="SELECT `categoryId`, `category`, `description`
-				FROM `". $config['prefix'] ."categories`
+        case "selectcategory":
+            $sql = "SELECT `categoryId`, `category`, `description`
+				FROM `" . $config['prefix'] . "categories`
 				WHERE `categoryId` = '{$values['categoryId']}'";
-			break;
+            break;
 
-		case "selectchecklist":
-			$sql="SELECT cl.`checklistId` as listId, cl.`title`,
+        case "selectchecklist":
+            $sql = "SELECT cl.`checklistId` as listId, cl.`title`,
 						cl.`premiseA`,cl.`premiseB`,cl.`conclusion`
             ,cl.`behaviour`, cl.`standard`, cl.`conditions`, cl.`metaphor`
             , cl.`categoryId`, cl.`hyperlink`
             , cl.`sortBy`, cl.`frequency`, cl.`effort`, cl.`effort_day`, cl.`scored`
             , cl.`menu`, cl.`prioritise`, cl.`sortItems`, cl.`thrs_score`, cl.`thrs_obs`
             , c.`category`
-				FROM `". $config['prefix'] ."checklist` as cl
+				FROM `" . $config['prefix'] . "checklist` as cl
 				LEFT OUTER JOIN `{$config['prefix']}categories` AS c USING (`categoryId`)
 				WHERE cl.`checklistId`='{$values['listId']}'";
-			break;
+            break;
 
-		case "selectchecklistitem":
-			$sql="SELECT `checklistItemId` as itemId,
+        case "selectchecklistitem":
+            $sql = "SELECT `checklistItemId` as itemId,
 						`item`,
 						`notes`,
 						`hyperlink`,
@@ -1101,18 +1136,18 @@ function getsql($config,$values,$sort,$querylabel) {
 						`assessed`,
 						`priority`,
 						`effort`
-				FROM `". $config['prefix'] . "checklistitems`
+				FROM `" . $config['prefix'] . "checklistitems`
 				WHERE `checklistItemId` = '{$values['itemId']}'";
-			break;
+            break;
 
-		case "selectcontext":
-			$sql="SELECT `contextId`, `name`, `description`
-				FROM `". $config['prefix'] . "context`
+        case "selectcontext":
+            $sql = "SELECT `contextId`, `name`, `description`
+				FROM `" . $config['prefix'] . "context`
 				WHERE `contextId` = '{$values['contextId']}'";
-			break;
+            break;
 
-		case "selectitem":
-			$sql="SELECT i.`itemId`, ia.`type`, i.`title`,
+        case "selectitem":
+            $sql = "SELECT i.`itemId`, ia.`type`, i.`title`,
 					i.`description`, i.`premiseA`, i.`premiseB`, i.`conclusion`, i.`behaviour`,i.`standard`,i.`conditions`,i.`metaphor`,i.`hyperlink`,i.`sortBy`,
 					ia.`categoryId`, ia.`contextId`,
 					ia.`timeframeId`, ia.`isSomeday`,
@@ -1125,123 +1160,123 @@ function getsql($config,$values,$sort,$querylabel) {
 				FROM `{$config['prefix']}items`          AS i
 				JOIN `{$config['prefix']}itemattributes` AS ia  USING (`itemId`)
 				JOIN `{$config['prefix']}itemstatus`     AS its USING (`itemId`)
-					LEFT OUTER JOIN `". $config['prefix'] ."categories` as c
+					LEFT OUTER JOIN `" . $config['prefix'] . "categories` as c
 						ON (c.`categoryId` = ia.`categoryId`)
-					LEFT OUTER JOIN `". $config['prefix'] . "context` as cn
+					LEFT OUTER JOIN `" . $config['prefix'] . "context` as cn
 						ON (cn.`contextId` = ia.`contextId`)
-					LEFT OUTER JOIN `". $config['prefix'] . "timeitems` as ti
+					LEFT OUTER JOIN `" . $config['prefix'] . "timeitems` as ti
 						ON (ti.`timeframeId` = ia.`timeframeId`)
-          LEFT OUTER JOIN `". $config['prefix'] . "tradeconditions` as tc
+          LEFT OUTER JOIN `" . $config['prefix'] . "tradeconditions` as tc
             ON (tc.`tradeConditionId` = ia.`tradeConditionId`)
 				WHERE i.`itemId` = '{$values['itemId']}'";
-			break;
+            break;
 
-		case "selectitemshort":
-			$sql="SELECT i.`itemId`, i.`title`,
+        case "selectitemshort":
+            $sql = "SELECT i.`itemId`, i.`title`,
 						i.`description`, ia.`isSomeday`,ia.`type`, its.`dateCompleted`
-				FROM `". $config['prefix'] . "items` as i
+				FROM `" . $config['prefix'] . "items` as i
 				JOIN `{$config['prefix']}itemattributes` AS ia USING (`itemId`)
 				JOIN `{$config['prefix']}itemstatus` AS its USING (`itemId`)
 				WHERE i.`itemId` = '{$values['itemId']}'";
-			break;
+            break;
 
-		case "selectitemstatus":
-      $sql="SELECT ia.`itemId`, ia.`isSomeday`, its.`dateCompleted`, its.`dateCreated`
+        case "selectitemstatus":
+            $sql = "SELECT ia.`itemId`, ia.`isSomeday`, its.`dateCompleted`, its.`dateCreated`
 				FROM `{$config['prefix']}itemattributes` AS ia
 				JOIN `{$config['prefix']}itemstatus`     AS its
 				WHERE ia.`itemId` = '{$values['itemId']}'
 				AND ia.`itemId` = its.`itemId`";
-			break;
+            break;
 
-		case "selectitemtitle":
-			$sql="SELECT i.`itemId`, i.`title`, i.`description`
-				    FROM `". $config['prefix'] . "items` as i
+        case "selectitemtitle":
+            $sql = "SELECT i.`itemId`, i.`title`, i.`description`
+				    FROM `" . $config['prefix'] . "items` as i
 				    WHERE i.`itemId` = '{$values['itemId']}'";
-			break;
+            break;
 
-		case "selectlist":
-			$sql="SELECT `listId` as listId, l.`title`
+        case "selectlist":
+            $sql = "SELECT `listId` as listId, l.`title`
         , l.`premiseA`, l.`premiseB`, l.`conclusion`, l.`behaviour`,l.`standard`,l.`conditions`
         ,l.`metaphor`,l.`categoryId`, l.`hyperlink`
         , l.`sortBy`, l.`menu`, l.`prioritise`, l.`sortItems`, c.`category`
-				FROM `". $config['prefix'] . "list` AS l
+				FROM `" . $config['prefix'] . "list` AS l
                 LEFT OUTER JOIN `{$config['prefix']}categories` AS c USING (`categoryId`)
 				WHERE `listId` = '{$values['listId']}'";
-			break;
+            break;
 
-		case "selectlistitem":
-			$sql="SELECT `listItemId` as itemId, `item`,
+        case "selectlistitem":
+            $sql = "SELECT `listItemId` as itemId, `item`,
 						`notes`, `hyperlink`, `listId` as listId, `dateCompleted`, `priority`
-				FROM `". $config['prefix'] . "listitems`
+				FROM `" . $config['prefix'] . "listitems`
 				WHERE `listItemId` = {$values['itemId']}";
-			break;
+            break;
 
-		case "selectnote":
-			$sql="SELECT `ticklerId`, `title`, `note`,
+        case "selectnote":
+            $sql = "SELECT `ticklerId`, `title`, `note`,
 						`date`, `repeat`, `suppressUntil`
-				FROM `". $config['prefix'] . "tickler`
+				FROM `" . $config['prefix'] . "tickler`
 				WHERE `ticklerId` = '{$values['noteId']}'";
-			break;
+            break;
 
-		case "selecttimecontext":
-			$sql="SELECT `timeframeId`, `timeframe`, `description`, `type`
-				FROM `". $config['prefix'] . "timeitems`
+        case "selecttimecontext":
+            $sql = "SELECT `timeframeId`, `timeframe`, `description`, `type`
+				FROM `" . $config['prefix'] . "timeitems`
 				WHERE `timeframeId` = '{$values['tcId']}'";
-			break;
+            break;
 
-		case "spacecontextselectbox":
-			$sql="SELECT `contextId`, `name`, `description`
-				FROM `". $config['prefix'] . "context` as cn
+        case "spacecontextselectbox":
+            $sql = "SELECT `contextId`, `name`, `description`
+				FROM `" . $config['prefix'] . "context` as cn
 				ORDER BY {$sort['spacecontextselectbox']}";
-			break;
+            break;
 
-		case "testitemrepeat":
-			$sql="SELECT ia.`repeat`,its.`dateCompleted`
+        case "testitemrepeat":
+            $sql = "SELECT ia.`repeat`,its.`dateCompleted`
 				FROM `{$config['prefix']}itemattributes` as ia
                 JOIN `{$config['prefix']}itemstatus` as its USING (`itemId`)
 				WHERE ia.`itemId`='{$values['itemId']}'";
-			break;
+            break;
 
-		case "testnextaction":
-			$sql="SELECT `parentId`, `nextaction`
-				FROM `". $config['prefix'] . "nextactions`
+        case "testnextaction":
+            $sql = "SELECT `parentId`, `nextaction`
+				FROM `" . $config['prefix'] . "nextactions`
 				WHERE `nextaction`='{$values['itemId']}'";
-			break;
+            break;
 
-		case "timecontextselectbox":
-			$sql="SELECT `timeframeId`, `timeframe`, `description`, `type`
-				FROM `". $config['prefix'] . "timeitems` as ti".$values['timefilterquery']."
+        case "timecontextselectbox":
+            $sql = "SELECT `timeframeId`, `timeframe`, `description`, `type`
+				FROM `" . $config['prefix'] . "timeitems` as ti" . $values['timefilterquery'] . "
 				ORDER BY {$sort['timecontextselectbox']}";
-			break;
+            break;
 
-    case "tradeconditionselectbox":
-      $sql="SELECT `tradeConditionId`, `tradeCondition`, `description`
-        FROM `". $config['prefix'] . "tradeconditions`
+        case "tradeconditionselectbox":
+            $sql = "SELECT `tradeConditionId`, `tradeCondition`, `description`
+        FROM `" . $config['prefix'] . "tradeconditions`
   			ORDER BY description";
-  		break;
+            break;
 
-		case "touchitem":
-			$sql="UPDATE `". $config['prefix'] . "itemstatus`
+        case "touchitem":
+            $sql = "UPDATE `" . $config['prefix'] . "itemstatus`
 				SET `lastModified` = CURRENT_DATE
 				WHERE `itemId` = '{$values['itemId']}'";
-			break;
+            break;
 
-		case "updatecategory":
-			$sql="UPDATE `". $config['prefix'] ."categories`
+        case "updatecategory":
+            $sql = "UPDATE `" . $config['prefix'] . "categories`
 				SET `category` ='{$values['name']}',
 						`description` ='{$values['description']}'
 				WHERE `categoryId` ='{$values['id']}'";
-			break;
+            break;
 
-		case "updateinstance":
-			$sql="UPDATE `". $config['prefix'] ."instance`
+        case "updateinstance":
+            $sql = "UPDATE `" . $config['prefix'] . "instance`
 				SET `name` ='{$values['name']}',
 						`description` ='{$values['description']}'
 				WHERE `instanceId` ='{$values['id']}'";
-			break;
+            break;
 
-		case "newchecklist":
-			$sql="INSERT INTO `". $config['prefix'] ."checklist`
+        case "newchecklist":
+            $sql = "INSERT INTO `" . $config['prefix'] . "checklist`
         VALUES (    NULL,
 				            '{$values['title']}',
 						    '{$values['categoryId']}',
@@ -1263,11 +1298,13 @@ function getsql($config,$values,$sort,$querylabel) {
                 '{$values['thrs_obs']}',
                 '{$values['sortItems']}'
 						    )";
-			break;
+            break;
 
-		case "updatechecklist":
-        if ($values['menu'] == '') $values['menu'] = 'n';
-		    $sql="UPDATE `". $config['prefix'] ."checklist`
+        case "updatechecklist":
+            if ($values['menu'] == '') {
+                $values['menu'] = 'n';
+            }
+            $sql = "UPDATE `" . $config['prefix'] . "checklist`
 				SET     `title`         = '{$values['title']}',
 						`categoryId`    = '{$values['categoryId']}',
 						`premiseA`      = '{$values['premiseA']}',
@@ -1289,42 +1326,43 @@ function getsql($config,$values,$sort,$querylabel) {
             `thrs_obs`      = '{$values['thrs_obs']}',
             `sortItems`     = '{$values['sortItems']}'
 				WHERE `checklistId` ='{$values['listId']}'";
-				// echo '<pre>';var_dump($sql);die;
-			break;
+                // echo '<pre>';var_dump($sql);die;
+            break;
 
-    case "movechecklistitem":
-        if (isset($values['instanceId']) && is_numeric($values['instanceId'])) {
-            $instTable = 'inst';
-        } else {
-            $instTable = '';
-        }
-        $sql="UPDATE `". $config['prefix'] . "checklistitems" . $values['instTable'] . "`
+        case "movechecklistitem":
+            if (isset($values['instanceId']) && is_numeric($values['instanceId'])) {
+                $instTable = 'inst';
+            } else {
+                $instTable = '';
+            }
+            $sql = "UPDATE `" . $config['prefix'] . "checklistitems" . $values['instTable'] . "`
   				SET
   				`checklistId` = '{$values['listId']}'
           WHERE `checklistItemId` = '{$values['itemId']}'";
-          // die($sql);
-    break;
+              // die($sql);
+            break;
 
-		case "updatechecklistitem":
+        case "updatechecklistitem":
+            $instTable = '';
+            $instQuery = '';
+            $instUse = false;
+            if (isset($values['instanceId']) && is_numeric($values['instanceId'])) {
+                $instUse = true;
+                $instTable = 'inst';
+                $instQuery = " AND `instanceId` = '{$values['instanceId']}' ";
+            }
 
-      $instTable = '';
-      $instQuery = '';
-      $instUse = FALSE;
-      if (isset($values['instanceId']) && is_numeric($values['instanceId'])) {
-          $instUse = TRUE;
-          $instTable = 'inst';
-          $instQuery = " AND `instanceId` = '{$values['instanceId']}' ";
-      }
-
-			$sql="UPDATE `". $config['prefix'] . "checklistitems" . $instTable . "`
+            $sql = "UPDATE `" . $config['prefix'] . "checklistitems" . $instTable . "`
 				SET ";
-        if (!$instUse) $sql .= "
+            if (!$instUse) {
+                $sql .= "
         `notes` = '{$values['notes']}',
         `hyperlink` = '{$values['hyperlink']}',
         `item` = '{$values['item']}',
         `effort` = '{$values['effort']}',
         `priority` = {$values['priority']}, ";
-        $sql .= "
+            }
+            $sql .= "
 				`checklistId` = '{$values['listId']}',
         `checked` = '{$values['checked']}',
         `ignored` = '{$values['ignored']}',
@@ -1332,16 +1370,16 @@ function getsql($config,$values,$sort,$querylabel) {
         `assessed` = {$values['assessed']}
 				WHERE `checklistItemId` = '{$values['itemId']}' " . $instQuery;
         #die($sql);
-			break;
+            break;
 
-		case "updatedeadline":
-			$sql="UPDATE `{$config['prefix']}itemattributes`
+        case "updatedeadline":
+            $sql = "UPDATE `{$config['prefix']}itemattributes`
 				SET `deadline` ={$values['deadline']}
 				WHERE `itemId` = '{$values['itemId']}'";
-			break;
+            break;
 
-		case "updateitem":
-			$sql="UPDATE `". $config['prefix'] . "items`
+        case "updateitem":
+            $sql = "UPDATE `" . $config['prefix'] . "items`
 				SET `description` = '{$values['description']}',
 						`title` = '{$values['title']}',
 						`premiseA` = '{$values['premiseA']}',
@@ -1353,10 +1391,10 @@ function getsql($config,$values,$sort,$querylabel) {
 						`metaphor` = '{$values['metaphor']}',
 						`hyperlink` = '{$values['hyperlink']}'
 				WHERE `itemId` = '{$values['itemId']}'";
-			break;
+            break;
 
-		case "updateitemattributes":
-			$sql="UPDATE `". $config['prefix'] . "itemattributes`
+        case "updateitemattributes":
+            $sql = "UPDATE `" . $config['prefix'] . "itemattributes`
 				SET `type` = '{$values['type']}',
 						`isSomeday`= '{$values['isSomeday']}',
 						`categoryId` = '{$values['categoryId']}',
@@ -1370,39 +1408,39 @@ function getsql($config,$values,$sort,$querylabel) {
             `isTrade`='{$values['isTrade']}',
             `tradeConditionId`='{$values['tradeConditionId']}'
 				WHERE `itemId` = '{$values['itemId']}'";
-			break;
+            break;
 
-    case "updateitemstatus":
-			$sql="UPDATE `". $config['prefix'] . "itemstatus`
+        case "updateitemstatus":
+            $sql = "UPDATE `" . $config['prefix'] . "itemstatus`
 				SET `dateCreated` = {$values['dateCreated']},
 						`lastModified`= CURRENT_DATE,
 						`dateCompleted` = {$values['dateCompleted']}
 				WHERE `itemId` = '{$values['itemId']}'";
-			break;
+            break;
 
-		case "updateitemtype":
-			$sql="UPDATE `{$config['prefix']}itemattributes`
+        case "updateitemtype":
+            $sql = "UPDATE `{$config['prefix']}itemattributes`
 				SET `type` = '{$values['type']}',
 					`isSomeday`= '{$values['isSomeday']}'
 				WHERE `itemId` = '{$values['itemId']}'";
-			break;
+            break;
 
-		case "updateitemtypequalities":
-			$sql="UPDATE `{$config['prefix']}lookupqualities`
+        case "updateitemtypequalities":
+            $sql = "UPDATE `{$config['prefix']}lookupqualities`
 				SET `itemType` = '{$values['type']}'
 				WHERE `itemId` = '{$values['itemId']}'
 				AND `itemType` = '{$values['oldType']}'";
-			break;
+            break;
 
-    case "updateitemvisqualities":
-			$sql="UPDATE `{$config['prefix']}lookupqualities`
+        case "updateitemvisqualities":
+            $sql = "UPDATE `{$config['prefix']}lookupqualities`
 				SET `visId` = '{$values['visId']}'
 				WHERE `itemId` = '{$values['itemId']}'
 				AND `itemType` = '{$values['itemType']}'";
-			break;
+            break;
 
-		case "updatelist":
-			$sql="UPDATE `". $config['prefix'] . "list`
+        case "updatelist":
+            $sql = "UPDATE `" . $config['prefix'] . "list`
 				SET `title` = '{$values['title']}',
 						`categoryId` = '{$values['categoryId']}',
 						`premiseA` = '{$values['premiseA']}',
@@ -1418,10 +1456,10 @@ function getsql($config,$values,$sort,$querylabel) {
             `prioritise` = '{$values['prioritise']}',
             `sortItems` = '{$values['sortItems']}'
 				WHERE `listId` ='{$values['listId']}'";
-			break;
+            break;
 
-		case "updatelistitem":
-			$sql="UPDATE `". $config['prefix'] . "listitems`
+        case "updatelistitem":
+            $sql = "UPDATE `" . $config['prefix'] . "listitems`
 				SET `notes` = '{$values['notes']}',
         `hyperlink` = '{$values['hyperlink']}',
         `item` = '{$values['item']}',
@@ -1429,84 +1467,87 @@ function getsql($config,$values,$sort,$querylabel) {
         `dateCompleted`={$values['dateCompleted']},
         `priority`={$values['priority']}
 				WHERE `listItemId` ='{$values['itemId']}'";
-			break;
+            break;
 
-		case "updateparent":
-			$sql="INSERT INTO `". $config['prefix'] . "lookup`
+        case "updateparent":
+            $sql = "INSERT INTO `" . $config['prefix'] . "lookup`
 						(`parentId`,`itemId`)
 				VALUES ('{$values['parentId']}','{$values['itemId']}')
 				ON DUPLICATE KEY UPDATE `parentId`='{$values['parentId']}'";
-			break;
+            break;
 
-		case "updatenextaction":
-			$sql="INSERT INTO `". $config['prefix'] . "nextactions`
+        case "updatenextaction":
+            $sql = "INSERT INTO `" . $config['prefix'] . "nextactions`
 						(`parentId`,`nextaction`)
 				VALUES ('{$values['parentId']}','{$values['itemId']}')
 				ON DUPLICATE KEY UPDATE `nextaction`='{$values['itemId']}'";
-			break;
+            break;
 
-		case "updatenote":
-			$sql="UPDATE `". $config['prefix'] . "tickler`
+        case "updatenote":
+            $sql = "UPDATE `" . $config['prefix'] . "tickler`
 				SET `date` = '{$values['date']}',
 					`note` = '{$values['note']}',
 					`title` = '{$values['title']}',
 					`repeat` = '{$values['repeat']}',
 					`suppressUntil` = '{$values['suppressUntil']}'
 				WHERE `ticklerId` = '{$values['noteId']}'";
-			break;
+            break;
 
-		case "updatespacecontext":
-			$sql="UPDATE `". $config['prefix'] . "context`
+        case "updatespacecontext":
+            $sql = "UPDATE `" . $config['prefix'] . "context`
 				SET `name` ='{$values['name']}',
 						`description`='{$values['description']}'
 				WHERE `contextId` ='{$values['id']}'";
-			break;
+            break;
 
-    case "updatetradecondition":
-      $sql="UPDATE `". $config['prefix'] . "tradeconditions`
+        case "updatetradecondition":
+            $sql = "UPDATE `" . $config['prefix'] . "tradeconditions`
         SET `tradeCondition` ='{$values['name']}',
 						`description`='{$values['description']}'
         WHERE `tradeConditionId` ='{$values['id']}'";
-			break;
+            break;
 
-		case "updatetimecontext":
-			$sql="UPDATE `". $config['prefix'] . "timeitems`
+        case "updatetimecontext":
+            $sql = "UPDATE `" . $config['prefix'] . "timeitems`
 				SET `timeframe` ='{$values['name']}',
 						`description`='{$values['description']}',
 						`type`='{$values['type']}'
 				WHERE `timeframeId` ='{$values['id']}'";
-			break;
+            break;
 
         default: // default to assuming that the label IS the query
-            $sql=$querylabel;
+            $sql = $querylabel;
             break;
     }
-	return $sql;
+    return $sql;
 }
 /*
   ===============================================================
 */
-function sqlparts($part,$config,$values) {
+function sqlparts($part, $config, $values)
+{
 
-  if (is_array($values))
-    foreach ($values as $key=>$value)
-        $values[$key] = safeIntoDB($config, $value, $key);
+    if (is_array($values)) {
+        foreach ($values as $key => $value) {
+            $values[$key] = safeIntoDB($config, $value, $key);
+        }
+    }
 
-  switch ($part) {
-	case "activeitems":
-		$sqlpart = " ((CURDATE()>=DATE_ADD(ia.`deadline`, INTERVAL -(ia.`suppressUntil`) DAY)) OR ia.`suppress`!='y') ";
-		break;
-	case "activelistitems":
-		$sqlpart = " li.`dateCompleted` IS NULL ";
-		break;
-	case "categoryfilter":
-		$sqlpart = " ia.`categoryId` = '{$values['categoryId']}' ";
-		break;
-	case "categoryfilter-parent":
-		$sqlpart = " y.`pcategoryId` = '{$values['categoryId']}' ";
-		break;
-	case "checkchildren":
-		$sqlpart = " LEFT JOIN (
+    switch ($part) {
+        case "activeitems":
+            $sqlpart = " ((CURDATE()>=DATE_ADD(ia.`deadline`, INTERVAL -(ia.`suppressUntil`) DAY)) OR ia.`suppress`!='y') ";
+            break;
+        case "activelistitems":
+            $sqlpart = " li.`dateCompleted` IS NULL ";
+            break;
+        case "categoryfilter":
+            $sqlpart = " ia.`categoryId` = '{$values['categoryId']}' ";
+            break;
+        case "categoryfilter-parent":
+            $sqlpart = " y.`pcategoryId` = '{$values['categoryId']}' ";
+            break;
+        case "checkchildren":
+            $sqlpart = " LEFT JOIN (
                                         SELECT parentId as itemId,COUNT(DISTINCT nextaction) AS numNA
                                             FROM {$config['prefix']}nextactions GROUP BY itemId
                                         ) AS na ON(na.itemId=x.itemId)
@@ -1519,57 +1560,57 @@ function sqlparts($part,$config,$values) {
                                             WHERE chis.dateCompleted IS NULL AND chia.type IN ('a','p','g','m','v','o','i','w')
                                             GROUP BY cl.parentId
                                         ) AS act ON (act.itemId=x.itemId) ";
-		break;
-	case "checklistcategoryfilter":
-		$sqlpart = " cl.`categoryId`='{$values['categoryId']}' ";
-		break;
-	case "listcatcodefilter":
-		$sqlpart = " ccc.`sortBy`='{$values['catcodeId']}' ";
-		break;
-	case "completeditems":
-		$sqlpart = " its.`dateCompleted` IS NOT NULL ";
-		break;
-	case "completedlistitems":
-		$sqlpart = " li.`dateCompleted` IS NOT NULL ";
-		break;
-	case "contextfilter":
-		$sqlpart = " ia.`contextId` = '{$values['contextId']}' ";
-		break;
-	case "countchildren":
-		$sqlpart = " ,na.numNA, act.numChildren";
-		break;
-	case "due":
-		$sqlpart = " ((CURDATE() + INTERVAL 3 DAY)>=ia.`deadline` AND ia.`deadline` IS NOT NULL) ";
-		break;
-	case "getNA":
-		$sqlpart = " , COUNT(DISTINCT na.nextaction) as NA ";
-		break;
-	case "hasparent":
-		$sqlpart = " y.`parentId` = '{$values['parentId']}' ";
-		break;
-	case "isNA":
-		$sqlpart = " LEFT JOIN ( SELECT nextaction FROM {$config['prefix']}nextactions
+            break;
+        case "checklistcategoryfilter":
+            $sqlpart = " cl.`categoryId`='{$values['categoryId']}' ";
+            break;
+        case "listcatcodefilter":
+            $sqlpart = " ccc.`sortBy`='{$values['catcodeId']}' ";
+            break;
+        case "completeditems":
+            $sqlpart = " its.`dateCompleted` IS NOT NULL ";
+            break;
+        case "completedlistitems":
+            $sqlpart = " li.`dateCompleted` IS NOT NULL ";
+            break;
+        case "contextfilter":
+            $sqlpart = " ia.`contextId` = '{$values['contextId']}' ";
+            break;
+        case "countchildren":
+            $sqlpart = " ,na.numNA, act.numChildren";
+            break;
+        case "due":
+            $sqlpart = " ((CURDATE() + INTERVAL 3 DAY)>=ia.`deadline` AND ia.`deadline` IS NOT NULL) ";
+            break;
+        case "getNA":
+            $sqlpart = " , COUNT(DISTINCT na.nextaction) as NA ";
+            break;
+        case "hasparent":
+            $sqlpart = " y.`parentId` = '{$values['parentId']}' ";
+            break;
+        case "isNA":
+            $sqlpart = " LEFT JOIN ( SELECT nextaction FROM {$config['prefix']}nextactions
                                ) AS na ON(na.nextaction=x.itemId) ";
-		break;
-	case "isNAonly":
-        $sqlpart = " INNER JOIN {$config['prefix']}nextactions AS na ON(na.nextaction=x.itemId) ";
-		break;
-	case "issomeday":
-		$sqlpart = " ia.`isSomeday` = '{$values['isSomeday']}' ";
-		break;
-	case "limit":
-		$sqlpart = " LIMIT {$values['maxItemsToSelect']} ";
-		break;
-	case "listcategoryfilter":
-		$sqlpart = " l.`categoryId`='{$values['categoryId']}' ";
-		break;
-    case "liveparents":
-        $sqlpart = "((CURDATE()>=DATE_ADD(y.`pdeadline`, INTERVAL -(y.`psuppressUntil`) DAY)) OR y.`psuppress`!='y' OR y.`psuppress` IS NULL)"
-                    ." AND (y.`pdatecompleted` IS NULL) "
-                    ." AND (y.`pisSomeday`='n' OR y.`pisSomeday` IS NULL)";
-		break;
-	case "matchall":
-		$sqlpart = " (i.`title` LIKE '%{$values['needle']}%'
+            break;
+        case "isNAonly":
+            $sqlpart = " INNER JOIN {$config['prefix']}nextactions AS na ON(na.nextaction=x.itemId) ";
+            break;
+        case "issomeday":
+            $sqlpart = " ia.`isSomeday` = '{$values['isSomeday']}' ";
+            break;
+        case "limit":
+            $sqlpart = " LIMIT {$values['maxItemsToSelect']} ";
+            break;
+        case "listcategoryfilter":
+            $sqlpart = " l.`categoryId`='{$values['categoryId']}' ";
+            break;
+        case "liveparents":
+            $sqlpart = "((CURDATE()>=DATE_ADD(y.`pdeadline`, INTERVAL -(y.`psuppressUntil`) DAY)) OR y.`psuppress`!='y' OR y.`psuppress` IS NULL)"
+                    . " AND (y.`pdatecompleted` IS NULL) "
+                    . " AND (y.`pisSomeday`='n' OR y.`pisSomeday` IS NULL)";
+            break;
+        case "matchall":
+            $sqlpart = " (i.`title` LIKE '%{$values['needle']}%'
                                       OR i.`description` LIKE '%{$values['needle']}%'
                                       OR i.`premiseA` LIKE '%{$values['needle']}%'
                                       OR i.`premiseB` LIKE '%{$values['needle']}%'
@@ -1580,8 +1621,8 @@ function sqlparts($part,$config,$values) {
                                       OR i.`metaphor` LIKE '%{$values['needle']}%'
                                       OR i.`hyperlink` LIKE '%{$values['needle']}%')
                                       ";
-		break;
-		/*
+            break;
+        /*
 
         $cols = array('i.`title`', 'i.`description`', 'i.`premiseA`', 'i.`premiseB`', 'i.`conclusion`', 'i.`behaviour`', 'i.`standard`', 'i.`conditions`');
         // Basic processing and controls
@@ -1635,58 +1676,61 @@ function sqlparts($part,$config,$values) {
         $sqlpart = $query . ') ';
         //echo $sqlpart;die;
         break;
-*/
-	case "notcategoryfilter":
-		$sqlpart = " ia.`categoryId` != '{$values['categoryId']}' ";
-		break;
-	case "notcategoryfilter-parent":
-		$sqlpart = " y.`pcategoryId` != '{$values['categoryId']}' ";
-		break;
-	case "notcontextfilter":
-		$sqlpart = " ia.`contextId` != '{$values['contextId']}' ";
-		break;
-	case "notefilter":
-		$sqlpart = " (`date` IS NULL) OR (CURDATE()>= `date`) ";
-		break;
-	case "nottimeframefilter":
-		$sqlpart = " ia.`timeframeId` !='{$values['timeframeId']}' ";
-		break;
-	case "pendingitems":
-		$sqlpart = " its.`dateCompleted` IS NULL ";
-		break;
-	case "repeating":
-		$sqlpart = " ia.`repeat` >0 ";
-		break;
-	case "singleitem":
-		$sqlpart = " i.`itemId`='{$values['itemId']}' ";
-		break;
-	case "suppresseditems":
-		$sqlpart = " ia.`suppress`='y' AND (CURDATE()<=DATE_ADD(ia.`deadline`, INTERVAL -(ia.`suppressUntil`) DAY)) ";
-		break;
-	case "timeframefilter":
-		$sqlpart = " ia.`timeframeId` ='{$values['timeframeId']}' ";
-		break;
-	case "timetype":
-		$sqlpart = " ti.`type` = '{$values['type']}' ";
-		break;
-	case "typefilter":
-		$sqlpart = " ia.`type` = '{$values['type']}' ";
-		break;
-/*
-	case "ptypefilter":
-		$sqlpart = " ia.`type` = '{$values['ptype']}' ";
-		break;
-*/
-    default:
-        if ($config['debug'] & _GTD_DEBUG) echo "<p class='error'>Failed to find sql component '$part'</p>'";
-        $sqlpart=$part;
+  */
+        case "notcategoryfilter":
+            $sqlpart = " ia.`categoryId` != '{$values['categoryId']}' ";
+            break;
+        case "notcategoryfilter-parent":
+            $sqlpart = " y.`pcategoryId` != '{$values['categoryId']}' ";
+            break;
+        case "notcontextfilter":
+            $sqlpart = " ia.`contextId` != '{$values['contextId']}' ";
+            break;
+        case "notefilter":
+            $sqlpart = " (`date` IS NULL) OR (CURDATE()>= `date`) ";
+            break;
+        case "nottimeframefilter":
+            $sqlpart = " ia.`timeframeId` !='{$values['timeframeId']}' ";
+            break;
+        case "pendingitems":
+            $sqlpart = " its.`dateCompleted` IS NULL ";
+            break;
+        case "repeating":
+            $sqlpart = " ia.`repeat` >0 ";
+            break;
+        case "singleitem":
+            $sqlpart = " i.`itemId`='{$values['itemId']}' ";
+            break;
+        case "suppresseditems":
+            $sqlpart = " ia.`suppress`='y' AND (CURDATE()<=DATE_ADD(ia.`deadline`, INTERVAL -(ia.`suppressUntil`) DAY)) ";
+            break;
+        case "timeframefilter":
+            $sqlpart = " ia.`timeframeId` ='{$values['timeframeId']}' ";
+            break;
+        case "timetype":
+            $sqlpart = " ti.`type` = '{$values['type']}' ";
+            break;
+        case "typefilter":
+            $sqlpart = " ia.`type` = '{$values['type']}' ";
+            break;
+  /*
+      case "ptypefilter":
+        $sqlpart = " ia.`type` = '{$values['ptype']}' ";
         break;
-  }
+  */
+        default:
+            if ($config['debug'] & _GTD_DEBUG) {
+                echo "<p class='error'>Failed to find sql component '$part'</p>'";
+            }
+            $sqlpart = $part;
+            break;
+    }
 
-  if ($config['debug'] & _GTD_DEBUG)
-      echo "<pre>Sqlparts '$part': Result $sqlpart<br />Sanitised values in sqlparts: ",print_r($values,true),'</pre>';
+    if ($config['debug'] & _GTD_DEBUG) {
+        echo "<pre>Sqlparts '$part': Result $sqlpart<br />Sanitised values in sqlparts: ",print_r($values, true),'</pre>';
+    }
 
-  return $sqlpart;
+    return $sqlpart;
 }
 
 // php closing tag has been omitted deliberately, to avoid unwanted blank lines being sent to the browser

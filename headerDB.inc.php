@@ -1,10 +1,12 @@
 <?php
+
 require_once("ses.php");
 require_once("config.php");
-if ($config['debug'] & _GTD_NOTICE)
-		error_reporting(E_ALL);
-    else
-		error_reporting(E_ALL ^ E_NOTICE);
+if ($config['debug'] & _GTD_NOTICE) {
+        error_reporting(E_ALL);
+} else {
+    error_reporting(E_ALL ^ E_NOTICE);
+}
 /*
   Select the correct database library file:
   the library file must define the following functions:
@@ -33,7 +35,7 @@ if ($config['debug'] & _GTD_NOTICE)
 */
 switch ($config['dbtype']) {
     case "mysql":
-		require_once("mysql.inc.php");
+        require_once("mysql.inc.php");
         break;
     /*
        only mysql is supported, at present! - all of the others are here as placeholders for later development

@@ -1,4 +1,5 @@
 <?php
+
 //lazy format correction
 //call with include('format.php');
 
@@ -44,9 +45,11 @@ foreach ((array) $fsets as $fset) {
 
 //echo '<pre>' . $fquery;
 
-if ($config['formatTidy']) $fresult = $fdb->query($fquery);
+if ($config['formatTidy']) {
+    $fresult = $fdb->query($fquery);
+}
 
-$fdb = NULL; // destroy connection
+$fdb = null; // destroy connection
 
 //echo round(1000 * (microtime(true) - $t), 0); // est. 25ms separately, but much more if in other code
 

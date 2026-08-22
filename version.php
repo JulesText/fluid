@@ -9,7 +9,7 @@
             <td><?php echo _GTDPHP_VERSION; ?></td>
         </tr>
         <tr><th>GTD-PHP database</th>
-            <td><?php echo array_pop(array_pop(query('getgtdphpversion',$config))); ?></td>
+            <td><?php echo array_pop(array_pop(query('getgtdphpversion', $config))); ?></td>
         </tr>
         <tr><th>GTD-PHP theme</th>
             <td><?php echo $config['theme']; ?></td>

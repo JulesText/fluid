@@ -9,129 +9,133 @@ $db = new PDO('mysql:host=' . $config["host"] . ';dbname=' . $config["db"], $con
 
 // ---- these are db functions ---- //
 
-function search_chats($needle, $db) {
+function search_chats($needle, $db)
+{
 
-  $stmt = $db->prepare('SELECT chat_id, chat_summary, comment_date, comment_human, comment_ai FROM chat_history WHERE comment_human LIKE "%' . $needle . '%" OR comment_ai LIKE "%' . $needle . '%" ORDER BY comment_id DESC');
-  $stmt->execute();
-  $haystack = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt = $db->prepare('SELECT chat_id, chat_summary, comment_date, comment_human, comment_ai FROM chat_history WHERE comment_human LIKE "%' . $needle . '%" OR comment_ai LIKE "%' . $needle . '%" ORDER BY comment_id DESC');
+    $stmt->execute();
+    $haystack = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-  foreach ($haystack as &$row) {
-    $row["itemId"] = $row["chat_id"];
-    $row["class"] = "";
-    $row["NA"] = "0";
-    $row["dateCreated"] = date('Y-m-d', strtotime($row["comment_date"]));
-    $row["lastModified"] = date('Y-m-d', strtotime($row["comment_date"]));
-    $row["dateCompleted"] = date('Y-m-d', strtotime($row["comment_date"]));
-    $row["isSomeday"] = "n";
-    $row["type"] = "fi";
-    $row["ptitle"] = "fi chat";
-    $row["parentId"] = "";
-    $row["ptype"] = "";
-    $row["flags"] = "";
-    $row["doreport"] = "";
-    $row["title.class"] = "maincolumn";
-    if ($row["chat_summary"] == '') $row["chat_summary"] = 'no summary';
-    $row["title"] = strtoupper(str_replace(array("\r\n", "\r", "\n", "."), '', $row["chat_summary"]));
-    if (strlen($row["title"]) > 15) $row["title"] = substr($row["title"], 0, 15) . " ...";
-    $row["checkbox.title"] = "";
-    $row["checkboxname"] = "";
-    $row["checkboxvalue"] = "";
-    $row["description"] = substr("human:\n" . $row['comment_human'] . "\n\nai:\n". $row['comment_ai'], 0, 250) . " ...";
-    $row["behaviour"] = "";
-    $row["category"] = "Multi";
-    $row["categoryId"] = "6";
-    $row["context"] = "COMPUTER";
-    $row["contextId"] = "6";
-    $row["timeframe"] = "Medium";
-    $row["timeframeId"] = "2";
-    $row["deadline"] = "";
-    $row["repeat"] = " ";
-    $row["suppressUntil"] = " ";
-    unset($row['chat_id']);
-    unset($row['chat_summary']);
-    unset($row['comment_date']);
-    unset($row['comment_human']);
-    unset($row['comment_ai']);
-  }
-  unset($row);
+    foreach ($haystack as &$row) {
+        $row["itemId"] = $row["chat_id"];
+        $row["class"] = "";
+        $row["NA"] = "0";
+        $row["dateCreated"] = date('Y-m-d', strtotime($row["comment_date"]));
+        $row["lastModified"] = date('Y-m-d', strtotime($row["comment_date"]));
+        $row["dateCompleted"] = date('Y-m-d', strtotime($row["comment_date"]));
+        $row["isSomeday"] = "n";
+        $row["type"] = "fi";
+        $row["ptitle"] = "fi chat";
+        $row["parentId"] = "";
+        $row["ptype"] = "";
+        $row["flags"] = "";
+        $row["doreport"] = "";
+        $row["title.class"] = "maincolumn";
+        if ($row["chat_summary"] == '') {
+            $row["chat_summary"] = 'no summary';
+        }
+        $row["title"] = strtoupper(str_replace(array("\r\n", "\r", "\n", "."), '', $row["chat_summary"]));
+        if (strlen($row["title"]) > 15) {
+            $row["title"] = substr($row["title"], 0, 15) . " ...";
+        }
+        $row["checkbox.title"] = "";
+        $row["checkboxname"] = "";
+        $row["checkboxvalue"] = "";
+        $row["description"] = substr("human:\n" . $row['comment_human'] . "\n\nai:\n" . $row['comment_ai'], 0, 250) . " ...";
+        $row["behaviour"] = "";
+        $row["category"] = "Multi";
+        $row["categoryId"] = "6";
+        $row["context"] = "COMPUTER";
+        $row["contextId"] = "6";
+        $row["timeframe"] = "Medium";
+        $row["timeframeId"] = "2";
+        $row["deadline"] = "";
+        $row["repeat"] = " ";
+        $row["suppressUntil"] = " ";
+        unset($row['chat_id']);
+        unset($row['chat_summary']);
+        unset($row['comment_date']);
+        unset($row['comment_human']);
+        unset($row['comment_ai']);
+    }
+    unset($row);
 
   // only return a chat_id once
-  $uniqueChatIds = [];
-  $result = [];
-  foreach ($haystack as $row) {
-    if (!in_array($row['itemId'], $uniqueChatIds)) {
-      $uniqueChatIds[] = $row['itemId'];
-      $result[] = $row;
+    $uniqueChatIds = [];
+    $result = [];
+    foreach ($haystack as $row) {
+        if (!in_array($row['itemId'], $uniqueChatIds)) {
+            $uniqueChatIds[] = $row['itemId'];
+            $result[] = $row;
+        }
     }
-  }
 
 // var_dump($result);die;
-  return $result;
-
+    return $result;
 }
 
-function get_other_chats($chat_id, $db) {
+function get_other_chats($chat_id, $db)
+{
 
-  $stmt = $db->prepare('SELECT DISTINCT chat_id, chat_summary FROM chat_history WHERE chat_id != "' . $chat_id . '" ORDER BY comment_id DESC');
-  $stmt->execute();
-  return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+    $stmt = $db->prepare('SELECT DISTINCT chat_id, chat_summary FROM chat_history WHERE chat_id != "' . $chat_id . '" ORDER BY comment_id DESC');
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function get_chat($chat_id, $db) {
+function get_chat($chat_id, $db)
+{
 
   // Retrieve the data in ascending order by the comment_id column
-  $stmt = $db->prepare('SELECT * FROM chat_history WHERE chat_id = "' . $chat_id . '" ORDER BY comment_id ASC');
-  $stmt->execute();
-  $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt = $db->prepare('SELECT * FROM chat_history WHERE chat_id = "' . $chat_id . '" ORDER BY comment_id ASC');
+    $stmt->execute();
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-  return $result;
-
+    return $result;
 }
 
-function update_chat_summary($chat_id, $chat_summary, $db) {
+function update_chat_summary($chat_id, $chat_summary, $db)
+{
 
   // Prepare the UPDATE statement
-  $stmt = $db->prepare('UPDATE chat_history SET chat_summary = :chat_summary WHERE chat_id = :chat_id');
+    $stmt = $db->prepare('UPDATE chat_history SET chat_summary = :chat_summary WHERE chat_id = :chat_id');
   // Bind the parameters and execute the statement
-  $stmt->bindValue(':chat_summary', $chat_summary, PDO::PARAM_STR);
-  $stmt->bindValue(':chat_id', $chat_id, PDO::PARAM_STR);
-  $stmt->execute();
-
+    $stmt->bindValue(':chat_summary', $chat_summary, PDO::PARAM_STR);
+    $stmt->bindValue(':chat_id', $chat_id, PDO::PARAM_STR);
+    $stmt->execute();
 }
 
-function insert_comment($chat_id, $msg, $db) {
+function insert_comment($chat_id, $msg, $db)
+{
 
   // prepare db for message
-  $stmt = $db->prepare('INSERT INTO chat_history (chat_id, comment_human) VALUES (:chat_id, :comment_human)');
-  $stmt->bindValue(':chat_id', $chat_id, PDO::PARAM_STR);
-  $stmt->bindValue(':comment_human', $msg, PDO::PARAM_STR);
-  $stmt->execute();
+    $stmt = $db->prepare('INSERT INTO chat_history (chat_id, comment_human) VALUES (:chat_id, :comment_human)');
+    $stmt->bindValue(':chat_id', $chat_id, PDO::PARAM_STR);
+    $stmt->bindValue(':comment_human', $msg, PDO::PARAM_STR);
+    $stmt->execute();
 
-  return $db->lastInsertId();
-
+    return $db->lastInsertId();
 }
 
-function update_comment_fi($comment_id, $msg, $db) {
+function update_comment_fi($comment_id, $msg, $db)
+{
 
   // Prepare the UPDATE statement
-  $stmt = $db->prepare('UPDATE chat_history SET comment_ai = :comment_ai WHERE comment_id = :comment_id');
+    $stmt = $db->prepare('UPDATE chat_history SET comment_ai = :comment_ai WHERE comment_id = :comment_id');
   // Bind the parameters and execute the statement
-  $stmt->bindValue(':comment_id', $comment_id, PDO::PARAM_INT);
-  $stmt->bindValue(':comment_ai', $msg, PDO::PARAM_STR);
-  $stmt->execute();
-
+    $stmt->bindValue(':comment_id', $comment_id, PDO::PARAM_INT);
+    $stmt->bindValue(':comment_ai', $msg, PDO::PARAM_STR);
+    $stmt->execute();
 }
 
-function delete_chat($chat_id, $db) {
+function delete_chat($chat_id, $db)
+{
 
   // Prepare and execute a DELETE statement to delete chat history records
-  $stmt = $db->prepare('DELETE FROM chat_history WHERE chat_id = "'. $chat_id . '"');
-  $result = $stmt->execute();
+    $stmt = $db->prepare('DELETE FROM chat_history WHERE chat_id = "' . $chat_id . '"');
+    $result = $stmt->execute();
 
   // Set the HTTP response status code to indicate success
-  return http_response_code(204); // No Content
-
+    return http_response_code(204); // No Content
 }
 
 
@@ -140,109 +144,118 @@ function delete_chat($chat_id, $db) {
 // ---- these are utility functions ---- //
 
 
-function curlReq($curly_tops) {
+function curlReq($curly_tops)
+{
 
   // Make the API request using cURL
-  $curl_info = [
+    $curl_info = [
       CURLOPT_URL            => $curly_tops['apiEndpoint'],
-      CURLOPT_RETURNTRANSFER => TRUE,
+      CURLOPT_RETURNTRANSFER => true,
       CURLOPT_ENCODING       => '',
       CURLOPT_MAXREDIRS      => 10,
       CURLOPT_TIMEOUT        => 60,
-      CURLOPT_FOLLOWLOCATION => TRUE,
+      CURLOPT_FOLLOWLOCATION => true,
       CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
       CURLOPT_CUSTOMREQUEST  => $curly_tops['method'],
-      CURLOPT_POST           => TRUE,
+      CURLOPT_POST           => true,
       CURLOPT_POSTFIELDS     => json_encode($curly_tops['opts'])
-  ];
+    ];
 
-  if ($curly_tops['opts'] == []) unset($curl_info[CURLOPT_POSTFIELDS]);
+    if ($curly_tops['opts'] == []) {
+        unset($curl_info[CURLOPT_POSTFIELDS]);
+    }
 
-  if (array_key_exists('stream', $curly_tops['opts']) && $curly_tops['opts']['stream']) {
-      $curl_info[CURLOPT_WRITEFUNCTION] = TRUE;
-      // not sure this works
-      $curly_tops['headers'][] = "Content-Type: text/event-stream";
-      $curly_tops['headers'][] = "Cache-Control: no-cache";
-  } else {
-      $curly_tops['headers'][] = "Content-Type: application/json";
-  }
+    if (array_key_exists('stream', $curly_tops['opts']) && $curly_tops['opts']['stream']) {
+        $curl_info[CURLOPT_WRITEFUNCTION] = true;
+        // not sure this works
+        $curly_tops['headers'][] = "Content-Type: text/event-stream";
+        $curly_tops['headers'][] = "Cache-Control: no-cache";
+    } else {
+        $curly_tops['headers'][] = "Content-Type: application/json";
+    }
 
-  $curl_info[CURLOPT_HTTPHEADER] = $curly_tops['headers'];
+    $curl_info[CURLOPT_HTTPHEADER] = $curly_tops['headers'];
 
-  $curl = curl_init();
+    $curl = curl_init();
 
-  curl_setopt_array($curl, $curl_info);
-  $response = curl_exec($curl);
+    curl_setopt_array($curl, $curl_info);
+    $response = curl_exec($curl);
 
   // Check for errors and decode the response data
-  $curls = [];
+    $curls = [];
 
-  if (curl_errno($curl)) {
-      $responseData = "Curl error encountered.";
-      $curls['success'] = FALSE;
-      $curls['data'] = "Curl error: " . curl_error($curl)
-        . PHP_EOL . print_r($curly_tops, TRUE);
-  } else {
-      $responseData = json_decode($response, true);
-      if (isset($responseData["choices"][0]["text"])) {
-          $curls['success'] = TRUE;
-          $curls['data'] = $responseData["choices"][0]["text"];
-      } else if (isset($responseData["choices"][0]["message"])) {
-          $curls['success'] = TRUE;
-          $curls['data'] = $responseData["choices"][0]["message"]["content"];
-      } else {
-          $curls['success'] = FALSE;
-          $curls['data'] = "API error: Failed to retrieve expected result: " . var_dump($responseData);
-      }
-  }
+    if (curl_errno($curl)) {
+        $responseData = "Curl error encountered.";
+        $curls['success'] = false;
+        $curls['data'] = "Curl error: " . curl_error($curl)
+        . PHP_EOL . print_r($curly_tops, true);
+    } else {
+        $responseData = json_decode($response, true);
+        if (isset($responseData["choices"][0]["text"])) {
+            $curls['success'] = true;
+            $curls['data'] = $responseData["choices"][0]["text"];
+        } elseif (isset($responseData["choices"][0]["message"])) {
+            $curls['success'] = true;
+            $curls['data'] = $responseData["choices"][0]["message"]["content"];
+        } else {
+            $curls['success'] = false;
+            $curls['data'] = "API error: Failed to retrieve expected result: " . var_dump($responseData);
+        }
+    }
 
-  curl_close($curl);
+    curl_close($curl);
 
-  if ($curls['success']) file_put_contents('_response.txt', '$curls[success]: TRUE');
-  else file_put_contents('_response.txt', '$curls[success]: FALSE');
+    if ($curls['success']) {
+        file_put_contents('_response.txt', '$curls[success]: TRUE');
+    } else {
+        file_put_contents('_response.txt', '$curls[success]: FALSE');
+    }
 
-  file_put_contents('_response.txt',
-    PHP_EOL
-    . '$curls[data]:' . print_r($curls['data'], TRUE)
-    . PHP_EOL . '$responseData: ' . print_r($responseData, TRUE)
-    . PHP_EOL . '$curly_tops: ' . print_r($curly_tops, TRUE)
-    , FILE_APPEND);
+    file_put_contents(
+        '_response.txt',
+        PHP_EOL
+        . '$curls[data]:' . print_r($curls['data'], true)
+        . PHP_EOL . '$responseData: ' . print_r($responseData, true)
+        . PHP_EOL . '$curly_tops: ' . print_r($curly_tops, true),
+        FILE_APPEND
+    );
 
-  return $curls;
-
+    return $curls;
 }
 
-function countTokens($str) {
+function countTokens($str)
+{
   // Replace special characters with spaces
-  $pattern = "/[^\p{L}\p{Mn}\p{Pd}'’“”]/u";
-  $str = preg_replace($pattern, " ", $str);
+    $pattern = "/[^\p{L}\p{Mn}\p{Pd}'’“”]/u";
+    $str = preg_replace($pattern, " ", $str);
 
   // Split the string into words and count them
-  $words = preg_split('/[\s]+/', $str);
-  $count = 0;
-  foreach ($words as $word) {
-  // Check if the word is a whitespace or contains only punctuation
-  if (strlen(trim($word)) == 0 || preg_match('/^[\p{P}\s]+$/u', $word)) {
-  continue;
-  }
-  // Check if the word is an opening or closing punctuation mark
-  if (preg_match('/^[\p{Pe}\p{Pf}]+$/u', $word)) {
-  $count += 1;
-  continue;
-  }
-  // Otherwise, count the word length
-  $count += strlen($word);
-  }
-  return $count;
+    $words = preg_split('/[\s]+/', $str);
+    $count = 0;
+    foreach ($words as $word) {
+    // Check if the word is a whitespace or contains only punctuation
+        if (strlen(trim($word)) == 0 || preg_match('/^[\p{P}\s]+$/u', $word)) {
+            continue;
+        }
+    // Check if the word is an opening or closing punctuation mark
+        if (preg_match('/^[\p{Pe}\p{Pf}]+$/u', $word)) {
+            $count += 1;
+            continue;
+        }
+    // Otherwise, count the word length
+        $count += strlen($word);
+    }
+    return $count;
 }
 
-function limitTokens($str, $limit) {
-  $count = countTokens($str);
-  if ($count > $limit) {
-  // Use substr_replace to get a string with the same number of tokens
-  $str = substr_replace($str, "...", $limit);
-  }
-  return $str;
+function limitTokens($str, $limit)
+{
+    $count = countTokens($str);
+    if ($count > $limit) {
+    // Use substr_replace to get a string with the same number of tokens
+        $str = substr_replace($str, "...", $limit);
+    }
+    return $str;
 }
 
 
@@ -250,46 +263,41 @@ function limitTokens($str, $limit) {
 
 
 if (isset($_POST['query']) && $_POST['query'] === 'get_chat') {
-
     // Get the chat ID from the request data
     $chat_id = $_POST['chat_id'];
 
-    if (isset($_POST['last'])) $last = TRUE;
-    else $last = FALSE;
+    if (isset($_POST['last'])) {
+        $last = true;
+    } else {
+        $last = false;
+    }
 
     $result = get_chat($chat_id, $db);
 
     $chat_history = array();
     foreach ($result as $row) {
-      $chat_history[] = $row;
+        $chat_history[] = $row;
     }
 
     if ($last) {
-
-      $chat_history = array_reverse($chat_history);
-      $chat_history = $chat_history[0]['comment_ai'];
-      echo $chat_history;
-
+        $chat_history = array_reverse($chat_history);
+        $chat_history = $chat_history[0]['comment_ai'];
+        echo $chat_history;
     } else {
-
       // Set the HTTP response header to indicate that the response is JSON
-      header('Content-Type: application/json');
+        header('Content-Type: application/json');
 
       // Convert the chat history array to JSON and send it as the HTTP response body
-      echo json_encode($chat_history);
-
+        echo json_encode($chat_history);
     }
 }
 
 if (isset($_POST['query']) && $_POST['query'] === 'delete_chat') {
-
-    if (!isset($_POST['chat_id'])) $chat_id = $_GET['chat_id'];
-    else $chat_id = $_POST['chat_id'];
+    if (!isset($_POST['chat_id'])) {
+        $chat_id = $_GET['chat_id'];
+    } else {
+        $chat_id = $_POST['chat_id'];
+    }
 
     return delete_chat($chat_id, $db);
-
 }
-
-
-
-?>

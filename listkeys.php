@@ -1,10 +1,10 @@
 <?php
-$title='gtd-php shortcut keys';
-$menu='';
+$title = 'gtd-php shortcut keys';
+$menu = '';
 require_once("headerHtml.inc.php");
 ob_start();
 require_once('headerMenu.inc.php');
-$menutext=ob_get_contents();
+$menutext = ob_get_contents();
 ob_end_clean();
 ?>
 </head><body>
@@ -17,13 +17,15 @@ ob_end_clean();
 <thead><tr><th>key</th><th>title</th><th>description</th></tr></thead>
 <tbody>
 <?php
-foreach ($menu as $line)
-    if (!empty($line['key']))
+foreach ($menu as $line) {
+    if (!empty($line['key'])) {
         echo "<tr>"
-            ,"<td>{$line['key']}</td>"
-            ,"<td>{$line['label']}</td>"
-            ,"<td>{$line['title']}</td>"
-            ,"</tr>";
+        ,"<td>{$line['key']}</td>"
+        ,"<td>{$line['label']}</td>"
+        ,"<td>{$line['title']}</td>"
+        ,"</tr>";
+    }
+}
 ?>
 </tbody>
 </table>

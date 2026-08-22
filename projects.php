@@ -13,30 +13,30 @@ include_once('header.php');
 require_once("headerDB.inc.php");
 
 // get and count active projects
-$values['type']= "p";
+$values['type'] = "p";
 $values['isSomeday'] = "n";
-$stem  = " WHERE ".sqlparts("typefilter",$config,$values)
-        ." AND ".sqlparts("activeitems",$config,$values)
-        ." AND ".sqlparts("pendingitems",$config,$values)
+$stem  = " WHERE " . sqlparts("typefilter", $config, $values)
+        . " AND " . sqlparts("activeitems", $config, $values)
+        . " AND " . sqlparts("pendingitems", $config, $values)
         //." AND title NOT LIKE '~%'"
         ;
-$values['filterquery'] = $stem." AND ".sqlparts("issomeday",$config,$values);
-$pres = query("getitems",$config,$values,$sort);
+$values['filterquery'] = $stem . " AND " . sqlparts("issomeday", $config, $values);
+$pres = query("getitems", $config, $values, $sort);
 
 // eliminate items with inactive visions from array
-$values['type']= "v";
+$values['type'] = "v";
 $values['isSomeday'] = "n";
-$stem  = " WHERE ".sqlparts("typefilter",$config,$values)
-        ." AND ".sqlparts("activeitems",$config,$values);
-$values['filterquery'] = $stem." AND ".sqlparts("issomeday",$config,$values);
-$vres = query("getitems",$config,$values,$sort);
-$i=0;
+$stem  = " WHERE " . sqlparts("typefilter", $config, $values)
+        . " AND " . sqlparts("activeitems", $config, $values);
+$values['filterquery'] = $stem . " AND " . sqlparts("issomeday", $config, $values);
+$vres = query("getitems", $config, $values, $sort);
+$i = 0;
 //echo '<pre>'; var_dump($pres);
 
 foreach ($pres as $p) {
     $active = false;
     $values['itemId'] = $p['itemId'];
-    $lu = query("lookupparentshort",$config,$values,$sort);
+    $lu = query("lookupparentshort", $config, $values, $sort);
     foreach ($lu as $mat) {
         foreach ($vres as $v) { // has active vision as parent?
             if ($mat['parentId'] == $v['itemId']) {
@@ -45,7 +45,7 @@ foreach ($pres as $p) {
             }
         }
         $values['itemId'] = $mat['parentId'];
-        $lup = query("lookupparentshort",$config,$values,$sort);
+        $lup = query("lookupparentshort", $config, $values, $sort);
         foreach ($lup as $matp) { // has project as parent that has active vision parent?
             foreach ($vres as $v) {
                 if ($matp['parentId'] == $v['itemId']) {
@@ -78,7 +78,7 @@ function pertinent() {
 <?php
 $comma = '';
 foreach ($pres as $p) {
-    echo $comma. "'itemReport.php?itemId={$p['itemId']}'";
+    echo $comma . "'itemReport.php?itemId={$p['itemId']}'";
     $comma = ',';
 }
 ?>

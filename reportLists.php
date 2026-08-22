@@ -2,66 +2,83 @@
 include_once('header.php');
 include_once('lists.inc.php');
 
-$result = query("select{$check}list",$config,$values,$sort);
+$result = query("select{$check}list", $config, $values, $sort);
 // var_dump($result);die;
-if ($result==1) {
+if ($result == 1) {
     echo "<p class='error'>That {$check}list does not exist</p>\n";
     include_once('footer.php');
     exit();
 }
-$row=$result[0];
+$row = $result[0];
 
 ### item sort order ###
 
 # normal list display
 if (!isset($_GET['content'])) {
-
   # checklist sort
-  if ($row['sortItems'] == 'title') $sort['getchecklistitems'] = $sort['getchecklistitems'];
-  if ($row['sortItems'] == 'priority') $sort['getchecklistitems'] = $sort['getchecklistitems_prioritise'];
-  if ($row['sortItems'] == 'title_priority') $sort['getchecklistitems'] = $sort['getchecklistitems_title_prioritise'];
-  if ($row['sortItems'] == 'title_notes') $sort['getchecklistitems'] = $sort['getchecklistitems_title_notes'];
+    if ($row['sortItems'] == 'title') {
+        $sort['getchecklistitems'] = $sort['getchecklistitems'];
+    }
+    if ($row['sortItems'] == 'priority') {
+        $sort['getchecklistitems'] = $sort['getchecklistitems_prioritise'];
+    }
+    if ($row['sortItems'] == 'title_priority') {
+        $sort['getchecklistitems'] = $sort['getchecklistitems_title_prioritise'];
+    }
+    if ($row['sortItems'] == 'title_notes') {
+        $sort['getchecklistitems'] = $sort['getchecklistitems_title_notes'];
+    }
 
   # list sort
-  $sort['getlistitems'] = $sort['getlistitemsprioritise'];
+    $sort['getlistitems'] = $sort['getlistitemsprioritise'];
 
 # bulk edit items display
-} else if ($_GET['content'] == 'bulk') {
-
+} elseif ($_GET['content'] == 'bulk') {
   # checklist sort
-  if ($row['sortItems'] == 'title') $sort['getchecklistitems'] = $sort['getchecklistitemsbulk'];
-  if ($row['sortItems'] == 'priority') $sort['getchecklistitems'] = $sort['getchecklistitemsbulk_prioritise'];
-  if ($row['sortItems'] == 'title_priority') $sort['getchecklistitems'] = $sort['getchecklistitemsbulk_title_prioritise'];
-  if ($row['sortItems'] == 'title_notes') $sort['getchecklistitems'] = $sort['getchecklistitemsbulk_title_notes'];
+    if ($row['sortItems'] == 'title') {
+        $sort['getchecklistitems'] = $sort['getchecklistitemsbulk'];
+    }
+    if ($row['sortItems'] == 'priority') {
+        $sort['getchecklistitems'] = $sort['getchecklistitemsbulk_prioritise'];
+    }
+    if ($row['sortItems'] == 'title_priority') {
+        $sort['getchecklistitems'] = $sort['getchecklistitemsbulk_title_prioritise'];
+    }
+    if ($row['sortItems'] == 'title_notes') {
+        $sort['getchecklistitems'] = $sort['getchecklistitemsbulk_title_notes'];
+    }
 
   # list sort
-  $sort['getlistitems'] = $sort['getlistitemsbulk'];
-
+    $sort['getlistitems'] = $sort['getlistitemsbulk'];
 }
 
 #######################
 
-$values['filterquery']= " AND ".sqlparts("activelistitems",$config,$values);
-$result1=query("get{$check}listitems",$config,$values,$sort);
+$values['filterquery'] = " AND " . sqlparts("activelistitems", $config, $values);
+$result1 = query("get{$check}listitems", $config, $values, $sort);
 
 if (!$isChecklist) {
-    $values['filterquery']= " AND ".sqlparts("completedlistitems",$config,$sort);
-    $result2=query("get{$check}listitems",$config,$values,$sort);
-    if (!$result2) $result2=array();
+    $values['filterquery'] = " AND " . sqlparts("completedlistitems", $config, $sort);
+    $result2 = query("get{$check}listitems", $config, $values, $sort);
+    if (!$result2) {
+        $result2 = array();
+    }
 }
-$createURL="editListItems.php?listId={$row['listId']}&amp;$urlSuffix";
+$createURL = "editListItems.php?listId={$row['listId']}&amp;$urlSuffix";
 
 $prioritise = $row['prioritise'];
 
 $item['title'] = $row['title']; // page title
 
 $scored = false;
-if (isset($check) && $check == 'check' && $row['scored'] == 'y') $scored = true;
+if (isset($check) && $check == 'check' && $row['scored'] == 'y') {
+    $scored = true;
+}
 
 require_once("headerHtml.inc.php");
-$urlVars = "?listId=" . $row['listId'] . "&type=". $type;
-$urlInst = "&instanceId=". $values['instanceId'];
-$urlBulk = "&content=". $_GET['content'];
+$urlVars = "?listId=" . $row['listId'] . "&type=" . $type;
+$urlInst = "&instanceId=" . $values['instanceId'];
+$urlBulk = "&content=" . $_GET['content'];
 ?>
 
 <script type='text/javascript' >
@@ -74,30 +91,32 @@ $( document ).ready(function() {
 
 <h1><?php
 
-  if (!empty($row['metaphor'])) echo "<a href=\"media/" . $row['metaphor'] . "\" target=\"_new\"><img src=\"media/",$row['metaphor'],"\" height=\"50px\"></a>";
+if (!empty($row['metaphor'])) {
+    echo "<a href=\"media/" . $row['metaphor'] . "\" target=\"_new\"><img src=\"media/",$row['metaphor'],"\" height=\"50px\"></a>";
+}
   echo $row['title'];
 
-  ?>&nbsp;&nbsp;&nbsp;
+?>&nbsp;&nbsp;&nbsp;
 
 <?php
-  if (isset($_GET['content']) && $_GET['content'] == 'bulk') {
-      echo "[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst . "\">Show&nbsp;List</a>&nbsp;]&nbsp;&nbsp;&nbsp;";
-  }
+if (isset($_GET['content']) && $_GET['content'] == 'bulk') {
+    echo "[&nbsp;<a href=\"reportLists.php" . $urlVars . $urlInst . "\">Show&nbsp;List</a>&nbsp;]&nbsp;&nbsp;&nbsp;";
+}
 ?>
   <span class='editbar'>[&nbsp;<a href='editLists.php<?php echo $urlVars . $urlInst; ?>'>Edit&nbsp;List</a>&nbsp;]</span>
 <?php
-    if ($row['hyperlink']) {
-        echo "&nbsp;&nbsp;&nbsp;[&nbsp;" . faLink($row['hyperlink']) . "&nbsp;]";
-    }
-    if (!isset($_GET['content'])) {
-        echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst . "&content=bulk\">Edit&nbsp;Items</a>&nbsp;]";
-        echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a id=\"copy-button\">Copy</a>&nbsp;]";
-        echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"reportLists.php". $urlVars . $urlInst . "&content=limit\">Limit</a>&nbsp;]";
-    }
-    if ($check) {
-        $values['urlInst'] = $urlVars . $urlBulk . '&instanceId=';
-        echo '&nbsp;&nbsp;&nbsp;' . instanceselectbox($config,$values,$sort);
-    }
+if ($row['hyperlink']) {
+    echo "&nbsp;&nbsp;&nbsp;[&nbsp;" . faLink($row['hyperlink']) . "&nbsp;]";
+}
+if (!isset($_GET['content'])) {
+    echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"reportLists.php" . $urlVars . $urlInst . "&content=bulk\">Edit&nbsp;Items</a>&nbsp;]";
+    echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a id=\"copy-button\">Copy</a>&nbsp;]";
+    echo "&nbsp;&nbsp;&nbsp;[&nbsp;<a href=\"reportLists.php" . $urlVars . $urlInst . "&content=limit\">Limit</a>&nbsp;]";
+}
+if ($check) {
+    $values['urlInst'] = $urlVars . $urlBulk . '&instanceId=';
+    echo '&nbsp;&nbsp;&nbsp;' . instanceselectbox($config, $values, $sort);
+}
 ?>
 </h1>
 <p>
@@ -109,47 +128,71 @@ $( document ).ready(function() {
     $values['queryKey'] = $check . 'listId';
     $values['queryValue'] = $row['listId'];
     $values['priorityId'] = $prioritise;
-    echo 'Prioritised: ' . priorityselectbox($config,$values,$sort) . ', ';
+    echo 'Prioritised: ' . priorityselectbox($config, $values, $sort) . ', ';
 
-    if (!empty($row['category'])) echo 'Category: ',$row['category'],", ";
-	?>CatCode: <?php echo makeclean($row['sortBy']);
-	if ($check) {
-	    $effort = $row['effort']
-  ?>, Frequency: <?php echo makeclean($row['frequency']); ?> / Year, Effort: <?php echo $effort; ?> Hours, <?php echo makeclean($row['effort_day']); ?> Hours / day
+if (!empty($row['category'])) {
+    echo 'Category: ',$row['category'],", ";
+}
+?>CatCode: <?php echo makeclean($row['sortBy']);
+if ($check) {
+    $effort = $row['effort']
+    ?>, Frequency: <?php echo makeclean($row['frequency']); ?> / Year, Effort: <?php echo $effort; ?> Hours, <?php echo makeclean($row['effort_day']); ?> Hours / day
     <?php
-      if ($scored) {
+    if ($scored) {
         $row['instanceId'] = $values['instanceId'];
         $row['score_total'] = scoreCL($config, $row, $sort);
         echo ', Score: ' . $row['score_total'];
-      }
-      echo '.';
-     } ?>
+    }
+        echo '.';
+} ?>
 <?php
     // $descriptionString = $row['description'];
     $descriptionString = '';
-    if ($row['premiseA']) $descriptionString .= $row['premiseA'];
-    if ($row['premiseA'] && $row['premiseB']) $descriptionString .= ", <br>";
-    if ($row['premiseB']) $descriptionString .= $row['premiseB'];
-    if ($row['premiseA'] || $row['premiseB']) $descriptionString .= ", <br>";
-    if ($row['conclusion']) $descriptionString .= $row['conclusion'];
+if ($row['premiseA']) {
+    $descriptionString .= $row['premiseA'];
+}
+if ($row['premiseA'] && $row['premiseB']) {
+    $descriptionString .= ", <br>";
+}
+if ($row['premiseB']) {
+    $descriptionString .= $row['premiseB'];
+}
+if ($row['premiseA'] || $row['premiseB']) {
+    $descriptionString .= ", <br>";
+}
+if ($row['conclusion']) {
+    $descriptionString .= $row['conclusion'];
+}
 
-    if ($row['behaviour'] && empty($descriptionString)) { $desiredOutcomeStr = ""; } else { $desiredOutcomeStr = '<br><br>'; }
-    if ($row['behaviour']) $desiredOutcomeStr .= $row['behaviour'];
-    if ($row['standard']) $desiredOutcomeStr .= ", <br>" . $row['standard'];
-    if ($row['conditions']) $desiredOutcomeStr .=  ", <br>" . $row['conditions'];
+if ($row['behaviour'] && empty($descriptionString)) {
+    $desiredOutcomeStr = "";
+} else {
+    $desiredOutcomeStr = '<br><br>';
+}
+if ($row['behaviour']) {
+    $desiredOutcomeStr .= $row['behaviour'];
+}
+if ($row['standard']) {
+    $desiredOutcomeStr .= ", <br>" . $row['standard'];
+}
+if ($row['conditions']) {
+    $desiredOutcomeStr .=  ", <br>" . $row['conditions'];
+}
     $descriptionString .= $desiredOutcomeStr;
 
-    if (!empty($descriptionString)) echo '<p class="JKSmallPadding">',trimTaggedString($descriptionString),"</p>\n";
+if (!empty($descriptionString)) {
+    echo '<p class="JKSmallPadding">',trimTaggedString($descriptionString),"</p>\n";
+}
 
     $sTTable1 = "'" . $check . "listitems'";
     $sTcol1 = "'" . $check . "listItemId','";
-    if (!is_numeric($values['instanceId'])) {
-        $sTTable2 = "'" . $check . "listitems'";
-        $sTcol2 = "";
-    } else {
-        $sTTable2 = "'checklistitemsinst'";
-        $sTcol2 = "'instanceId','" . $values['instanceId'] . "',";
-    }
+if (!is_numeric($values['instanceId'])) {
+    $sTTable2 = "'" . $check . "listitems'";
+    $sTcol2 = "";
+} else {
+    $sTTable2 = "'checklistitemsinst'";
+    $sTcol2 = "'instanceId','" . $values['instanceId'] . "',";
+}
 
 ?>
 <h2><a href='<?php echo $createURL; ?>' title='add a new item'>Add items</a></h2>
@@ -157,13 +200,13 @@ $( document ).ready(function() {
     //echo '<pre>';var_dump($result1);die;
     // standard layout
     if (!isset($_GET['content']) || $_GET['content'] !== 'bulk') {
-?>
+        ?>
         <form action='processLists.php' method='post'>
             <?php if ($check && $scored) { ?>
               <table class="datatable sortable" summary="table of list items">
             <?php } else { ?>
               <table class="datatable sortable" id="itemtable" summary="table of list items">
-              <?php } ?>
+            <?php } ?>
                 <thead>
                     <tr>
                         <th>Item</th>
@@ -190,39 +233,46 @@ $( document ).ready(function() {
                 </thead>
                 <tbody>
                 <?php
-                  if ($check && $scored) {
+                if ($check && $scored) {
                     $str = "<tr><td></td><td></td>"
-                      . "<td class='JKSmallPaddingFaded'><input type='checkbox' id='check_completed'></td>"
-                      . "<td class='JKSmallPaddingFaded'><input type='checkbox' id='check_ignored'></td>"
-                      . "<td></td></tr>";
+                    . "<td class='JKSmallPaddingFaded'><input type='checkbox' id='check_completed'></td>"
+                    . "<td class='JKSmallPaddingFaded'><input type='checkbox' id='check_ignored'></td>"
+                    . "<td></td></tr>";
                     #echo $str;
-                  }
+                }
                 ?>
-                <?php foreach($result1 as $row) {
-                    if ($row['priority'] > $prioritise && $prioritise > -1) continue;
-                ?>
+                <?php foreach ($result1 as $row) {
+                    if ($row['priority'] > $prioritise && $prioritise > -1) {
+                        continue;
+                    }
+                    ?>
                     <tr>
                         <td class="JKSmallPadding" tabindex="2">
                             <?php
-                            if ($prioritise > 0) echo '<span style="opacity: 0.6; font-size: medium;">P<div contenteditable="true" class="inline-div-editable" ' . ajaxUpd($check . "listitemPriority", $row['itemId']) . '>' . $row['priority'] . '</div></span>&nbsp;';
+                            if ($prioritise > 0) {
+                                echo '<span style="opacity: 0.6; font-size: medium;">P<div contenteditable="true" class="inline-div-editable" ' . ajaxUpd($check . "listitemPriority", $row['itemId']) . '>' . $row['priority'] . '</div></span>&nbsp;';
+                            }
                             ?><a href="editListItems.php?itemId=<?php
                             echo $row['itemId'],'&amp;',$urlSuffix;
-                            ?>" title="Edit"><?php echo makeclean($row['item']); ?></a>
+?>" title="Edit"><?php echo makeclean($row['item']); ?></a>
                             </td>
                         <td class="JKSmallPadding">
                           <?php
                           # exception if contains hyperlink avoid ajax update
-                          if (strstr(trimTaggedString($row['notes']), '<a href='))
-                            echo trimTaggedString($row['notes']) . '<div>';
+                            if (strstr(trimTaggedString($row['notes']), '<a href=')) {
+                                echo trimTaggedString($row['notes']) . '<div>';
+                            } else {
                           # otherwise do it
-                          else
-                            echo '<div contenteditable="true" tabindex="3"'
+                                echo '<div contenteditable="true" tabindex="3"'
                                   . ajaxUpd($check . "listitemNotes", $row['itemId']) . '>' . trimTaggedString($row['notes']) . '</div><div>';
-                          if ($row['hyperlink']) {
-                              if (strlen($row['notes'])>0) echo "<br>";
-                              echo faLink($row['hyperlink']);
-                          }
-                        ?></div></td>
+                            }
+                            if ($row['hyperlink']) {
+                                if (strlen($row['notes']) > 0) {
+                                    echo "<br>";
+                                }
+                                echo faLink($row['hyperlink']);
+                            }
+                            ?></div></td>
                         <?php /*
                         if ($check) {
                             if ($prioritise > -1) { ?>
@@ -244,44 +294,56 @@ $( document ).ready(function() {
                             } */
                         ?>
                         <td class="JKSmallPaddingFaded">
-													<input tabindex="1" type="checkbox" name="completed[]" title="Complete" value="<?php
-                            echo $row['itemId'],
-														'"',
-                            ($isChecklist && $row['checked']==='y')?" checked='checked' class='checked' ":'',
-                            ($isChecklist && $row['checked']==='n')?" class='unchecked' ":'';
-                            if ($isChecklist) {
-                              if (!is_numeric($values['instanceId'])) echo ajaxUpd('checklistitem', $row['itemId']);
-                              else echo ajaxUpd('checklistiteminst', $row['itemId'], $values['instanceId']);
-                            }
-                            ?> />
+                                                    <input tabindex="1" type="checkbox" name="completed[]" title="Complete" value="<?php
+                                                    echo $row['itemId'],
+                                                        '"',
+                                                    ($isChecklist && $row['checked'] === 'y') ? " checked='checked' class='checked' " : '',
+                                                    ($isChecklist && $row['checked'] === 'n') ? " class='unchecked' " : '';
+                                                    if ($isChecklist) {
+                                                        if (!is_numeric($values['instanceId'])) {
+                                                            echo ajaxUpd('checklistitem', $row['itemId']);
+                                                        } else {
+                                                            echo ajaxUpd('checklistiteminst', $row['itemId'], $values['instanceId']);
+                                                        }
+                                                    }
+                                                    ?> />
                           <?php
-                            if ($isChecklist) echo '<span style="opacity: 1.0; font-size: medium"><div contenteditable="true" class="inline-div-editable" onBlur="sT(this,\'checklistitems\',\'effort\',\'checklistItemId\',\'' . $row['itemId'] . '\'); calcCL(\'' . $row['listId'] . '\')" onFocus="sE(this)">' . ($row['effort'] == "" ? "_" : $row['effort']) . '</div>m</span>';
-                          ?>
+                            if ($isChecklist) {
+                                echo '<span style="opacity: 1.0; font-size: medium"><div contenteditable="true" class="inline-div-editable" onBlur="sT(this,\'checklistitems\',\'effort\',\'checklistItemId\',\'' . $row['itemId'] . '\'); calcCL(\'' . $row['listId'] . '\')" onFocus="sE(this)">' . ($row['effort'] == "" ? "_" : $row['effort']) . '</div>m</span>';
+                            }
+                            ?>
                         </td>
                     <?php if ($check && $scored) { ?>
                         <td class="JKSmallPaddingFaded"><input type="checkbox" name="ignored[]" title="Ignore" value="<?php
-                            echo $row['itemId'],'"',($isChecklist && $row['ignored']==='y')?" checked='checked' ":'';
-                            if (!is_numeric($values['instanceId'])) echo ajaxUpd('checklistitemignore', $row['itemId']);
-                            else echo ajaxUpd('checklistiteminstignore', $row['itemId'], $values['instanceId']);
-                            ?> />
+                            echo $row['itemId'],'"',($isChecklist && $row['ignored'] === 'y') ? " checked='checked' " : '';
+                        if (!is_numeric($values['instanceId'])) {
+                            echo ajaxUpd('checklistitemignore', $row['itemId']);
+                        } else {
+                            echo ajaxUpd('checklistiteminstignore', $row['itemId'], $values['instanceId']);
+                        }
+                        ?> />
                         </td>
                     <?php } ?>
                         <?php
-                            if ($scored) {
-                        ?>
+                        if ($scored) {
+                            ?>
                         <td class="JKSmallPadding">
-                        <?php
+                            <?php
                             if ($row['assessed'] > 0) {
 #                                $score = number_format((float)$row['score'] / $row['assessed'], 1, '.', '');
-	                            $score = round($row['score'] / $row['assessed'], 2) * 100;
-	                            if($score == 100) $score = 99;
-	                            if($score > 0 && $score < 10) $score = "0" . $score;
-	                            $score = $score . "%<br>" . $row['assessed'];
-														} else {
-																$score = $row['score'] . '/0';
-														}
-                           echo $score;
-                        ?>
+                                $score = round($row['score'] / $row['assessed'], 2) * 100;
+                                if ($score == 100) {
+                                    $score = 99;
+                                }
+                                if ($score > 0 && $score < 10) {
+                                    $score = "0" . $score;
+                                }
+                                $score = $score . "%<br>" . $row['assessed'];
+                            } else {
+                                $score = $row['score'] . '/0';
+                            }
+                                echo $score;
+                            ?>
                         </td>
                         <?php } ?>
                     </tr><?php
@@ -290,7 +352,8 @@ $( document ).ready(function() {
             </table>
             <div class='formbuttons'>
                 <input type='submit' name='submit' value='update' />
-                <?php if ($isChecklist) { ?> JK
+                <?php if ($isChecklist) {
+                    ?> JK
                     <input type='submit' name='listclear' value='Clear checked' />
                     <?php if ($scored) { ?>
                         <input type='hidden' name='scored' value='y' />
@@ -305,9 +368,9 @@ $( document ).ready(function() {
                 <input type='hidden' name='type' value='<?php echo $type; ?>' />
             </div>
         </form>
-<?php
+        <?php
     } elseif ($_GET['content'] == 'bulk') {
-?>
+        ?>
         <link rel="stylesheet" href="themes/default/dataTables.css" type="text/css" media="Screen" />
 
             <table class='listEd'>
@@ -316,34 +379,46 @@ $( document ).ready(function() {
                         <?php
                             $x = 2;
                             $y = 0;
-                            if ($prioritise > -1) $x++;
-                            if ($check) $x++;
-                            if ($scored) $x = $x + 2;
+                        if ($prioritise > -1) {
+                            $x++;
+                        }
+                        if ($check) {
+                            $x++;
+                        }
+                        if ($scored) {
+                            $x = $x + 2;
+                        }
                         ?>
-                        <th class='contList' onClick="<?php $y++; echo editableCol($x, $y); ?>">Item</th>
-                        <th class='contList' onClick="<?php $y++; echo editableCol($x, $y); ?>">Description</th>
+                        <th class='contList' onClick="<?php $y++;
+                        echo editableCol($x, $y); ?>">Item</th>
+                        <th class='contList' onClick="<?php $y++;
+                        echo editableCol($x, $y); ?>">Description</th>
                     <?php if ($prioritise > -1) { ?>
-                        <th class='contList' onClick="<?php $y++; echo editableCol($x, $y); ?>">Priority</th>
+                        <th class='contList' onClick="<?php $y++;
+                        echo editableCol($x, $y); ?>">Priority</th>
                     <?php } ?>
                     <?php if ($check) { ?>
-                        <th class='contList' onClick="<?php $y++; echo editableCol($x, $y); ?>">Mins</th>
+                        <th class='contList' onClick="<?php $y++;
+                        echo editableCol($x, $y); ?>">Mins</th>
                     <?php } ?>
                     <?php if ($scored) { ?>
-                        <th class='contList' onClick="<?php $y++; echo editableCol($x, $y); ?>">Score</th>
-                        <th class='contList' onClick="<?php $y++; echo editableCol($x, $y); ?>">Assess</th>
+                        <th class='contList' onClick="<?php $y++;
+                        echo editableCol($x, $y); ?>">Score</th>
+                        <th class='contList' onClick="<?php $y++;
+                        echo editableCol($x, $y); ?>">Assess</th>
                     <?php } ?>
                     </tr>
                 </thead>
                 <tbody>
 
-                <?php foreach($result1 as $row) { ?>
+                <?php foreach ($result1 as $row) { ?>
                     <tr>
                             <td class="JKSmallPadding" contenteditable="true" onBlur="sT(this,<?php echo $sTTable1; ?>,'item',<?php echo $sTcol1 . $row['itemId']; ?>')" onFocus="sE(this)"><?php
                             echo trim(nl2br($row['item']));
-                        ?></td>
+                            ?></td>
                             <td class="JKSmallPadding" contenteditable="true" onBlur="sT(this,<?php echo $sTTable1; ?>,'notes',<?php echo $sTcol1 . $row['itemId']; ?>')" onFocus="sE(this)"><?php
                             echo ajaxLineBreak($row['notes']);
-                        ?></td>
+                            ?></td>
                         <?php if ($prioritise > -1) { ?>
                             <td class="JKSmallPadding" contenteditable="true" onBlur="sT(this,<?php echo $sTTable1; ?>,'priority',<?php echo $sTcol1 . $row['itemId']; ?>')" onFocus="sE(this)"><?php
                                 echo $row['priority'];
@@ -367,10 +442,10 @@ $( document ).ready(function() {
                 </tbody>
             </table>
 
-<?php
+        <?php
     }
 } else {
-?>
+    ?>
 sub<p>There are no <?php
     echo ($isChecklist) ? 'check' : 'incomplete '
         ,"list items. <a href='$createURL'>"; ?>Create one</a></p>
@@ -385,12 +460,12 @@ if (!$isChecklist && count($result2)) {  // it's an ordinary list, so split tabl
             <th>Completed</th>
         </tr></thead>
         <tbody>
-            <?php foreach($result2 as $row) { ?>
+            <?php foreach ($result2 as $row) { ?>
                 <tr>
                     <td><a href="editListItems.php?itemId=<?php
                         echo $row['itemId']; ?>" title="Edit"><?php
                             echo makeclean($row['item']);
-                        ?></a>
+?></a>
                     </td>
                     <td><?php echo trimTaggedString($row['notes']); ?></td>
                     <td><?php echo $row['dateCompleted']; ?></td>

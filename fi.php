@@ -10,15 +10,18 @@ include('fi_require.php');
 $search_query = isset($_GET['q']) && is_string($_GET['q']) ? $_GET['q'] : '';
 $chat_id = isset($_GET['chat_id']) && is_string($_GET['chat_id']) ? $_GET['chat_id'] : '';
 $other_chats = get_other_chats($chat_id, $db);
-$db = NULL; // Close the database connection
+$db = null; // Close the database connection
 
 ?>
 
 <link rel="stylesheet" href="themes/default/fi_style.css">
 
 <div class="conta <?php
-  if (isMobile()) echo "contamob";
-  else echo "contabro";
+if (isMobile()) {
+    echo "contamob";
+} else {
+    echo "contabro";
+}
 ?>">
 
 <section class="msger">
@@ -41,18 +44,22 @@ $db = NULL; // Close the database connection
           <span class="word_count" style="opacity:0"></span>
           <button id="copy-button">Copy</button>
           <?php
-          if (isMobile()) echo "<input type='button' value='Close' onclick='closeMe();' class='closeButton' />";
-          ?>
+            if (isMobile()) {
+                echo "<input type='button' value='Close' onclick='closeMe();' class='closeButton' />";
+            }
+            ?>
         </div>
     </header>
 
     <div id="popup-menu">
       <form action='listItems.php?type=*&everything=true&liveparents=*' method='post' style='text-align:right'><a href="">X</a>&nbsp;&nbsp;&nbsp;Search<input type='text' name='needle' id='needle' style='width: 150px'></form>
       <?php
-      foreach ($other_chats as $row) {
-        $descrip = $row["chat_summary"];
-        if ($descrip == NULL) $descrip = $row["chat_id"];
-        echo '
+        foreach ($other_chats as $row) {
+            $descrip = $row["chat_summary"];
+            if ($descrip == null) {
+                $descrip = $row["chat_id"];
+            }
+            echo '
         <a class="history-link" onClick="summariseChat(
           \'' . $row["chat_id"] . '\',\'hist\'
           )">Summarise</a>&nbsp;
@@ -62,8 +69,8 @@ $db = NULL; // Close the database connection
           ' . $descrip . '
         </a>&nbsp;&nbsp;<br>
         ';
-      }
-      ?>
+        }
+        ?>
     </div>
 
     <main class="msger-chat" id="area-scroll">

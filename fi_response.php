@@ -16,35 +16,37 @@ $history_char_limit = $config['fir_history_max_tkn'] * 4;
 $history_chars = strlen($system_message['content']);
 $recent_history = [];
 foreach (array_reverse($result) as $row) {
-  $row_chars = strlen((string) $row['comment_human']) + strlen((string) $row['comment_ai']);
-  if (!empty($recent_history) && $history_chars + $row_chars > $history_char_limit) break;
-  $recent_history[] = $row;
-  $history_chars += $row_chars;
+    $row_chars = strlen((string) $row['comment_human']) + strlen((string) $row['comment_ai']);
+    if (!empty($recent_history) && $history_chars + $row_chars > $history_char_limit) {
+        break;
+    }
+    $recent_history[] = $row;
+    $history_chars += $row_chars;
 }
 
 $history[] = $system_message;
 foreach (array_reverse($recent_history) as $row) {
-  $history[] = ['role' => 'user', 'content' => $row['comment_human']];
-  if ($row['comment_ai'] !== NULL && $row['comment_ai'] !== '') {
-    $history[] = ['role' => 'assistant', 'content' => $row['comment_ai']];
-  }
+    $history[] = ['role' => 'user', 'content' => $row['comment_human']];
+    if ($row['comment_ai'] !== null && $row['comment_ai'] !== '') {
+        $history[] = ['role' => 'assistant', 'content' => $row['comment_ai']];
+    }
 }
 
 $model_id = $_POST['model_id'];
 if ($model_id == '5') {
-  $model_id = $config['fir_model_5'];
-  $token_word = $config['fir_model_5_token_word'];
-  $model_temp = $config['fir_model_5_temp'];
+    $model_id = $config['fir_model_5'];
+    $token_word = $config['fir_model_5_token_word'];
+    $model_temp = $config['fir_model_5_temp'];
 }
 if ($model_id == '4') {
-  $model_id = $config['fir_model_4'];
-  $token_word = $config['fir_model_4_token_word'];
-  $model_temp = $config['fir_model_4_temp'];
+    $model_id = $config['fir_model_4'];
+    $token_word = $config['fir_model_4_token_word'];
+    $model_temp = $config['fir_model_4_temp'];
 }
 if ($model_id == '3') {
-  $model_id = $config['fir_model_3'];
-  $token_word = $config['fir_model_3_token_word'];
-  $model_temp = $config['fir_model_3_temp'];
+    $model_id = $config['fir_model_3'];
+    $token_word = $config['fir_model_3_token_word'];
+    $model_temp = $config['fir_model_3_temp'];
 }
 
 $opts = [
@@ -57,8 +59,11 @@ $opts['model'] = $model_id;
 $opts['messages'] = $history;
 
 # max number of tokens in response
-if ($_POST['word_count'] > 0) $max_tokens = $_POST['word_count'] * 2; // roughly 1.5 tokens / word
-else $max_tokens = $config['fir_max_tkn'];
+if ($_POST['word_count'] > 0) {
+    $max_tokens = $_POST['word_count'] * 2; // roughly 1.5 tokens / word
+} else {
+    $max_tokens = $config['fir_max_tkn'];
+}
 $opts[$token_word] = $max_tokens;
 
 // Set up the API parameters
@@ -75,6 +80,6 @@ $curls = curlReq($curly_tops);
 update_comment_fi($comment_id, $curls['data'], $db);
 
 // Close the database connection
-$db = NULL;
+$db = null;
 
 echo $curls['data'];

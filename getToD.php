@@ -4,6 +4,4 @@
 $today = getdate();
 $hour = $today[hours];
 $minutes = $today[minutes];
-echo $hour." ".$minutes;
-
-?>
+echo $hour . " " . $minutes;

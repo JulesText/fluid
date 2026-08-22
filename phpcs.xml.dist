@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<ruleset name="Fluid">
+    <description>PSR-12 formatting rules for the Fluid PHP codebase.</description>
+
+    <arg name="basepath" value="."/>
+    <arg name="colors"/>
+    <arg name="extensions" value="php"/>
+
+    <file>.</file>
+
+    <exclude-pattern>config_private.php</exclude-pattern>
+    <exclude-pattern>dt/node_modules/*</exclude-pattern>
+    <exclude-pattern>media/*</exclude-pattern>
+    <exclude-pattern>node_modules/*</exclude-pattern>
+    <exclude-pattern>vendor/*</exclude-pattern>
+
+    <rule ref="PSR12">
+        <exclude name="Generic.WhiteSpace.ScopeIndent"/>
+        <exclude name="PSR1.Files.SideEffects"/>
+    </rule>
+
+    <rule ref="Internal.NoCodeFound">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Generic.Files.LineLength">
+        <severity>0</severity>
+    </rule>
+
+</ruleset>

@@ -3,27 +3,30 @@
 include_once('header.php');
 
 //RETRIEVE URL VARIABLES
-$values=array();
-$values['noteId']= (int) $_GET["noteId"];
+$values = array();
+$values['noteId'] = (int) $_GET["noteId"];
 $referrer = $_GET["referrer"];
 $type = $_GET["type"];
 
 //select note details
-if ($values['noteId']>0) {
-    $result = query("selectnote",$config,$values,$sort);
-    if ($result) $currentrow = $result[0];
-    else echo "Nothing found.";
+if ($values['noteId'] > 0) {
+    $result = query("selectnote", $config, $values, $sort);
+    if ($result) {
+        $currentrow = $result[0];
+    } else {
+        echo "Nothing found.";
     }
+}
 
 //PAGE DISPLAY CODE
 if ($values['noteId']) {
-    $pagetitle='Edit Note';
-    $pageaction='updateNote.php?noteId='.$values['noteId'];
-    $pagesubmit='Update Note';
-}else{
-    $pagetitle='New Note';
-    $pageaction='processNote.php';
-    $pagesubmit='Add Note';
+    $pagetitle = 'Edit Note';
+    $pageaction = 'updateNote.php?noteId=' . $values['noteId'];
+    $pagesubmit = 'Update Note';
+} else {
+    $pagetitle = 'New Note';
+    $pageaction = 'processNote.php';
+    $pagesubmit = 'Add Note';
 }
 ?>
 <h2><?php echo $pagetitle; ?></h2>
@@ -38,8 +41,8 @@ Normal actions can be put into a tickler file, to be suppressed until a specifie
             <input type="text" size="10" name="date" id="f_date_b" value="<?php echo $currentrow['date'] ?>"/><button type="reset" id="f_trigger_b">...</button>
             <script type="text/javascript">
                 Calendar.setup({
-					firstDay       :    <?php echo (int) $config['firstDayOfWeek']; ?>, 
-					inputField     :    "f_date_b",      // id of the input field
+                    firstDay       :    <?php echo (int) $config['firstDayOfWeek']; ?>,
+                    inputField     :    "f_date_b",      // id of the input field
                     ifFormat       :    "%Y-%m-%d",       // format of the input field
                     showsTime      :    false,            // will display a time selector
                     button         :    "f_trigger_b",   // trigger for the calendar (button ID)
@@ -66,9 +69,9 @@ Normal actions can be put into a tickler file, to be suppressed until a specifie
             <input type="checkbox" name="delete" value="y" title="Deletes note; will not repeat again"/><label for="delete" id="delete" class="notfirst">Delete Note</label>
             <input type="hidden" name="referrer" value="<?php echo $referrer ?>" />
             <input type="hidden" name="type" value="<?php echo $type ?>" />
-     		<input type='hidden' name='dateformat' value='ccyy-mm-dd' />
-    		<input type='hidden' name='required'
-    		       value='title:notnull:Title can not be blank.,date:notnull:You must provide a date,date:date:Date must be valid ' />
+            <input type='hidden' name='dateformat' value='ccyy-mm-dd' />
+            <input type='hidden' name='required'
+                   value='title:notnull:Title can not be blank.,date:notnull:You must provide a date,date:date:Date must be valid ' />
         </div>
     </form>
 </div>

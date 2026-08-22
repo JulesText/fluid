@@ -1,130 +1,149 @@
 body {
-	font-size: 42px; /* JK display text */
+  font-size: 42px; /* JK display text */
 }
 
 h1 {
-	font-size: 42px; /* JK display text */
+  font-size: 42px; /* JK display text */
 }
 
 h2 {
-	font-size: 42px; /* JK display text */
-	border-bottom: 2px solid #ccb;
+  font-size: 42px; /* JK display text */
+  border-bottom: 2px solid #ccb;
 }
 
 h3 {
-	font-size: 42px; /* JK display text */
+  font-size: 42px; /* JK display text */
 }
 
 h4 {
-	font-size: 15px; /* JK display text */
+  font-size: 15px; /* JK display text */
 }
 
-thead td, th {
-	padding: 2px 3px;
-	border: 1px solid #777;
-	font-size: 42px; /* JK display text */
+thead td,
+th {
+  padding: 2px 3px;
+  border: 1px solid #777;
+  font-size: 42px; /* JK display text */
 }
 
 tbody td {
-	border: 1px dotted #999;
-	font-size: 42px; /* JK display text */
+  border: 1px dotted #999;
+  font-size: 42px; /* JK display text */
 }
 
-.formrow textarea, .formrow #name {
-	width: 20em;
-	font-size: 42px; /* JK display text */
+.formrow textarea,
+.formrow #name {
+  width: 20em;
+  font-size: 42px; /* JK display text */
 }
 
-.formrow #title, #conclusion, #outcome, #hyperlink, #metaphor {
-	font-size: 42px; /* JK display text */
-	width: 20em;
+.formrow #title,
+#conclusion,
+#outcome,
+#hyperlink,
+#metaphor {
+  font-size: 42px; /* JK display text */
+  width: 20em;
 }
 
-select, input, textarea, button {
-	font-size: 24px;
+select,
+input,
+textarea,
+button {
+  font-size: 24px;
 }
 
 input.JKPadding {
-	font-size: 24px;
+  font-size: 24px;
 }
 
-input.score, input.notfirst{
-	height:2.0em;
-	width:2.0em;
+input.score,
+input.notfirst {
+  height: 2em;
+  width: 2em;
 }
 
-select, input[type='text'], input[type='submit'], input[type='reset'], button, textarea {
-	font-size: 42px;
+select,
+input[type="text"],
+input[type="submit"],
+input[type="reset"],
+button,
+textarea {
+  font-size: 42px;
 }
 
 input.closeButton {
-	position: absolute; right:10px; top:10px;
-	/* color: red;  */
-	padding: 20px;
-	font-size: 42px;
-	font-family: verdana;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  /* color: red;  */
+  padding: 20px;
+  font-size: 42px;
+  font-family: verdana;
 }
 
 /*------------------------------
   live javascript effects CSS
   ----------------------------*/
 #searcher {
-	top:6em;
-	left:30em;
-	right:1em;
-	bottom:1em;
-	/* position:fixed; */
-	z-Index:999;
-	background-Color:white;
-	border: 6px ridge #39c;
-	display:none;
+  top: 6em;
+  left: 30em;
+  right: 1em;
+  bottom: 1em;
+  /* position:fixed; */
+  z-index: 999;
+  background-color: white;
+  border: 6px ridge #39c;
+  display: none;
 }
 #parenttable {
-		z-Index:950;
+  z-index: 950;
 }
 #searchresults {
-    /* position:fixed; */
-    right:2em;
-    left:32em;
-    bottom:2em;
-    top:12em;
-    /* overflow:scroll; */
+  /* position:fixed; */
+  right: 2em;
+  left: 32em;
+  bottom: 2em;
+  top: 12em;
+  /* overflow:scroll; */
 }
 #searchresults p {
-    padding:0.1em;
-    margin:0;
+  padding: 0.1em;
+  margin: 0;
 }
 #searcher #donebox {
-    /* position:fixed; */
-		top:7em;
-    right:2em;
-    background-color:#c00;
+  /* position:fixed; */
+  top: 7em;
+  right: 2em;
+  background-color: #c00;
 }
-#searcher #donebox a,#searcher #donebox a:link, #searcher #donebox a:visited {
-    color:#ddd;
-    font-size:2em;
-    text-decoration:none;
+#searcher #donebox a,
+#searcher #donebox a:link,
+#searcher #donebox a:visited {
+  color: #ddd;
+  font-size: 2em;
+  text-decoration: none;
 }
 #searcher #donebox a:hover {
-    color:white;
-    border:1px solid #c00;
+  color: white;
+  border: 1px solid #c00;
 }
 .togglehidden {
-    display:none;
+  display: none;
 }
 div#freezer {
-	top:0;
-	left:0;
-    right:0;
-    bottom:0;
-	/* position:fixed; */
-	z-Index:900;
-	background-color:#000;
-	opacity:0.20;
-	filter:opacity(20%);
-	-Moz-Opacity:0.20;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* position:fixed; */
+  z-index: 900;
+  background-color: #000;
+  opacity: 0.2;
+  filter: opacity(20%);
+  -moz-opacity: 0.2;
 }
 .trans {
-    opacity:0;
-    border:0px;
+  opacity: 0;
+  border: 0px;
 }

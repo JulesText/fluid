@@ -4,11 +4,12 @@ include_once('gtd_constants.inc.php');
 /*
    ======================================================================================
 */
-function query($querylabel,$config,$values=NULL,$sort=NULL) {
+function query($querylabel, $config, $values = null, $sort = null)
+{
     //for developer testing only--- testing data handling
     //testing passed variables
     if ($config['debug'] & _GTD_DEBUG) {
-        echo "<p class='debug'><b>Query label: ".$querylabel."</b></p>";
+        echo "<p class='debug'><b>Query label: " . $querylabel . "</b></p>";
         echo "<pre>Config: ";
         print_r($config);
         echo "<br />Values: ";
@@ -20,10 +21,12 @@ function query($querylabel,$config,$values=NULL,$sort=NULL) {
 
     //grab correct query string from query library array
     //values automatically inserted into array
-    $query = getsql($config,$values,$sort,$querylabel);
+    $query = getsql($config, $values, $sort, $querylabel);
 
     // for testing only: display fully-formed query
-    if ($config['debug'] & _GTD_DEBUG) echo "<p class='debug'>Query: ".$query."</p>";
+    if ($config['debug'] & _GTD_DEBUG) {
+        echo "<p class='debug'>Query: " . $query . "</p>";
+    }
 
     //perform query
     $result = doQuery($config, $query, $querylabel);
@@ -33,7 +36,7 @@ function query($querylabel,$config,$values=NULL,$sort=NULL) {
         echo "<pre>Result: ";
         print_r($result);
         echo "</pre>";
-        }
+    }
 
     return $result;
 }
@@ -42,73 +45,85 @@ function query($querylabel,$config,$values=NULL,$sort=NULL) {
 */
 
 
-function scoreCL($config, $values, $sort) {
+function scoreCL($config, $values, $sort)
+{
 
-  $score_items_pass = 0;
-  $score_items_obs = 0;
-  $items_total = 0;
+    $score_items_pass = 0;
+    $score_items_obs = 0;
+    $items_total = 0;
 
-  $list = query("selectchecklist",$config,$values,$sort);
-  $list = $list[0];
+    $list = query("selectchecklist", $config, $values, $sort);
+    $list = $list[0];
 
-  $prioritise = $list['prioritise'];
+    $prioritise = $list['prioritise'];
 
-  $result = query("getchecklistitems",$config,$values,$sort);
+    $result = query("getchecklistitems", $config, $values, $sort);
 
-  if (is_array($result) && count($result) > 0) {
-      foreach ((array) $result as $row) if($prioritise == -1 || ($row['priority'] <= $prioritise && $prioritise > -1)) {
-
-        $items_total++;
-        if ($row['assessed'] >= $list['thrs_obs'] && $row['assessed'] > 0) {
-          $score_items_obs++;
-          if (100 * $row['score'] / $row['assessed'] >= $list['thrs_score']) $score_items_pass++;
+    if (is_array($result) && count($result) > 0) {
+        foreach ((array) $result as $row) {
+            if ($prioritise == -1 || ($row['priority'] <= $prioritise && $prioritise > -1)) {
+                $items_total++;
+                if ($row['assessed'] >= $list['thrs_obs'] && $row['assessed'] > 0) {
+                    $score_items_obs++;
+                    if (100 * $row['score'] / $row['assessed'] >= $list['thrs_score']) {
+                        $score_items_pass++;
+                    }
+                }
+            }
         }
+    }
 
-      }
-  }
-
-  if ($score_items_obs)
-    $score_total = 100 * round($score_items_pass / $score_items_obs, 2)
+    if ($score_items_obs) {
+        $score_total = 100 * round($score_items_pass / $score_items_obs, 2)
                         . '% pass / '
                         . 100 * round($score_items_obs / $items_total, 2)
                         . '% obs';
-  else
-    $score_total = 'insufficient obs';
+    } else {
+        $score_total = 'insufficient obs';
+    }
 
-  return $score_total;
-
+    return $score_total;
 }
 
-function ajaxLineBreak($textIn) {
+function ajaxLineBreak($textIn)
+{
     global $config;
     if (is_array($textIn)) {
-        $cleaned=array();
-        foreach ($textIn as $line) $cleaned[]=ajaxLineBreak($line);
+        $cleaned = array();
+        foreach ($textIn as $line) {
+            $cleaned[] = ajaxLineBreak($line);
+        }
     } else {
-        $cleaned = preg_replace('/[\r\n]+/','', nl2br($textIn)); // carriage returns to <br /> then remove carriage return
+        $cleaned = preg_replace('/[\r\n]+/', '', nl2br($textIn)); // carriage returns to <br /> then remove carriage return
     }
     return $cleaned;
 }
 
-function makeClean($textIn) {
+function makeClean($textIn)
+{
     global $config;
     if (is_array($textIn)) {
-        $cleaned=array();
-        foreach ($textIn as $line) $cleaned[]=makeClean($line);
+        $cleaned = array();
+        foreach ($textIn as $line) {
+            $cleaned[] = makeClean($line);
+        }
     } else {
-        $cleaned=htmlentities(stripslashes($textIn),ENT_QUOTES,$config['charset']);
+        $cleaned = htmlentities(stripslashes($textIn), ENT_QUOTES, $config['charset']);
     }
     return $cleaned;
 }
 
-function moveElement(&$array, $from, $to) {
+function moveElement(&$array, $from, $to)
+{
         $out = array_splice($array, $from, 1);
         array_splice($array, $to, 0, $out);
 }
 
-function trimTaggedString($inStr,$inLength=0,$keepTags=TRUE) { // Ensure the visible part of a string, excluding html tags, is no longer than specified)    // TOFIX -  we don't handle "%XX" strings yet.
+function trimTaggedString($inStr, $inLength = 0, $keepTags = true)
+{
+ // Ensure the visible part of a string, excluding html tags, is no longer than specified)    // TOFIX -  we don't handle "%XX" strings yet.
     // constants - might move permittedTags to config file
-    $permittedTags=array(
+    $permittedTags = array(
          array('/^<a ((href)|(file))=[^>]+>/i','</a>')
         ,array('/^<b>/i','</b>')
         ,array('/^<i>/i','</i>')
@@ -116,285 +131,341 @@ function trimTaggedString($inStr,$inLength=0,$keepTags=TRUE) { // Ensure the vis
         ,array('/^<ol>/i','</ol>')
         ,array('/^<li>/i','</li>')
         );
-    $ellipsis='&hellip;';
-    $ampStrings='/^&[#a-zA-Z0-9]+;/';
+    $ellipsis = '&hellip;';
+    $ampStrings = '/^&[#a-zA-Z0-9]+;/';
 
     // initialise variables
-    if ($inLength==0) $inLength=strlen($inStr)+1;
-    $outStr='';
-    $visibleLength=0;
-    $thisChar=0;
-    $keepGoing=!empty($inStr);
-    $tagsOpen=array();
+    if ($inLength == 0) {
+        $inLength = strlen($inStr) + 1;
+    }
+    $outStr = '';
+    $visibleLength = 0;
+    $thisChar = 0;
+    $keepGoing = !empty($inStr);
+    $tagsOpen = array();
     // main processing here
     while ($keepGoing) {
-        $stillHere = TRUE;
-        $tagToClose=end($tagsOpen);
-        if ($tagToClose && strtolower(substr($inStr,$thisChar,strlen($tagToClose)))===strtolower($tagToClose) ) {
-            $stillHere=FALSE;
-            $thisChar+=strlen($tagToClose);
-            if ($keepTags) $outStr.=array_pop($tagsOpen);
-        } else foreach ($permittedTags as $thisTag) {
-            if ($stillHere && ($inStr{$thisChar}==='<') && (preg_match($thisTag[0],substr($inStr,$thisChar),$matches)>0)) {
-                $thisChar+=strlen($matches[0]);
-                $stillHere=FALSE;
-                if ($keepTags) {
-                    array_push($tagsOpen,$thisTag[1]);
-                    $outStr.=$matches[0];
-                }
-            } // end of if
-        } // end of else foreach
+        $stillHere = true;
+        $tagToClose = end($tagsOpen);
+        if ($tagToClose && strtolower(substr($inStr, $thisChar, strlen($tagToClose))) === strtolower($tagToClose)) {
+            $stillHere = false;
+            $thisChar += strlen($tagToClose);
+            if ($keepTags) {
+                $outStr .= array_pop($tagsOpen);
+            }
+        } else {
+            foreach ($permittedTags as $thisTag) {
+                if ($stillHere && ($inStr{$thisChar} === '<') && (preg_match($thisTag[0], substr($inStr, $thisChar), $matches) > 0)) {
+                    $thisChar += strlen($matches[0]);
+                    $stillHere = false;
+                    if ($keepTags) {
+                        array_push($tagsOpen, $thisTag[1]);
+                        $outStr .= $matches[0];
+                    }
+                } // end of if
+            } // end of else foreach
+        }
         // now check for & ... control characters
-        if ($stillHere && ($inStr{$thisChar}==='&') && (preg_match($ampStrings,substr($inStr,$thisChar),$matches)>0)) {
-            if (strlen(html_entity_decode($matches[0]))==1) {
+        if ($stillHere && ($inStr{$thisChar} === '&') && (preg_match($ampStrings, substr($inStr, $thisChar), $matches) > 0)) {
+            if (strlen(html_entity_decode($matches[0])) == 1) {
                 $visibleLength++;
-                $outStr.=$matches[0];
-                $thisChar+=strlen($matches[0]);
-                $stillHere=FALSE;
+                $outStr .= $matches[0];
+                $thisChar += strlen($matches[0]);
+                $stillHere = false;
             }
         }
         // just a normal character, so add it to the string
         if ($stillHere) {
             $visibleLength++;
-            $outStr.=$inStr{$thisChar};
+            $outStr .= $inStr{$thisChar};
             $thisChar++;
         } // end of if
-        $keepGoing= (($thisChar<strlen($inStr)) && ($visibleLength<$inLength));
+        $keepGoing = (($thisChar < strlen($inStr)) && ($visibleLength < $inLength));
     } // end of while ($keepGoing)
     // add ellipsis if we have trimmed some text
-    if ($thisChar<strlen($inStr) && $visibleLength>=$inLength) $outStr.=$ellipsis;
+    if ($thisChar < strlen($inStr) && $visibleLength >= $inLength) {
+        $outStr .= $ellipsis;
+    }
     // got the string - now close any open tags
-    if ($keepTags) while (count($tagsOpen))
-        $outStr.=array_pop($tagsOpen);
-    $outStr=nl2br(escapeChars($outStr));
+    if ($keepTags) {
+        while (count($tagsOpen)) {
+            $outStr .= array_pop($tagsOpen);
+        }
+    }
+    $outStr = nl2br(escapeChars($outStr));
     return($outStr);
 }
 
-function getTickleDate($deadline,$days) { // returns unix timestamp of date when tickle becomes active
-    $dm=(int)substr($deadline,5,2);
-    $dd=(int)substr($deadline,8,2);
-    $dy=(int)substr($deadline,0,4);
+function getTickleDate($deadline, $days)
+{
+ // returns unix timestamp of date when tickle becomes active
+    $dm = (int)substr($deadline, 5, 2);
+    $dd = (int)substr($deadline, 8, 2);
+    $dy = (int)substr($deadline, 0, 4);
     // relies on PHP to sanely and clevery handle dates like "the -5th of March" or "the 50th of April"
-    $remind=mktime(0,0,0,$dm,($dd-$days),$dy);
+    $remind = mktime(0, 0, 0, $dm, ($dd - $days), $dy);
     return $remind;
 }
 
-function nothingFound($message, $prompt=NULL, $yeslink=NULL, $nolink="index.php"){
+function nothingFound($message, $prompt = null, $yeslink = null, $nolink = "index.php")
+{
         //Give user ability to create a new entry, or go back to the index.
         echo "<h4>$message</h4>";
-        if($prompt)
-            echo "<p>$prompt;<a href='$yeslink'> Yes </a><a href='$nolink'>No</a></p>\n";
+    if ($prompt) {
+        echo "<p>$prompt;<a href='$yeslink'> Yes </a><a href='$nolink'>No</a></p>\n";
+    }
 }
 
-function categoryselectbox($config,$values,$sort) {
-    $result = query("categoryselectbox",$config,$values,$sort);
-    $cashtml='<option value="0">--</option>'."\n";
+function categoryselectbox($config, $values, $sort)
+{
+    $result = query("categoryselectbox", $config, $values, $sort);
+    $cashtml = '<option value="0">--</option>' . "\n";
     if ($result) {
-        foreach($result as $row) {
-            $cashtml .= '   <option value="'.$row['categoryId'].'" title="'.makeclean($row['description']).'"';
-            if($row['categoryId']==$values['categoryId']) $cashtml .= ' selected="selected"';
-            $cashtml .= '>'.makeclean($row['category'])."</option>\n";
+        foreach ($result as $row) {
+            $cashtml .= '   <option value="' . $row['categoryId'] . '" title="' . makeclean($row['description']) . '"';
+            if ($row['categoryId'] == $values['categoryId']) {
+                $cashtml .= ' selected="selected"';
             }
+            $cashtml .= '>' . makeclean($row['category']) . "</option>\n";
         }
-    return $cashtml;
     }
+    return $cashtml;
+}
 
-function instanceselectbox($config,$values,$sort) {
-    $result = query("instanceselectbox",$config,$values,$sort);
+function instanceselectbox($config, $values, $sort)
+{
+    $result = query("instanceselectbox", $config, $values, $sort);
     //echo '<pre>'; var_dump($result);die;
-    $cashtml='<select onchange="if (this.value) window.location.href=this.value">';
-    $cashtml.='<option value="' . $values['urlInst'] . '">self</option>'."\n";
+    $cashtml = '<select onchange="if (this.value) window.location.href=this.value">';
+    $cashtml .= '<option value="' . $values['urlInst'] . '">self</option>' . "\n";
     if ($result) {
-        foreach($result as $row) {
-            $cashtml .= '   <option value="' . $values['urlInst'] . $row['instanceId'].'" title="'.makeclean($row['name']).'"';
-            if($row['instanceId']==$values['instanceId']) $cashtml .= ' selected="selected"';
-            $cashtml .= '>'.makeclean($row['name'])."</option>\n";
+        foreach ($result as $row) {
+            $cashtml .= '   <option value="' . $values['urlInst'] . $row['instanceId'] . '" title="' . makeclean($row['name']) . '"';
+            if ($row['instanceId'] == $values['instanceId']) {
+                $cashtml .= ' selected="selected"';
+            }
+            $cashtml .= '>' . makeclean($row['name']) . "</option>\n";
         }
     }
     $cashtml .= '</select>';
     return $cashtml;
-    }
+}
 
 
-function parentlistselectbox($config,$values,$sort) {
-    $result = query("parentlistselectbox",$config,$values,$sort);
+function parentlistselectbox($config, $values, $sort)
+{
+    $result = query("parentlistselectbox", $config, $values, $sort);
     //echo '<pre>'; var_dump($result);die;
-    $cashtml='<select onchange="if (this.value) window.location.href=this.value">';
+    $cashtml = '<select onchange="if (this.value) window.location.href=this.value">';
     if ($result) {
-        foreach($result as $row) {
-            $cashtml .= '   <option value="' . $values['urlCL'] . $row['checklistId'].'"';
-            if($row['checklistId']==$values['listId']) $cashtml .= ' selected="selected"';
-            $cashtml .= '>'.makeclean($row['title'])."</option>\n";
+        foreach ($result as $row) {
+            $cashtml .= '   <option value="' . $values['urlCL'] . $row['checklistId'] . '"';
+            if ($row['checklistId'] == $values['listId']) {
+                $cashtml .= ' selected="selected"';
+            }
+            $cashtml .= '>' . makeclean($row['title']) . "</option>\n";
         }
     }
     $cashtml .= '</select>';
     return $cashtml;
-    }
+}
 
-function priorityselectbox($config,$values,$sort) {
-    $result = query("priorityselectbox",$config,$values,$sort);
-    if ($result == 0) return -1;
+function priorityselectbox($config, $values, $sort)
+{
+    $result = query("priorityselectbox", $config, $values, $sort);
+    if ($result == 0) {
+        return -1;
+    }
     $result = array_merge([['priority' => '-1']], $result);
     $arrsize = count($result) - 1;
     $max = $result[$arrsize]['priority'];
     #echo '<pre>'; var_dump($result);die;
-    $cashtml='<select onchange="if (this.value) window.location.href=this.value">';
-    foreach($result as $row) {
-        $cashtml .= '   <option value="processLists.php' . $values['urlVars'] . '&action=listpriority&prioritise=' . $row['priority'] . '" title="'.$row['priority'].'"';
-        if($row['priority']==$values['priorityId']) $cashtml .= ' selected="selected"';
-        $cashtml .= '>'.$row['priority'];
-        if ($row['priority'] !== '-1') $cashtml .= '/' . $max;
+    $cashtml = '<select onchange="if (this.value) window.location.href=this.value">';
+    foreach ($result as $row) {
+        $cashtml .= '   <option value="processLists.php' . $values['urlVars'] . '&action=listpriority&prioritise=' . $row['priority'] . '" title="' . $row['priority'] . '"';
+        if ($row['priority'] == $values['priorityId']) {
+            $cashtml .= ' selected="selected"';
+        }
+        $cashtml .= '>' . $row['priority'];
+        if ($row['priority'] !== '-1') {
+            $cashtml .= '/' . $max;
+        }
         $cashtml .= '</option>' . PHP_EOL;
     }
     $cashtml .= '</select>';
     return $cashtml;
-    }
+}
 
-function contextselectbox($config,$values,$sort) {
-    $result = query("spacecontextselectbox",$config,$values,$sort);
-    $cshtml='<option value="0">--</option>'."\n";
+function contextselectbox($config, $values, $sort)
+{
+    $result = query("spacecontextselectbox", $config, $values, $sort);
+    $cshtml = '<option value="0">--</option>' . "\n";
     if ($result) {
-            foreach($result as $row) {
-            $cshtml .= '                    <option value="'.$row['contextId'].'" title="'.makeclean($row['description']).'"';
-            if(($row['contextId']==$values['contextId']) /* && $values['itemId']>0 */) $cshtml .= ' selected="selected"';
-            $cshtml .= '>'.makeclean($row['name'])."</option>\n";
+        foreach ($result as $row) {
+            $cshtml .= '                    <option value="' . $row['contextId'] . '" title="' . makeclean($row['description']) . '"';
+            if (($row['contextId'] == $values['contextId']) /* && $values['itemId']>0 */) {
+                $cshtml .= ' selected="selected"';
             }
+            $cshtml .= '>' . makeclean($row['name']) . "</option>\n";
         }
-    return $cshtml;
     }
+    return $cshtml;
+}
 
-function timecontextselectbox($config,$values,$sort) {
-    $result = query("timecontextselectbox",$config,$values,$sort);
-    $tshtml='<option value="0">--</option>'."\n";
+function timecontextselectbox($config, $values, $sort)
+{
+    $result = query("timecontextselectbox", $config, $values, $sort);
+    $tshtml = '<option value="0">--</option>' . "\n";
     if ($result) {
-        foreach($result as $row) {
-            $tshtml .= '                    <option value="'.$row['timeframeId'].'" title="'.makeclean($row['description']).'"';
+        foreach ($result as $row) {
+            $tshtml .= '                    <option value="' . $row['timeframeId'] . '" title="' . makeclean($row['description']) . '"';
             if ($row['timeframeId'] == $values['timeframeId']) {
                 $tshtml .= ' selected="selected"';
             } elseif ($values['timeframeId'] == '' && $row['timeframeId'] == 0) {
                 $tshtml .= ' selected="selected"';
             }
-            $tshtml .= '>'.makeclean($row['timeframe'])."</option>\n";
-            }
+            $tshtml .= '>' . makeclean($row['timeframe']) . "</option>\n";
         }
-    return $tshtml;
     }
+    return $tshtml;
+}
 
-function tradeconditionselectbox($config,$values,$sort) {
+function tradeconditionselectbox($config, $values, $sort)
+{
 
-    $tcshtml='<option value="0"';
-    if ($values['tradeConditionId'] == 0)
+    $tcshtml = '<option value="0"';
+    if ($values['tradeConditionId'] == 0) {
         $tcshtml .= ' selected="selected"';
-    $tcshtml .= '>Action item</option>'."\n";
+    }
+    $tcshtml .= '>Action item</option>' . "\n";
 
-    $result = query("tradeconditionselectbox",$config,$values,$sort);
+    $result = query("tradeconditionselectbox", $config, $values, $sort);
     if ($result) {
-        foreach($result as $row) {
-            $tcshtml .= '                    <option value="'.$row['tradeConditionId'].'" title="'.makeclean($row['description']).'"';
+        foreach ($result as $row) {
+            $tcshtml .= '                    <option value="' . $row['tradeConditionId'] . '" title="' . makeclean($row['description']) . '"';
             if ($row['tradeConditionId'] == $values['tradeConditionId']) {
                 $tcshtml .= ' selected="selected"';
             } elseif ($values['tradeConditionId'] == '' && $row['tradeConditionId'] == 0) {
                 $tcshtml .= ' selected="selected"';
             }
-            $tcshtml .= '>'.makeclean($row['tradeCondition'])."</option>\n";
-            }
+            $tcshtml .= '>' . makeclean($row['tradeCondition']) . "</option>\n";
         }
+    }
 
     return $tcshtml;
+}
 
+function makeOption($row, $selected)
+{
+    $cleandesc = makeclean($row['description']);
+    $cleantitle = makeclean($row['title']);
+    if ($row['isSomeday'] === "y") {
+        $cleandesc .= ' (Someday)';
+        $cleantitle .= ' (S)';
     }
-
-function makeOption($row,$selected) {
-    $cleandesc=makeclean($row['description']);
-    $cleantitle=makeclean($row['title']);
-    if ($row['isSomeday']==="y") {
-        $cleandesc.=' (Someday)';
-        $cleantitle.=' (S)';
-    }
-    $seltext = ($selected[$row['itemId']])?' selected="selected"':'';
+    $seltext = ($selected[$row['itemId']]) ? ' selected="selected"' : '';
     $out = "<option value='{$row['itemId']}' title='$cleandesc' $seltext>$cleantitle</option>";
     return $out;
 }
 
-function parentselectbox($config,$values,$sort) {
-    $result = query("parentselectbox",$config,$values,$sort);
-    $pshtml='';
-    $parents=array();
-    if (is_array($values['parentId']))
-        foreach ($values['parentId'] as $key) $parents[$key]=true;
-    else
-        $parents[$values['parentId']]=true;
-    if ($config['debug'] & _GTD_DEBUG) echo '<pre>parents:',print_r($parents,true),'</pre>';
-    if ($result)
-        foreach($result as $row) {
-            $thisOpt= makeOption($row,$parents)."\n";
-            if($parents[$row['itemId']]) {
-                $pshtml =$thisOpt.$pshtml;
-                $parents[$row['itemId']]=false;
-            } else
-                $pshtml .=$thisOpt;
+function parentselectbox($config, $values, $sort)
+{
+    $result = query("parentselectbox", $config, $values, $sort);
+    $pshtml = '';
+    $parents = array();
+    if (is_array($values['parentId'])) {
+        foreach ($values['parentId'] as $key) {
+            $parents[$key] = true;
         }
-    foreach ($parents as $key=>$val) if ($val) {
-        // $key is a parentId which wasn't found for the drop-down box, so need to add it in
-        $values['itemId']=$key;
-        $row=query('selectitemshort',$config,$values,$sort);
-        if ($row) $pshtml = makeOption($row[0],$parents)."\n".$pshtml;
+    } else {
+        $parents[$values['parentId']] = true;
     }
-    $pshtml="<option value='0'>--</option>\n".$pshtml;
+    if ($config['debug'] & _GTD_DEBUG) {
+        echo '<pre>parents:',print_r($parents, true),'</pre>';
+    }
+    if ($result) {
+        foreach ($result as $row) {
+            $thisOpt = makeOption($row, $parents) . "\n";
+            if ($parents[$row['itemId']]) {
+                $pshtml = $thisOpt . $pshtml;
+                $parents[$row['itemId']] = false;
+            } else {
+                $pshtml .= $thisOpt;
+            }
+        }
+    }
+    foreach ($parents as $key => $val) {
+        if ($val) {
+                // $key is a parentId which wasn't found for the drop-down box, so need to add it in
+            $values['itemId'] = $key;
+            $row = query('selectitemshort', $config, $values, $sort);
+            if ($row) {
+                $pshtml = makeOption($row[0], $parents) . "\n" . $pshtml;
+            }
+        }
+    }
+    $pshtml = "<option value='0'>--</option>\n" . $pshtml;
     return $pshtml;
 }
 
-function listselectbox($config,&$values,$sort,$check=NULL) { // NB $values is passed by reference
-    $result = query("get{$check}lists",$config,array('filterquery'=>''),$sort);
-    $lshtml='';
+function listselectbox($config, &$values, $sort, $check = null)
+{
+ // NB $values is passed by reference
+    $result = query("get{$check}lists", $config, array('filterquery' => ''), $sort);
+    $lshtml = '';
     if ($result) {
-        foreach($result as $row) {
-            $lshtml .= "<option value='{$row['listId']}' title='".makeclean($row['title'])."'";
-            if($row['listId']==$values['listId']) {
+        foreach ($result as $row) {
+            $lshtml .= "<option value='{$row['listId']}' title='" . makeclean($row['title']) . "'";
+            if ($row['listId'] == $values['listId']) {
                 $lshtml .= " selected='selected' ";
-                $values['listTitle']=$row['title'];
+                $values['listTitle'] = $row['title'];
             }
-            $lshtml .= '>'.makeclean($row['title'])."</option>\n";
-            }
+            $lshtml .= '>' . makeclean($row['title']) . "</option>\n";
         }
-    return $lshtml;
     }
+    return $lshtml;
+}
 
-function prettyDueDate($dateToShow,$thismask,$tickle='n',$tickleIsDeadline='n') {
-    $retval=array('class'=>'','title'=>'');
-    if(trim($dateToShow)!='') {
-        $retval['date'] = date($thismask,strtotime($dateToShow));
-        if($tickle !== 'n' && $tickleIsDeadline == 'n') {
-            $retval['class']='tickle';
-            $retval['title']='Tickle';
-        }
-        elseif(time() > strtotime($dateToShow)) {
-            $retval['class']='overdue';
-            $retval['title']='Overdue';
-        }
-        elseif ((time() + (60*60*24)) > strtotime($dateToShow)) {
-            $retval['class']='due';
-            $retval['title']='Due today';
-        }
-        elseif ((time() + (3*60*60*24)) > strtotime($dateToShow)) {
-            $retval['class']='duesoon';
-            $retval['title']='Due soon';
+function prettyDueDate($dateToShow, $thismask, $tickle = 'n', $tickleIsDeadline = 'n')
+{
+    $retval = array('class' => '','title' => '');
+    if (trim($dateToShow) != '') {
+        $retval['date'] = date($thismask, strtotime($dateToShow));
+        if ($tickle !== 'n' && $tickleIsDeadline == 'n') {
+            $retval['class'] = 'tickle';
+            $retval['title'] = 'Tickle';
+        } elseif (time() > strtotime($dateToShow)) {
+            $retval['class'] = 'overdue';
+            $retval['title'] = 'Overdue';
+        } elseif ((time() + (60 * 60 * 24)) > strtotime($dateToShow)) {
+            $retval['class'] = 'due';
+            $retval['title'] = 'Due today';
+        } elseif ((time() + (3 * 60 * 60 * 24)) > strtotime($dateToShow)) {
+            $retval['class'] = 'duesoon';
+            $retval['title'] = 'Due soon';
         }
 /*        elseif ($dateToShow>date("Y-m-d")) {
             $retval['class']='tomorrow';
             $retval['title']='Due tomorrow';
         }
 */
-     } else
-        $retval['date'] ='&nbsp;';
+    } else {
+        $retval['date'] = '&nbsp;';
+    }
     return $retval;
 }
 
-function faLink($link, $mx = false) {
-    $retval='';
-    if ($mx) { $mxa = " class=\"mx\""; $mxb = " target=\"_blank\" class=\"mx\""; }
-    else { $mxb = ""; $mxa = ""; }
-    if($link != '') {
+function faLink($link, $mx = false)
+{
+    $retval = '';
+    if ($mx) {
+        $mxa = " class=\"mx\"";
+        $mxb = " target=\"_blank\" class=\"mx\"";
+    } else {
+        $mxb = "";
+        $mxa = "";
+    }
+    if ($link != '') {
         if (preg_match('/devonthink/', $link)) {
             if (preg_match('/search/', $link)) {
                 $retval = "<a href=\"" . $link . "\"" . $mxa . ">FR link</a>";
@@ -412,73 +483,146 @@ function faLink($link, $mx = false) {
     return $retval;
 }
 
-function ajaxUpd($query, $id, $inst = NULL) {
-    $retval='';
-    if($id != '') {
-      if ($query === 'itemCategory') $retval = " onChange=\"sT(this,'itemattributes','categoryId','itemId','{$id}')\" ";
-      if ($query === 'itemContext') $retval = " onChange=\"sT(this,'itemattributes','contextId','itemId','{$id}')\" ";
-      if ($query === 'itemTime') $retval = " onChange=\"sT(this,'itemattributes','timeframeId','itemId','{$id}')\" ";
-      if ($query === 'itemNA') $retval = " onClick=\"cB(this,'nextactions','nextaction','nextaction','{$id}')\" ";
-      if ($query === 'itemComplete') $retval = " onClick=\"cB(this,'itemstatus','dateCompleted','itemId','{$id}')\" ";
-      if ($query === 'itemTitle') $retval = " onFocus=\"sEf(this,'items','title','itemId','{$id}')\" ";
-      if ($query === 'itemDescription') $retval = " onFocus=\"sEf(this,'items','description','itemId','{$id}')\" ";
-      if ($query === 'itemBehaviour') $retval = " onFocus=\"sEf(this,'items','behaviour','itemId','{$id}')\" ";
-      if ($query === 'itemStandard') $retval = " onFocus=\"sEf(this,'items','standard','itemId','{$id}')\" ";
-      if ($query === 'itemConditions') $retval = " onFocus=\"sEf(this,'items','conditions','itemId','{$id}')\" ";
-      if ($query === 'itemPremiseA') $retval = " onFocus=\"sEf(this,'items','premiseA','itemId','{$id}')\" ";
-      if ($query === 'itemPremiseB') $retval = " onFocus=\"sEf(this,'items','premiseB','itemId','{$id}')\" ";
-      if ($query === 'itemConclusion') $retval = " onFocus=\"sEf(this,'items','conclusion','itemId','{$id}')\" ";
-      if ($query === 'itemLink') $retval = " onFocus=\"sEf(this,'items','hyperlink','itemId','{$id}')\" ";
-      if ($query === 'itemDeadline') $retval = " onChange=\"sT(this,'itemattributes','deadline','itemId','{$id}')\" ";
-      if ($query === 'itemDeadlineInline') $retval = " onFocus=\"sEf(this,'itemattributes','deadline','itemId','{$id}')\" ";
-      if ($query === 'itemDateCreated') $retval = " onChange=\"sT(this,'itemstatus','dateCreated','itemId','{$id}')\" ";
-      if ($query === 'itemDateCreatedInline') $retval = " onFocus=\"sEf(this,'itemstatus','dateCreated','itemId','{$id}')\" ";
-      if ($query === 'itemCompletedNow') $retval = " onFocus=\"sT(this,'itemstatus','dateCompleted','itemId','{$id}')\" ";
-      if ($query === 'itemCompletedEdit') $retval = " onChange=\"sT(this,'itemstatus','dateCompleted','itemId','{$id}')\" ";
-      if ($query === 'itemSomeday') $retval = " onClick=\"cB(this,'itemattributes','isSomeday','itemId','{$id}')\" ";
-      if ($query === 'itemTickler') $retval = " onClick=\"cB(this,'itemattributes','suppress','itemId','{$id}')\" ";
-      if ($query === 'itemTicklerDays') $retval = " onChange=\"sT(this,'itemattributes','suppressUntil','itemId','{$id}')\" ";
-      if ($query === 'itemTicklerDeadline') $retval = " onClick=\"cB(this,'itemattributes','suppressIsDeadline','itemId','{$id}')\" ";
-      if ($query === 'itemTrade') $retval = " onClick=\"cB(this,'itemattributes','isTrade','itemId','{$id}')\" ";
-      if ($query === 'itemTradeCondition') $retval = " onChange=\"sT(this,'itemattributes','tradeConditionId','itemId','{$id}')\" ";
-      if ($query === 'checklistitem') $retval = " onClick=\"cB(this,'checklistitems','checked','checklistItemId','{$id}')\" ";
-      if ($query === 'checklistitemNotes') $retval = " onFocus=\"sEf(this,'checklistitems','notes','checklistItemId','{$id}')\" ";
-      if ($query === 'checklistiteminst') $retval = " onClick=\"cB(this,'checklistitemsinst','checked','checklistItemId','{$id}','instanceId','{$inst}')\" ";
-      if ($query === 'checklistitemignore') $retval = " onClick=\"cB(this,'checklistitems','ignored','checklistItemId','{$id}')\" ";
-      if ($query === 'checklistiteminstignore') $retval = " onClick=\"cB(this,'checklistitemsinst','ignored','checklistItemId','{$id}','instanceId','{$inst}')\" ";
-      if ($query === 'checklistitemPriority') $retval = " onFocus=\"sEf(this,'checklistitems','priority','checklistItemId','{$id}')\" ";
-      if ($query === 'checklistitemEffort') $retval = " onFocus=\"sEf(this,'checklistitems','effort','checklistItemId','{$id}')\" ";
-      if ($query === 'listitemPriority') $retval = " onFocus=\"sEf(this,'listitems','priority','listItemId','{$id}')\" ";
-      if ($query === 'listitemNotes') $retval = " onFocus=\"sEf(this,'listitems','notes','listItemId','{$id}')\" ";
+function ajaxUpd($query, $id, $inst = null)
+{
+    $retval = '';
+    if ($id != '') {
+        if ($query === 'itemCategory') {
+            $retval = " onChange=\"sT(this,'itemattributes','categoryId','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemContext') {
+            $retval = " onChange=\"sT(this,'itemattributes','contextId','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemTime') {
+            $retval = " onChange=\"sT(this,'itemattributes','timeframeId','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemNA') {
+            $retval = " onClick=\"cB(this,'nextactions','nextaction','nextaction','{$id}')\" ";
+        }
+        if ($query === 'itemComplete') {
+            $retval = " onClick=\"cB(this,'itemstatus','dateCompleted','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemTitle') {
+            $retval = " onFocus=\"sEf(this,'items','title','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemDescription') {
+            $retval = " onFocus=\"sEf(this,'items','description','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemBehaviour') {
+            $retval = " onFocus=\"sEf(this,'items','behaviour','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemStandard') {
+            $retval = " onFocus=\"sEf(this,'items','standard','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemConditions') {
+            $retval = " onFocus=\"sEf(this,'items','conditions','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemPremiseA') {
+            $retval = " onFocus=\"sEf(this,'items','premiseA','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemPremiseB') {
+            $retval = " onFocus=\"sEf(this,'items','premiseB','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemConclusion') {
+            $retval = " onFocus=\"sEf(this,'items','conclusion','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemLink') {
+            $retval = " onFocus=\"sEf(this,'items','hyperlink','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemDeadline') {
+            $retval = " onChange=\"sT(this,'itemattributes','deadline','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemDeadlineInline') {
+            $retval = " onFocus=\"sEf(this,'itemattributes','deadline','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemDateCreated') {
+            $retval = " onChange=\"sT(this,'itemstatus','dateCreated','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemDateCreatedInline') {
+            $retval = " onFocus=\"sEf(this,'itemstatus','dateCreated','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemCompletedNow') {
+            $retval = " onFocus=\"sT(this,'itemstatus','dateCompleted','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemCompletedEdit') {
+            $retval = " onChange=\"sT(this,'itemstatus','dateCompleted','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemSomeday') {
+            $retval = " onClick=\"cB(this,'itemattributes','isSomeday','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemTickler') {
+            $retval = " onClick=\"cB(this,'itemattributes','suppress','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemTicklerDays') {
+            $retval = " onChange=\"sT(this,'itemattributes','suppressUntil','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemTicklerDeadline') {
+            $retval = " onClick=\"cB(this,'itemattributes','suppressIsDeadline','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemTrade') {
+            $retval = " onClick=\"cB(this,'itemattributes','isTrade','itemId','{$id}')\" ";
+        }
+        if ($query === 'itemTradeCondition') {
+            $retval = " onChange=\"sT(this,'itemattributes','tradeConditionId','itemId','{$id}')\" ";
+        }
+        if ($query === 'checklistitem') {
+            $retval = " onClick=\"cB(this,'checklistitems','checked','checklistItemId','{$id}')\" ";
+        }
+        if ($query === 'checklistitemNotes') {
+            $retval = " onFocus=\"sEf(this,'checklistitems','notes','checklistItemId','{$id}')\" ";
+        }
+        if ($query === 'checklistiteminst') {
+            $retval = " onClick=\"cB(this,'checklistitemsinst','checked','checklistItemId','{$id}','instanceId','{$inst}')\" ";
+        }
+        if ($query === 'checklistitemignore') {
+            $retval = " onClick=\"cB(this,'checklistitems','ignored','checklistItemId','{$id}')\" ";
+        }
+        if ($query === 'checklistiteminstignore') {
+            $retval = " onClick=\"cB(this,'checklistitemsinst','ignored','checklistItemId','{$id}','instanceId','{$inst}')\" ";
+        }
+        if ($query === 'checklistitemPriority') {
+            $retval = " onFocus=\"sEf(this,'checklistitems','priority','checklistItemId','{$id}')\" ";
+        }
+        if ($query === 'checklistitemEffort') {
+            $retval = " onFocus=\"sEf(this,'checklistitems','effort','checklistItemId','{$id}')\" ";
+        }
+        if ($query === 'listitemPriority') {
+            $retval = " onFocus=\"sEf(this,'listitems','priority','listItemId','{$id}')\" ";
+        }
+        if ($query === 'listitemNotes') {
+            $retval = " onFocus=\"sEf(this,'listitems','notes','listItemId','{$id}')\" ";
+        }
     }
     return $retval;
 }
 
-function getVarFromGetPost($varName,$default='') {
-    $retval=(isset($_GET[$varName]))?$_GET[$varName]:( (isset($_POST[$varName]))?$_POST[$varName]:$default );
+function getVarFromGetPost($varName, $default = '')
+{
+    $retval = (isset($_GET[$varName])) ? $_GET[$varName] : ( (isset($_POST[$varName])) ? $_POST[$varName] : $default );
     return $retval;
 }
 
-function nextScreen($url) {
+function nextScreen($url)
+{
 
     global $config;
 
-    $cleanurl=htmlspecialchars($url);
+    $cleanurl = htmlspecialchars($url);
 
     if ($config['debug'] & _GTD_WAIT) {
         echo "<p>Next screen is <a href='$cleanurl'>$cleanurl</a> - would be auto-refresh in non-debug mode</p>";
-    } else if (headers_sent()) {
+    } elseif (headers_sent()) {
         echo "<META HTTP-EQUIV='Refresh' CONTENT='0;url=$cleanurl' />\n"
-            ."<script type='text/javascript'>"
-            ."var decodedUrl = decodeURIComponent('" . $cleanurl . "');"
-            ."decodedUrl = decodedUrl.replace(/&amp;/g, '&');"
-            ."window.location.replace(decodedUrl);"
-            ."</script>\n"
-            ."</head><body><a href='$cleanurl'>Click here to continue on to $cleanurl</a>\n";
+            . "<script type='text/javascript'>"
+            . "var decodedUrl = decodeURIComponent('" . $cleanurl . "');"
+            . "decodedUrl = decodedUrl.replace(/&amp;/g, '&');"
+            . "window.location.replace(decodedUrl);"
+            . "</script>\n"
+            . "</head><body><a href='$cleanurl'>Click here to continue on to $cleanurl</a>\n";
             die();
     } else {
-        $header="Location: "
-                .$url;
+        $header = "Location: "
+                . $url;
         header($header);
         die();
 /*        $header="Location: http"
@@ -493,46 +637,69 @@ function nextScreen($url) {
     }
 }
 
-function getChildType($parentType) {
-switch ($parentType) {
-    case "m" : $childtype=array("v","o","g","p","s"); break;
-    case "v" : $childtype=array("o","g","p","s"); break;
-    case "o" : $childtype=array("g","p","s"); break;
-    case "g" : $childtype=array("p","s"); break;
-    case "p" : $childtype=array("a","w","p","r","s"); break;
-    case "s" : $childtype=array("a","w","p","r","s"); break;
-    default  : $childtype=NULL; break; // all other items have no children
+function getChildType($parentType)
+{
+    switch ($parentType) {
+        case "m":
+            $childtype = array("v","o","g","p","s");
+            break;
+        case "v":
+            $childtype = array("o","g","p","s");
+            break;
+        case "o":
+            $childtype = array("g","p","s");
+            break;
+        case "g":
+            $childtype = array("p","s");
+            break;
+        case "p":
+            $childtype = array("a","w","p","r","s");
+            break;
+        case "s":
+            $childtype = array("a","w","p","r","s");
+            break;
+        default:
+            $childtype = null;
+            break; // all other items have no children
     }
-return $childtype;
+    return $childtype;
 }
 
-function getParentType($childType) {
-$parentType=array();
-switch ($childType) {
-    case "a" : // deliberately flows through to "r"
-    case "w" : // deliberately flows through to "r"
-    case "r" : $parentType=array('p','s');
-        break;
-    case "i" : $parentType=array();
-        break;
-    case "p" :  // deliberately flows through to "s"
-    case "s" : $parentType=array('g','p','s','o','v');
-        break;
-    case "g" : $parentType=array('o','v');
-        break;
-    case "o" : $parentType=array('g','v');
-        break;
-    case "v" : $parentType[]='m';
-        break;
-    default  :
-        $parentType=array('p','s');
-        break;
+function getParentType($childType)
+{
+    $parentType = array();
+    switch ($childType) {
+        case "a": // deliberately flows through to "r"
+        case "w": // deliberately flows through to "r"
+        case "r":
+            $parentType = array('p','s');
+            break;
+        case "i":
+            $parentType = array();
+            break;
+        case "p":  // deliberately flows through to "s"
+        case "s":
+            $parentType = array('g','p','s','o','v');
+            break;
+        case "g":
+            $parentType = array('o','v');
+            break;
+        case "o":
+            $parentType = array('g','v');
+            break;
+        case "v":
+            $parentType[] = 'm';
+            break;
+        default:
+            $parentType = array('p','s');
+            break;
     }
-return $parentType;
+    return $parentType;
 }
 
-function getTypes($type=false) {
-$types=array("m" => "Value",
+function getTypes($type = false)
+{
+    $types = array("m" => "Value",
             "v" => "Vision",
             "o" => "Role",
             "g" => "Goal",
@@ -549,66 +716,72 @@ $types=array("m" => "Value",
             // "ai" => "Ai Chat",
             "fi" => "FI Chat"
         );
-if ($type===false)
-    $out=$types;
-elseif (empty($type))
-    $out='item without a type assigned';
-else
-    $out=$types[$type];
-return $out;
+    if ($type === false) {
+        $out = $types;
+    } elseif (empty($type)) {
+        $out = 'item without a type assigned';
+    } else {
+        $out = $types[$type];
+    }
+    return $out;
 }
 
 
-function escapeChars($str) {  // TOFIX consider internationalization issues with charset coding
-    $outStr=str_replace(array('&','�'),array('&amp;','&hellip'),$str);
-    $outStr=str_replace(array('&amp;amp;','&amp;hellip;'),array('&amp;','&hellip;'),$outStr);
+function escapeChars($str)
+{
+  // TOFIX consider internationalization issues with charset coding
+    $outStr = str_replace(array('&','�'), array('&amp;','&hellip'), $str);
+    $outStr = str_replace(array('&amp;amp;','&amp;hellip;'), array('&amp;','&hellip;'), $outStr);
     return $outStr;
 }
 
-function getShow($where,$values) {
+function getShow($where, $values)
+{
     $type = $values['type'];
     // die($values['isTrade']);
     global $config;
-    $show=array(
+    $show = array(
         'title'         => true,
 
         // fields suppressed on certain types
 
-        'lastModified'  =>($where==='edit'),
-        'dateCreated'   => ($values['isTrade']=='y'),
-        'tradeCondition'   =>($values['isTrade']=='y'),
-        'type'          =>($where==='edit' && ($type==='i' || $config['allowChangingTypes'])),
+        'lastModified'  => ($where === 'edit'),
+        'dateCreated'   => ($values['isTrade'] == 'y'),
+        'tradeCondition'   => ($values['isTrade'] == 'y'),
+        'type'          => ($where === 'edit' && ($type === 'i' || $config['allowChangingTypes'])),
 
-        'description'   => ($type!=='m' && $type!=='v' && $type!=='p' && $type!=='o' && $type!=='g'),
-        'conclusion'=>  ($type=='m' || $type=='v' || $type=='p' || $type=='o' || $type=='g'
-                        || $values['isTrade']=='y' || !empty($values['premiseA']) || !empty($values['premiseB']) || !empty($values['conclusion'])),
-        'behaviour'=>  ($type=='m' || $type=='v' || $type=='p' || $type=='o' || $type=='g'
+        'description'   => ($type !== 'm' && $type !== 'v' && $type !== 'p' && $type !== 'o' && $type !== 'g'),
+        'conclusion' =>  ($type == 'm' || $type == 'v' || $type == 'p' || $type == 'o' || $type == 'g'
+                        || $values['isTrade'] == 'y' || !empty($values['premiseA']) || !empty($values['premiseB']) || !empty($values['conclusion'])),
+        'behaviour' =>  ($type == 'm' || $type == 'v' || $type == 'p' || $type == 'o' || $type == 'g'
                         || $values['isTrade'] == 'y' || !empty($values['behaviour']) || !empty($values['standard']) || !empty($values['conditions'])),
-        'desiredOutcome'=>($type!=='r'),
-        'metaphor'=>($type!=='r' && $type!=='a' && $type!=='w' && $type!=='i'),
-        'category'      =>($type!=='m'),
-        'ptitle'        =>($type!=='m' && $type!=='i'),
-        'dateCompleted' =>($type!=='m'),
-        'complete'      =>($type!=='m' && $type!=='r'),
-        'timeframe'     =>($type!=='m' && $type!=='v' && $type!=='w' && $type!=='r' && $type!=='i' && $type!=='o' && $type!=='g'),
+        'desiredOutcome' => ($type !== 'r'),
+        'metaphor' => ($type !== 'r' && $type !== 'a' && $type !== 'w' && $type !== 'i'),
+        'category'      => ($type !== 'm'),
+        'ptitle'        => ($type !== 'm' && $type !== 'i'),
+        'dateCompleted' => ($type !== 'm'),
+        'complete'      => ($type !== 'm' && $type !== 'r'),
+        'timeframe'     => ($type !== 'm' && $type !== 'v' && $type !== 'w' && $type !== 'r' && $type !== 'i' && $type !== 'o' && $type !== 'g'),
 
         // fields only shown for certain types
-        'context'       =>($type==='p' || $type==='i' || $type==='a' || $type==='w' || $type==='r'),
-        'deadline'      =>($type==='p' || $type==='a' || $type==='w' || $type==='i'),
-        'suppress'      =>($type==='p' || $type==='a' || $type==='w'),
-        'suppressUntil' =>($type==='p' || $type==='a' || $type==='w'),
-        'repeat'        =>($type==='null'),
-        'NA'            =>($type==='a' || $type==='w'),
-        'isSomeday'     =>($type==='p' || $type==='g'),
+        'context'       => ($type === 'p' || $type === 'i' || $type === 'a' || $type === 'w' || $type === 'r'),
+        'deadline'      => ($type === 'p' || $type === 'a' || $type === 'w' || $type === 'i'),
+        'suppress'      => ($type === 'p' || $type === 'a' || $type === 'w'),
+        'suppressUntil' => ($type === 'p' || $type === 'a' || $type === 'w'),
+        'repeat'        => ($type === 'null'),
+        'NA'            => ($type === 'a' || $type === 'w'),
+        'isSomeday'     => ($type === 'p' || $type === 'g'),
 
         // fields never shown on item.php
         'checkbox'      => false,
         'flags'         => false
         );
 
-    if ($config['forceAllFields'])
-        foreach ($show as $key=>$value)
-            $show[$key]=true;
+    if ($config['forceAllFields']) {
+        foreach ($show as $key => $value) {
+            $show[$key] = true;
+        }
+    }
 
     // var_dump($show);die;
     return $show;
@@ -616,52 +789,64 @@ function getShow($where,$values) {
 /*
    ======================================================================================
 */
-function columnedTable($cols,$data,$link='itemReport.php') {
-    $nrows=count($data);
-    $displace=round($nrows/$cols+0.499,0);
-    for ($i=0;$i<$nrows;) {
+function columnedTable($cols, $data, $link = 'itemReport.php')
+{
+    $nrows = count($data);
+    $displace = round($nrows / $cols + 0.499, 0);
+    for ($i = 0; $i < $nrows;) {
         echo "<tr>\n";
-        for ($j=0;$j<$cols;$j++) {
-            $ndx=$i/$cols+$j*$displace;
-            if ($ndx<$nrows) {
-                $row=$data[$ndx];
+        for ($j = 0; $j < $cols; $j++) {
+            $ndx = $i / $cols + $j * $displace;
+            if ($ndx < $nrows) {
+                $row = $data[$ndx];
                 echo "<td"
                     ,(empty($row['td.class'])) ? '' : " class='{$row['td.class']}' "
                     ,(empty($row['td.title'])) ? '' : " title='{$row['td.title']}' "
                     ,"><a href='";
-                if (isset($row['type']) && $row['type'] == 'c')
-                  echo "reportLists.php?listId={$row['listId']}&type=c";
-                else if (isset($row['type']) && $row['type'] == 'l')
-                  echo "reportLists.php?listId={$row['listId']}&type=l";
-                else
-                  echo "$link?itemId={$row['itemId']}";
+                if (isset($row['type']) && $row['type'] == 'c') {
+                    echo "reportLists.php?listId={$row['listId']}&type=c";
+                } elseif (isset($row['type']) && $row['type'] == 'l') {
+                    echo "reportLists.php?listId={$row['listId']}&type=l";
+                } else {
+                    echo "$link?itemId={$row['itemId']}";
+                }
                 echo "' title='"
                     ,makeclean($row['description']),"'>"
                     ,makeclean($row['title']),"</a></td>\n";
             }
         }
         echo "</tr>\n";
-        $i+=$cols;
+        $i += $cols;
     }
 }
 /*
    ======================================================================================
 */
-function checkerB ($table,$itemIdCol,$itemId,$column,$checked,$col2='',$id2='',$col3='',$id3='',$col4='',$id4='',$col5='',$id5='') {
+function checkerB($table, $itemIdCol, $itemId, $column, $checked, $col2 = '', $id2 = '', $col3 = '', $id3 = '', $col4 = '', $id4 = '', $col5 = '', $id5 = '')
+{
     $checkerS = '<input type="checkbox" class="mx"' . ' onClick="cB(this,\'' . $table . '\',\'' . $column . '\',\'' . $itemIdCol . '\',\'' . $itemId . '\'';
-    if ($col2 != '') $checkerS .= ',\'' . $col2 . '\',\'' . $id2 . '\'';
-    if ($col3 != '') $checkerS .= ',\'' . $col3 . '\',\'' . $id3 . '\'';
-    if ($col4 != '') $checkerS .= ',\'' . $col4 . '\',\'' . $id4 . '\'';
-    if ($col5 != '') $checkerS .= ',\'' . $col5 . '\',\'' . $id5 . '\'';
-    $checkerS .= ')"' . ($checked=='y' ? ' checked' : '') . '>';
+    if ($col2 != '') {
+        $checkerS .= ',\'' . $col2 . '\',\'' . $id2 . '\'';
+    }
+    if ($col3 != '') {
+        $checkerS .= ',\'' . $col3 . '\',\'' . $id3 . '\'';
+    }
+    if ($col4 != '') {
+        $checkerS .= ',\'' . $col4 . '\',\'' . $id4 . '\'';
+    }
+    if ($col5 != '') {
+        $checkerS .= ',\'' . $col5 . '\',\'' . $id5 . '\'';
+    }
+    $checkerS .= ')"' . ($checked == 'y' ? ' checked' : '') . '>';
     return $checkerS;
 }
 
-function editableCol ($tmp1, $tmp2) {
+function editableCol($tmp1, $tmp2)
+{
     $html = '';
-    for($i = 1; $i <= $tmp1; $i++) {
+    for ($i = 1; $i <= $tmp1; $i++) {
         $html .= "editableCol('listEd', " . $i;
-        if($i == $tmp2) {
+        if ($i == $tmp2) {
             $html .= ", true);";
         } else {
             $html .= ", false);";
@@ -670,47 +855,68 @@ function editableCol ($tmp1, $tmp2) {
     return $html;
 }
 
-function childUpd ($type,$itemId,$visId,$catId = '') {
-    if ($catId > 0) { $catId = '&categoryId=' . $catId; } else { $catId = ''; }
+function childUpd($type, $itemId, $visId, $catId = '')
+{
+    if ($catId > 0) {
+        $catId = '&categoryId=' . $catId;
+    } else {
+        $catId = '';
+    }
     $catMultiId = '&catMultiId=6';
     switch ($type) {
-        case 'l' : $title = 'list'; break;
-        case 'c' : $title = 'checklist'; break;
-        case 'p' : $title = 'project'; break;
-        case 'g' : $title = 'goal'; break;
-        case 'o' : $title = 'role'; break;
+        case 'l':
+            $title = 'list';
+            break;
+        case 'c':
+            $title = 'checklist';
+            break;
+        case 'p':
+            $title = 'project';
+            break;
+        case 'g':
+            $title = 'goal';
+            break;
+        case 'o':
+            $title = 'role';
+            break;
     }
     switch ($type) {
-        case 'l' :
-        case 'c' : $childUpd = '<a href="listsUpdate.php?itemId=' . $itemId . '&visId=' . $visId . '&type=' . $type . '&matrix=true' . $catId . $catMultiId . '" class="mx" target="_blank" title="' . $title . 's">' . strtoupper($type) . '</a>';
-        break;
-        default :  $childUpd = '<a href="item.php?parentId=' . $visId;
-            if ($visId !== $itemId) $childUpd .= ',' . $itemId;
+        case 'l':
+        case 'c':
+            $childUpd = '<a href="listsUpdate.php?itemId=' . $itemId . '&visId=' . $visId . '&type=' . $type . '&matrix=true' . $catId . $catMultiId . '" class="mx" target="_blank" title="' . $title . 's">' . strtoupper($type) . '</a>';
+            break;
+        default:
+            $childUpd = '<a href="item.php?parentId=' . $visId;
+            if ($visId !== $itemId) {
+                $childUpd .= ',' . $itemId;
+            }
             $childUpd .= '&type=' . $type . '&action=create" class="mx" target="_blank" title="new ' . $title . '">+</a><a href="childrenUpdate.php?itemId=' . $itemId . '&visId=' . $visId . '&type=' . $type . '&matrix=true' . $catId . $catMultiId . '" class="mx" target="_blank" title="' . $title . 's">' . strtoupper($type) . '</a>';
     }
 
     return $childUpd;
 }
 
-function isMobile() {
+function isMobile()
+{
     return preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i", $_SERVER["HTTP_USER_AGENT"]);
 }
 
 /*
    ======================================================================================
 */
-function formula ($id) {
+function formula($id)
+{
 
-		$form = '';
+        $form = '';
 
     switch ($id) {
-        case 'posIncTot' : // formulaSum1
+        case 'posIncTot': // formulaSum1
             $form .= '                           $summary1 += $output1 - $pseudo2;';
             break;
-        case 'negIncTot' : // formulaSum2
+        case 'negIncTot': // formulaSum2
             $form .= '                           $summary2 += $output2 + $pseudo2;';
             break;
-        case 'inc' : // formulaVis1
+        case 'inc': // formulaVis1
             $form .= '                           $output1 += ceil($value * ($prob > 0 ? 1/$prob : 0) * $weight);
                     if (
                         is_numeric($value) &&
@@ -718,7 +924,7 @@ function formula ($id) {
                         )                       $pseudo2 += floor($value * ($prob > 0 ? 1/$prob : 0) * $weight);
                                                 ';
             break;
-        case 'scorCubeYr' : // formulaVis1
+        case 'scorCubeYr': // formulaVis1
             $form .= 'if (
                         is_numeric($value) &&
                         $value > 0
@@ -764,7 +970,7 @@ function formula ($id) {
                         )                       $output2 += floor($value * ($prob > 0 ? 1/$prob : 0) * $weight);';
             break;
 */
-        case 'incBrain' : // formulaVis1
+        case 'incBrain': // formulaVis1
             $form .= 'if (
                         $brainless != "y" &&
                         is_numeric($value) &&
@@ -777,7 +983,7 @@ function formula ($id) {
                         )     $pseudo2 += floor($value * ($prob > 0 ? 1/$prob : 0) * $weight);
                         ';
             break;
-        case 'incBrainless' : // formulaVis2
+        case 'incBrainless': // formulaVis2
             $form .= 'if (
                         $brainless == "y" &&
                         is_numeric($value) &&
@@ -790,17 +996,17 @@ function formula ($id) {
                         )     $bless2 += floor($value * ($prob > 0 ? 1/$prob : 0) * $weight);
                         ';
             break;
-        case 'cubeYrItem' : // matrixfomula.php
+        case 'cubeYrItem': // matrixfomula.php
             $form .= '                           $sum = round(pow($value,3) * $prob * $weight / $years, 2);';
             break;
-        case 'maxYrs' : // formulaVis1
+        case 'maxYrs': // formulaVis1
             $form .= 'if ($yrend > $outputYrs)    $outputYrs = $yrend;
                     if ($yearst < $outputYear &&
                         $outputYear)            $outputYear = $yearst;
                     if (!$outputYear)           $outputYear = $yearst;
                         ';
             break;
-        case 'maxIntAll' : // formulaSum1
+        case 'maxIntAll': // formulaSum1
             $form .= 'if (is_numeric($output1) &&
                         (
                         !is_numeric($summary1)
@@ -809,7 +1015,7 @@ function formula ($id) {
                         is_numeric($summary1)
                         )))                       $summary1 = $output1;';
             break;
-        case 'maxInt' : // formulaVis1
+        case 'maxInt': // formulaVis1
             $form .= 'if (is_numeric($value) &&
                         (
                         !is_numeric($output1)
@@ -826,7 +1032,7 @@ function formula ($id) {
                         )))                      $pseudo2 = $value;
                         ';
             break;
-        case 'minIntAll' : // formulaSum2
+        case 'minIntAll': // formulaSum2
             $form .= '
                     if (is_numeric($pseudo2))   $summary2 = $pseudo2;
                     if (is_numeric($output2) &&
@@ -837,7 +1043,7 @@ function formula ($id) {
                         is_numeric($summary2)
                         )))                      $summary2 = $output2;';
             break;
-        case 'minInt' : // formulaVis2
+        case 'minInt': // formulaVis2
             $form .= 'if (is_numeric($value) &&
                         (
                         !is_numeric($output2)
@@ -853,130 +1059,153 @@ function formula ($id) {
    ======================================================================================
 */
 
-function clean_mean ($arr) {
+function clean_mean($arr)
+{
 
-  $arr = clean_array($arr);
+    $arr = clean_array($arr);
 
-  if (count($arr) > 0) $mean = array_sum($arr) / count($arr);
-  else $mean = NULL;
-
-  return $mean;
-
-}
-
-function clean_array ($arr) {
-
-  // assume values of NULL should be removed, but inclue 0 values
-  $arr = array_filter($arr, function ($val) { return !is_null($val); });
-
-  return $arr;
-
-}
-/*
-   ======================================================================================
-*/
-
-function create_variable_set($name, $qId, $pqId = 0, $power = 1) {
-
-  global ${$name}, ${$name.'_p'}, ${$name.'_w'};
-  global $config, $_POST, $weights;
-
-  // main variable value
-  $_POST["id4"] = $qId;
-  include('matrixQuery.php');
-  if (isset($value) && filter_var($value, FILTER_VALIDATE_FLOAT) !== false) {
-
-    ${$name} = $value ** $power;
-
-    // main variable weight
-    ${$name.'_w'} = $weights[$qId];
-
-    // p variable value
-    $_POST["id4"] = $pqId;
-    include('matrixQuery.php');
-    if ($pqId > 0 && isset($value) && filter_var($value, FILTER_VALIDATE_FLOAT) !== false) {
-
-      // multiply main variable value by probability
-      ${$name.'_p'} = $value + 1;
-      ${$name} *= ${$name.'_p'} / 10;
-
+    if (count($arr) > 0) {
+        $mean = array_sum($arr) / count($arr);
     } else {
-
-      ${$name.'_p'} = NULL;
-
+        $mean = null;
     }
 
-  } else {
+    return $mean;
+}
 
-    ${$name} = NULL;
-    ${$name.'_w'} = NULL;
-    ${$name.'_p'} = NULL;
+function clean_array($arr)
+{
 
-  }
+  // assume values of NULL should be removed, but inclue 0 values
+    $arr = array_filter($arr, function ($val) {
+        return !is_null($val);
+    });
 
+    return $arr;
+}
+/*
+   ======================================================================================
+*/
+
+function create_variable_set($name, $qId, $pqId = 0, $power = 1)
+{
+
+    global ${$name}, ${$name . '_p'}, ${$name . '_w'};
+    global $config, $_POST, $weights;
+
+  // main variable value
+    $_POST["id4"] = $qId;
+    include('matrixQuery.php');
+    if (isset($value) && filter_var($value, FILTER_VALIDATE_FLOAT) !== false) {
+        ${$name} = $value ** $power;
+
+      // main variable weight
+        ${$name . '_w'} = $weights[$qId];
+
+      // p variable value
+        $_POST["id4"] = $pqId;
+        include('matrixQuery.php');
+        if ($pqId > 0 && isset($value) && filter_var($value, FILTER_VALIDATE_FLOAT) !== false) {
+          // multiply main variable value by probability
+            ${$name . '_p'} = $value + 1;
+            ${$name} *= ${$name . '_p'} / 10;
+        } else {
+            ${$name . '_p'} = null;
+        }
+    } else {
+        ${$name} = null;
+        ${$name . '_w'} = null;
+        ${$name . '_p'} = null;
+    }
 }
 
 /*
    ======================================================================================
 */
 
-function calculate_score ($res, $save_to, $vars, $factor, $scale) {
+function calculate_score($res, $save_to, $vars, $factor, $scale)
+{
 
-  if ($res == 'xxxx') $debug = true;
-  else $debug = false;
+    if ($res == 'xxxx') {
+        $debug = true;
+    } else {
+        $debug = false;
+    }
 
-  global $config, $_POST;
-  global ${$res.'_score'}, ${$res.'_score_w'};
-  foreach ($vars as $var)
-    global ${$var}, ${$var.'_w'}, ${$var.'_p'};
+    global $config, $_POST;
+    global ${$res . '_score'}, ${$res . '_score_w'};
+    foreach ($vars as $var) {
+        global ${$var}, ${$var . '_w'}, ${$var . '_p'};
+    }
 
-  $n = count($vars);
-  if ($debug) file_put_contents ('_response.txt', PHP_EOL . '$n = ' . count($vars));
+    $n = count($vars);
+    if ($debug) {
+        file_put_contents('_response.txt', PHP_EOL . '$n = ' . count($vars));
+    }
 
   // assume values of NULL should be removed, but inclue 0 values
-  $arr = [];
-  for ($i = 0; $i < $n; $i++) {
-    $var = $vars[$i];
-    if (!is_null(${$var})) $arr[] = $var;
-    if ($debug) file_put_contents ('_response.txt', PHP_EOL . '$' . $var . ' = ' . ${$var}, FILE_APPEND);
-    if ($debug) file_put_contents ('_response.txt', PHP_EOL . '$' . $var . '_w = ' . ${$var.'_w'}, FILE_APPEND);
-    if ($debug) file_put_contents ('_response.txt', PHP_EOL . '$' . $var . '_p = ' . ${$var.'_p'}, FILE_APPEND);
-  }
+    $arr = [];
+    for ($i = 0; $i < $n; $i++) {
+        $var = $vars[$i];
+        if (!is_null(${$var})) {
+            $arr[] = $var;
+        }
+        if ($debug) {
+            file_put_contents('_response.txt', PHP_EOL . '$' . $var . ' = ' . ${$var}, FILE_APPEND);
+        }
+        if ($debug) {
+            file_put_contents('_response.txt', PHP_EOL . '$' . $var . '_w = ' . ${$var . '_w'}, FILE_APPEND);
+        }
+        if ($debug) {
+            file_put_contents('_response.txt', PHP_EOL . '$' . $var . '_p = ' . ${$var . '_p'}, FILE_APPEND);
+        }
+    }
 
-  $n = count($arr);
-  if ($debug) file_put_contents ('_response.txt', PHP_EOL . '$n ' . $n, FILE_APPEND);
+    $n = count($arr);
+    if ($debug) {
+        file_put_contents('_response.txt', PHP_EOL . '$n ' . $n, FILE_APPEND);
+    }
 
-  if ($n < 1) {
+    if ($n < 1) {
+        $score = null;
+        $w = null;
+    } else {
+        $w = 0;
+        foreach ($arr as $var) {
+            $w += ${$var . '_w'};
+        }
+        $w /= $n;
+        if ($debug) {
+            file_put_contents('_response.txt', PHP_EOL . '$w = ' . $w, FILE_APPEND);
+        }
 
-    $score = NULL;
-    $w = NULL;
+        $score = 0;
+        foreach ($arr as $var) {
+            $score += ${$var} * ${$var . '_w'} / $w;
+        }
+        if ($debug) {
+            file_put_contents('_response.txt', PHP_EOL . '$score = ' . $score, FILE_APPEND);
+        }
+        $score *= $scale / ($n * $factor);
+        $score = intval($score);
+        if ($debug) {
+            file_put_contents('_response.txt', PHP_EOL . '$score rescaled = ' . $score, FILE_APPEND);
+        }
+    }
 
-  } else {
-
-    $w = 0;
-    foreach ($arr as $var) $w += ${$var.'_w'};
-    $w /= $n;
-    if ($debug) file_put_contents ('_response.txt', PHP_EOL . '$w = ' . $w, FILE_APPEND);
-
-    $score = 0;
-    foreach ($arr as $var) $score += ${$var} * ${$var.'_w'} / $w;
-    if ($debug) file_put_contents ('_response.txt', PHP_EOL . '$score = ' . $score, FILE_APPEND);
-    $score *= $scale / ($n * $factor);
-    $score = intval($score);
-    if ($debug) file_put_contents ('_response.txt', PHP_EOL . '$score rescaled = ' . $score, FILE_APPEND);
-
-  }
-
-  ${$res.'_score'} = $score;
-  ${$res.'_score_w'} = $w;
-  if ($debug) file_put_contents ('_response.txt', PHP_EOL . '$' . $res.'_score' . ' = ' . ${$res.'_score'}, FILE_APPEND);
-  if ($debug) file_put_contents ('_response.txt', PHP_EOL . '$' . $res.'_score_w' . ' = ' . ${$res.'_score_w'}, FILE_APPEND);
+    ${$res . '_score'} = $score;
+    ${$res . '_score_w'} = $w;
+    if ($debug) {
+        file_put_contents('_response.txt', PHP_EOL . '$' . $res . '_score' . ' = ' . ${$res . '_score'}, FILE_APPEND);
+    }
+    if ($debug) {
+        file_put_contents('_response.txt', PHP_EOL . '$' . $res . '_score_w' . ' = ' . ${$res . '_score_w'}, FILE_APPEND);
+    }
 
   // save
-  $_POST["id4"] = (int)$save_to;
-  $_POST["updVal"] = $score;
-  include('matrixSave.php');
-
+    $_POST["id4"] = (int)$save_to;
+    $_POST["updVal"] = $score;
+    include('matrixSave.php');
 }
 
 /*

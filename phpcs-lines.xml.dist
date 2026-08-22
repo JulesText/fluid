@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ruleset name="Fluid line-length review">
+    <description>Non-blocking review of PHP lines longer than 120 characters.</description>
+
+    <arg name="basepath" value="."/>
+    <arg name="colors"/>
+    <arg name="extensions" value="php"/>
+
+    <file>.</file>
+
+    <exclude-pattern>config_private.php</exclude-pattern>
+    <exclude-pattern>dt/node_modules/*</exclude-pattern>
+    <exclude-pattern>media/*</exclude-pattern>
+    <exclude-pattern>node_modules/*</exclude-pattern>
+    <exclude-pattern>vendor/*</exclude-pattern>
+
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="120"/>
+            <property name="absoluteLineLimit" value="0"/>
+        </properties>
+    </rule>
+</ruleset>

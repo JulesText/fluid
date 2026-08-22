@@ -1,6 +1,6 @@
 <?php
 
-// 
+//
 //
 // to re-calibrate insert value of timestamp of last new moon before winter solstice for $sinceBase
 //
@@ -11,17 +11,17 @@
 $today = getdate();
 $date = $today[0]; // system timestamp
 
-$sinceBase = $date - 1368100828; // timestamp of last new moon 
+$sinceBase = $date - 1368100828; // timestamp of last new moon
 
-$cycle = 29.53059 * 86400; 	// seconds per new moon cycle
-							// 29.53059 is average days between new moon, then this is days converted to seconds between new moons
+$cycle = 29.53059 * 86400;  // seconds per new moon cycle
+                            // 29.53059 is average days between new moon, then this is days converted to seconds between new moons
 
 $lunarSinceBase = $sinceBase / $cycle;
 $lunarMonths = fmod($lunarSinceBase, 13);
 $lunarCurrent = round($lunarMonths, 0);
 $currentProgress = fmod($lunarMonths, 1);
 $currentDay = $currentProgress * 29.53059;
-							
+
 /*
 
 $str = '';
@@ -33,7 +33,7 @@ $str .= '<br>lunar current ' . $lunarCurrent;
 $str .= '<br>current cycle ' . $currentProgress;
 $str .= '<br>current day ' . $currentDay;
 
-echo $str; die; // debug 
+echo $str; die; // debug
 */
 
 // global vars:
@@ -42,5 +42,3 @@ $day = ceil($currentDay); // round up
 $month = $lunarCurrent;
 
 // end Lunar calc
-
-?>

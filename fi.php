@@ -7,6 +7,7 @@ require_once("headerHtml.inc.php");
 $api_file = 'fi.php';
 
 include('fi_require.php');
+$search_query = isset($_GET['q']) ? $_GET['q'] : '';
 $other_chats = get_other_chats($_GET['chat_id'], $db);
 $db = NULL; // Close the database connection
 
@@ -45,7 +46,10 @@ $db = NULL; // Close the database connection
     </header>
 
     <div id="popup-menu">
-      <form action='listItems.php?type=*&everything=true&liveparents=*' method='post' style='text-align:right'><a href="">X</a>&nbsp;&nbsp;&nbsp;Search<input type='text' name='needle' id='needle' style='width: 150px'></form>
+      <form action='listItems.php?type=*&everything=true&liveparents=*' method='post' style='text-align:right'>
+        <a href="">X</a>&nbsp;&nbsp;&nbsp;Search
+        <input type='text' name='needle' id='needle' style='width: 150px' value="<?php echo htmlspecialchars($search_query); ?>">
+      </form>
       <?php
       foreach ($other_chats as $row) {
         $descrip = $row["chat_summary"];

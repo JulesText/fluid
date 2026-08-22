@@ -65,9 +65,11 @@ $result = query("updatechecklist", $config, $values, $sort);
 
 // file_put_contents ('_response.txt', PHP_EOL . $result . ' x CL ' . $values['listId'] . ' x effort: ' . $values['effort'], FILE_APPEND);
 
-if (count($result) > 0) {
+if ($result > 0) {
     $i = 1;
 } else {
     $i = 0;
 }
-echo json_encode($i);
+if (realpath($_SERVER['SCRIPT_FILENAME']) === realpath(__FILE__)) {
+    echo json_encode($i);
+}

@@ -1315,6 +1315,10 @@ function getsql($config, $values, $sort, $querylabel)
             if ($values['menu'] == '') {
                 $values['menu'] = 'n';
             }
+            $effortDayUpdate = '';
+            if (array_key_exists('effort_day', $values)) {
+                $effortDayUpdate = "`effort_day`    = '{$values['effort_day']}',";
+            }
             $sql = "UPDATE `" . $config['prefix'] . "checklist`
 				SET     `title`         = '{$values['title']}',
 						`categoryId`    = '{$values['categoryId']}',
@@ -1329,7 +1333,7 @@ function getsql($config, $values, $sort, $querylabel)
 						`sortBy`        = '{$values['sortBy']}',
 						`frequency`     = '{$values['frequency']}',
             `effort`        = '{$values['effort']}',
-            `effort_day`    = '{$values['effort_day']}',
+            $effortDayUpdate
 						`scored`        = '{$values['scored']}',
 						`menu`          = '{$values['menu']}',
             `prioritise`    = '{$values['prioritise']}',

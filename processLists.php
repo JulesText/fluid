@@ -405,10 +405,12 @@ switch ($action) {
             // update also matrixSaveCL.php
         }
         $result = query("update{$check}list", $config, $values);
+        $updated = (bool) $result;
         if ($check == 'check') {
             include('matrixSaveCL.php');
+            $updated = $updated || (bool) $result;
         }
-        $msg = ($result) ? "Updated" : "No changes needed to";
+        $msg = ($updated) ? "Updated" : "No changes needed to";
         $_SESSION['message'][] = "$msg {$check}list: '{$values['title']}'";
         // echo '<pre>';var_dump($result);die;
         break;
@@ -418,10 +420,12 @@ switch ($action) {
         $values = $result[0];
         $values['prioritise'] = $_REQUEST['prioritise'];
         $result = query("update{$check}list", $config, $values);
+        $updated = (bool) $result;
         if ($check == 'check') {
             include('matrixSaveCL.php');
+            $updated = $updated || (bool) $result;
         }
-        $msg = ($result) ? "Updated" : "No changes needed to";
+        $msg = ($updated) ? "Updated" : "No changes needed to";
         $_SESSION['message'][] = "$msg {$check}list: '{$values['title']}'";
         break;
     //-----------------------------------------------------------------------------------

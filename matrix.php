@@ -224,6 +224,10 @@ if (is_array($attrVar)) { # for some displays like Career disp = e, we expect no
 $values = array();
 $values['itemType'] = 'v';
 $visAttrRes = query("lookupqualities", $config, $values, $sort);
+$visAttrByItem = array();
+foreach ((array) $visAttrRes as $res) {
+    $visAttrByItem[$res['itemId']][$res['qId']] = $res;
+}
 
 $mxTitle = 'Matrix';
 if ($qLimit == 'h') { // Qual: Scen [scenario]
@@ -323,6 +327,13 @@ foreach ((array) $vis as $visn) {
 }
 $vLimit = substr($vLimit, 0, -1);
 
+$values = array();
+$lookupRows = query("lookuparray", $config, $values, $sort);
+$parentsByItem = array();
+foreach ((array) $lookupRows as $lookupRow) {
+    $parentsByItem[$lookupRow['itemId']][] = $lookupRow['parentId'];
+}
+
 foreach ((array) $vis as $visn) {
     $maintable[$i]['mx'] = true;
     $maintable[$i]['toggle'] = '+';
@@ -347,12 +358,10 @@ foreach ((array) $vis as $visn) {
     foreach ((array) $visAttr as $attrId) {
         $maintable[$i]['attr ' . $attrId] = '';
         $maintable[$i]['attr ' . $attrId . '  qaId'] = '';
-        foreach ((array) $visAttrRes as $res) {
-            if ($res['qId'] == $attrId && $res['itemId'] == $visn['itemId']) {
-                $maintable[$i]['attr ' . $attrId] = $res['value'];
-                $maintable[$i]['attr ' . $attrId . ' qaId'] = $res['qaId'];
-                break;
-            }
+        if (isset($visAttrByItem[$visn['itemId']][$attrId])) {
+            $res = $visAttrByItem[$visn['itemId']][$attrId];
+            $maintable[$i]['attr ' . $attrId] = $res['value'];
+            $maintable[$i]['attr ' . $attrId . ' qaId'] = $res['qaId'];
         }
     }
 
@@ -395,16 +404,14 @@ foreach ((array) $vis as $visn) {
     foreach ((array) $result as $row) {
         // default
         $result[$j]['pId'] = 0;
-        // get parents
-        $par = query("lookupparent", $config, $row, $sort);
         // each parent
-        foreach ((array) $par as $pars) {
+        foreach ((array) ($parentsByItem[$row['itemId']] ?? array()) as $parentId) {
             // research children of vision
             foreach ((array) $result as $rowN) {
                 // if that parent is in children of vision
-                if ($pars['parentId'] == $rowN['itemId']) {
+                if ($parentId == $rowN['itemId']) {
                     // set parent id
-                    $result[$j]['pId'] = $pars['parentId'];
+                    $result[$j]['pId'] = $parentId;
                     break 2;
                 }
             }
@@ -632,28 +639,31 @@ foreach ((array) $maintable as $row) {
 $maintable = $maintemp;
 
 // append qualities and vision formulae
+$qualitiesByRow = array();
+foreach ((array) $visIds as $visId) {
+    $values = array();
+    $values['visId'] = $visId;
+    $qualityRows = query("lookupqualities", $config, $values, $sort);
+    foreach ((array) $qualityRows as $qualityRow) {
+        $rowKey = $qualityRow['visId'] . ':' . $qualityRow['itemType'] . ':' . $qualityRow['itemId'];
+        $qualitiesByRow[$rowKey][$qualityRow['qId']] = $qualityRow;
+    }
+}
+
 $i = 0;
 foreach ((array) $maintable as $row) {
     if (isset($row['visId'])) {
-        $values = array();
-        $values['visId'] = $row['visId'];
-        $values['itemId'] = $row['itemId'];
-        $values['itemType'] = $row['type'];
-        //create blank
-        $result = query("lookupqualities", $config, $values, $sort);
+        $rowKey = $row['visId'] . ':' . $row['type'] . ':' . $row['itemId'];
+        $result = $qualitiesByRow[$rowKey] ?? array();
         // create blank table rows
         foreach ((array) $angles as $angle) {
             foreach ((array) $angle['qualities'] as $quals) {
                 foreach ((array) $quals['attributes'] as $attr) {
-                    $exist = false;
-                    foreach ((array) $result as $res) {
-                        if ($attr['qId'] == $res['qId']) {
-                            $exist = true;
-                            $maintable[$i]['attr ' . $res['qId']] = $res['value'];
-                            $maintable[$i]['attr ' . $res['qId'] . ' qaId'] = $res['qaId'];
-                        }
-                    }
-                    if (!$exist) {
+                    if (isset($result[$attr['qId']])) {
+                        $res = $result[$attr['qId']];
+                        $maintable[$i]['attr ' . $res['qId']] = $res['value'];
+                        $maintable[$i]['attr ' . $res['qId'] . ' qaId'] = $res['qaId'];
+                    } else {
                         $maintable[$i]['attr ' . $attr['qId']] = '';
                         $maintable[$i]['attr ' . $attr['qId'] . ' qaId'] = '';
                         /*
@@ -668,8 +678,7 @@ foreach ((array) $maintable as $row) {
                 }
             }
         }
-        // fill existing
-        $result = query("lookupqualities", $config, $values, $sort);
+        // fill existing metadata such as the list-specific someday attribute
         foreach ((array) $result as $res) {
             $maintable[$i]['attr ' . $res['qId']] = $res['value'];
             $maintable[$i]['attr ' . $res['qId'] . ' qaId'] = $res['qaId'];
@@ -683,7 +692,7 @@ if (isset($_GET['orphans']) && $_GET['orphans'] == true) {
     $values = array();
     $values['filterquery'] = " WHERE ia.type IN ('o','g','p')";
     $orphans = query("getitemsattr", $config, $values, $sort);
-    $lu = query("lookuparray", $config, $values, $sort);
+    $lu = $lookupRows;
     $luc = array();
     foreach ((array) $lu as $l) {
         // create array of items with vision parents

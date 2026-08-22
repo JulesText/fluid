@@ -202,6 +202,7 @@ $et2 = 0;
 $et3 = 0;
 $et4 = 0;
 $arrowKeys = "id='start' ";
+$existingValueCache = array();
 foreach ((array) $maintable as $row) {
     echo '<tr'
         ,(!empty($row['row.class'])) ? " class='{$row['row.class']}'" : ''
@@ -293,7 +294,10 @@ foreach ((array) $maintable as $row) {
                         // special case x-linked
                         if ($existXRef) {
                             $query = "SELECT " . $existField . " FROM " . $existTable . " WHERE " . $existKey . " = '" . $existKeyVal . "'";
-                            $res = doQuery($config, $query);
+                            if (!array_key_exists($query, $existingValueCache)) {
+                                $existingValueCache[$query] = doQuery($config, $query);
+                            }
+                            $res = $existingValueCache[$query];
                             foreach ((array) $res as $r) {
                                 $existKeyVal = $r[$existField]; // call value before rewriting $existField
                             }
@@ -396,7 +400,10 @@ foreach ((array) $maintable as $row) {
                     $tdstr = ajaxLineBreak($row[$key]);
                 } else {
                     $query = "SELECT " . $existField . " FROM " . $existTable . " WHERE " . $existKey . " = '" . $existKeyVal . "'";
-                    $res = doQuery($config, $query);
+                    if (!array_key_exists($query, $existingValueCache)) {
+                        $existingValueCache[$query] = doQuery($config, $query);
+                    }
+                    $res = $existingValueCache[$query];
                     $tdstr = ajaxLineBreak($res[0][$existField]);
                 }
                 if ($mxlink && strlen($tdstr) > 0) {

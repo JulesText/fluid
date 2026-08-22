@@ -9,13 +9,13 @@ function checkErrors($prefix)
 {
 
     $q = "SELECT COUNT(*) FROM `{$prefix}items`";
-    $items = @mysql_fetch_row(send_query($q, false));
+    $items = fetchRow(send_query($q, false));
     if (empty($items)) {
         return false;
     }
 
     $q = "SELECT COUNT(DISTINCT `nextaction`) FROM `{$prefix}nextactions`";
-    $na = @mysql_fetch_row(send_query($q, false));
+    $na = fetchRow(send_query($q, false));
 
     $q = "SELECT COUNT(*) FROM `{$prefix}items` AS `i`
             JOIN `{$prefix}itemattributes` AS `ia`  USING (`itemId`)
@@ -23,14 +23,14 @@ function checkErrors($prefix)
             WHERE (ia.`type` NOT IN ('i','m','p','o','g','v')
                     AND `i`.`itemId` NOT IN (SELECT `itemId` FROM `{$prefix}lookup`
                 ) OR ia.`type`='' OR ia.`type` IS NULL)";
-    $orphans = @mysql_fetch_row(send_query($q, false));
+    $orphans = fetchRow(send_query($q, false));
 
     $q = "SELECT COUNT(*) FROM `{$prefix}items` AS `i`
             JOIN `{$prefix}itemattributes` AS `ia`  USING (`itemId`)
             JOIN `{$prefix}itemstatus`     AS `its` USING (`itemId`)
             WHERE `its`.`dateCompleted` IS NOT NULL
                 AND ia.`type` = 'r'";
-    $refscomp = @mysql_fetch_row(send_query($q, false));
+    $refscomp = fetchRow(send_query($q, false));
 
     $totals = array(
                      'items' => $items[0]
@@ -42,31 +42,31 @@ function checkErrors($prefix)
 
     $q = "SELECT COUNT(*) FROM `{$prefix}nextactions` WHERE ROW(`parentId`,`nextaction`) NOT IN
             (SELECT * FROM `{$prefix}lookup`) AND `parentId`!='0'";
-    $excessNA = @mysql_fetch_row(send_query($q, false));
+    $excessNA = fetchRow(send_query($q, false));
 
     $q = "SELECT COUNT(*) FROM `{$prefix}lookup` WHERE
             ROW(`parentId`,`itemId`) NOT IN (SELECT * FROM `{$prefix}nextactions`)
             AND `itemID` IN (SELECT `nextaction` FROM `{$prefix}nextactions`)";
-    $missingNA = @mysql_fetch_row(send_query($q, false));
+    $missingNA = fetchRow(send_query($q, false));
 
     $q = "SELECT COUNT(*) FROM `{$prefix}nextactions` AS `na`
             JOIN `{$prefix}itemstatus` AS `its` ON (na.`nextaction`=its.`itemId`)
             WHERE its.`dateCompleted` IS NOT NULL";
-    $completedNA = @mysql_fetch_row(send_query($q, false));
+    $completedNA = fetchRow(send_query($q, false));
 
     $q = "SELECT COUNT(*) FROM `{$prefix}itemattributes` WHERE `suppress`='y' AND `deadline`=NULL";
-    $noTickleDate = @mysql_fetch_row(send_query($q, false));
+    $noTickleDate = fetchRow(send_query($q, false));
 
     $q = "SELECT COUNT(*) FROM `{$prefix}items` where `title`=NULL OR `title`=''";
-    $noTitle = @mysql_fetch_row(send_query($q, false));
+    $noTitle = fetchRow(send_query($q, false));
 
     $q = "SELECT COUNT(*) FROM `{$prefix}lookup` WHERE
             `parentId` NOT IN (SELECT `itemId` FROM `{$prefix}itemattributes`)
            OR `itemId` NOT IN (SELECT `itemId` FROM `{$prefix}itemattributes`)";
-    $redundantparent = @mysql_fetch_row(send_query($q, false));
+    $redundantparent = fetchRow(send_query($q, false));
 
     $q = "SELECT COUNT(version) FROM `{$prefix}version`";
-    $excessVersions = @mysql_fetch_row(send_query($q, false));
+    $excessVersions = fetchRow(send_query($q, false));
 
     $errors = array(
                      'redundant nextaction entries' => $excessNA[0]
@@ -85,7 +85,7 @@ function checkErrors($prefix)
         foreach ($items2 as $t2) {
             if ($t1 != $t2) {
                         $q = "SELECT COUNT(DISTINCT `itemId`) FROM `{$prefix}$t1` WHERE `itemId` NOT IN (SELECT `itemId` FROM `{$prefix}$t2`)";
-                        $val = @mysql_fetch_row(send_query($q, false));
+                        $val = fetchRow(send_query($q, false));
                         $errors["IDs are in $t1, but not in $t2"] = $val[0];
             }
         }
@@ -108,13 +108,13 @@ function backupData($prefix)
         $table = $prefix . $tab;
         $data .= $sep;
         $header .= "TRUNCATE TABLE `$table`;\n";
-        $tableStructure = @mysql_fetch_assoc(send_query("SHOW CREATE TABLE $table"));
+        $tableStructure = fetchAssoc(send_query("SHOW CREATE TABLE $table"));
         $creators .= "DROP TABLE IF EXISTS `{$table}`; \n" . $tableStructure['Create Table'] . ";\n";
         $rows = send_query("SELECT * FROM `$table`", false);
-        while ($rec = @mysql_fetch_assoc($rows)) {
+        while ($rec = fetchAssoc($rows)) {
             $thisdata = '';
             foreach ($rec as $key => $value) {
-                $thisdata .= ( ($value === null) ? 'NULL' : ("'" . safeIntoDB($value) . "'") ) . ',';
+                $thisdata .= (($value === null) ? 'NULL' : ("'" . safeIntoDB($config, $value) . "'")) . ',';
             }
             $thisdata = substr($thisdata, 0, -1);
             $data .= "INSERT INTO `$table` VALUES ($thisdata);\n";
@@ -414,7 +414,7 @@ function checkVersion($prefix)
         $retval = '0.8rc-2';
     } else {
         $last = array(0 => null);
-        while ($out = mysql_fetch_row($result)) {
+        while ($out = fetchRow($result)) {
             $last = $out;
         }
         $retval = $last[0];
@@ -501,15 +501,15 @@ function drop_table($config, $name)
 {
     global $rollback;
     $q = "drop table if exists `$name`";
-    send_query($config, $q);
+    send_query($q);
     unset($rollback[$name]);
 }
 /*
    ======================================================================================
 */
-function send_query($config, $q, $dieOnFail = true)
+function send_query($q, $dieOnFail = true)
 {
-    global $rollback;
+    global $config,$rollback;
     if (_DEBUG) {
         echo "<p class='debug'>{$q}</p>\n";
     }
@@ -521,7 +521,7 @@ function send_query($config, $q, $dieOnFail = true)
 
     if ($result) {
         if (_DEBUG) {
-            echo "<p class='debug'>",mysql_affected_rows()," rows affected</p>\n";
+            echo "<p class='debug'>",mysqli_affected_rows($config["conn"])," rows affected</p>\n";
         }
         if (stristr($q, 'create table') !== false) {
             $tmp = explode('`', $q);
@@ -536,13 +536,23 @@ function send_query($config, $q, $dieOnFail = true)
         }
     } else {
         if ($dieOnFail) {
-            echo "<p class='error'>Fatal error: Failed to do MySQL query: '$q'<br />",mysql_error(),"</p>\n";
+            echo "<p class='error'>Fatal error: Failed to do MySQL query: '$q'<br />",mysqli_error($config["conn"]),"</p>\n";
             die("<p class='error'>Installation terminated</p>");
         } elseif (_DEBUG) {
-            echo "<p class='warning debug'>Warning: Failed to do MySQL query: '$q'<br />",mysql_error(),"</p>\n";
+            echo "<p class='warning debug'>Warning: Failed to do MySQL query: '$q'<br />",mysqli_error($config["conn"]),"</p>\n";
         }
     }
     return($result);
+}
+
+function fetchRow($result)
+{
+    return $result instanceof mysqli_result ? mysqli_fetch_row($result) : false;
+}
+
+function fetchAssoc($result)
+{
+    return $result instanceof mysqli_result ? mysqli_fetch_assoc($result) : false;
 }
 /*
    ======================================================================================

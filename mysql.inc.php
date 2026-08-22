@@ -8,10 +8,17 @@
 error_reporting(E_ALL ^ E_DEPRECATED);
 function connectdb($config)
 {
+    try {
+        $connection = @mysqli_connect($config['host'], $config['user'], $config['pass'], $config['db']);
+    } catch (mysqli_sql_exception $exception) {
+        $connection = false;
+    }
 
-    $config["conn"] = mysqli_connect($config['host'], $config['user'], $config['pass'], $config['db'])
-        or die("Unable to connect to MySQL server: check your host, user and pass settings in config.php!");
+    if ($connection === false) {
+        die("Unable to connect to MySQL server: check your host, user and pass settings in config.php!");
+    }
 
+    $config["conn"] = $connection;
     return $config;
 }
 /*
@@ -19,16 +26,23 @@ function connectdb($config)
 */
 function getDBVersion()
 {
-    return mysql_get_server_info();
+    global $config;
+
+    return mysqli_get_server_info($config["conn"]);
 }
 /*
   ===============================================================
 */
 function getDBtables($db)
 {
+    global $config;
+
     $tablelist = array();
-    $tables = mysql_list_tables($db);
-    while ($tbl = mysql_fetch_row($tables)) {
+    $tables = mysqli_query($config["conn"], "SHOW TABLES");
+    if (!$tables) {
+        return $tablelist;
+    }
+    while ($tbl = mysqli_fetch_row($tables)) {
         array_push($tablelist, $tbl[0]);
     }
     return $tablelist;
@@ -87,9 +101,6 @@ function safeIntoDB($config, &$value, $key = null)
             strpos($key, 'filterquery') === false
             && !preg_match("/^'\d\d\d\d-\d\d-\d\d'$/", $value)
         ) { // and don't clean dates
-            if (get_magic_quotes_gpc() && !empty($value) && is_string($value)) {
-                $value = stripslashes($value);
-            }
             $value = mysqli_real_escape_string($config["conn"], $value);
         } else {
             return $value;

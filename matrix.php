@@ -110,6 +110,9 @@ $angles = query("getqualities", $config, $values, $sort);
 $i = 0;
 $attrStat = array();
 foreach ((array) $angles as $row) {
+    if (!is_array($row) || !isset($row['qId'])) {
+        continue;
+    }
     $values['qQuery'] = "`parId`";
     if ($qLimit == 'e') {
         $values['qQuery'] = "`parIdCareer`"; // special case for Career view
@@ -120,6 +123,9 @@ foreach ((array) $angles as $row) {
     // call qualities attributes
     $j = 0;
     foreach ((array) $qualities as $rowN) {
+        if (!is_array($rowN) || !isset($rowN['qId'])) {
+            continue;
+        }
         $values['qValue'] = $rowN['qId'];
         $qualities[$j]['attributes'] = query("getqualities", $config, $values, $sort);
         foreach ((array) $qualities[$j]['attributes'] as $attr) {
@@ -181,7 +187,10 @@ $values['qValue'] = 'variable';
 $attrVar = query("getqualities", $config, $values, $sort);
 // error check, we need these variables for all displays
 $needVars = array('unqhoursyear', 'unqhoursyearbrainless');
-foreach ($attrVar as $var) {
+foreach ((array) $attrVar as $var) {
+    if (!is_array($var) || !isset($var['format'])) {
+        continue;
+    }
     if (in_array($var['format'], $needVars)) {
         $needVars = array_diff($needVars, [$var['format']]);
     }

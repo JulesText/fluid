@@ -1,16 +1,21 @@
 <?php
 
+require_once('request.inc.php');
+normaliseCurrentRequest();
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-if (isset($_SESSION['views'])) {
-    $_SESSION['views']++;
-} else {
-    $_SESSION['views'] = 1;
-    $_SESSION['categoryId'] = 0;
-    $_SESSION['contextId'] = 0;
-    $_SESSION['message'] = array();
-    $_SESSION['version'] = '';
+$newSession = !isset($_SESSION['views']);
+$_SESSION += array(
+    'categoryId' => 0,
+    'contextId' => 0,
+    'message' => array(),
+    'version' => '',
+    'views' => 0,
+);
+$_SESSION['views']++;
+if ($newSession) {
     foreach ($_COOKIE as $key => $val) {
         $_SESSION[$key] = $val; // retrieve cookie values
     }

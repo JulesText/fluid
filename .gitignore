@@ -25,6 +25,7 @@ dt/*.json
 
 # installation-specific information
 media/
+temp/
 
 # unwanted system files created by osx or windows
 # VS code #

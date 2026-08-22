@@ -10,10 +10,10 @@ $values['note'] = $_POST['note'];
 $values['date'] = $_POST['date'];
 $values['repeat'] = (int) $_POST['repeat'];
 $values['suppressUntil'] = $_POST['suppressUntil'];
-$values['delete'] = $_POST['delete']{0};
+$values['delete'] = ($_POST['delete'] ?? 'n')[0];
 $values['noteId'] = (int) $_GET['noteId'];
-$acknowledge = $_POST['acknowledge']{0};
-$referrer = $_POST['referrer']{0};
+$acknowledge = ($_POST['acknowledge'] ?? 'n')[0];
+$referrer = $_POST['referrer'][0];
 
 if ($values['delete'] == "y") {
     $q = 'deletenote';

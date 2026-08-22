@@ -1,6 +1,8 @@
 <?php
 
 include_once 'config.php';
+require_once 'request.inc.php';
+normaliseCurrentRequest();
 $id = $_REQUEST['addonid'];
 $addon = $config['addons'][$id];
 $addon['id'] = $id;

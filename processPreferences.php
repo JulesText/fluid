@@ -5,7 +5,7 @@ require_once('gtdfuncs.php');
 unset($_POST['submit']);
 $newPrefs = $_POST;
 // for each checkbox: if value is set at all, set to TRUE, otherwise set to FALSE
-foreach ($_POST['checkboxes'] as $val) {
+foreach ((array) $_POST['checkboxes'] as $val) {
     $newPrefs[$val] = (isset($_POST[$val]));
 }
 unset($newPrefs['checkboxes']);

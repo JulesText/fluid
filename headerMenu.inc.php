@@ -323,7 +323,13 @@ foreach ($pres as $p) {
     $values['itemId'] = $p['itemId'];
     $lu = query("lookupparentshort", $config, $values, $sort);
     foreach ((array) $lu as $mat) {
-        foreach ($vres as $v) {
+        if (!is_array($mat) || !isset($mat['parentId'])) {
+            continue;
+        }
+        foreach ((array) $vres as $v) {
+            if (!is_array($v) || !isset($v['itemId'])) {
+                continue;
+            }
             if ($mat['parentId'] == $v['itemId']) {
                 $inactive = false;
             }

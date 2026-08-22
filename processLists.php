@@ -134,7 +134,7 @@ switch ($action) {
 
             $sep = '';
             $ids = '';
-            foreach ($_POST['completed'] as $id) {
+            foreach ((array) $_POST['completed'] as $id) {
                 $ids .= $sep . (int) $id;
                 $sep = "','";
             }
@@ -207,7 +207,7 @@ switch ($action) {
           // clear previous
             query("clearitemlists", $config, $values);
           // add current
-            foreach ($_POST['addedList'] as $id) {
+            foreach ((array) $_POST['addedList'] as $id) {
                 $values['listId'] = $id;
                 query("newlistparent", $config, $values);
             }
@@ -240,7 +240,7 @@ switch ($action) {
           // clear existing
             query("clearitemlists", $config, $values);
           // add current
-            foreach ($_POST['addedList'] as $id) {
+            foreach ((array) $_POST['addedList'] as $id) {
                 $values['itemId'] = $_POST['itemId'];
                 $values['listId'] = $id;
                 query("newlistparent", $config, $values);
@@ -277,7 +277,7 @@ switch ($action) {
         }
         $sep = '';
         $ids = '';
-        foreach ($_POST['ignored'] as $id) {
+        foreach ((array) $_POST['ignored'] as $id) {
             $ids .= $sep . (int) $id;
             $sep = "','";
         }
@@ -286,7 +286,7 @@ switch ($action) {
         $cnt = query($query, $config, $values);
         $sep = '';
         $ids = '';
-        foreach ($_POST['completed'] as $id) {
+        foreach ((array) $_POST['completed'] as $id) {
             $ids .= $sep . (int) $id;
             $sep = "','";
         }

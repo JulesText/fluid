@@ -155,7 +155,7 @@ function trimTaggedString($inStr, $inLength = 0, $keepTags = true)
             }
         } else {
             foreach ($permittedTags as $thisTag) {
-                if ($stillHere && ($inStr{$thisChar} === '<') && (preg_match($thisTag[0], substr($inStr, $thisChar), $matches) > 0)) {
+                if ($stillHere && ($inStr[$thisChar] === '<') && (preg_match($thisTag[0], substr($inStr, $thisChar), $matches) > 0)) {
                     $thisChar += strlen($matches[0]);
                     $stillHere = false;
                     if ($keepTags) {
@@ -166,7 +166,7 @@ function trimTaggedString($inStr, $inLength = 0, $keepTags = true)
             } // end of else foreach
         }
         // now check for & ... control characters
-        if ($stillHere && ($inStr{$thisChar} === '&') && (preg_match($ampStrings, substr($inStr, $thisChar), $matches) > 0)) {
+        if ($stillHere && ($inStr[$thisChar] === '&') && (preg_match($ampStrings, substr($inStr, $thisChar), $matches) > 0)) {
             if (strlen(html_entity_decode($matches[0])) == 1) {
                 $visibleLength++;
                 $outStr .= $matches[0];
@@ -177,7 +177,7 @@ function trimTaggedString($inStr, $inLength = 0, $keepTags = true)
         // just a normal character, so add it to the string
         if ($stillHere) {
             $visibleLength++;
-            $outStr .= $inStr{$thisChar};
+            $outStr .= $inStr[$thisChar];
             $thisChar++;
         } // end of if
         $keepGoing = (($thisChar < strlen($inStr)) && ($visibleLength < $inLength));
@@ -811,7 +811,7 @@ function columnedTable($cols, $data, $link = 'itemReport.php')
                     echo "$link?itemId={$row['itemId']}";
                 }
                 echo "' title='"
-                    ,makeclean($row['description']),"'>"
+                    ,makeclean($row['description'] ?? ''),"'>"
                     ,makeclean($row['title']),"</a></td>\n";
             }
         }
@@ -1089,33 +1089,31 @@ function clean_array($arr)
 
 function create_variable_set($name, $qId, $pqId = 0, $power = 1)
 {
-
-    global ${$name}, ${$name . '_p'}, ${$name . '_w'};
     global $config, $_POST, $weights;
 
   // main variable value
     $_POST["id4"] = $qId;
     include('matrixQuery.php');
     if (isset($value) && filter_var($value, FILTER_VALIDATE_FLOAT) !== false) {
-        ${$name} = $value ** $power;
+        $GLOBALS[$name] = $value ** $power;
 
       // main variable weight
-        ${$name . '_w'} = $weights[$qId];
+        $GLOBALS[$name . '_w'] = $weights[$qId];
 
       // p variable value
         $_POST["id4"] = $pqId;
         include('matrixQuery.php');
         if ($pqId > 0 && isset($value) && filter_var($value, FILTER_VALIDATE_FLOAT) !== false) {
           // multiply main variable value by probability
-            ${$name . '_p'} = $value + 1;
-            ${$name} *= ${$name . '_p'} / 10;
+            $GLOBALS[$name . '_p'] = $value + 1;
+            $GLOBALS[$name] *= $GLOBALS[$name . '_p'] / 10;
         } else {
-            ${$name . '_p'} = null;
+            $GLOBALS[$name . '_p'] = null;
         }
     } else {
-        ${$name} = null;
-        ${$name . '_w'} = null;
-        ${$name . '_p'} = null;
+        $GLOBALS[$name] = null;
+        $GLOBALS[$name . '_w'] = null;
+        $GLOBALS[$name . '_p'] = null;
     }
 }
 
@@ -1133,11 +1131,6 @@ function calculate_score($res, $save_to, $vars, $factor, $scale)
     }
 
     global $config, $_POST;
-    global ${$res . '_score'}, ${$res . '_score_w'};
-    foreach ($vars as $var) {
-        global ${$var}, ${$var . '_w'}, ${$var . '_p'};
-    }
-
     $n = count($vars);
     if ($debug) {
         file_put_contents('_response.txt', PHP_EOL . '$n = ' . count($vars));
@@ -1147,17 +1140,17 @@ function calculate_score($res, $save_to, $vars, $factor, $scale)
     $arr = [];
     for ($i = 0; $i < $n; $i++) {
         $var = $vars[$i];
-        if (!is_null(${$var})) {
+        if (!is_null($GLOBALS[$var])) {
             $arr[] = $var;
         }
         if ($debug) {
-            file_put_contents('_response.txt', PHP_EOL . '$' . $var . ' = ' . ${$var}, FILE_APPEND);
+            file_put_contents('_response.txt', PHP_EOL . '$' . $var . ' = ' . $GLOBALS[$var], FILE_APPEND);
         }
         if ($debug) {
-            file_put_contents('_response.txt', PHP_EOL . '$' . $var . '_w = ' . ${$var . '_w'}, FILE_APPEND);
+            file_put_contents('_response.txt', PHP_EOL . '$' . $var . '_w = ' . $GLOBALS[$var . '_w'], FILE_APPEND);
         }
         if ($debug) {
-            file_put_contents('_response.txt', PHP_EOL . '$' . $var . '_p = ' . ${$var . '_p'}, FILE_APPEND);
+            file_put_contents('_response.txt', PHP_EOL . '$' . $var . '_p = ' . $GLOBALS[$var . '_p'], FILE_APPEND);
         }
     }
 
@@ -1172,7 +1165,7 @@ function calculate_score($res, $save_to, $vars, $factor, $scale)
     } else {
         $w = 0;
         foreach ($arr as $var) {
-            $w += ${$var . '_w'};
+            $w += $GLOBALS[$var . '_w'];
         }
         $w /= $n;
         if ($debug) {
@@ -1181,7 +1174,7 @@ function calculate_score($res, $save_to, $vars, $factor, $scale)
 
         $score = 0;
         foreach ($arr as $var) {
-            $score += ${$var} * ${$var . '_w'} / $w;
+            $score += $GLOBALS[$var] * $GLOBALS[$var . '_w'] / $w;
         }
         if ($debug) {
             file_put_contents('_response.txt', PHP_EOL . '$score = ' . $score, FILE_APPEND);
@@ -1193,13 +1186,13 @@ function calculate_score($res, $save_to, $vars, $factor, $scale)
         }
     }
 
-    ${$res . '_score'} = $score;
-    ${$res . '_score_w'} = $w;
+    $GLOBALS[$res . '_score'] = $score;
+    $GLOBALS[$res . '_score_w'] = $w;
     if ($debug) {
-        file_put_contents('_response.txt', PHP_EOL . '$' . $res . '_score' . ' = ' . ${$res . '_score'}, FILE_APPEND);
+        file_put_contents('_response.txt', PHP_EOL . '$' . $res . '_score' . ' = ' . $GLOBALS[$res . '_score'], FILE_APPEND);
     }
     if ($debug) {
-        file_put_contents('_response.txt', PHP_EOL . '$' . $res . '_score_w' . ' = ' . ${$res . '_score_w'}, FILE_APPEND);
+        file_put_contents('_response.txt', PHP_EOL . '$' . $res . '_score_w' . ' = ' . $GLOBALS[$res . '_score_w'], FILE_APPEND);
     }
 
   // save

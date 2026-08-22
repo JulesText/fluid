@@ -33,6 +33,8 @@ $title = ucwords(strtolower(ltrim($title)));
      /*   }
     } */
 
+echo '<link rel="search" type="application/opensearchdescription+xml" title="FI Chat" href="https://x.jules.net.au/fi_search.xml">' . PHP_EOL;
+
 echo "<title>" . $title . "</title>\n";
 
 if ($config['debug'] || defined('_DEBUG'))

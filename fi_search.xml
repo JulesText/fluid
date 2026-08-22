@@ -1,0 +1,7 @@
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+    <ShortName>FI Chat</ShortName>
+    <Description>Search using FI Chat</Description>
+    <InputEncoding>UTF-8</InputEncoding>
+    <Image height="16" width="16" type="image/x-icon">https://x.jules.net.au/favicon.gif</Image>
+    <Url type="text/html" method="get" template="https://x.jules.net.au/fi.php?q={searchTerms}"/>
+</OpenSearchDescription>

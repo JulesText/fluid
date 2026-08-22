@@ -72,7 +72,7 @@ $db = NULL; // Close the database connection
     </main>
 
     <form class="msger-inputarea">
-        <textarea rows="2" class="msger-input" id="msger-input" placeholder="Enter your message..." require><?php echo htmlspecialchars($search_query); ?></textarea>
+        <textarea rows="2" class="msger-input" id="msger-input" placeholder="Enter your message..." require></textarea>
         <button type="submit" class="msger-send-btn">Send</button>
     </form>
 </section>

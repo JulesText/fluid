@@ -195,7 +195,7 @@ echo "</p>\n</div>\n";
                 echo "	</td> --> <td style='vertical-align: text-top;' class='JKSmallPadding'>\n";
 //JJK projects to deliver
 foreach ($deliver as $row) {
-    echo '<a href = "item.php?itemId=' . $row['itemId'] . '&pType=p" title="Edit ' . htmlspecialchars(stripslashes($row['title'])) . '">' . stripslashes($row['title']) . "</a><br>\n";
+    echo '<a href = "item.php?itemId=' . $row['itemId'] . '&pType=p" title="Edit ' . htmlspecialchars(stripslashes($row['title']), ENT_COMPAT | ENT_HTML401, $config['charset']) . '">' . stripslashes($row['title']) . "</a><br>\n";
 //projects to deliver proper follows
     echo nl2br(stripslashes($row['description']));
 }
@@ -212,7 +212,7 @@ foreach ($deliver as $row) {
 //JJK DRAW awareness details
             echo "<td style='vertical-align: text-top;'>\n";
         while($row = mysql_fetch_assoc($awareness)) {
-            echo '<a href = "item.php?itemId='.$row['itemId'].'&pType=p" title="Edit '.htmlspecialchars(stripslashes($row['title'])).'">'.stripslashes($row['title'])."</a>\n";
+            echo '<a href = "item.php?itemId='.$row['itemId'].'&pType=p" title="Edit '.htmlspecialchars(stripslashes($row['title']), ENT_COMPAT | ENT_HTML401, $config['charset']).'">'.stripslashes($row['title'])."</a>\n";
 //awareness proper follows
             echo nl2br(stripslashes($row['description']));
                 }

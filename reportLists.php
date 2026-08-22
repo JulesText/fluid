@@ -4,7 +4,7 @@ include_once('lists.inc.php');
 
 $result = query("select{$check}list", $config, $values, $sort);
 // var_dump($result);die;
-if ($result == 1) {
+if (!is_array($result) || count($result) === 0) {
     echo "<p class='error'>That {$check}list does not exist</p>\n";
     include_once('footer.php');
     exit();

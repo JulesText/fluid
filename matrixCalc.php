@@ -358,7 +358,7 @@ foreach ((array) $attributes as $attr) {
                 foreach ((array) $itemVars as $item) {
                     $values['listId'] = $item['listId'];
                     $res = query("selectchecklist", $config, $values, $sort);
-                    if (count($res) > 0 && is_array($res)) {
+                    if (is_array($res) && count($res) > 0) {
                         if (!is_array($items)) {
                             $items = array(); // error handling where no child match in main table, but match from other table, ie checklist hours
                         }

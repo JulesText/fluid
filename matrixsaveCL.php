@@ -11,7 +11,7 @@ $frequency = 1; // default once a year
 
 $result = query("selectchecklist", $config, $values, $sort);
 
-if (count($result) > 0) {
+if (is_array($result) && count($result) > 0) {
     $res = array();
     $res = $result[0];
     if (isset($res['frequency']) && $res['frequency'] > 0) {
@@ -50,7 +50,7 @@ $prioritise = $values['prioritise'];
 
 $result1 = query("getchecklistitems", $config, $values, $sort);
 
-if (count($result1) > 0) {
+if (is_array($result1) && count($result1) > 0) {
     foreach ((array) $result1 as $row) {
         if ($prioritise == -1 || ($row['priority'] <= $prioritise && $prioritise > -1)) {
             $effort += $row['effort'];

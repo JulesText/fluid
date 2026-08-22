@@ -27,7 +27,7 @@ $listMena = array();
 $values = array();
 $values['qId'] = 1000;
 $lists = query('lookupqualities', $config, $values, $sort);
-if (count($lists) > 0 && is_array($lists)) {
+if (is_array($lists) && count($lists) > 0) {
     foreach ((array) $lists as $l) {
         if ($l['value'] == 'y') {
             $sdays[] = $l;
@@ -71,7 +71,7 @@ foreach ((array) $vres as $visn) {
                 $values['queryKey'] = $check . 'listId';
                 $values['queryValue'] = $list['listId'];
                 $priorities = query("priorityselectbox", $config, $values, $sort);
-                if (count($priorities) == 1) {
+                if (is_array($priorities) && count($priorities) == 1) {
                     continue 1;
                 }
             }

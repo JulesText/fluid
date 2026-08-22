@@ -89,7 +89,7 @@ require_once("headerHtml.inc.php");
                                 $values['parentId'] = $_REQUEST['visId'];
                                 $values['itemId'] = $resCh['itemId'];
                                 $resultV = query("checklookup", $config, $values, $sort);
-                                if (count($resultV) > 0 && is_array($resultV)) {
+                                if (is_array($resultV) && count($resultV) > 0) {
                                     echo 'checked="checked"';
                                 } else {
                                     echo 'style="outline: 3px solid #0c0;"';

@@ -2,11 +2,16 @@
 
 require_once('headerDB.inc.php');
 
-$db = new PDO('mysql:host=' . $config["host"] . ';dbname=' . $config["db"], $config["user"], $config["pass"]);
+$db = new PDO(
+    'mysql:host=' . $config["host"] . ';dbname=' . $config["db"],
+    $config["user"],
+    $config["pass"],
+    array(PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT)
+);
 
 //table,updCol,pcol1,pid1,col2,id2,col3,id3,col4,id4,col5,id5,updVal
 
-$updVal = htmlspecialchars_decode($_POST["updVal"]);
+$updVal = htmlspecialchars_decode((string) ($_POST["updVal"] ?? ''), ENT_COMPAT | ENT_HTML401);
 $updVal = str_replace(array(' .CL', ' .LIST'), '', $updVal);
 if (substr($updVal, -4) == '<br>') {
     $updVal = substr_replace($updVal, '', -4);

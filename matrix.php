@@ -92,7 +92,7 @@ if (isset($_GET['test']) && $_GET['test'] == true) {
     $test = false;
 }
 if (isset($_GET['vLimit'])) {
-    $vLimit = $_GET['vLimit'];
+    $vLimit = (int) $_GET['vLimit'];
 } else {
     $vLimit = false;
 }
@@ -244,7 +244,12 @@ if ($qLimit == 'h') { // Qual: Scen [scenario]
     }
     $values['filterquery'] .= ' WHERE i.itemId = ' . $vLimit;
     $vis = query("getitems", $config, $values, $sort);
-    $mxTitle = $vis[0]['title'];
+    if (is_array($vis) && isset($vis[0])) {
+        $mxTitle = $vis[0]['title'];
+        if ($vis[0]['isSomeday'] === 'y') {
+            $live = false;
+        }
+    }
 }
 
 require_once("headerHtml.inc.php");
@@ -317,6 +322,9 @@ if ($vLimit) {
 }
 $altsort['getitems'] = $sort['getitemsvisn'];
 $vis = query("getitems", $config, $values, $altsort);
+if (!is_array($vis)) {
+    $vis = array();
+}
 $visIds = array();
 
 // limit visions to calculate

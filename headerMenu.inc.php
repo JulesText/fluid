@@ -231,7 +231,7 @@ $listNoMen = '';
 $values = array();
 $values['qId'] = 1000;
 $lists = query('lookupqualities', $config, $values, $sort);
-if (count($lists) > 0 && is_array($lists)) {
+if (is_array($lists) && count($lists) > 0) {
     foreach ((array) $lists as $l) {
         if ($l['value'] == 'y') {
             $sdays[] = $l;

@@ -661,7 +661,7 @@ $tst = 'list';
 $nextURL = "item.php?itemId=" . $values['itemId'];
   }
   $_SESSION[$key] = $tst;
-  $nextURL = html_entity_decode($nextURL);
+  $nextURL = html_entity_decode($nextURL, ENT_COMPAT | ENT_HTML401);
 
     if ($updateGlobals['captureOutput']) {
         $logtext = ob_get_contents();

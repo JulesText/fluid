@@ -109,7 +109,12 @@ create_variable_set('unqhours', 511, 512);
 // calculations //
 //////////////////
 
-$db = new PDO('mysql:host=' . $config["host"] . ';dbname=' . $config["db"], $config["user"], $config["pass"]);
+$db = new PDO(
+    'mysql:host=' . $config["host"] . ';dbname=' . $config["db"],
+    $config["user"],
+    $config["pass"],
+    array(PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT)
+);
 
 //
 /* Impact */

@@ -94,7 +94,12 @@ $costextras = (isset($value) && ctype_digit($value)) ? intval($value) : 0;
 
 // calculations
 
-$db = new PDO('mysql:host=' . $config["host"] . ';dbname=' . $config["db"], $config["user"], $config["pass"]);
+$db = new PDO(
+    'mysql:host=' . $config["host"] . ';dbname=' . $config["db"],
+    $config["user"],
+    $config["pass"],
+    array(PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT)
+);
 
 // calculation for unqhours, Effort / Year
 if (

@@ -6,6 +6,8 @@
 
 */
 error_reporting(E_ALL ^ E_DEPRECATED);
+mysqli_report(MYSQLI_REPORT_OFF);
+
 function connectdb($config)
 {
     try {
@@ -336,7 +338,11 @@ function getsql($config, $values, $sort, $querylabel)
 				FROM `" . $config['prefix'] . "lookuplist`
 				WHERE 1 = 1";
             if (isset($values['parentId'])) {
-                $sql .= " AND `parentId` = {$values['parentId']}";
+                if (is_numeric($values['parentId'])) {
+                    $sql .= " AND `parentId` = " . (int) $values['parentId'];
+                } else {
+                    $sql .= " AND 1 = 0";
+                }
             }
             if (isset($values['type'])) {
                 $sql .= " AND `listType` = '{$values['type']}'";

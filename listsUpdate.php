@@ -66,7 +66,7 @@ if ($_GET['visId'] > 0 && $_GET['visId'] != $_GET['itemId']) {
     $values['parentId'] = $_GET['visId'];
     $resultV = query("getchildlists", $config, $values, $sort);
     //var_dump($values);
-    if (count($resultV) > 0 && is_array($resultV)) {
+    if (is_array($resultV) && count($resultV) > 0) {
         foreach ((array) $resultV as $l) {
             array_push($highlights, $l['listId']);
         }

@@ -167,7 +167,7 @@ function trimTaggedString($inStr, $inLength = 0, $keepTags = true)
         }
         // now check for & ... control characters
         if ($stillHere && ($inStr[$thisChar] === '&') && (preg_match($ampStrings, substr($inStr, $thisChar), $matches) > 0)) {
-            if (strlen(html_entity_decode($matches[0])) == 1) {
+            if (strlen(html_entity_decode($matches[0], ENT_COMPAT | ENT_HTML401)) == 1) {
                 $visibleLength++;
                 $outStr .= $matches[0];
                 $thisChar += strlen($matches[0]);
@@ -607,7 +607,7 @@ function nextScreen($url)
 
     global $config;
 
-    $cleanurl = htmlspecialchars($url);
+    $cleanurl = htmlspecialchars($url, ENT_COMPAT | ENT_HTML401, $config['charset']);
 
     if ($config['debug'] & _GTD_WAIT) {
         echo "<p>Next screen is <a href='$cleanurl'>$cleanurl</a> - would be auto-refresh in non-debug mode</p>";

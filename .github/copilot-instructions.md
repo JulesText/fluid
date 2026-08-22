@@ -10,7 +10,7 @@
 - PHP formatting/linting:
   - Check all PHP: `composer check:php` or `vendor/bin/phpcs --standard=phpcs.xml.dist`
   - Fix all PHP: `composer format:php`
-  - Check PHP 8.3 compatibility: `composer check:php-compat`
+  - Check PHP 7.4 through 8.3 compatibility: `composer check:php-compat`
   - Non-blocking 120-column review: `composer review:php-lines`
   - Check one PHP file: `php -l item.php && vendor/bin/phpcs --standard=phpcs.xml.dist item.php`
 - Frontend formatting:

@@ -1,18 +1,15 @@
-let CHAT_ID;
-
 const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get('chat_id') === null) {
-  window.location.href = api_file + '?chat_id=' + uuidv4();
-} else {
-  CHAT_ID = urlParams.get('chat_id');
+let CHAT_ID = urlParams.get('chat_id');
+if (!CHAT_ID) {
+  CHAT_ID = uuidv4();
+  urlParams.set('chat_id', CHAT_ID);
+  window.history.replaceState(null, '', api_file + '?' + urlParams.toString());
 }
 
 document.getElementById("chat_id").value = CHAT_ID;
 
 const chatSummary = get(".chat_summary");
 chatSummary.textContent = CHAT_ID;
-
-getChat()
 
 var areaScroll = document.getElementById("area-scroll");
 
@@ -36,7 +33,7 @@ function getChat() {
     var formData = new FormData();
     formData.append('chat_id', CHAT_ID);
     formData.append('query', 'get_chat');
-    fetch('fi_require.php', {method: 'POST', body: formData})
+    return fetch('fi_require.php', {method: 'POST', body: formData})
         .then(response => response.json())
         .then(chatHistory => {
             for (const row of chatHistory) {
@@ -210,6 +207,17 @@ msgerForm.addEventListener("submit", event => {
     if (!msgText) return;
     msgerInput.value = "";
     sendMsg(msgText)
+});
+
+const initialQuery = msgerInput.value.trim();
+if (initialQuery) {
+  urlParams.delete('q');
+  window.history.replaceState(null, '', api_file + '?' + urlParams.toString());
+  msgerInput.value = "";
+}
+
+getChat().then(() => {
+  if (initialQuery) sendMsg(initialQuery);
 });
 
 function sendMsg(msg) {

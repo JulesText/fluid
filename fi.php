@@ -7,8 +7,9 @@ require_once("headerHtml.inc.php");
 $api_file = 'fi.php';
 
 include('fi_require.php');
-$search_query = isset($_GET['q']) ? $_GET['q'] : '';
-$other_chats = get_other_chats($_GET['chat_id'], $db);
+$search_query = isset($_GET['q']) && is_string($_GET['q']) ? $_GET['q'] : '';
+$chat_id = isset($_GET['chat_id']) && is_string($_GET['chat_id']) ? $_GET['chat_id'] : '';
+$other_chats = get_other_chats($chat_id, $db);
 $db = NULL; // Close the database connection
 
 ?>
@@ -69,7 +70,7 @@ $db = NULL; // Close the database connection
     </main>
 
     <form class="msger-inputarea">
-        <textarea rows="2" class="msger-input" id="msger-input" placeholder="Enter your message..." require></textarea>
+        <textarea rows="2" class="msger-input" id="msger-input" placeholder="Enter your message..." required><?php echo htmlspecialchars($search_query, ENT_QUOTES, 'UTF-8'); ?></textarea>
         <button type="submit" class="msger-send-btn">Send</button>
     </form>
 </section>

@@ -7,7 +7,10 @@ $comment_id = insert_comment($_POST['chat_id'], $_POST['msg'], $db);
 $result = get_chat($_POST['chat_id'], $db);
 
 // format for API
-$history[] = ['role' => 'system', 'content' => ''];
+$history[] = [
+  'role' => 'system'
+  , 'content' => 'Respond with plain text and no markdown, headings, bold text, emojis, or decorative formatting. Allow code blocks and plain tables.'
+  ];
 foreach ($result as $row) {
   $history[] = ['role' => 'user', 'content' => $row['comment_human']];
   $history[] = ['role' => 'assistant', 'content' => $row['comment_ai']];

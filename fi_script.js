@@ -246,11 +246,6 @@ function sendMsg(msg) {
           // reload page if formatted code or markdown included
           if (res.includes("```") || res.includes("**") || res.includes("##")) {
             window.location.href = 'fi.php?chat_id=' + CHAT_ID + '&model_id=' + model_id;
-            // var lang = 'html';
-            // if (res.includes("```javascript")) lang = 'javascript';
-            // var regex = /```([^`]+)```/g;
-            // res = res.replace(regex, '<pre><code class="' + lang + '">$1</code></pre>');
-            // div.innerHTML = res;
           } else {
             scrollDown(areaScroll);
           }
@@ -262,37 +257,6 @@ function sendMsg(msg) {
         });
     msgerSendBtn.disabled = false
 }
-
-// async function streamChunks(div, url) { // not developed
-//   try {
-//     const response = await fetch(url);
-//     for await (const chunk of response.body) {
-//       alert(chunk);
-//       if (chunk.data == "[DONE]") {
-//           var res = div.innerHTML;
-//           if (res.split("`").length - 1 === 3) { // if has code then rewrite for highlight js script
-//             var regex = /```([^`]+)```/g;
-//             res = res.replace(regex, '<pre><code class="html language-html hljs">$1</code></pre>'); // but assumes there is only 1 code chunk in the response, or will not write properly
-//             div.innerHTML = res;
-//           }
-//           msgerSendBtn.disabled = false
-//           response.close();
-//       } else {
-//           let txt = JSON.parse(chunk.data).choices[0].delta.content;
-//           if (txt !== undefined) {
-//               div.innerHTML += txt.replace(/(?:\r\n|\r|\n)/g, '<br>');
-//           }
-//       }
-//     }
-//   } catch (e) {
-//     if (e instanceof TypeError) {
-//       console.log(e);
-//       alert("TypeError: Browser may not support async iteration");
-//     } else {
-//       alert(`Error in async iterator: ${e}.`);
-//     }
-//   }
-// }
 
 // ---- Utils ---- //
 

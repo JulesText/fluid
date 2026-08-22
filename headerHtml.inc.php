@@ -64,9 +64,6 @@ echo "
 <!-- theme screen stylesheet (should check to see if this actually exists) -->
 <link rel="stylesheet" href="themes/<?php echo $config['theme']; ?>/style_screen.css" type="text/css" media="Screen" />
 
-<!-- theme script (should check to see if this actually exists) -->
-<script type="text/javascript" src="themes/<?php echo $config['theme']; ?>/theme.js"></script>
-
 <!-- printing stylesheet -->
 <link rel="stylesheet" href="print.css" type="text/css" media="print" />
 

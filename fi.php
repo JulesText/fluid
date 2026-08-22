@@ -46,10 +46,7 @@ $db = NULL; // Close the database connection
     </header>
 
     <div id="popup-menu">
-      <form action='listItems.php?type=*&everything=true&liveparents=*' method='post' style='text-align:right'>
-        <a href="">X</a>&nbsp;&nbsp;&nbsp;Search
-        <input type='text' name='needle' id='needle' style='width: 150px' value="<?php echo htmlspecialchars($search_query); ?>">
-      </form>
+      <form action='listItems.php?type=*&everything=true&liveparents=*' method='post' style='text-align:right'><a href="">X</a>&nbsp;&nbsp;&nbsp;Search<input type='text' name='needle' id='needle' style='width: 150px'></form>
       <?php
       foreach ($other_chats as $row) {
         $descrip = $row["chat_summary"];

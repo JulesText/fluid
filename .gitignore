@@ -47,3 +47,4 @@ temp/
 ehthumbs.db
 Thumbs.db
 .aider*
+/.playwright-mcp/

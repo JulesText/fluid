@@ -1240,7 +1240,7 @@ function toggleCheckB(ctype) {
 function calcFormulae (vLimit) {
 
     // option for matrixCalc.php to print attribute values to file for debug (_response.txt)
-    // values: false, result, yrsval, vsumvisn, certainties, visions, valuessumhrs,
+    // values: false, result, certainties, visions, valuessumhrs,
     //         contextssum, valuessum, optimise, timeline, tlinevis, childitems, inactiveitems
     //         or attribute id (i.e. '511')
     var debugSave = 'false';

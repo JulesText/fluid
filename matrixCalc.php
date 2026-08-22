@@ -62,9 +62,6 @@ $contextssum = array();
 // initialise temporary array to collate scores for optimising
 $scores = array();
 
-// initialise temporary array to collate years for value scores
-$yrsval = array();
-
 // initialise temporary array to collate timeline results
 $timeline = array();
 
@@ -240,7 +237,7 @@ foreach ((array) $attributes as $attr) {
         $attr['formulaSum1'] == null &&
         $attr['formulaSum2'] == null &&
         $attr['formulaVis1'] == null &&
-        $attr['formulaSum2'] == null
+        $attr['formulaVis2'] == null
     ) {
         $skipqIds[] = $attr['qId'];
     }
@@ -751,9 +748,6 @@ foreach ((array) $attributes as $attr) {
                     $yrend = count($unqtimelineIds) - 1; // - 1 to ignore $unqtimelineIds[0]
                 }
 
-                // years for value product
-                $yrsval[] = array('type' => $item['itemType'], 'visId' => $visn['itemId'], 'id' => $item['itemId'], 'active' => $active, 'yrs' => $yrend - $yrbegin + 1);
-
                 // process value for each year item on timeline
                 // 0 is base value used for sum of weighted value results per hour per year
                 $yr = 0;
@@ -992,82 +986,6 @@ if (isset($yearenqId)) {
 }
 
 
-// process value year scores
-$yrsval = array_values(array_unique($yrsval, SORT_REGULAR));
-
-// initialise temp vision array
-$valuessumvisn = array();
-foreach ((array) $visions as $visn) {
-    if ($visn['isSomeday'] !== 'y' && $visn['dateCompleted'] == '') {
-        $active = 1;
-    } else {
-        $active = 0;
-    }
-    $valuessumvisn[$visn['itemId']] = array('active' => $active);
-}
-// process items
-foreach ((array) $scores as $score) {
-    if (!isset($valuessumvisn[$score['visId']][$score['attrId']])) {
-        $valuessumvisn[$score['visId']][$score['attrId']] = 0;
-    }
-    foreach ((array) $yrsval as $item) {
-        if (
-            $item['type'] == $score['type'] &&
-            $item['visId'] == $score['visId'] &&
-            $item['id'] == $score['id']
-        ) {
-            # error check and clean
-            if (!is_numeric($score['value'])) {
-                file_put_contents('_response.txt', 'cleaned, but poorly formed $score[value] for item type ' . $item['type'] . ' item id ' . $item['id'] . ' visId ' . $item['visId'] . ':"' . $score['value'] . '"' . PHP_EOL, FILE_APPEND);
-                $score['value'] = preg_replace('/[^0-9]/', '', $score['value']); # remove non-numeric
-                $score['value'] = (int) $score['value']; # if no numbers remain convert to 0
-            }
-
-            # calculate
-            $valuessumvisn[$score['visId']][$score['attrId']] += $item['yrs'] * (int) $score['value'] * $item['active'];
-            break;
-        }
-    }
-}
-
-// push vision value sums onto the final result
-$formsummary = array('a' => 0, 'b' => 0);
-$valuessummaryn = array();
-foreach ((array) $valuessumvisn as $key => $visn) {
-    foreach ((array) $visn as $valkey => $value) {
-        if ($valkey == 'active') {
-            $active = $value;
-            continue;
-        }
-        if (!isset($valuessummaryn[$valkey])) {
-            $valuessummaryn[$valkey] = $formsummary;
-        }
-
-        if ($value >= 0) {
-            $value = ceil($value);
-        } else {
-            $value = floor($value);
-        }
-        $result[] = array('type' => 'v', 'visId' => $key, 'attrId' => $valkey, 'value' => $value);
-
-        // if vision is live then increment summary value sums
-        if ($active) {
-            if ($value >= 0) {
-                $valuessummaryn[$valkey]['a'] += $value;
-            } else {
-                $valuessummaryn[$valkey]['b'] += $value;
-            }
-        }
-    }
-}
-
-// push summary value sums onto final result
-foreach ((array) $valuessummaryn as $key => $summary) {
-    $result[] = array('type' => 'x', 'attrId' => $key, 'form' => 'a', 'value' => $summary['a']);
-    $result[] = array('type' => 'x', 'attrId' => $key, 'form' => 'b', 'value' => $summary['b']);
-}
-
-
 // process optimsing scores
 if ($optim) {
     // process items
@@ -1166,12 +1084,14 @@ foreach ((array) $visions as $visn) {
     $valuessumvis[$visn['itemId']] = 0;
 }
 foreach ((array) $valuessum as $valuesum) {
+    $itemValue = round($valuesum['value']);
+
     // push item value sums onto the final result
-    $result[] = array('type' => $valuesum['type'], 'visId' => $valuesum['visId'], 'itemId' => $valuesum['id'], 'attrId' => $unqvaluessumId, 'value' => round($valuesum['value']));
+    $result[] = array('type' => $valuesum['type'], 'visId' => $valuesum['visId'], 'itemId' => $valuesum['id'], 'attrId' => $unqvaluessumId, 'value' => $itemValue);
 
     // increment vision value sums
     if ($valuesum['active']) {
-        $valuessumvis[$valuesum['visId']] += $valuesum['value'];
+        $valuessumvis[$valuesum['visId']] += $itemValue;
     }
 }
 
@@ -1750,19 +1670,6 @@ switch ($debugSave) {
         file_put_contents(
             '_response.txt',
             '$result: ' . print_r($result, true) . "\n"
-        );
-        break;
-    case 'yrsval':
-        file_put_contents(
-            '_response.txt',
-            '$yrsval: ' . print_r($yrsval, true) . "\n"
-        );
-        break;
-    case 'vsumvisn':
-        file_put_contents(
-            '_response.txt',
-            '$valuessummaryn: ' . print_r($valuessummaryn, true) . "\n" .
-            '$valuessumvisn: ' . print_r($valuessumvisn, true) . "\n"
         );
         break;
     case 'certainties':

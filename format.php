@@ -5,17 +5,21 @@
 
 $t = microtime(true);
 
+$previousDirectory = getcwd();
+chdir(__DIR__);
 require_once('headerDB.inc.php');
+if ($previousDirectory !== false) {
+    chdir($previousDirectory);
+}
 
 $fdb = new PDO(
     'mysql:host=' . $config["host"] . ';dbname=' . $config["db"],
     $config["user"],
     $config["pass"],
-    array(PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT)
+    array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
 );
 
-$fquery = "";
-
+$fqueries = array();
 $fsets = array();
 $ftables = array('checklist', 'list', 'items');
 $ffields = array('title', 'premiseA', 'premiseB', 'conclusion', 'behaviour', 'standard', 'conditions');
@@ -34,24 +38,25 @@ foreach ((array) $fsets as $fset) {
         $i = 0;
         foreach ((array) $ffields as $ffield) {
             // remove double spaces
-            $fquery .= "UPDATE `" . $ftable . "` SET `" . $ffield . "` = REPLACE(`" . $ffield . "`, '  ', ' '); \n";
+            $fqueries[] = "UPDATE `" . $ftable . "` SET `" . $ffield . "` = REPLACE(`" . $ffield . "`, '  ', ' ')";
             // remove leading and trailing spaces
-            $fquery .= "UPDATE `" . $ftable . "` SET `" . $ffield . "` = TRIM(`" . $ffield . "`); \n";
+            $fqueries[] = "UPDATE `" . $ftable . "` SET `" . $ffield . "` = TRIM(`" . $ffield . "`)";
             // ucase else scase
             if (in_array($i, $fucases)) {
-                $fquery .= "UPDATE `" . $ftable . "` SET `" . $ffield . "` = UCASE(`" . $ffield . "`); \n";
+                $fqueries[] = "UPDATE `" . $ftable . "` SET `" . $ffield . "` = UCASE(`" . $ffield . "`)";
             } else {
-                $fquery .= "UPDATE `" . $ftable . "` SET `" . $ffield . "` = CONCAT(UCASE(LEFT(`" . $ffield . "`,1)),SUBSTRING(`" . $ffield . "`, 2)); \n";
+                $fqueries[] = "UPDATE `" . $ftable . "` SET `" . $ffield . "` = "
+                    . "CONCAT(UCASE(LEFT(`" . $ffield . "`,1)),SUBSTRING(`" . $ffield . "`, 2))";
             }
             $i++;
         }
     }
 }
 
-//echo '<pre>' . $fquery;
-
 if ($config['formatTidy']) {
-    $fresult = $fdb->query($fquery);
+    foreach ($fqueries as $fquery) {
+        $fdb->exec($fquery);
+    }
 }
 
 $fdb = null; // destroy connection

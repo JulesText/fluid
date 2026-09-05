@@ -1308,6 +1308,7 @@ function getsql($config, $values, $sort, $querylabel)
 						    '{$values['sortBy']}',
 						    '{$values['frequency']}',
                 '{$values['effort']}',
+                0,
 						    '{$values['scored']}',
                 '{$values['menu']}',
                 '{$values['prioritise']}',

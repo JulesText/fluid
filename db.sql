@@ -75,11 +75,13 @@ CREATE TABLE `checklist` (
   `sortBy` char(4) NOT NULL DEFAULT '00',
   `frequency` int(11) DEFAULT NULL,
   `effort` int(11) DEFAULT NULL,
+  `effort_day` float NOT NULL DEFAULT 0,
   `scored` enum('y','n') NOT NULL DEFAULT 'n',
   `menu` enum('y','n') NOT NULL DEFAULT 'y',
   `prioritise` int(11) NOT NULL DEFAULT -1,
   `thrs_score` int(3) NOT NULL DEFAULT 80,
-  `thrs_obs` int(3) NOT NULL DEFAULT 5
+  `thrs_obs` int(3) NOT NULL DEFAULT 5,
+  `sortItems` varchar(16) NOT NULL DEFAULT 'priority'
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- --------------------------------------------------------

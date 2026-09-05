@@ -195,13 +195,18 @@ if (!is_numeric($values['instanceId'])) {
 }
 
 ?>
-<h2><a href='<?php echo $createURL; ?>' title='add a new item'>Add items</a></h2>
+<h2>
+    <a href='<?php echo $createURL; ?>' title='add a new item'>Add items</a>
+    <?php if ($result1 && $isChecklist && (!isset($_GET['content']) || $_GET['content'] !== 'bulk')) { ?>
+        <input type='submit' name='listclear' value='Clear checked' form='list-items-form' />
+    <?php } ?>
+</h2>
 <?php if ($result1) {
     //echo '<pre>';var_dump($result1);die;
     // standard layout
     if (!isset($_GET['content']) || $_GET['content'] !== 'bulk') {
         ?>
-        <form action='processLists.php' method='post'>
+        <form action='processLists.php' method='post' id='list-items-form'>
             <?php if ($check && $scored) { ?>
               <table class="datatable sortable" summary="table of list items">
             <?php } else { ?>

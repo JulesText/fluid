@@ -1,5 +1,13 @@
 # Copilot instructions for Fluid
 
+> **DEVONthink MCP access:** DEVONthink is available through its local MCP JSON-RPC
+> listener at `http://localhost:8420` (use `POST`, not browser `GET`). When the
+> user provides a URI such as
+> `x-devonthink-item://752BABFC-D049-44A0-9AB9-8B712BEA5C73`, treat it as a
+> DEVONthink MCP reference: the item UUID is everything after `//`.
+> Requests to read, inspect, or process that item or folder should use the
+> DEVONthink MCP listener with that UUID.
+
 ## Setup and validation
 
 - This is a framework-free PHP application served by Apache/PHP with MySQL or MariaDB. Copy

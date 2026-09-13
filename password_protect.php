@@ -44,8 +44,13 @@ if (!function_exists('showLoginPasswordProtect')) {
 // assume invalid login
 $verified = false;
 
+# local development servers do not require the application login
+$local_hosts = array('localhost', '127.0.0.1', '::1');
+$server_name = isset($_SERVER['SERVER_NAME']) ? trim($_SERVER['SERVER_NAME'], '[]') : '';
+$is_local_host = in_array($server_name, $local_hosts, true);
+
 # check if call turn turn pass off currently active
-if (!$config['password_on']) {
+if (!$config['password_on'] || $is_local_host) {
   // $_SESSION['message'][] = 'Password turned off until ' . date('Y-m-d H:i', $config['pass_off_to']);
     $verified = true;
 }

@@ -67,6 +67,13 @@ if (!$isChecklist) {
 $createURL = "editListItems.php?listId={$row['listId']}&amp;$urlSuffix";
 
 $prioritise = $row['prioritise'];
+$displayPriority = $prioritise;
+if (isset($_GET['priority']) && $_GET['priority'] !== '') {
+    $requestedPriority = filter_var($_GET['priority'], FILTER_VALIDATE_INT);
+    if ($requestedPriority !== false && $requestedPriority >= -1) {
+        $displayPriority = $requestedPriority;
+    }
+}
 
 $item['title'] = $row['title']; // page title
 
@@ -247,14 +254,14 @@ if (!is_numeric($values['instanceId'])) {
                 }
                 ?>
                 <?php foreach ($result1 as $row) {
-                    if ($row['priority'] > $prioritise && $prioritise > -1) {
+                    if ($row['priority'] > $displayPriority && $displayPriority > -1) {
                         continue;
                     }
                     ?>
                     <tr>
                         <td class="JKSmallPadding" tabindex="2">
                             <?php
-                            if ($prioritise > 0) {
+                            if ($displayPriority > 0) {
                                 echo '<span style="opacity: 0.6; font-size: medium;">P<div contenteditable="true" class="inline-div-editable" ' . ajaxUpd($check . "listitemPriority", $row['itemId']) . '>' . $row['priority'] . '</div></span>&nbsp;';
                             }
                             ?><a href="editListItems.php?itemId=<?php

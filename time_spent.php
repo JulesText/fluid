@@ -372,7 +372,7 @@ require_once 'headerHtml.inc.php';
         </details>
 
         <details class="time-spent-details">
-            <summary>Correct current total</summary>
+            <summary>Correct fortnight total</summary>
             <?php if (!$isRunning) { ?>
                 <form method="post" action="time_spent.php" class="time-spent-correction">
                     <input type="hidden" name="csrf" value="<?php echo timeSpentEscape($_SESSION['time_spent_csrf'], $config); ?>" />

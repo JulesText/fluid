@@ -83,25 +83,30 @@ if ($submitted || $has_cookie) {
 
 // if invalid, call form and die
 if (!$verified) {
-    setcookie('verify', '');
+    setcookie('verify', '', array(
+        'expires' => time() - 3600,
+        'path' => '/',
+        'secure' => true,
+        'httponly' => true,
+        'samesite' => 'Strict'
+    ));
     showLoginPasswordProtect("Submit password");
 }
 
-// if valid submission, save
-if ($submitted && $verified) {
-  // cookie options
-  // these are set when creating cookie in browser but can't be read back in php
+// if valid, save or renew
+if ($verified && ($submitted || $has_cookie)) {
     $cooked = array(
-    'expires' => time() + $config['login_timeout'] * 24 * 60 * 60,
-    'path' => '/',
-    'domain' => $_SERVER["HTTP_HOST"], // leading dot for compatibility or use subdomain
-    'secure' => true,
-    'httponly' => true,
-    'samesite' => 'Strict' // None || Lax  || Strict - Firefox soon prefers Lax or Strict
+        'expires' => time() + $config['login_timeout'] * 24 * 60 * 60,
+        'path' => '/',
+        'secure' => true,
+        'httponly' => true,
+        'samesite' => 'Strict'
     );
 
     setcookie('verify', $cred, $cooked);
-    mail($config['email_admin'], 'New fluid login ' . $_SERVER['REMOTE_ADDR'], 'EOM');
+    if ($submitted) {
+        mail($config['email_admin'], 'New fluid login ' . $_SERVER['REMOTE_ADDR'], 'EOM');
+    }
 }
 
 # check if call to turn pass off, i.e. for local app site access such as FR

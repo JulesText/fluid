@@ -336,10 +336,34 @@ CREATE TABLE `timeitems` (
 
 CREATE TABLE `time_spent` (
   `id` tinyint(3) UNSIGNED NOT NULL,
+  `activityName` varchar(255) NOT NULL DEFAULT 'Activity',
   `startDate` date NOT NULL,
   `startedAt` datetime DEFAULT NULL,
   `totalSeconds` bigint(20) UNSIGNED NOT NULL DEFAULT 0,
+  `lowerLimitHours` decimal(6,2) NOT NULL DEFAULT 10.00,
+  `upperLimitHours` decimal(6,2) NOT NULL DEFAULT 20.00,
+  `periodStart` date NOT NULL,
+  `periodEnd` date NOT NULL,
+  `upperLimitNotified` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `updatedAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+--
+-- Table structure for table `time_spent_periods`
+--
+
+CREATE TABLE `time_spent_periods` (
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `periodStart` date NOT NULL,
+  `periodEnd` date NOT NULL,
+  `totalSeconds` bigint(20) UNSIGNED NOT NULL DEFAULT 0,
+  `lowerLimitHours` decimal(6,2) NOT NULL DEFAULT 10.00,
+  `upperLimitHours` decimal(6,2) NOT NULL DEFAULT 20.00,
+  `status` varchar(32) NOT NULL DEFAULT 'Complete',
+  `notes` text DEFAULT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updatedAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  UNIQUE KEY `time_spent_period_dates` (`periodStart`,`periodEnd`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 --
@@ -492,6 +516,12 @@ ALTER TABLE `timeitems`
 -- Indexes for table `time_spent`
 --
 ALTER TABLE `time_spent`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `time_spent_periods`
+--
+ALTER TABLE `time_spent_periods`
   ADD PRIMARY KEY (`id`);
 
 --

@@ -911,9 +911,18 @@ function getsql($config, $values, $sort, $querylabel)
             break;
 
         case "selecttimespent":
-            $sql = "SELECT `id`, `startDate`, `startedAt`, `totalSeconds`
+            $sql = "SELECT `id`, `activityName`, `startDate`, `startedAt`, `totalSeconds`,
+                    `lowerLimitHours`, `upperLimitHours`, `periodStart`, `periodEnd`,
+                    `upperLimitNotified`
 				FROM `" . $config['prefix'] . "time_spent`
 				WHERE `id` = 1";
+            break;
+
+        case "gettimespentperiods":
+            $sql = "SELECT `id`, `periodStart`, `periodEnd`, `totalSeconds`,
+                    `lowerLimitHours`, `upperLimitHours`, `status`, `notes`
+				FROM `" . $config['prefix'] . "time_spent_periods`
+				ORDER BY `periodStart` DESC";
             break;
 
 
@@ -1074,8 +1083,20 @@ function getsql($config, $values, $sort, $querylabel)
 
         case "newtimespent":
             $sql = "INSERT INTO `" . $config['prefix'] . "time_spent`
-						(`id`,`startDate`,`startedAt`,`totalSeconds`)
-				VALUES (1, CURRENT_DATE, NULL, 0)";
+						(`id`,`activityName`,`startDate`,`startedAt`,`totalSeconds`,
+                         `lowerLimitHours`,`upperLimitHours`,`periodStart`,`periodEnd`)
+				VALUES (1, '{$values['activityName']}', '{$values['startDate']}', NULL, 0,
+                        '{$values['lowerLimitHours']}', '{$values['upperLimitHours']}',
+                        '{$values['periodStart']}', '{$values['periodEnd']}')";
+            break;
+
+        case "newtimespentperiod":
+            $sql = "INSERT INTO `" . $config['prefix'] . "time_spent_periods`
+						(`periodStart`,`periodEnd`,`totalSeconds`,`lowerLimitHours`,
+                         `upperLimitHours`,`status`,`notes`)
+				VALUES ('{$values['periodStart']}', '{$values['periodEnd']}', '{$values['totalSeconds']}',
+                        '{$values['lowerLimitHours']}', '{$values['upperLimitHours']}',
+                        '{$values['status']}', '{$values['notes']}')";
             break;
 
         case "parentselectbox":
@@ -1557,8 +1578,46 @@ function getsql($config, $values, $sort, $querylabel)
 
         case "updatetimespentstop":
             $sql = "UPDATE `" . $config['prefix'] . "time_spent`
-				SET `startedAt` = NULL, `totalSeconds` = '{$values['totalSeconds']}'
+				SET `startedAt` = NULL,
+					`totalSeconds` = '{$values['totalSeconds']}'
 				WHERE `id` = 1 AND `startedAt` IS NOT NULL";
+            break;
+
+        case "updatetimespentcurrent":
+            $sql = "UPDATE `" . $config['prefix'] . "time_spent`
+				SET `totalSeconds` = '{$values['totalSeconds']}'
+				WHERE `id` = 1 AND `startedAt` IS NULL";
+            break;
+
+        case "marktimespentnotified":
+            $sql = "UPDATE `" . $config['prefix'] . "time_spent`
+				SET `upperLimitNotified` = 1
+				WHERE `id` = 1";
+            break;
+
+        case "updatetimespentsettings":
+            $sql = "UPDATE `" . $config['prefix'] . "time_spent`
+				SET `activityName` = '{$values['activityName']}',
+                    `lowerLimitHours` = '{$values['lowerLimitHours']}',
+                    `upperLimitHours` = '{$values['upperLimitHours']}'
+				WHERE `id` = 1";
+            break;
+
+        case "rollovertimespent":
+            $sql = "UPDATE `" . $config['prefix'] . "time_spent`
+				SET `periodStart` = '{$values['periodStart']}',
+                    `periodEnd` = '{$values['periodEnd']}',
+                    `totalSeconds` = 0,
+                    `upperLimitNotified` = 0
+				WHERE `id` = 1 AND `startedAt` IS NULL";
+            break;
+
+        case "updatetimespentperiod":
+            $sql = "UPDATE `" . $config['prefix'] . "time_spent_periods`
+				SET `totalSeconds` = '{$values['totalSeconds']}',
+                    `status` = '{$values['status']}',
+                    `notes` = '{$values['notes']}'
+				WHERE `id` = '{$values['id']}'";
             break;
 
         default: // default to assuming that the label IS the query

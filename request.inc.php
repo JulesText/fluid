@@ -227,6 +227,7 @@ function normaliseCurrentRequest()
         'thrs_score',
         'title',
         'travel',
+        'toggle',
         'type',
         'unprioritised',
         'up_priorities',

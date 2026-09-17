@@ -910,6 +910,12 @@ function getsql($config, $values, $sort, $querylabel)
 				{$values['timefilterquery']} ORDER BY `timeframeId` ASC";
             break;
 
+        case "selecttimespent":
+            $sql = "SELECT `id`, `startDate`, `startedAt`, `totalSeconds`
+				FROM `" . $config['prefix'] . "time_spent`
+				WHERE `id` = 1";
+            break;
+
 
         case "lookupparent":
             $sql = "SELECT lu.`parentId`,i.`title` AS `ptitle`,ia.`isSomeday`,ia.`type` AS `ptype`
@@ -1064,6 +1070,12 @@ function getsql($config, $values, $sort, $querylabel)
             $sql = "INSERT INTO `" . $config['prefix'] . "timeitems`
 						(`timeframe`,`description`,`type`)
 				VALUES ('{$values['name']}', '{$values['description']}', '{$values['type']}')";
+            break;
+
+        case "newtimespent":
+            $sql = "INSERT INTO `" . $config['prefix'] . "time_spent`
+						(`id`,`startDate`,`startedAt`,`totalSeconds`)
+				VALUES (1, CURRENT_DATE, NULL, 0)";
             break;
 
         case "parentselectbox":
@@ -1535,6 +1547,18 @@ function getsql($config, $values, $sort, $querylabel)
 						`description`='{$values['description']}',
 						`type`='{$values['type']}'
 				WHERE `timeframeId` ='{$values['id']}'";
+            break;
+
+        case "updatetimespentstart":
+            $sql = "UPDATE `" . $config['prefix'] . "time_spent`
+				SET `startedAt` = '{$values['startedAt']}'
+				WHERE `id` = 1 AND `startedAt` IS NULL";
+            break;
+
+        case "updatetimespentstop":
+            $sql = "UPDATE `" . $config['prefix'] . "time_spent`
+				SET `startedAt` = NULL, `totalSeconds` = '{$values['totalSeconds']}'
+				WHERE `id` = 1 AND `startedAt` IS NOT NULL";
             break;
 
         default: // default to assuming that the label IS the query

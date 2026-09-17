@@ -328,6 +328,20 @@ CREATE TABLE `timeitems` (
   `type` enum('v','o','g','p','a') NOT NULL DEFAULT 'a'
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `time_spent`
+--
+
+CREATE TABLE `time_spent` (
+  `id` tinyint(3) UNSIGNED NOT NULL,
+  `startDate` date NOT NULL,
+  `startedAt` datetime DEFAULT NULL,
+  `totalSeconds` bigint(20) UNSIGNED NOT NULL DEFAULT 0,
+  `updatedAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
 --
 -- Indexes for dumped tables
 --
@@ -473,6 +487,12 @@ ALTER TABLE `timeitems`
   ADD KEY `type` (`type`),
   ADD KEY `timeframe` (`timeframe`(10)),
   ADD KEY `description` (`description`(10));
+
+--
+-- Indexes for table `time_spent`
+--
+ALTER TABLE `time_spent`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT for dumped tables

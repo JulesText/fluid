@@ -112,6 +112,7 @@ function normaliseCurrentRequest()
         'checkboxes',
         'checklistId',
         'chat_id',
+        'csrf',
         'clearitemlists',
         'col2',
         'col3',

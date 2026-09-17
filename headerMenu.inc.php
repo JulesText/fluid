@@ -31,6 +31,7 @@ $menu[] = array("link" => "listLists.php?type=C", 'title' => "Show reusable chec
 // $menu[] = array("link"=>'', 'copy' => TRUE, 'label'=>'Copy page link');
 #$menu[] = array("link"=>"itemReport.php?itemId=18792", 'title'=>"~ BETTY", 'label' => "~ BETTY");
 $menu[] = array("link" => "ToD.php", 'title' => "Process the time of day", 'label' => "ToDB");
+$menu[] = array("link" => "time_spent.php", 'title' => "Start or stop the time spent timer", 'label' => "Time spent");
 $menu[] = array("link" => "matrix.php?&live=true&qLimit=b", 'title' => "Matrix", 'label' => "Matrix");
 //warning: poorly formed GET variables for matrix can generate errors in matrixCalc.php and matrix.php
 $menu[] = array("link" => "media/flow.gif", 'title' => "Process item", 'label' => "Flow.gif");

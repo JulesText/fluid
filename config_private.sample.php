@@ -29,6 +29,13 @@ $config = array(
 // exception to not alter headers in headerHtml.inc.php if running on localhost server
 $config['servLocalIP'] = '127.0.0.1';
 
+/*********  Password bypass IPs ************/
+
+// Exact client IP addresses that may access the application without a password.
+$config['password_ip_whitelist'] = array(
+    // '203.0.113.10',
+);
+
 /*********  openAI API ************/
 
 $config['openAI'] = 'xxx';

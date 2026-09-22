@@ -48,9 +48,15 @@ $verified = false;
 $local_hosts = array('localhost', '127.0.0.1', '::1');
 $server_name = isset($_SERVER['SERVER_NAME']) ? trim($_SERVER['SERVER_NAME'], '[]') : '';
 $is_local_host = in_array($server_name, $local_hosts, true);
+$client_ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
+$password_ip_whitelist = isset($config['password_ip_whitelist'])
+    && is_array($config['password_ip_whitelist'])
+    ? $config['password_ip_whitelist']
+    : array();
+$is_whitelisted_ip = in_array($client_ip, $password_ip_whitelist, true);
 
 # check if call turn turn pass off currently active
-if (!$config['password_on'] || $is_local_host) {
+if (!$config['password_on'] || $is_local_host || $is_whitelisted_ip) {
   // $_SESSION['message'][] = 'Password turned off until ' . date('Y-m-d H:i', $config['pass_off_to']);
     $verified = true;
 }

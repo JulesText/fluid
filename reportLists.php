@@ -68,8 +68,8 @@ $createURL = "editListItems.php?listId={$row['listId']}&amp;$urlSuffix";
 
 $prioritise = $row['prioritise'];
 $displayPriority = $prioritise;
-if (isset($_GET['priority']) && $_GET['priority'] !== '') {
-    $requestedPriority = filter_var($_GET['priority'], FILTER_VALIDATE_INT);
+if (isset($_GET['prioritised']) && $_GET['prioritised'] !== '') {
+    $requestedPriority = filter_var($_GET['prioritised'], FILTER_VALIDATE_INT);
     if ($requestedPriority !== false && $requestedPriority >= -1) {
         $displayPriority = $requestedPriority;
     }

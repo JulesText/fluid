@@ -140,7 +140,7 @@ if ($result->rowCount() > 0) {
 }
 
 if ($i) {
-    $query = "UPDATE " . $_POST["table"] . " SET `" . $_POST["updCol"] . "` = " . ($_POST["updVal"] == 'NULL' ? "''" : "'" . $updVal . "'") . " WHERE 1 = 1 ";
+    $query = "UPDATE " . $_POST["table"] . " SET `" . $_POST["updCol"] . "` = " . ($_POST["updVal"] == 'NULL' ? "NULL" : "'" . $updVal . "'") . " WHERE 1 = 1 ";
     if ($_POST["pid1"]) {
         $query .= " AND `" . $_POST["pcol1"] . "` = '" . $_POST["pid1"] . "'";
     }

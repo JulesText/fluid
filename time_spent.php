@@ -31,11 +31,15 @@ function timeSpentFormatPeriodEnd($date)
     return $formattedDate === false ? (string) $date : $formattedDate->modify('-1 day')->format('D d/m');
 }
 
-function timeSpentRedirect($message)
+function timeSpentRedirect($message, $activityId = null)
 {
     $_SESSION['message'][] = $message;
     $redirectUrl = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
-    nextScreen(is_string($redirectUrl) && $redirectUrl !== '' ? $redirectUrl : 'time_spent.php');
+    $redirectUrl = is_string($redirectUrl) && $redirectUrl !== '' ? $redirectUrl : 'time_spent.php';
+    if ($activityId !== null) {
+        $redirectUrl .= '?activity=' . (int) $activityId;
+    }
+    nextScreen($redirectUrl);
 }
 
 function timeSpentEscape($value, $config)
@@ -79,27 +83,63 @@ $now = new DateTimeImmutable('now', $timezone);
 $periodStart = timeSpentPeriodStart($now);
 $periodEnd = $periodStart->modify('+14 days');
 
-$result = query('selecttimespent', $config);
-if ($result === false) {
-    $timer = false;
-    $periods = false;
-    $_SESSION['message'][] = 'The time tracker tables are not available. Import the time_spent tables from db.sql.';
-} elseif ($result === 0) {
-    $values = array(
+$tablesReady = query('ensuretimespentactivities', $config) !== false;
+if ($tablesReady) {
+    $tablesReady = query('ensuretimespentactivityperiods', $config) !== false;
+}
+$activities = $tablesReady ? query('selecttimespentactivities', $config) : false;
+if ($activities === 0) {
+    query('newtimespent', $config, array(
         'activityName' => 'Activity',
         'startDate' => $now->format('Y-m-d'),
         'lowerLimitHours' => 10,
         'upperLimitHours' => 20,
         'periodStart' => $periodStart->format('Y-m-d'),
         'periodEnd' => $periodEnd->format('Y-m-d')
-    );
-    query('newtimespent', $config, $values);
-    $result = query('selecttimespent', $config);
-    $timer = is_array($result) ? $result[0] : false;
-    $periods = array();
+    ));
+    $activities = query('selecttimespentactivities', $config);
+}
+
+$selectedActivityId = filter_var($_GET['activity'], FILTER_VALIDATE_INT);
+$selectedActivityId = $selectedActivityId === false ? null : (int) $selectedActivityId;
+$runningActivityId = null;
+if (is_array($activities)) {
+    foreach ($activities as $activity) {
+        if ($activity['startedAt'] !== null) {
+            $runningActivityId = (int) $activity['id'];
+            break;
+        }
+    }
+}
+if (
+    $selectedActivityId === null
+    || !is_array($activities)
+    || !array_reduce(
+        $activities,
+        function ($found, $activity) use ($selectedActivityId) {
+            return $found || (int) $activity['id'] === $selectedActivityId;
+        },
+        false
+    )
+) {
+    $selectedActivityId = is_array($activities) && count($activities) > 0
+        ? (int) $activities[0]['id']
+        : null;
+}
+$_SESSION['time_spent_activity_id'] = $selectedActivityId;
+
+$result = $tablesReady && $selectedActivityId !== null
+    ? query('selecttimespent', $config, array('id' => $selectedActivityId))
+    : false;
+if (!$tablesReady || $result === false) {
+    $timer = false;
+    $periods = false;
+    $_SESSION['message'][] = 'The time tracker tables are not available. Import the time_spent tables from db.sql.';
 } else {
-    $timer = $result[0];
-    $periods = query('gettimespentperiods', $config);
+    $timer = is_array($result) && count($result) > 0 ? $result[0] : false;
+    $periods = $timer === false
+        ? array()
+        : query('gettimespentperiods', $config, array('activityId' => $selectedActivityId));
 }
 
 if ($timer !== false && $timer['startedAt'] === null) {
@@ -108,6 +148,7 @@ if ($timer !== false && $timer['startedAt'] === null) {
         $values = array(
             'periodStart' => $timer['periodStart'],
             'periodEnd' => $timer['periodEnd'],
+            'activityId' => $selectedActivityId,
             'totalSeconds' => (int) $timer['totalSeconds'],
             'lowerLimitHours' => $timer['lowerLimitHours'],
             'upperLimitHours' => $timer['upperLimitHours'],
@@ -123,18 +164,19 @@ if ($timer !== false && $timer['startedAt'] === null) {
 
         $nextStart = new DateTimeImmutable($timer['periodEnd'] . ' 00:00:00', $timezone);
         $values = array(
+            'id' => $selectedActivityId,
             'periodStart' => $nextStart->format('Y-m-d'),
             'periodEnd' => $nextStart->modify('+14 days')->format('Y-m-d')
         );
         query('rollovertimespent', $config, $values);
-        $result = query('selecttimespent', $config);
-        $timer = is_array($result) ? $result[0] : false;
+        $result = query('selecttimespent', $config, array('id' => $selectedActivityId));
+        $timer = is_array($result) && count($result) > 0 ? $result[0] : false;
         if ($timer === false) {
             break;
         }
         $timerPeriodEnd = new DateTimeImmutable($timer['periodEnd'] . ' 00:00:00', $timezone);
     }
-    $periods = query('gettimespentperiods', $config);
+    $periods = query('gettimespentperiods', $config, array('activityId' => $selectedActivityId));
 }
 
 if (
@@ -161,40 +203,58 @@ if (
     }
 
     $action = isset($_POST['action']) ? (string) $_POST['action'] : 'toggle';
+    if ($action === 'create-activity') {
+        $activityName = trim((string) $_POST['newActivityName']);
+        if ($activityName === '' || strlen($activityName) > 255) {
+            timeSpentRedirect('Enter an activity name up to 255 characters.', $selectedActivityId);
+        }
+        query('newtimespent', $config, array(
+            'activityName' => $activityName,
+            'startDate' => $now->format('Y-m-d'),
+            'lowerLimitHours' => 10,
+            'upperLimitHours' => 20,
+            'periodStart' => $periodStart->format('Y-m-d'),
+            'periodEnd' => $periodEnd->format('Y-m-d')
+        ));
+        $selectedActivityId = (int) $GLOBALS['lastinsertid'];
+        $_SESSION['time_spent_activity_id'] = $selectedActivityId;
+        timeSpentRedirect('Activity created.', $selectedActivityId);
+    }
     if ($action === 'save-settings') {
-        $activityName = trim((string) $_POST['activityName']);
         $lowerLimitHours = filter_var($_POST['lowerLimitHours'], FILTER_VALIDATE_FLOAT);
         $upperLimitHours = filter_var($_POST['upperLimitHours'], FILTER_VALIDATE_FLOAT);
         if (
-            $activityName === ''
-            || strlen($activityName) > 255
-            || $lowerLimitHours === false
+            $lowerLimitHours === false
             || $upperLimitHours === false
             || $lowerLimitHours < 0
             || $upperLimitHours < $lowerLimitHours
         ) {
-            timeSpentRedirect('Enter a name and valid limits, with the upper limit at least as high as the lower limit.');
+            timeSpentRedirect(
+                'Enter valid limits, with the upper limit at least as high as the lower limit.',
+                $selectedActivityId
+            );
         }
         query('updatetimespentsettings', $config, array(
-            'activityName' => $activityName,
             'lowerLimitHours' => number_format($lowerLimitHours, 2, '.', ''),
-            'upperLimitHours' => number_format($upperLimitHours, 2, '.', '')
+            'upperLimitHours' => number_format($upperLimitHours, 2, '.', ''),
+            'id' => $selectedActivityId
         ));
-        timeSpentRedirect('Tracker settings saved.');
+        timeSpentRedirect('Tracker settings saved.', $selectedActivityId);
     }
 
     if ($action === 'correct-current') {
         if ($timer['startedAt'] !== null) {
-            timeSpentRedirect('Stop the timer before correcting the current period.');
+            timeSpentRedirect('Stop the timer before correcting the current period.', $selectedActivityId);
         }
         $totalHours = filter_var($_POST['totalHours'], FILTER_VALIDATE_FLOAT);
         if ($totalHours === false || $totalHours < 0) {
-            timeSpentRedirect('Enter a valid non-negative total.');
+            timeSpentRedirect('Enter a valid non-negative total.', $selectedActivityId);
         }
         query('updatetimespentcurrent', $config, array(
+            'id' => $selectedActivityId,
             'totalSeconds' => (int) round($totalHours * 3600)
         ));
-        timeSpentRedirect('Current period total corrected.');
+        timeSpentRedirect('Current period total corrected.', $selectedActivityId);
     }
 
     if ($action === 'correct-period') {
@@ -210,11 +270,12 @@ if (
             }
         }
         if ($period === false || $totalHours === false || $totalHours < 0) {
-            timeSpentRedirect('Enter a valid period total.');
+            timeSpentRedirect('Enter a valid period total.', $selectedActivityId);
         }
         $totalSeconds = (int) round($totalHours * 3600);
         query('updatetimespentperiod', $config, array(
             'id' => $periodId,
+            'activityId' => $selectedActivityId,
             'totalSeconds' => $totalSeconds,
             'status' => timeSpentPeriodStatus(
                 $totalSeconds,
@@ -224,19 +285,23 @@ if (
             ),
             'notes' => trim((string) $_POST['notes'])
         ));
-        timeSpentRedirect('Historical period corrected.');
+        timeSpentRedirect('Historical period corrected.', $selectedActivityId);
     }
 
     $now = new DateTimeImmutable('now', $timezone);
     if ($timer['startedAt'] === null) {
+        if ($runningActivityId !== null && $runningActivityId !== $selectedActivityId) {
+            timeSpentRedirect('Stop the running activity before starting another one.', $selectedActivityId);
+        }
         $updated = query('updatetimespentstart', $config, array(
+            'id' => $selectedActivityId,
             'startedAt' => $now->format('Y-m-d H:i:s')
         ));
         if ($updated !== 1) {
-            timeSpentRedirect('The timer changed before it could start; please try again.');
+            timeSpentRedirect('The timer changed before it could start; please try again.', $selectedActivityId);
         }
         $_SESSION['time_spent_last_session_seconds'] = 0;
-        timeSpentRedirect($timer['activityName'] . ' started.');
+        timeSpentRedirect($timer['activityName'] . ' started.', $selectedActivityId);
     }
 
     $startedAt = DateTimeImmutable::createFromFormat(
@@ -245,16 +310,17 @@ if (
         $timezone
     );
     if ($startedAt === false) {
-        timeSpentRedirect('The saved start time is invalid; the timer was not stopped.');
+        timeSpentRedirect('The saved start time is invalid; the timer was not stopped.', $selectedActivityId);
     }
 
     $elapsedSeconds = max(0, $now->getTimestamp() - $startedAt->getTimestamp());
     $updatedTotalSeconds = (int) $timer['totalSeconds'] + $elapsedSeconds;
     $updated = query('updatetimespentstop', $config, array(
+        'id' => $selectedActivityId,
         'totalSeconds' => $updatedTotalSeconds
     ));
     if ($updated !== 1) {
-        timeSpentRedirect('The timer changed before it could stop; please try again.');
+        timeSpentRedirect('The timer changed before it could stop; please try again.', $selectedActivityId);
     }
 
     $message = $timer['activityName'] . ' stopped. Added ' . timeSpentFormatDuration($elapsedSeconds)
@@ -263,11 +329,11 @@ if (
         (float) $updatedTotalSeconds / 3600 > (float) $timer['upperLimitHours']
         && !(int) $timer['upperLimitNotified']
     ) {
-        query('marktimespentnotified', $config);
+        query('marktimespentnotified', $config, array('id' => $selectedActivityId));
         $message .= ' Upper fortnightly limit exceeded.';
     }
     $_SESSION['time_spent_last_session_seconds'] = $elapsedSeconds;
-    timeSpentRedirect($message);
+    timeSpentRedirect($message, $selectedActivityId);
 }
 
 $startedAt = null;
@@ -308,12 +374,25 @@ $currentStatus = $timer === false
         $timer['upperLimitHours'],
         !$isRunning && $now >= new DateTimeImmutable($timer['periodEnd'] . ' 00:00:00', $timezone)
     );
+$timeSpentUrl = 'time_spent.php?activity=' . (int) $selectedActivityId;
 
 $_SESSION['message'] = array();
 require_once 'headerHtml.inc.php';
 ?>
 <div class="time-spent-page">
-    <h1><?php echo timeSpentEscape($timer === false ? 'Time spent' : $timer['activityName'], $config); ?></h1>
+    <?php if (is_array($activities) && count($activities) > 0) { ?>
+        <form method="get" action="time_spent.php" class="time-spent-activity-picker">
+            <label for="time-spent-activity">Activity</label>
+            <select id="time-spent-activity" name="activity" onchange="this.form.submit()">
+                <?php foreach ($activities as $activity) { ?>
+                    <option
+                        value="<?php echo (int) $activity['id']; ?>"
+                        <?php echo (int) $activity['id'] === (int) $selectedActivityId ? ' selected="selected"' : ''; ?>
+                    ><?php echo timeSpentEscape($activity['activityName'], $config); ?></option>
+                <?php } ?>
+            </select>
+        </form>
+    <?php } ?>
     <?php if ($timer !== false) { ?>
         <p class="time-spent-status">
             <?php echo $isRunning ? 'Timer running' : 'Timer stopped'; ?>
@@ -330,7 +409,7 @@ require_once 'headerHtml.inc.php';
                 : ''; ?>"
             data-total-seconds="<?php echo (int) $displaySeconds; ?>"
         ><?php echo timeSpentFormatDuration($displaySeconds); ?></p>
-        <form method="post" action="time_spent.php">
+        <form method="post" action="<?php echo timeSpentEscape($timeSpentUrl, $config); ?>">
             <input type="hidden" name="csrf" value="<?php echo timeSpentEscape($_SESSION['time_spent_csrf'], $config); ?>" />
             <input type="hidden" name="action" value="toggle" />
             <button class="time-spent-toggle" type="submit">
@@ -355,12 +434,9 @@ require_once 'headerHtml.inc.php';
 
         <details class="time-spent-details">
             <summary>Tracker settings</summary>
-            <form method="post" action="time_spent.php" class="time-spent-settings">
+            <form method="post" action="<?php echo timeSpentEscape($timeSpentUrl, $config); ?>" class="time-spent-settings">
                 <input type="hidden" name="csrf" value="<?php echo timeSpentEscape($_SESSION['time_spent_csrf'], $config); ?>" />
                 <input type="hidden" name="action" value="save-settings" />
-                <label>Activity
-                    <input type="text" name="activityName" maxlength="255" value="<?php echo timeSpentEscape($timer['activityName'], $config); ?>" />
-                </label>
                 <label>Lower limit (hours)
                     <input type="number" name="lowerLimitHours" min="0" step="0.01" value="<?php echo number_format((float) $timer['lowerLimitHours'], 0, '.', ''); ?>" />
                 </label>
@@ -369,12 +445,20 @@ require_once 'headerHtml.inc.php';
                 </label>
                 <button type="submit">Save settings</button>
             </form>
+            <form method="post" action="<?php echo timeSpentEscape($timeSpentUrl, $config); ?>" class="time-spent-new-activity">
+                <input type="hidden" name="csrf" value="<?php echo timeSpentEscape($_SESSION['time_spent_csrf'], $config); ?>" />
+                <input type="hidden" name="action" value="create-activity" />
+                <label>Activity name
+                    <input type="text" name="newActivityName" maxlength="255" placeholder="Activity name" />
+                </label>
+                <button type="submit">Add activity</button>
+            </form>
         </details>
 
         <details class="time-spent-details">
             <summary>Correct fortnight total</summary>
             <?php if (!$isRunning) { ?>
-                <form method="post" action="time_spent.php" class="time-spent-correction">
+                <form method="post" action="<?php echo timeSpentEscape($timeSpentUrl, $config); ?>" class="time-spent-correction">
                     <input type="hidden" name="csrf" value="<?php echo timeSpentEscape($_SESSION['time_spent_csrf'], $config); ?>" />
                     <input type="hidden" name="action" value="correct-current" />
                     <label>Total hours
@@ -389,7 +473,7 @@ require_once 'headerHtml.inc.php';
             <details class="time-spent-details time-spent-history">
                 <summary>Previous fortnights</summary>
                 <?php foreach ($periods as $period) { ?>
-                    <form method="post" action="time_spent.php" class="time-spent-period-row">
+                    <form method="post" action="<?php echo timeSpentEscape($timeSpentUrl, $config); ?>" class="time-spent-period-row">
                         <input type="hidden" name="csrf" value="<?php echo timeSpentEscape($_SESSION['time_spent_csrf'], $config); ?>" />
                         <input type="hidden" name="action" value="correct-period" />
                         <input type="hidden" name="periodId" value="<?php echo (int) $period['id']; ?>" />
@@ -453,6 +537,25 @@ body {
     font-size: 2em;
     font-weight: 600;
 }
+.time-spent-activity-picker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    margin-bottom: 1em;
+    color: #8b949e;
+    font-size: 1.2em;
+    font-weight: 600;
+}
+.time-spent-activity-picker select {
+    max-width: 18em;
+    padding: 0.45em;
+    border: 1px solid #30363d;
+    border-radius: 0.35em;
+    background: #161b22;
+    color: #e6edf3;
+    font-size: 1em;
+}
 .time-spent-status {
     margin: 0;
     color: #8b949e;
@@ -468,7 +571,7 @@ body {
     margin: 0;
     color: #58a6ff;
     font-family: monospace;
-    font-size: clamp(2.8em, 15vw, 4.5em);
+    font-size: clamp(1.8em, 9vw, 3em);
     font-weight: 700;
     letter-spacing: 0.04em;
     line-height: 1;
@@ -476,6 +579,7 @@ body {
 }
 .time-spent-toggle,
 .time-spent-settings button,
+.time-spent-new-activity button,
 .time-spent-correction button,
 .time-spent-period-row button {
     border: 1px solid #388bfd;
@@ -496,6 +600,8 @@ body {
 .time-spent-toggle:focus,
 .time-spent-settings button:hover,
 .time-spent-settings button:focus,
+.time-spent-new-activity button:hover,
+.time-spent-new-activity button:focus,
 .time-spent-correction button:hover,
 .time-spent-correction button:focus,
 .time-spent-period-row button:hover,
@@ -504,6 +610,7 @@ body {
 }
 .time-spent-toggle:focus,
 .time-spent-settings button:focus,
+.time-spent-new-activity button:focus,
 .time-spent-correction button:focus,
 .time-spent-period-row button:focus {
     outline: 2px solid #79c0ff;
@@ -562,12 +669,14 @@ body {
     font-weight: 600;
 }
 .time-spent-settings,
+.time-spent-new-activity,
 .time-spent-correction {
     display: grid;
     gap: 0.75em;
     padding: 0 1em 1em;
 }
 .time-spent-settings label,
+.time-spent-new-activity label,
 .time-spent-correction label {
     display: grid;
     gap: 0.3em;
@@ -575,6 +684,7 @@ body {
     font-size: 0.9em;
 }
 .time-spent-settings input,
+.time-spent-new-activity input,
 .time-spent-correction input,
 .time-spent-period-row input {
     box-sizing: border-box;
@@ -591,6 +701,7 @@ body {
     font-size: 1.1em;
 }
 .time-spent-settings button,
+.time-spent-new-activity button,
 .time-spent-correction button {
     justify-self: start;
     padding: 0.65em 1em;

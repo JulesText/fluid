@@ -330,12 +330,14 @@ CREATE TABLE `timeitems` (
 
 -- --------------------------------------------------------
 
+-- --------------------------------------------------------
+
 --
--- Table structure for table `time_spent`
+-- Table structure for table `time_spent_activities`
 --
 
-CREATE TABLE `time_spent` (
-  `id` tinyint(3) UNSIGNED NOT NULL,
+CREATE TABLE `time_spent_activities` (
+  `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
   `activityName` varchar(255) NOT NULL DEFAULT 'Activity',
   `startDate` date NOT NULL,
   `startedAt` datetime DEFAULT NULL,
@@ -345,15 +347,17 @@ CREATE TABLE `time_spent` (
   `periodStart` date NOT NULL,
   `periodEnd` date NOT NULL,
   `upperLimitNotified` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
-  `updatedAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updatedAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 --
--- Table structure for table `time_spent_periods`
+-- Table structure for table `time_spent_activity_periods`
 --
 
-CREATE TABLE `time_spent_periods` (
+CREATE TABLE `time_spent_activity_periods` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `activityId` tinyint(3) UNSIGNED NOT NULL,
   `periodStart` date NOT NULL,
   `periodEnd` date NOT NULL,
   `totalSeconds` bigint(20) UNSIGNED NOT NULL DEFAULT 0,
@@ -363,7 +367,8 @@ CREATE TABLE `time_spent_periods` (
   `notes` text DEFAULT NULL,
   `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
   `updatedAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  UNIQUE KEY `time_spent_period_dates` (`periodStart`,`periodEnd`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `time_spent_activity_period_dates` (`activityId`,`periodStart`,`periodEnd`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 --
@@ -511,18 +516,6 @@ ALTER TABLE `timeitems`
   ADD KEY `type` (`type`),
   ADD KEY `timeframe` (`timeframe`(10)),
   ADD KEY `description` (`description`(10));
-
---
--- Indexes for table `time_spent`
---
-ALTER TABLE `time_spent`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `time_spent_periods`
---
-ALTER TABLE `time_spent_periods`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT for dumped tables

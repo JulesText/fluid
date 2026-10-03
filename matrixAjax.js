@@ -137,7 +137,11 @@ function sT(editableObj, table, updCol, pcol1, pid1, col2, id2, col3, id3, col4,
     (updVal == "\n" || updVal === "" || typeof updVal == "undefined")
   )
     updVal = "NULL";
-  if (table == "itemattributes" && updCol == "deadline" && (updVal == "\n" || typeof updVal == "undefined"))
+  if (
+    table == "itemattributes" &&
+    updCol == "deadline" &&
+    (updVal == "\n" || updVal === "" || typeof updVal == "undefined")
+  )
     updVal = "NULL";
 
   // alert(updVal);

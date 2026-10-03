@@ -8,6 +8,7 @@
 
         var windows = [
           "fi.php", // last window
+          "https://x.jules.net.au/time_spent.php?activity=2",
           "reportContext.php?notContext=25",
           // 'reportLists.php?listId=172&type=c',
           "listItems.php?tickler=false&type=a&contextId=25&notspacecontext=true&dueonly=true&liveparents=*",

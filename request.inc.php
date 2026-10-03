@@ -93,6 +93,8 @@ function normaliseCurrentRequest()
         'access_password',
         'acknowledge',
         'action',
+        'activity',
+        'newActivityName',
         'addonid',
         'addedItem',
         'addedList',

@@ -910,18 +910,62 @@ function getsql($config, $values, $sort, $querylabel)
 				{$values['timefilterquery']} ORDER BY `timeframeId` ASC";
             break;
 
+        case "ensuretimespentactivities":
+            $sql = "CREATE TABLE IF NOT EXISTS `" . $config['prefix'] . "time_spent_activities` (
+                    `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
+                    `activityName` varchar(255) NOT NULL DEFAULT 'Activity',
+                    `startDate` date NOT NULL,
+                    `startedAt` datetime DEFAULT NULL,
+                    `totalSeconds` bigint(20) UNSIGNED NOT NULL DEFAULT 0,
+                    `lowerLimitHours` decimal(6,2) NOT NULL DEFAULT 10.00,
+                    `upperLimitHours` decimal(6,2) NOT NULL DEFAULT 20.00,
+                    `periodStart` date NOT NULL,
+                    `periodEnd` date NOT NULL,
+                    `upperLimitNotified` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
+                    `updatedAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+                    PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci";
+            break;
+
+        case "ensuretimespentactivityperiods":
+            $sql = "CREATE TABLE IF NOT EXISTS `" . $config['prefix'] . "time_spent_activity_periods` (
+                    `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+                    `activityId` tinyint(3) UNSIGNED NOT NULL,
+                    `periodStart` date NOT NULL,
+                    `periodEnd` date NOT NULL,
+                    `totalSeconds` bigint(20) UNSIGNED NOT NULL DEFAULT 0,
+                    `lowerLimitHours` decimal(6,2) NOT NULL DEFAULT 10.00,
+                    `upperLimitHours` decimal(6,2) NOT NULL DEFAULT 20.00,
+                    `status` varchar(32) NOT NULL DEFAULT 'Complete',
+                    `notes` text DEFAULT NULL,
+                    `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
+                    `updatedAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+                    PRIMARY KEY (`id`),
+                    UNIQUE KEY `time_spent_activity_period_dates` (`activityId`,`periodStart`,`periodEnd`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci";
+            break;
+
+        case "selecttimespentactivities":
+            $sql = "SELECT `id`, `activityName`, `startDate`, `startedAt`, `totalSeconds`,
+                    `lowerLimitHours`, `upperLimitHours`, `periodStart`, `periodEnd`,
+                    `upperLimitNotified`
+                FROM `" . $config['prefix'] . "time_spent_activities`
+                ORDER BY `activityName` ASC, `id` ASC";
+            break;
+
         case "selecttimespent":
             $sql = "SELECT `id`, `activityName`, `startDate`, `startedAt`, `totalSeconds`,
                     `lowerLimitHours`, `upperLimitHours`, `periodStart`, `periodEnd`,
                     `upperLimitNotified`
-				FROM `" . $config['prefix'] . "time_spent`
-				WHERE `id` = 1";
+				FROM `" . $config['prefix'] . "time_spent_activities`
+				WHERE `id` = '{$values['id']}'";
             break;
 
         case "gettimespentperiods":
             $sql = "SELECT `id`, `periodStart`, `periodEnd`, `totalSeconds`,
                     `lowerLimitHours`, `upperLimitHours`, `status`, `notes`
-				FROM `" . $config['prefix'] . "time_spent_periods`
+				FROM `" . $config['prefix'] . "time_spent_activity_periods`
+                WHERE `activityId` = '{$values['activityId']}'
 				ORDER BY `periodStart` DESC";
             break;
 
@@ -1082,19 +1126,19 @@ function getsql($config, $values, $sort, $querylabel)
             break;
 
         case "newtimespent":
-            $sql = "INSERT INTO `" . $config['prefix'] . "time_spent`
-						(`id`,`activityName`,`startDate`,`startedAt`,`totalSeconds`,
+            $sql = "INSERT INTO `" . $config['prefix'] . "time_spent_activities`
+						(`activityName`,`startDate`,`startedAt`,`totalSeconds`,
                          `lowerLimitHours`,`upperLimitHours`,`periodStart`,`periodEnd`)
-				VALUES (1, '{$values['activityName']}', '{$values['startDate']}', NULL, 0,
+				VALUES ('{$values['activityName']}', '{$values['startDate']}', NULL, 0,
                         '{$values['lowerLimitHours']}', '{$values['upperLimitHours']}',
                         '{$values['periodStart']}', '{$values['periodEnd']}')";
             break;
 
         case "newtimespentperiod":
-            $sql = "INSERT INTO `" . $config['prefix'] . "time_spent_periods`
-						(`periodStart`,`periodEnd`,`totalSeconds`,`lowerLimitHours`,
+            $sql = "INSERT INTO `" . $config['prefix'] . "time_spent_activity_periods`
+						(`activityId`,`periodStart`,`periodEnd`,`totalSeconds`,`lowerLimitHours`,
                          `upperLimitHours`,`status`,`notes`)
-				VALUES ('{$values['periodStart']}', '{$values['periodEnd']}', '{$values['totalSeconds']}',
+				VALUES ('{$values['activityId']}', '{$values['periodStart']}', '{$values['periodEnd']}', '{$values['totalSeconds']}',
                         '{$values['lowerLimitHours']}', '{$values['upperLimitHours']}',
                         '{$values['status']}', '{$values['notes']}')";
             break;
@@ -1571,53 +1615,52 @@ function getsql($config, $values, $sort, $querylabel)
             break;
 
         case "updatetimespentstart":
-            $sql = "UPDATE `" . $config['prefix'] . "time_spent`
+            $sql = "UPDATE `" . $config['prefix'] . "time_spent_activities`
 				SET `startedAt` = '{$values['startedAt']}'
-				WHERE `id` = 1 AND `startedAt` IS NULL";
+				WHERE `id` = '{$values['id']}' AND `startedAt` IS NULL";
             break;
 
         case "updatetimespentstop":
-            $sql = "UPDATE `" . $config['prefix'] . "time_spent`
+            $sql = "UPDATE `" . $config['prefix'] . "time_spent_activities`
 				SET `startedAt` = NULL,
 					`totalSeconds` = '{$values['totalSeconds']}'
-				WHERE `id` = 1 AND `startedAt` IS NOT NULL";
+				WHERE `id` = '{$values['id']}' AND `startedAt` IS NOT NULL";
             break;
 
         case "updatetimespentcurrent":
-            $sql = "UPDATE `" . $config['prefix'] . "time_spent`
+            $sql = "UPDATE `" . $config['prefix'] . "time_spent_activities`
 				SET `totalSeconds` = '{$values['totalSeconds']}'
-				WHERE `id` = 1 AND `startedAt` IS NULL";
+				WHERE `id` = '{$values['id']}' AND `startedAt` IS NULL";
             break;
 
         case "marktimespentnotified":
-            $sql = "UPDATE `" . $config['prefix'] . "time_spent`
+            $sql = "UPDATE `" . $config['prefix'] . "time_spent_activities`
 				SET `upperLimitNotified` = 1
-				WHERE `id` = 1";
+				WHERE `id` = '{$values['id']}'";
             break;
 
         case "updatetimespentsettings":
-            $sql = "UPDATE `" . $config['prefix'] . "time_spent`
-				SET `activityName` = '{$values['activityName']}',
-                    `lowerLimitHours` = '{$values['lowerLimitHours']}',
+            $sql = "UPDATE `" . $config['prefix'] . "time_spent_activities`
+				SET `lowerLimitHours` = '{$values['lowerLimitHours']}',
                     `upperLimitHours` = '{$values['upperLimitHours']}'
-				WHERE `id` = 1";
+				WHERE `id` = '{$values['id']}'";
             break;
 
         case "rollovertimespent":
-            $sql = "UPDATE `" . $config['prefix'] . "time_spent`
+            $sql = "UPDATE `" . $config['prefix'] . "time_spent_activities`
 				SET `periodStart` = '{$values['periodStart']}',
                     `periodEnd` = '{$values['periodEnd']}',
                     `totalSeconds` = 0,
                     `upperLimitNotified` = 0
-				WHERE `id` = 1 AND `startedAt` IS NULL";
+				WHERE `id` = '{$values['id']}' AND `startedAt` IS NULL";
             break;
 
         case "updatetimespentperiod":
-            $sql = "UPDATE `" . $config['prefix'] . "time_spent_periods`
+            $sql = "UPDATE `" . $config['prefix'] . "time_spent_activity_periods`
 				SET `totalSeconds` = '{$values['totalSeconds']}',
                     `status` = '{$values['status']}',
                     `notes` = '{$values['notes']}'
-				WHERE `id` = '{$values['id']}'";
+				WHERE `id` = '{$values['id']}' AND `activityId` = '{$values['activityId']}'";
             break;
 
         default: // default to assuming that the label IS the query

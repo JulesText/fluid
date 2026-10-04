@@ -24,10 +24,9 @@ $values = array();
     $awareness = query("selectitemshort", $config, $values, $sort);
 //JJK end
 
-//JJK GET projects to deliver details
-
-    $values['itemId'] = 1418;
-    $deliver = query("selectitemshort", $config, $values, $sort);
+//JJK GET strategic view checklist item
+    $values['itemId'] = 8912;
+    $strategic_view = query("selectchecklistitem", $config, $values, $sort);
 
 //JJK end
 /*
@@ -117,9 +116,28 @@ require_once("headerHtml.inc.php");
 
 include('Lunar_Calc.php');
 
-echo "<P>Day " . $day;
+$values['listId'] = $lunarChecklistId;
+$lunar_checklist = query("selectchecklist", $config, $values, $sort);
+$lunarChecklistTitle = $lunar_checklist[0]['title'];
 
-echo "<P>Month " . $month;
+echo "<P><a href=\"reportLists.php?listId=" . (int) $lunarChecklistId
+    . "&amp;type=C\">" . htmlspecialchars($lunarChecklistTitle, ENT_COMPAT | ENT_HTML401, $config['charset'])
+    . "</a>";
+
+echo "<P><svg width=\"90\" height=\"90\" viewBox=\"0 0 100 100\" role=\"img\" aria-label=\""
+    . htmlspecialchars($lunarChecklistName, ENT_COMPAT | ENT_HTML401, $config['charset'])
+    . " moon phase\" focusable=\"false\">"
+    . "<defs><clipPath id=\"lunar-moon-circle\"><circle cx=\"50\" cy=\"50\" r=\"45\" /></clipPath></defs>"
+    . "<circle cx=\"50\" cy=\"50\" r=\"45\" fill=\"#333\" stroke=\"#333\" stroke-width=\"2\" />"
+    . "<path d=\"" . $moonLightPath . "\" fill=\"#f5f1c8\""
+    . " clip-path=\"url(#lunar-moon-circle)\" />"
+    . "</svg>";
+
+// echo "<P>Month " . $month;
+
+echo "<P>" . htmlspecialchars($lunarChecklistName, ENT_COMPAT | ENT_HTML401, $config['charset']);
+
+echo "<P>Day " . $day . "/" . $lunarCycleDays;
 
 
             //show today date
@@ -194,17 +212,17 @@ echo "</p>\n</div>\n";
 
                 echo "	</td> --> <td style='vertical-align: text-top;' class='JKSmallPadding'>\n";
 //JJK projects to deliver
-foreach ($deliver as $row) {
-    echo '<a href = "item.php?itemId=' . $row['itemId'] . '&pType=p" title="Edit ' . htmlspecialchars(stripslashes($row['title']), ENT_COMPAT | ENT_HTML401, $config['charset']) . '">' . stripslashes($row['title']) . "</a><br>\n";
+foreach ($strategic_view as $row) {
+    echo "<a href=\"editListItems.php?itemId=8912&amp;type=c\" title=\"Edit STRATEGIC VIEW\">STRATEGIC VIEW</a><br>\n";
 //projects to deliver proper follows
-    echo nl2br(stripslashes($row['description']));
+    echo nl2br(stripslashes($row['notes']));
 }
 //JJK projects to deliver  end
 
             echo "</td>\n";
 
 
-            echo "</tr><tr>\n";
+            echo "</tr>\n";
 
 //JJK routine end
 
@@ -224,8 +242,6 @@ foreach ($deliver as $row) {
 /* //JJK lunar schedule
             echo "<tr><td><a href='reportLists.php?listId=15&type=C'>LUNAR<br>SCHEDULE</a></td>\n";
 */ //JJk end
-
-            echo "<td colspan='1' style='vertical-align: text-top;' class='JKSmallPadding'>\n";
 
 //JJK calendar follows
 /*
@@ -248,9 +264,6 @@ foreach ($deliver as $row) {
             echo "</td><td><a href='reportLists.php?listId=13&type=C'>WEEKLY<br>SCHEDULE</a>\n";
 */ //JJK weekly schedule end
 
-            echo "</td></tr>\n";
-
-
 /*
 //JJK checklist
            echo "<table class='datatable sortable' id='itemtable' summary='table of list items'>\n";
@@ -269,7 +282,7 @@ foreach ($deliver as $row) {
 //JJK end  UNDER DEVELOPMENT
 */
 
-            echo "</tr>\n</table>\n";
+            echo "</table>\n";
 
 //JJK set against calendar
     echo "<div >";

@@ -1757,6 +1757,58 @@ function sqlparts($part, $config, $values)
                     . " AND (y.`pdatecompleted` IS NULL) "
                     . " AND (y.`pisSomeday`='n' OR y.`pisSomeday` IS NULL)";
             break;
+        case "liveparentvision":
+            $sqlpart = "EXISTS (
+                            SELECT 1
+                            FROM `{$config['prefix']}lookup` AS lp
+                            JOIN `{$config['prefix']}itemattributes` AS lpa
+                                ON (lpa.`itemId` = lp.`parentId`)
+                            JOIN `{$config['prefix']}itemstatus` AS lps
+                                ON (lps.`itemId` = lp.`parentId`)
+                            JOIN `{$config['prefix']}lookup` AS lv
+                                ON (lv.`itemId` = lp.`parentId`)
+                            JOIN `{$config['prefix']}itemattributes` AS lva
+                                ON (lva.`itemId` = lv.`parentId`)
+                            JOIN `{$config['prefix']}itemstatus` AS lvs
+                                ON (lvs.`itemId` = lv.`parentId`)
+                            WHERE lp.`itemId` = x.`itemId`
+                                AND lva.`type` = 'v'
+                                AND (
+                                    (
+                                        (
+                                            CURDATE() < DATE_ADD(
+                                                lpa.`deadline`,
+                                                INTERVAL -(lpa.`suppressUntil`) DAY
+                                            )
+                                            OR DATE_ADD(
+                                                lpa.`deadline`,
+                                                INTERVAL -(lpa.`suppressUntil`) DAY
+                                            ) IS NULL
+                                        )
+                                        AND lpa.`suppress` = 'y'
+                                    )
+                                    OR lps.`dateCompleted` IS NOT NULL
+                                    OR lpa.`isSomeday` = 'y'
+                                ) = 0
+                                AND (
+                                    (
+                                        (
+                                            CURDATE() < DATE_ADD(
+                                                lva.`deadline`,
+                                                INTERVAL -(lva.`suppressUntil`) DAY
+                                            )
+                                            OR DATE_ADD(
+                                                lva.`deadline`,
+                                                INTERVAL -(lva.`suppressUntil`) DAY
+                                            ) IS NULL
+                                        )
+                                        AND lva.`suppress` = 'y'
+                                    )
+                                    OR lvs.`dateCompleted` IS NOT NULL
+                                    OR lva.`isSomeday` = 'y'
+                                ) = 0
+                        )";
+            break;
         case "matchall":
             $sqlpart = " (i.`title` LIKE '%{$values['needle']}%'
                                       OR i.`description` LIKE '%{$values['needle']}%'

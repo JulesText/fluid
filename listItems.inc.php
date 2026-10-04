@@ -360,7 +360,7 @@ if ($filter['everything'] != "true") {
                     #var_dump($values);
                     #die;
                 }
-                $values['filterquery'] .= ' WHERE ' . sqlparts("liveparents", $config, $values);
+                $values['filterquery'] .= ' WHERE ' . sqlparts("liveparentvision", $config, $values);
                 break;
         }
     }

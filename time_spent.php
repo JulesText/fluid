@@ -377,6 +377,7 @@ $currentStatus = $timer === false
 $timeSpentUrl = 'time_spent.php?activity=' . (int) $selectedActivityId;
 
 $_SESSION['message'] = array();
+$values['title'] = 'Time Spent';
 require_once 'headerHtml.inc.php';
 ?>
 <div class="time-spent-page">

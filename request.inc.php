@@ -15,7 +15,7 @@ function normaliseCurrentRequest()
     $required = array(
         'addon.php' => array('request' => array('addonid', 'url')),
         'assigntype.php' => array('get' => array('itemId')),
-        'childrenmove.php' => array('request' => array('action', 'itemId', 'type')),
+        'childrenmove.php' => array('get' => array('itemId', 'type')),
         'childrenupdate.php' => array('get' => array('itemId', 'type')),
         'editcat.php' => array('get' => array('field')),
         'fi_response.php' => array('post' => array('chat_id', 'model_id', 'msg', 'word_count')),

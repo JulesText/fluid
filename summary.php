@@ -212,10 +212,12 @@ echo "</p>\n</div>\n";
 
                 echo "	</td> --> <td style='vertical-align: text-top;' class='JKSmallPadding'>\n";
 //JJK projects to deliver
-foreach ($strategic_view as $row) {
-    echo "<a href=\"editListItems.php?itemId=8912&amp;type=c\" title=\"Edit STRATEGIC VIEW\">STRATEGIC VIEW</a><br>\n";
-//projects to deliver proper follows
-    echo nl2br(stripslashes($row['notes']));
+if (is_array($strategic_view)) {
+    foreach ($strategic_view as $row) {
+        echo "<a href=\"editListItems.php?itemId=8912&amp;type=c\" title=\"Edit STRATEGIC VIEW\">STRATEGIC VIEW</a><br>\n";
+        //projects to deliver proper follows
+        echo nl2br(stripslashes($row['notes']));
+    }
 }
 //JJK projects to deliver  end
 

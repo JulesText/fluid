@@ -359,13 +359,22 @@ if ($timer !== false) {
 
 $currentHours = $timer === false ? 0 : $currentTotalSeconds / 3600;
 $daysTracked = $timer === false ? 1 : timeSpentDaysTracked($timer['startDate'], $now);
+$lifetimeTotalSeconds = $currentTotalSeconds;
+$periodsAvailable = $periods === 0 || is_array($periods);
+if (is_array($periods)) {
+    foreach ($periods as $period) {
+        $lifetimeTotalSeconds += (int) $period['totalSeconds'];
+    }
+}
 $periodEndDate = $timer === false
     ? false
     : new DateTimeImmutable($timer['periodEnd'] . ' 00:00:00', $timezone);
 $daysRemaining = $timer === false
     ? 0
     : (int) floor(max(0, $periodEndDate->getTimestamp() - $now->getTimestamp()) / 86400);
-$averageHours = $currentHours / $daysTracked;
+$averageHours = $timer === false || !$periodsAvailable
+    ? null
+    : $lifetimeTotalSeconds / 3600 / $daysTracked;
 $currentStatus = $timer === false
     ? 'Unavailable'
     : timeSpentPeriodStatus(
@@ -422,7 +431,7 @@ require_once 'headerHtml.inc.php';
             <div><strong><?php echo number_format($currentHours, 0); ?></strong><span>hours this fortnight</span></div>
             <div><strong><?php echo (int) $daysRemaining; ?></strong><span>days remaining</span></div>
             <div><strong><?php echo (int) $daysTracked; ?></strong><span>days tracked</span></div>
-            <div><strong><?php echo number_format($averageHours, 0); ?></strong><span>hours / day</span></div>
+            <div><strong><?php echo $averageHours === null ? 'Unavailable' : number_format($averageHours, 1); ?></strong><span>hours / day</span></div>
         </div>
         <p class="time-spent-period">
             Target: <?php echo number_format((float) $timer['lowerLimitHours'], 0); ?>

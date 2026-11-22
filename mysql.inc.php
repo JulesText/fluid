@@ -739,7 +739,10 @@ function getsql($config, $values, $sort, $querylabel)
             break;
 
         case "getgtdphpversion":
-            //$sql="SELECT `version` FROM `{$config['prefix']}version`";
+            $sql = "SELECT `version`
+                FROM `" . $config['prefix'] . "version`
+                ORDER BY `updated` DESC
+                LIMIT 1";
             break;
 
         case "getitems":

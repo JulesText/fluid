@@ -9,7 +9,7 @@ require_once("headerHtml.inc.php");
 <div class='formrow'><span class="error" id='errorMessage'></span></div>
 <div>
 <input type='hidden' name='field' value='<?php echo $field; ?>' />
-    <?php if ($thiscat['id'] !== false) { ?>
+    <?php if (isset($thiscat['id']) && $thiscat['id'] !== false) { ?>
     <input type='hidden' name='id' value=<?php echo "'{$thiscat['id']}'"; ?> />
     <?php } ?>
 </div>
@@ -27,7 +27,7 @@ require_once("headerHtml.inc.php");
             <?php } ?>
         </tr>
     <?php
-    if ($thiscat['id'] !== false) { ?>
+    if (isset($thiscat['id']) && $thiscat['id'] !== false) { ?>
         <tr>
             <td><input type="text" name="name" value="<?php echo $thiscat['name']; ?>" />
                 <input type='hidden' name='next' value="<?php echo $nextcat; ?>" />

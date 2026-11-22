@@ -12,6 +12,8 @@ if ($values['itemId']) {
     foreach (array('listId','item','notes', 'hyperlink', 'priority') as $field) {
             $values[$field] = $row[0][$field];
     }
+    $values['checked'] = 'n';
+    $values['ignored'] = 'n';
     if ($isChecklist) {
         $values['checked'] = $row[0]['checked'];
         $values['ignored'] = $row[0]['ignored'];
@@ -34,7 +36,8 @@ if ($values['itemId']) {
     $values['notes'] = '';
     $values['hyperlink'] = '';
     $values['dateCompleted'] = null;
-    $values['checked'] = null;
+    $values['checked'] = 'n';
+    $values['ignored'] = 'n';
     $action = 'itemcreate';
 }
 

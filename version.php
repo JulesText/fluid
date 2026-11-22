@@ -1,4 +1,13 @@
 <?php include_once('header.php'); ?>
+<?php
+$databaseVersion = '';
+if (in_array($config['prefix'] . 'version', getDBtables($config), true)) {
+    $version = query('getgtdphpversion', $config);
+    if (is_array($version) && isset($version[0]['version'])) {
+        $databaseVersion = $version[0]['version'];
+    }
+}
+?>
 <h2>GTD-PHP Version Information</h2>
 <table summary='version information'>
     <tbody>
@@ -9,7 +18,7 @@
             <td><?php echo _GTDPHP_VERSION; ?></td>
         </tr>
         <tr><th>GTD-PHP database</th>
-            <td><?php echo array_pop(array_pop(query('getgtdphpversion', $config))); ?></td>
+            <td><?php echo $databaseVersion; ?></td>
         </tr>
         <tr><th>GTD-PHP theme</th>
             <td><?php echo $config['theme']; ?></td>

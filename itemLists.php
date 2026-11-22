@@ -79,7 +79,7 @@ if (is_array($resultListX)) {
                 </thead>
                 <tbody>
                 <?php foreach ($resultList1 as $row) {
-                    if ($row['checked'] === 'y') {
+                    if (isset($row['checked']) && $row['checked'] === 'y') {
                         echo "<tr style=\"display:none\">";
                     } else {
                         echo "<tr>";
@@ -99,7 +99,7 @@ if (is_array($resultListX)) {
                         </td>
                         <?php if ($type == 'c') { ?>
                         <td class="JKSmallPadding"><input type="checkbox" name="completed[]" title="Complete" value="<?php
-                            echo $row['itemId'],'"',($isChecklist && $row['checked'] === 'y') ? " checked='checked' " : '';
+                            echo $row['itemId'],'"',($isChecklist && isset($row['checked']) && $row['checked'] === 'y') ? " checked='checked' " : '';
                         ?> />
                         </td>
                         <?php } ?>

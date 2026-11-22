@@ -6,6 +6,16 @@
 //include_once('lists.inc.php');
 //JJK end
 $values = array();
+$numbercontexts = 0;
+$numberitems = 0;
+$nextactionsdue = array('1' => 0, '2' => 0, '3' => 0);
+$numbernextactions = 0;
+$numberprojects = 0;
+$numbersomeday = 0;
+$numberdone = 0;
+$numdue = 0;
+$numoverdue = 0;
+$reminderresult = null;
 
 //SQL Code
 
@@ -128,8 +138,8 @@ echo "<P><svg width=\"90\" height=\"90\" viewBox=\"0 0 100 100\" role=\"img\" ar
     . htmlspecialchars($lunarChecklistName, ENT_COMPAT | ENT_HTML401, $config['charset'])
     . " moon phase\" focusable=\"false\">"
     . "<defs><clipPath id=\"lunar-moon-circle\"><circle cx=\"50\" cy=\"50\" r=\"45\" /></clipPath></defs>"
-    . "<circle cx=\"50\" cy=\"50\" r=\"45\" fill=\"#333\" stroke=\"#333\" stroke-width=\"2\" />"
-    . "<path d=\"" . $moonLightPath . "\" fill=\"#f5f1c8\""
+    . "<circle cx=\"50\" cy=\"50\" r=\"45\" fill=\"#f5f1c8\" stroke=\"#333\" stroke-width=\"2\" />"
+    . "<path d=\"" . $moonShadowPath . "\" fill=\"#333\""
     . " clip-path=\"url(#lunar-moon-circle)\" />"
     . "</svg>";
 

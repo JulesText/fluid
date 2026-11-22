@@ -22,6 +22,10 @@ if (basename($_SERVER['SCRIPT_FILENAME']) == 'reportContext.php' || basename($_S
     $reportContext = false;
 }
 
+if (!isset($linkedItems) || !is_array($linkedItems)) {
+    $linkedItems = array();
+}
+
 foreach ($maintable as $row) {
     if (!isset($row['ptype'])) {
         $row['ptype'] = '';
@@ -40,9 +44,6 @@ foreach ($maintable as $row) {
             ,'>';
             switch ($key) {
                 case 'title':
-                    if (!is_array($linkedItems)) {
-                        $linkedItems = array();
-                    }
                         $isProject = false;
                         $isActiveProject = false;
                         $hasTickler = false;

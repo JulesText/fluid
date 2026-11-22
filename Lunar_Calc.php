@@ -103,16 +103,13 @@ if ($currentProgress < (1 / 12) || $currentProgress >= (11 / 12)) {
 $current = $currentProgress;
 $day = floor($currentDay) + 1;
 $lunarCycleDays = ceil($cycleLength);
-$moonTerminatorRadius = abs(cos(2 * pi() * $currentProgress)) * 45;
-if ($currentProgress <= 0.5) {
-    $moonLightPath = 'M 50 5 A 45 45 0 0 0 50 95 A '
-        . number_format($moonTerminatorRadius, 2, '.', '')
-        . ' 45 0 0 1 50 5 Z';
-} else {
-    $moonLightPath = 'M 50 5 A 45 45 0 0 1 50 95 A '
-        . number_format($moonTerminatorRadius, 2, '.', '')
-        . ' 45 0 0 0 50 5 Z';
-}
+$moonPhaseCosine = cos(2 * pi() * $currentProgress);
+$moonTerminatorRadius = abs($moonPhaseCosine) * 45;
+$moonOuterSweep = $currentProgress <= 0.5 ? 0 : 1;
+$moonTerminatorSweep = $moonPhaseCosine >= 0 ? 0 : 1;
+$moonShadowPath = 'M 50 5 A 45 45 0 0 ' . $moonOuterSweep . ' 50 95 A '
+    . number_format($moonTerminatorRadius, 2, '.', '')
+    . ' 45 0 0 ' . $moonTerminatorSweep . ' 50 5 Z';
 $month = fmod($lunation, 13);
 if ($month < 0) {
     $month += 13;

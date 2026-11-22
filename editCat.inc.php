@@ -53,10 +53,11 @@ switch ($field) {
         $showTypes = false;
         break;
 }
+$newcat = $thiscat;
 $result = query($query, $config, $values, $sort);
 $catlist = array();
 $count = 0;
-$thiscat = false;
+$thiscat = (isset($_GET['id']) && $id === 0) ? $newcat : false;
 
 if ($result) {
     $firstcat = 0;

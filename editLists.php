@@ -37,6 +37,8 @@ if ($values['listId']) {
     $values['thrs_obs'] = '5';
     $values['sortItems'] = '';
     $action = 'listcreate';
+    $urlVars = '';
+    $urlInst = '';
 }
 $cashtml = categoryselectbox($config, $values, $sort);
 require_once("headerHtml.inc.php");

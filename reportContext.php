@@ -20,17 +20,22 @@ if (!$randomDisplay) {
 }
 
 if ($randomDisplay) {
+    $randomContext = null;
     $contexts = array();
     foreach ($matrixcount as $row) {
         if ($row['count'] > 0) {
             array_push($contexts, $row['context']);
         }
     }
-    $key = rand(0, count($contexts) - 1);
-    $randomContext = $contexts[$key];
-    // echo "<pre>"; var_dump($matrixcount);die();
-    // echo "<pre>" . $key . " " . $contexts[$key] . PHP_EOL; var_dump($contexts);die();
-    echo "<h1>Random context: " . $randomContext . "</h1>";
+    if ($contexts) {
+        $key = rand(0, count($contexts) - 1);
+        $randomContext = $contexts[$key];
+        // echo "<pre>"; var_dump($matrixcount);die();
+        // echo "<pre>" . $key . " " . $contexts[$key] . PHP_EOL; var_dump($contexts);die();
+        echo "<h1>Random context: " . $randomContext . "</h1>";
+    } else {
+        echo "<h1>No active contexts available</h1>";
+    }
 }
 
 ?>

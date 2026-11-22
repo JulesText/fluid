@@ -15,7 +15,12 @@ $values['filterquery'] = sqlparts('isNA', $config, $values);
 $values['extravarsfilterquery'] = sqlparts("getNA", $config, $values);
 ;
 $result = query("getitemsandparent", $config, $values, $sort);
-$item = ($result) ? $result[0] : array();
+if (!is_array($result) || !isset($result[0])) {
+    echo "<p class='error'>Failed to retrieve item {$values['itemId']}</p>";
+    include_once('footer.php');
+    exit();
+}
+$item = $result[0];
 $values['isSomeday'] = ($item['isSomeday'] == "y") ? 'y' : 'n';
 $isTrade = ($item['isTrade'] == "y") ? 'y' : 'n';
 $values['type'] = $item['type'];
